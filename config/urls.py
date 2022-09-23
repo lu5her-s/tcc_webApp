@@ -28,9 +28,15 @@ from django.conf.urls.static import static
 # for test template
 from django.views.generic import TemplateView
 
+from account import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('test/', TemplateView.as_view(template_name="test.html")),
+    path('test/', TemplateView.as_view(template_name="test.html"), name='test'),
+    path('', views.HomeView.as_view(), name="home"),
+    
+    #internal url
+    path('account/', include('account.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
