@@ -3,15 +3,26 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Thu Sep, 29 2022, 13:36 272
+# Last Modified Date: Thu Sep, 29 2022, 22:03 272
 # Last Modified By  : lu5her <lu5her@mail>
-from django.shortcuts import render
+from django.shortcuts import HttpResponseRedirect, render
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
     TemplateView,
+)
+
+from account.models import (
+    Position,
+    Profile,
+    Rank,
+)
+from account.forms import (
+    ProfileForm,
+    UserForm,
 )
 
 # Create your views here.
@@ -30,3 +41,54 @@ class RegisterView(CreateView):
     model = User
     template_name = 'account/register1.html'
     success_url = reverse_lazy('login')
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    model = User
+    template_name = 'account/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_form'] = UserForm(instance=self.request.user)
+        context['profile_form'] = ProfileForm(instance=self.request.user.profile)
+        context['password_form'] = PasswordChangeForm(user=self.request.user)
+        return context
+
+def update_profile(request):
+    user = User.objects.get(pk=request.user.pk)
+    profile = Profile.objects.get(pk=user.pk)
+
+    if request.method == 'POST':
+        user.first_name = request.POST['first_name']
+        user.last_name = request.POST['last_name']
+        user.email = request.POST['email']
+
+        user.save()
+
+        if request.POST['rank']:
+            rank = requser.POST['rank']
+            profile.rank = Rank.objects.get(pk=rank)
+
+        if request.POST['position']:
+            profile.position = Position.objects.get(pk=request.POST['position'])
+
+        if request.POST['sector']:
+            profile.sector = Sector.objects.get(pk=request.POST['sector'])
+
+        profile.place = request.POST['place']
+        profile.address = request.POST['address']
+        profile.phone = request.POST['phone']
+        profile.twitter = request.POST['twitter']
+        profile.facebook = request.POST['facebook']
+        profile.instagram = request.POST['instagram']
+        profile.line_id = request.POST['line_id']
+        profile.line_token = request.POST['line_token']
+
+        profile.save()
+        return HttpResponseRedirect(reverse_lazy('account:profile'))
+
+def change_password(request):
+    if request.method == 'POST':
+        old_password = request.POST['old_password']
+        new_password = request.POST['new_password1']
+        confirm_password = request.POST['new_password2']
+

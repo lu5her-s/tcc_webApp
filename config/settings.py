@@ -3,7 +3,7 @@
 # File              : settings.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 22 2022, 15:05 265
-# Last Modified Date: Wed Sep, 28 2022, 21:46 271
+# Last Modified Date: Thu Sep, 29 2022, 15:27 272
 # Last Modified By  : lu5her <lu5her@mail>
 """
 Django settings for config project.
@@ -133,9 +133,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    Path.joinpath(BASE_DIR, 'static'),
 ]
-STATIC_ROOT = Path.joinpath(BASE_DIR, 'staticfiles')
+# STATIC_ROOT = Path.joinpath(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
