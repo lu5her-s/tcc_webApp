@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <!--
- - File              : login.html
+ - File              : register1.html
  - Author            : lu5her <lu5her@mail>
- - Date              : Thu Sep, 29 2022, 10:19 272
- - Last Modified Date: Thu Sep, 29 2022, 14:22 272
+ - Date              : Thu Sep, 29 2022, 11:57 272
+ - Last Modified Date: Thu Sep, 29 2022, 14:20 272
  - Last Modified By  : lu5her <lu5her@mail>
 -->
-{% load static %}
 
+{% load static %}
 <html lang="en">
 
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Login - TCC Protal</title>
+  <title>Register - TCC Portal</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -51,8 +51,8 @@
             <div class="col-lg-6 col-md-6 d-flex flex-column align-items-center justify-content-center">
 
               <div class="d-flex justify-content-center py-4">
-                  <a href="{% url 'home' %}" class="logo d-flex align-items-center w-auto">
-                      <img src="{% static 'assets/img/logo.png' %}" alt="">
+                <a href="index.html" class="logo d-flex align-items-center w-auto">
+                    <img src="{% static 'assets/img/logo.png' %}" alt="">
                   <span class="d-none d-lg-block">TCC Portal</span>
                 </a>
               </div><!-- End Logo -->
@@ -62,39 +62,46 @@
                 <div class="card-body">
 
                   <div class="pt-4 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
-                    <p class="text-center small">Enter your username & password to login</p>
+                    <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
+                    <p class="text-center small">Enter your personal details to create account</p>
                   </div>
 
                   <form method="post" class="row g-3 needs-validation" novalidate>
                       {% csrf_token %}
 
                     <div class="col-12">
-                      <label for="yourUsername" class="form-label">Username</label>
+                        <label for="{{ form.username.name }}" class="form-label">{{ form.username.label }}</label>
                       <div class="input-group has-validation">
                         <span class="input-group-text" id="inputGroupPrepend">@</span>
-                        <input type="text" name="username" class="form-control" id="yourUsername" required>
-                        <div class="invalid-feedback">Please enter your username.</div>
+                        <input type="text" name="{{ form.username.name }}" class="form-control" id="{{ form.username.name }}" required>
+                        <div class="invalid-feedback">Please choose a username.</div>
                       </div>
                     </div>
 
                     <div class="col-12">
-                      <label for="yourPassword" class="form-label">Password</label>
-                      <input type="password" name="password" class="form-control" id="yourPassword" required>
+                        <label for="{{ form.password1.name }}" class="form-label">{{ form.password1.label }}</label>
+                        <input type="password" name="{{ form.password1.name }}" class="form-control" id="{{ form.password1.name }}" required>
                       <div class="invalid-feedback">Please enter your password!</div>
                     </div>
 
                     <div class="col-12">
+                        <label for="{{ form.password2.name }}" class="form-label">{{ form.password2.label }}</label>
+                        <input type="password" name="{{ form.password2.name }}" class="form-control" id="{{ form.password2.name }}" required>
+                      <div class="invalid-feedback">Please re-peat your password!</div>
+                    </div>
+
+                    <div class="col-12">
                       <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="remember" value="true" id="rememberMe">
-                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                        <input class="form-check-input" name="terms" type="checkbox" value="" id="acceptTerms" required>
+                        <label class="form-check-label" for="acceptTerms">I agree and accept the <a href="#">terms and conditions</a></label>
+                        <div class="invalid-feedback">You must agree before submitting.</div>
                       </div>
                     </div>
                     <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit">Login</button>
+                      <button class="btn btn-primary w-100" type="submit">Create Account</button>
                     </div>
                     <div class="col-12">
-                        <p class="small mb-0">Don't have account? <a href="{% url 'account:register' %}">Create an account</a></p>
+                        <p class="small mb-0">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
                     </div>
                   </form>
 
@@ -127,4 +134,4 @@
 
 </body>
 
-</html>->
+</html>
