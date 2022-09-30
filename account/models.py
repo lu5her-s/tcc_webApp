@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Sep, 28 2022, 22:02 271
-# Last Modified Date: Wed Sep, 28 2022, 22:02 271
+# Last Modified Date: Fri Sep, 30 2022, 12:33 273
 # Last Modified By  : lu5her <lu5her@mail>
 from django.db import models
 from django.contrib.auth.models import User

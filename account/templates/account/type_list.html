@@ -42,7 +42,7 @@
                             <tbody>
                                 {% for member in object_list %}
                                 <tr>
-                                    <th scope="row">{{ member.profile.sector.name }}</th>
+                                    <th scope="row"><a href="{% url 'account:sector' pk=member.profile.sector.pk %}">{{ member.sector.name }}</a></th>
                                     <td><a href="{% url 'account:member' pk=member.pk %}">{{ member.profile.rank.name }} {{ member.get_full_name }}</a></td>
                                     <td><a href="#" class="text-primary">{{ member.profile.position.name }}</a></td>
                                     <td>{{ member.profile.place }}</td>
