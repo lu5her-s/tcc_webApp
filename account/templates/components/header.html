@@ -174,7 +174,7 @@
 
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                     {% if request.user.profile.image %}
-                    <img src="{{ request.user.profile.image.url }}" alt="Profile">
+                    <img src="{{ request.user.profile.image.url }}" alt="Profile" class="rounded-circle">
                     {% else %}
                     <img src="{% static 'assets/img/profile.png' %}" alt="Profile" class="rounded-circle">
                     {% endif %}

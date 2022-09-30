@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Fri Sep, 30 2022, 12:27 273
+# Last Modified Date: Fri Sep, 30 2022, 19:24 273
 # Last Modified By  : lu5her <lu5her@mail>
 from re import L
 from django.contrib.auth import update_session_auth_hash
@@ -117,12 +117,3 @@ class MembersListView(LoginRequiredMixin, ListView):
 class MembersDetailView(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'account/profile.html'
-
-def sector_list(request, pk):
-    object_list = Profile.objects.filter(sector__pk=pk)
-    print(object_list)
-    context = {
-        'ocject_list': object_list,
-        'title': Sector.objects.get(pk=pk).name,
-    }
-    return render(request, 'account/type_list.html', context)

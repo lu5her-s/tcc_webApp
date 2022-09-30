@@ -3,7 +3,7 @@
 # File              : settings.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 22 2022, 15:05 265
-# Last Modified Date: Thu Sep, 29 2022, 15:27 272
+# Last Modified Date: Fri Sep, 30 2022, 13:45 273
 # Last Modified By  : lu5her <lu5her@mail>
 """
 Django settings for config project.
@@ -47,9 +47,11 @@ INSTALLED_APPS = [
 
     # external app
     'crispy_forms',
+    'ckeditor',
 
     # internal app
     'account',
+    'announce',
 
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
