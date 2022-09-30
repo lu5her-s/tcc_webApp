@@ -27,7 +27,7 @@
                     {% else %}
                     <img src="{% static 'assets/img/profile.png' %}" alt="Profile" class="rounded-circle">
                     {% endif %}
-                    {% if request.user.first_name and request.user.profile.last_name %}
+                    {% if request.user.first_name and request.user.last_name %}
                     <h2>{{ request.user.profile.rank.name }}{{ request.user.get_full_name }}</h2>
                         {% if request.user.profile.position %} 
                         <h3>{{ request.user.profile.position.name }}</h3>
@@ -329,27 +329,31 @@
 
                         <div class="tab-pane fade pt-3" id="profile-change-password">
                             <!-- Change Password Form -->
-                            <form>
+
+                            {% comment %} 
+                            <form method="post" action="{% url 'account:change-password' %}">
+                                {% csrf_token %}
                                 {{ password_form }}
 
                                 <div class="row mb-3">
-                                    <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
+                                    <label for="{{ password_form.old_password.name }}" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <input name="password" type="password" class="form-control" id="currentPassword">
+                                        <input name="password" type="password" class="form-control" id="{{ password_form.old_password.name }}">
+                                        {{ password_form.old_password }}
                                     </div>
                                 </div>
 
                                 <div class="row mb-3">
-                                    <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
+                                    <label for="{{ password_form.new_password1.name }}" class="col-md-4 col-lg-3 col-form-label">New Password</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <input name="newpassword" type="password" class="form-control" id="newPassword">
+                                        <input name="{{ password_form.new_password1.name }}" type="password" class="form-control" id="{{ password_form.new_password1.name }}">
                                     </div>
                                 </div>
 
                                 <div class="row mb-3">
-                                    <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
+                                    <label for="{{ password_form.new_password2.name }}" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <input name="renewpassword" type="password" class="form-control" id="renewPassword">
+                                        <input name="{{ password_form.new_password2.name }}" type="password" class="form-control" id="{{ password_form.new_password2.name }}">
                                     </div>
                                 </div>
 
@@ -357,7 +361,8 @@
                                     <button type="submit" class="btn btn-primary">Change Password</button>
                                 </div>
                             </form><!-- End Change Password Form -->
-
+                            {% endcomment %}
+                            <p>Change Password<a href="{% url 'account:change-password' %}">&nbsp;Here</a></p>
                         </div>
 
                     </div><!-- End Bordered Tabs -->

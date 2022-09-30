@@ -3,7 +3,7 @@
 # File              : urls.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 15:34 272
-# Last Modified Date: Thu Sep, 29 2022, 22:03 272
+# Last Modified Date: Fri Sep, 30 2022, 08:11 273
 # Last Modified By  : lu5her <lu5her@mail>
 from django.urls import path
 
@@ -15,4 +15,5 @@ urlpatterns = [
     path('register/', views.RegisterView.as_view(), name='register'),
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('profile-update/', views.update_profile, name='profile-update'),
+    path('change-password/', views.ChangePassword.as_view(), name='change-password'),
 ]

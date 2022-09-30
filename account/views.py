@@ -3,9 +3,11 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Thu Sep, 29 2022, 22:03 272
+# Last Modified Date: Fri Sep, 30 2022, 09:40 273
 # Last Modified By  : lu5her <lu5her@mail>
-from django.shortcuts import HttpResponseRedirect, render
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.views import PasswordChangeView
+from django.shortcuts import HttpResponseRedirect, get_object_or_404, redirect, render
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -19,11 +21,14 @@ from account.models import (
     Position,
     Profile,
     Rank,
+    Sector,
 )
 from account.forms import (
     ProfileForm,
     UserForm,
 )
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 
 # Create your views here.
 
@@ -50,12 +55,12 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['user_form'] = UserForm(instance=self.request.user)
         context['profile_form'] = ProfileForm(instance=self.request.user.profile)
-        context['password_form'] = PasswordChangeForm(user=self.request.user)
+        context['password_form'] = PasswordChangeForm(self.request.user)
         return context
 
 def update_profile(request):
-    user = User.objects.get(pk=request.user.pk)
-    profile = Profile.objects.get(pk=user.pk)
+    user = get_object_or_404(User, pk=request.user.pk)
+    profile = get_object_or_404(Profile, user=user)
 
     if request.method == 'POST':
         user.first_name = request.POST['first_name']
@@ -64,8 +69,11 @@ def update_profile(request):
 
         user.save()
 
+        if request.FILES:
+            profile.image = request.FILES.get('image')
+
         if request.POST['rank']:
-            rank = requser.POST['rank']
+            rank = request.POST['rank']
             profile.rank = Rank.objects.get(pk=rank)
 
         if request.POST['position']:
@@ -86,9 +94,8 @@ def update_profile(request):
         profile.save()
         return HttpResponseRedirect(reverse_lazy('account:profile'))
 
-def change_password(request):
-    if request.method == 'POST':
-        old_password = request.POST['old_password']
-        new_password = request.POST['new_password1']
-        confirm_password = request.POST['new_password2']
-
+class ChangePassword(LoginRequiredMixin, PasswordChangeView):
+    model = User
+    form_class = PasswordChangeForm
+    template_name = 'account/change_password.html'
+    success_url = reverse_lazy('login')
