@@ -9,7 +9,7 @@
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item">Users</li>
+            <li class="breadcrumb-item"><a href="{% url 'account:members' %}">Members</a></li>
             <li class="breadcrumb-item active">Profile</li>
         </ol>
     </nav>
@@ -22,23 +22,23 @@
             <div class="card">
                 <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-                    {% if request.user.profile.image %}
-                    <img src="{{ request.user.profile.image.url }}" alt="Profile" class="rounded-circle">
+                    {% if user.profile.image %}
+                    <img src="{{ user.profile.image.url }}" alt="Profile" class="rounded-circle">
                     {% else %}
                     <img src="{% static 'assets/img/profile.png' %}" alt="Profile" class="rounded-circle">
                     {% endif %}
-                    {% if request.user.first_name and request.user.last_name %}
-                    <h2>{{ request.user.profile.rank.name }}{{ request.user.get_full_name }}</h2>
-                        {% if request.user.profile.position %} 
-                        <h3>{{ request.user.profile.position.name }}</h3>
+                    {% if user.first_name and user.last_name %}
+                    <h2>{{ user.get_full_name }}</h2>
+                        {% if user.profile.position %} 
+                        <h3>{{ user.profile.position.name }}</h3>
                         {% endif %}
                     {% else %}
                         <h3>Wait for Update Profile</h3>
                     {% endif %}
                     <div class="social-links mt-2">
-                        <a href="{{ request.user.profile.twitter }}" class="twitter"><i class="bi bi-twitter"></i></a>
-                        <a href="{{ request.user.profile.facebook }}" class="facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="{{ request.user.profile.instagram }}" class="instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="{{ user.profile.twitter }}" class="twitter"><i class="bi bi-twitter"></i></a>
+                        <a href="{{ user.profile.facebook }}" class="facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="{{ user.profile.instagram }}" class="instagram"><i class="bi bi-instagram"></i></a>
                         {% comment %}<a href="{{ request.user.profile.line_id }}" class="linkedin"><i class="bi bi-line"></i></a>{% endcomment %}
                     </div>
                 </div>
@@ -57,33 +57,37 @@
                             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
                         </li>
 
+                        {% comment %}{% if request.user == user %}{% endcomment %}
+                        {% if request.path == '/account/profile/' %}
                         <li class="nav-item">
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
                         </li>
 
                         {% comment %}<li class="nav-item">{% endcomment %}
                             {% comment %}<button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">Settings</button>{% endcomment %}
-                        {% comment %}</li>{% endcomment %}
+                            {% comment %}</li>{% endcomment %}
 
                         <li class="nav-item">
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
                         </li>
 
+                        {% endif %}
+                       
                     </ul>
                     <div class="tab-content pt-2">
 
                         <div class="tab-pane fade show active profile-overview" id="profile-overview">
                             <h5 class="card-title">About</h5>
-                            {% if request.user.profile.about %}
-                            <p class="small fst-italic">{{ request.user.profile.about }}</p>
+                            {% if user.profile.about %}
+                            <p class="small fst-italic">{{ user.profile.about }}</p>
                             {% endif %}
 
                             <h5 class="card-title">Profile Details</h5>
 
                             <div class="row">
                                 <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                                {% if request.user.get_full_name %}
-                                <div class="col-lg-9 col-md-8">{{ request.user.get_full_name }}</div>
+                                {% if user.get_full_name %}
+                                <div class="col-lg-9 col-md-8">{{ user.profile.rank.name }} {{ user.get_full_name }}</div>
                                 {% else %}
                                 <div class="col-lg-9 col-md-8">Wait for Update...</div>
                                 {% endif %}
@@ -91,8 +95,8 @@
 
                             <div class="row">
                                 <div class="col-lg-3 col-md-4 label">Sector</div>
-                                {% if request.user.profile.sector %}
-                                <div class="col-lg-9 col-md-8">{{ request.user.profile.sector }}</div>
+                                {% if user.profile.sector %}
+                                <div class="col-lg-9 col-md-8">{{ user.profile.sector }}</div>
                                 {% else %}
                                 <div class="col-lg-9 col-md-8">Wait for Update...</div>
                                 {% endif %}
@@ -100,8 +104,8 @@
 
                             <div class="row">
                                 <div class="col-lg-3 col-md-4 label">Job</div>
-                                {% if request.user.profile.position %}
-                                <div class="col-lg-9 col-md-8">{{ request.user.profile.position }}</div>
+                                {% if user.profile.position %}
+                                <div class="col-lg-9 col-md-8">{{ user.profile.position }}</div>
                                 {% else %}
                                 <div class="col-lg-9 col-md-8">Wait for Update...</div>
                                 {% endif %}
@@ -109,8 +113,8 @@
 
                             <div class="row">
                                 <div class="col-lg-3 col-md-4 label">Place</div>
-                                {% if request.user.profile.place %}
-                                <div class="col-lg-9 col-md-8">{{ request.user.profile.place }}</div>
+                                {% if user.profile.place %}
+                                <div class="col-lg-9 col-md-8">{{ user.profile.place }}</div>
                                 {% else %}
                                 <div class="col-lg-9 col-md-8">Wait for Update...</div>
                                 {% endif %}
@@ -118,8 +122,8 @@
 
                             <div class="row">
                                 <div class="col-lg-3 col-md-4 label">Address</div>
-                                {% if request.user.profile.address %}
-                                <div class="col-lg-9 col-md-8">{{ request.user.profile.address }}</div>
+                                {% if user.profile.address %}
+                                <div class="col-lg-9 col-md-8">{{ user.profile.address }}</div>
                                 {% else %}
                                 <div class="col-lg-9 col-md-8">Wait for Update...</div>
                                 {% endif %}
@@ -127,8 +131,8 @@
 
                             <div class="row">
                                 <div class="col-lg-3 col-md-4 label">Phone</div>
-                                {% if request.user.profile.phone %}
-                                <div class="col-lg-9 col-md-8">{{ request.user.profile.phone }}</div>
+                                {% if user.profile.phone %}
+                                <div class="col-lg-9 col-md-8">{{ user.profile.phone }}</div>
                                 {% else %}
                                 <div class="col-lg-9 col-md-8">Wait for Update...</div>
                                 {% endif %}
@@ -136,8 +140,8 @@
 
                             <div class="row">
                                 <div class="col-lg-3 col-md-4 label">Email</div>
-                                {% if request.user.email %}
-                                <div class="col-lg-9 col-md-8">{{ request.user.email }}</div>
+                                {% if user.email %}
+                                <div class="col-lg-9 col-md-8">{{ user.email }}</div>
                                 {% else %}
                                 <div class="col-lg-9 col-md-8">Wait for Update...</div>
                                 {% endif %}
@@ -168,6 +172,7 @@
                                     </div>
                                 </div>
 
+                                {% comment %}{{ request.path }}{% endcomment %}
                                 <div class="row mb-3">
                                     <label for="{{ profile_form.rank.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.rank.label }}</label>
                                     <div class="col-md-8 col-lg-9">

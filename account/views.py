@@ -3,8 +3,9 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Fri Sep, 30 2022, 09:40 273
+# Last Modified Date: Fri Sep, 30 2022, 10:24 273
 # Last Modified By  : lu5her <lu5her@mail>
+from re import L
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import HttpResponseRedirect, get_object_or_404, redirect, render
@@ -14,6 +15,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
+    DetailView,
+    ListView,
     TemplateView,
 )
 
@@ -99,3 +102,13 @@ class ChangePassword(LoginRequiredMixin, PasswordChangeView):
     form_class = PasswordChangeForm
     template_name = 'account/change_password.html'
     success_url = reverse_lazy('login')
+
+
+class MembersListView(LoginRequiredMixin, ListView):
+    model = User
+    template_name = 'account/members.html'
+    queryset = User.objects.all().exclude(is_superuser=True)
+
+class MembersDetailView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'account/profile.html'
