@@ -5,11 +5,11 @@ from ckeditor.fields import RichTextField
 # Create your models here.
 
 def get_image_name(instance, filename):
-    image_name = instance.announce.name
+    image_name = instance.announce.title
     return "AnnounceImages/{}/{}".format(image_name, filename)
 
 def get_file_name(instance, filename):
-    file_name = instance.announce.name
+    file_name = instance.announce.title
     return "AnnounceFiles/{}/{}".format(file_name, filename)
 
 class AnnounceType(models.Model):
