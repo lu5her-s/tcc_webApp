@@ -31,144 +31,144 @@
             {% if request.user.is_authenticated %}
             <li class="nav-item dropdown">
 
-                <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                    <i class="bi bi-bell"></i>
-                    <span class="badge bg-primary badge-number">4</span>
-                </a><!-- End Notification Icon -->
+                {% comment %}<a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">{% endcomment %}
+                    {% comment %}<i class="bi bi-bell"></i>{% endcomment %}
+                    {% comment %}<span class="badge bg-primary badge-number">{{ not_read.count }}</span>{% endcomment %}
+                {% comment %}</a><!-- End Notification Icon -->{% endcomment %}
 
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-                    <li class="dropdown-header">
-                        You have 4 new notifications
-                        <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
+{% comment %}                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">{% endcomment %}
+                    {% comment %}<li class="dropdown-header">{% endcomment %}
+                        {% comment %}You have 4 new notifications{% endcomment %}
+                        {% comment %}<a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
+                    {% comment %}<li>{% endcomment %}
+                        {% comment %}<hr class="dropdown-divider">{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                    <li class="notification-item">
-                        <i class="bi bi-exclamation-circle text-warning"></i>
-                        <div>
-                            <h4>Lorem Ipsum</h4>
-                            <p>Quae dolorem earum veritatis oditseno</p>
-                            <p>30 min. ago</p>
-                        </div>
-                    </li>
+                    {% comment %}<li class="notification-item">{% endcomment %}
+                        {% comment %}<i class="bi bi-exclamation-circle text-warning"></i>{% endcomment %}
+                        {% comment %}<div>{% endcomment %}
+                            {% comment %}<h4>Lorem Ipsum</h4>{% endcomment %}
+                            {% comment %}<p>Quae dolorem earum veritatis oditseno</p>{% endcomment %}
+                            {% comment %}<p>30 min. ago</p>{% endcomment %}
+                        {% comment %}</div>{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
+                    {% comment %}<li>{% endcomment %}
+                        {% comment %}<hr class="dropdown-divider">{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                    <li class="notification-item">
-                        <i class="bi bi-x-circle text-danger"></i>
-                        <div>
-                            <h4>Atque rerum nesciunt</h4>
-                            <p>Quae dolorem earum veritatis oditseno</p>
-                            <p>1 hr. ago</p>
-                        </div>
-                    </li>
+                    {% comment %}<li class="notification-item">{% endcomment %}
+                        {% comment %}<i class="bi bi-x-circle text-danger"></i>{% endcomment %}
+                        {% comment %}<div>{% endcomment %}
+                            {% comment %}<h4>Atque rerum nesciunt</h4>{% endcomment %}
+                            {% comment %}<p>Quae dolorem earum veritatis oditseno</p>{% endcomment %}
+                            {% comment %}<p>1 hr. ago</p>{% endcomment %}
+                        {% comment %}</div>{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
+                    {% comment %}<li>{% endcomment %}
+                        {% comment %}<hr class="dropdown-divider">{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                    <li class="notification-item">
-                        <i class="bi bi-check-circle text-success"></i>
-                        <div>
-                            <h4>Sit rerum fuga</h4>
-                            <p>Quae dolorem earum veritatis oditseno</p>
-                            <p>2 hrs. ago</p>
-                        </div>
-                    </li>
+                    {% comment %}<li class="notification-item">{% endcomment %}
+                        {% comment %}<i class="bi bi-check-circle text-success"></i>{% endcomment %}
+                        {% comment %}<div>{% endcomment %}
+                            {% comment %}<h4>Sit rerum fuga</h4>{% endcomment %}
+                            {% comment %}<p>Quae dolorem earum veritatis oditseno</p>{% endcomment %}
+                            {% comment %}<p>2 hrs. ago</p>{% endcomment %}
+                        {% comment %}</div>{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
+                    {% comment %}<li>{% endcomment %}
+                        {% comment %}<hr class="dropdown-divider">{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                    <li class="notification-item">
-                        <i class="bi bi-info-circle text-primary"></i>
-                        <div>
-                            <h4>Dicta reprehenderit</h4>
-                            <p>Quae dolorem earum veritatis oditseno</p>
-                            <p>4 hrs. ago</p>
-                        </div>
-                    </li>
+                    {% comment %}<li class="notification-item">{% endcomment %}
+                        {% comment %}<i class="bi bi-info-circle text-primary"></i>{% endcomment %}
+                        {% comment %}<div>{% endcomment %}
+                            {% comment %}<h4>Dicta reprehenderit</h4>{% endcomment %}
+                            {% comment %}<p>Quae dolorem earum veritatis oditseno</p>{% endcomment %}
+                            {% comment %}<p>4 hrs. ago</p>{% endcomment %}
+                        {% comment %}</div>{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li class="dropdown-footer">
-                        <a href="#">Show all notifications</a>
-                    </li>
+                    {% comment %}<li>{% endcomment %}
+                        {% comment %}<hr class="dropdown-divider">{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
+                    {% comment %}<li class="dropdown-footer">{% endcomment %}
+                        {% comment %}<a href="#">Show all notifications</a>{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                </ul><!-- End Notification Dropdown Items -->
+                {% comment %}</ul><!-- End Notification Dropdown Items -->{% endcomment %}
 
-            </li><!-- End Notification Nav -->
+            {% comment %}</li><!-- End Notification Nav -->{% endcomment %}
 
-            <li class="nav-item dropdown">
+{% comment %}            <li class="nav-item dropdown">{% endcomment %}
 
-                <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                    <i class="bi bi-chat-left-text"></i>
-                    <span class="badge bg-success badge-number">3</span>
-                </a><!-- End Messages Icon -->
+                {% comment %}<a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">{% endcomment %}
+                    {% comment %}<i class="bi bi-chat-left-text"></i>{% endcomment %}
+                    {% comment %}<span class="badge bg-success badge-number">3</span>{% endcomment %}
+                {% comment %}</a><!-- End Messages Icon -->{% endcomment %}
 
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
-                    <li class="dropdown-header">
-                        You have 3 new messages
-                        <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
+                {% comment %}<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">{% endcomment %}
+                    {% comment %}<li class="dropdown-header">{% endcomment %}
+                        {% comment %}You have 3 new messages{% endcomment %}
+                        {% comment %}<a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
+                    {% comment %}<li>{% endcomment %}
+                        {% comment %}<hr class="dropdown-divider">{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                    <li class="message-item">
-                        <a href="#">
-                            <img src="{% static 'assets/img/profile.png' %}" alt="" class="rounded-circle">
-                            <div>
-                                <h4>Maria Hudson</h4>
-                                <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                                <p>4 hrs. ago</p>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
+                    {% comment %}<li class="message-item">{% endcomment %}
+                        {% comment %}<a href="#">{% endcomment %}
+                            {% comment %}<img src="{% static 'assets/img/profile.png' %}" alt="" class="rounded-circle">{% endcomment %}
+                            {% comment %}<div>{% endcomment %}
+                                {% comment %}<h4>Maria Hudson</h4>{% endcomment %}
+                                {% comment %}<p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>{% endcomment %}
+                                {% comment %}<p>4 hrs. ago</p>{% endcomment %}
+                            {% comment %}</div>{% endcomment %}
+                        {% comment %}</a>{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
+                    {% comment %}<li>{% endcomment %}
+                        {% comment %}<hr class="dropdown-divider">{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                    <li class="message-item">
-                        <a href="#">
-                            <img src="{% static 'assets/img/profile.png' %}" alt="" class="rounded-circle">
-                            <div>
-                                <h4>Anna Nelson</h4>
-                                <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                                <p>6 hrs. ago</p>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
+                    {% comment %}<li class="message-item">{% endcomment %}
+                        {% comment %}<a href="#">{% endcomment %}
+                            {% comment %}<img src="{% static 'assets/img/profile.png' %}" alt="" class="rounded-circle">{% endcomment %}
+                            {% comment %}<div>{% endcomment %}
+                                {% comment %}<h4>Anna Nelson</h4>{% endcomment %}
+                                {% comment %}<p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>{% endcomment %}
+                                {% comment %}<p>6 hrs. ago</p>{% endcomment %}
+                            {% comment %}</div>{% endcomment %}
+                        {% comment %}</a>{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
+                    {% comment %}<li>{% endcomment %}
+                        {% comment %}<hr class="dropdown-divider">{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                    <li class="message-item">
-                        <a href="#">
-                            <img src="{% static 'assets/img/profile.png'%}" alt="" class="rounded-circle">
-                            <div>
-                                <h4>David Muldon</h4>
-                                <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
-                                <p>8 hrs. ago</p>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
+                    {% comment %}<li class="message-item">{% endcomment %}
+                        {% comment %}<a href="#">{% endcomment %}
+                            {% comment %}<img src="{% static 'assets/img/profile.png'%}" alt="" class="rounded-circle">{% endcomment %}
+                            {% comment %}<div>{% endcomment %}
+                                {% comment %}<h4>David Muldon</h4>{% endcomment %}
+                                {% comment %}<p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>{% endcomment %}
+                                {% comment %}<p>8 hrs. ago</p>{% endcomment %}
+                            {% comment %}</div>{% endcomment %}
+                        {% comment %}</a>{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
+                    {% comment %}<li>{% endcomment %}
+                        {% comment %}<hr class="dropdown-divider">{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                    <li class="dropdown-footer">
-                        <a href="#">Show all messages</a>
-                    </li>
+                    {% comment %}<li class="dropdown-footer">{% endcomment %}
+                        {% comment %}<a href="#">Show all messages</a>{% endcomment %}
+                    {% comment %}</li>{% endcomment %}
 
-                </ul><!-- End Messages Dropdown Items -->
+                {% comment %}</ul><!-- End Messages Dropdown Items -->{% endcomment %}
 
-            </li><!-- End Messages Nav -->
+            {% comment %}</li><!-- End Messages Nav -->{% endcomment %}
 
             <li class="nav-item dropdown pe-3">
 

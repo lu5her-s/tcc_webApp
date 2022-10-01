@@ -39,7 +39,7 @@
     </head>
 
     <body>
-        {% include 'components/header.html' %}
+        {% include 'components/header.html' with not_read=not_read %}
         {% include 'components/sidebar.html' %}
         <main id="main" class="main">
             {% block content %}
@@ -404,7 +404,7 @@
 
         <!-- Template Main JS File -->
         <script src="{% static 'assets/js/main.js' %}"></script>
-        <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+        {% comment %}<script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>{% endcomment %}
 
         <!-- Plugin Javascript -->
         <script src="{% static 'assets/vendor/datatables/jquery.dataTables.js' %}"></script>

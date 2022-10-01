@@ -3,19 +3,19 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Sat Oct, 01 2022, 17:35 274
+# Last Modified Date: Sat Oct, 01 2022, 19:27 274
 # Last Modified By  : lu5her <lu5her@mail>
-from datetime import datetime
-from re import L
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.views import PasswordChangeView
+from datetime                           import datetime
+from re                                 import L
+from django.contrib.auth                import update_session_auth_hash
+from django.contrib.auth.views          import PasswordChangeView
 from django.contrib.contenttypes.models import Q
-from django.shortcuts import HttpResponseRedirect, get_object_or_404, redirect, render
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
-from django.views.generic import (
+from django.shortcuts                   import HttpResponseRedirect, get_object_or_404, redirect, render
+from django.contrib.auth.models         import User
+from django.contrib.auth.forms          import PasswordChangeForm,   UserCreationForm
+from django.contrib.auth.mixins         import LoginRequiredMixin
+from django.urls                        import reverse_lazy
+from django.views.generic               import (
     CreateView,
     DetailView,
     ListView,
@@ -35,7 +35,7 @@ from account.forms import (
 
 from announce.models import Announce
 
-from django.contrib import messages
+from django.contrib      import messages
 from django.contrib.auth import update_session_auth_hash
 
 # Create your views here.
@@ -44,40 +44,40 @@ class HomeView(TemplateView):
     template_name = 'base.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
+        context             = super().get_context_data(*args, **kwargs)
         context['announce'] = Announce.objects.all()
-        context['not_read']       = Announce.objects.filter(
-            ~Q(author             = self.request.user) & ~Q(reads__id=self.request.user.id)
+        context['not_read'] = Announce.objects.filter(
+            ~Q(author       = self.request.user) & ~Q(reads__id=self.request.user.id)
         )
         return context
 
 class RegisterView(CreateView):
 
     """Docstring for RegisterView. """
-    form_class = UserCreationForm
-    model = User
+    form_class    = UserCreationForm
+    model         = User
     template_name = 'account/register1.html'
-    success_url = reverse_lazy('login')
+    success_url   = reverse_lazy('login')
 
 class ProfileView(LoginRequiredMixin, TemplateView):
-    model = User
+    model         = User
     template_name = 'account/profile.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['user_form'] = UserForm(instance=self.request.user)
-        context['profile_form'] = ProfileForm(instance=self.request.user.profile)
+        context                  = super().get_context_data(**kwargs)
+        context['user_form']     = UserForm(instance=self.request.user)
+        context['profile_form']  = ProfileForm(instance=self.request.user.profile)
         context['password_form'] = PasswordChangeForm(self.request.user)
         return context
 
 def update_profile(request):
-    user = get_object_or_404(User, pk=request.user.pk)
+    user    = get_object_or_404(User, pk=request.user.pk)
     profile = get_object_or_404(Profile, user=user)
 
     if request.method == 'POST':
         user.first_name = request.POST['first_name']
-        user.last_name = request.POST['last_name']
-        user.email = request.POST['email']
+        user.last_name  = request.POST['last_name']
+        user.email      = request.POST['email']
 
         user.save()
 
@@ -85,7 +85,7 @@ def update_profile(request):
             profile.image = request.FILES.get('image')
 
         if request.POST['rank']:
-            rank = request.POST['rank']
+            rank         = request.POST['rank']
             profile.rank = Rank.objects.get(pk=rank)
 
         if request.POST['position']:
@@ -94,35 +94,35 @@ def update_profile(request):
         if request.POST['sector']:
             profile.sector = Sector.objects.get(pk=request.POST['sector'])
 
-        profile.place = request.POST['place']
-        profile.address = request.POST['address']
-        profile.phone = request.POST['phone']
-        profile.twitter = request.POST['twitter']
-        profile.facebook = request.POST['facebook']
-        profile.instagram = request.POST['instagram']
-        profile.line_id = request.POST['line_id']
+        profile.place      = request.POST['place']
+        profile.address    = request.POST['address']
+        profile.phone      = request.POST['phone']
+        profile.twitter    = request.POST['twitter']
+        profile.facebook   = request.POST['facebook']
+        profile.instagram  = request.POST['instagram']
+        profile.line_id    = request.POST['line_id']
         profile.line_token = request.POST['line_token']
 
         profile.save()
         return HttpResponseRedirect(reverse_lazy('account:profile'))
 
 class ChangePassword(LoginRequiredMixin, PasswordChangeView):
-    model = User
-    form_class = PasswordChangeForm
+    model         = User
+    form_class    = PasswordChangeForm
     template_name = 'account/change_password.html'
-    success_url = reverse_lazy('login')
+    success_url   = reverse_lazy('login')
 
 
 class MembersListView(LoginRequiredMixin, ListView):
-    model = User
+    model         = User
     template_name = 'account/members.html'
-    queryset = User.objects.all().exclude(is_superuser=True)
+    queryset      = User.objects.all().exclude(is_superuser=True)
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context          = super().get_context_data(**kwargs)
         context['title'] = 'Members'
         return context
 
 class MembersDetailView(LoginRequiredMixin, DetailView):
-    model = User
+    model         = User
     template_name = 'account/profile.html'
