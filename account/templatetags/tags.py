@@ -111,3 +111,7 @@ def ReadNumber(number):
         divider = divider / 10
         pos += 1
     return ret
+
+@register.filter(name='split')
+def split(value, key):
+    return value.split(key)

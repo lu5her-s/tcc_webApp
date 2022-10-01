@@ -43,7 +43,7 @@
 
 
                         <div class="card-body">
-                            <h6 class="card-title">{{ object.title }} <span>| Detail</span></h6>
+                            <h6 class="card-title"> Detail | <span> {{ object.title }}</span></h6>
                             <table class="table">
                                 <tr>
                                     <th>Type</th>
@@ -89,7 +89,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">{{ object.title }}</h5>
+                            <h5 class="card-title">Image | <span>{{ object.title }}</span></h5>
 
                             <!-- Slides with indicators -->
                             <div id="gallery">
@@ -113,8 +113,17 @@
                         <div class="card-body">
                             <h5 class="card-title">File | <span>{{ object.title }}</span></h5>
                             {% for f in files_list %}
-                            <iframe src="{{ f.files.url }}" frameborder="0" width="100%" height="800px"></iframe>
-                            <a href="{{ f.files.url }}" target="_blank">เอกสารที่เกี่ยวข้อง--{{ f.files.name }}</a>
+
+                            <iframe src="{{ f.files.url }}" frameborder="0" style="width: 100%; height: 800px;"></iframe>
+                            <br>
+                            {% comment %}<a href="{{ f.files.url }}" target="_blank">เอกสารที่เกี่ยวข้อง--{{ f.files.name }}</a>{% endcomment %}
+
+                            {% comment %}<p>Download - <a href="{{ f.files.url }}">เอกสารนี้</a></p>{% endcomment %}
+                            {% with f.files.name|split:"/" as file %}
+                            <p>Download - <a href="{{ f.files.url }}">{{ file|last }}</a></p>
+                            {% comment %}{{ file|last }}{% endcomment %}
+                            {% endwith %}
+
                             {% endfor %}
                         </div>
 
@@ -207,115 +216,6 @@
                     </div>
 
 
-                    {% for f in files_list %}
-                    <div id="my_pdf_viewer">
-                        <div id="canvas_container" class="d-flex justify-content-center">
-                            <canvas id="pdf_renderer"></canvas>
-                        </div>
-
-                        <br>
-                        <div id="navigation_controls" class="d-flex justify-content-center">
-                            <button class="btn btn-outline-dark" id="go_previous">
-                                <i class="bi bi-arrow-left-square"></i>
-                            </button>
-                            <input id="current_page" value="1" type="number" style="margin-left: 5px; margin-right: 5px;" />
-                            <button class="btn btn-outline-dark" id="go_next">
-                                <i class="bi bi-arrow-right-square"></i>
-                            </button>
-                        </div>
-
-                        <div id="zoom_controls" class="d-flex justify-content-center" style="margin-top: 5px;">  
-                            <button class="btn btn-outline-info" id="zoom_in" style="margin-right:5px;">+</button>
-                            <button class="btn btn-outline-info" id="zoom_out">-</button>
-                        </div>
-                    </div>
-
-                    <script>
-                        var myState = {
-                            pdf: null,
-                            currentPage: 1,
-                            zoom: 1
-                        }
-
-                        pdfjsLib.getDocument('{{ f.files.url }}').then((pdf) => {
-
-                            myState.pdf = pdf;
-                            render();
-
-                        });
-
-                        function render() {
-                            myState.pdf.getPage(myState.currentPage).then((page) => {
-
-                                var canvas = document.getElementById("pdf_renderer");
-                                var ctx = canvas.getContext('2d');
-
-                                var viewport = page.getViewport(myState.zoom);
-
-                                canvas.width = viewport.width;
-                                canvas.height = viewport.height;
-
-                                page.render({
-                                    canvasContext: ctx,
-                                    viewport: viewport
-                                });
-                            });
-                        }
-
-                        document.getElementById('go_previous')
-                            .addEventListener('click', (e) => {
-                                if(myState.pdf == null|| myState.currentPage == 1) 
-                                    return;
-
-                                myState.currentPage -= 1;
-                                document.getElementById("current_page").value = myState.currentPage;
-                                render();
-                            });
-                        document.getElementById('go_next')
-                            .addEventListener('click', (e) => {
-                                if(myState.pdf == null || myState.currentPage > myState.pdf._pdfInfo.numPages) 
-                                    return;
-
-                                myState.currentPage += 1;
-                                document.getElementById("current_page").value = myState.currentPage;
-                                render();
-                            });
-                        document.getElementById('current_page')
-                            .addEventListener('keypress', (e) => {
-                                if(myState.pdf == null) return;
-
-                                // Get key code
-                                var code = (e.keyCode ? e.keyCode : e.which);
-
-                                // If key code matches that of the Enter key
-                                if(code == 13) {
-                                    var desiredPage = document.getElementById('current_page').valueAsNumber;
-
-                                    if(desiredPage >= 1 && desiredPage <= myState.pdf._pdfInfo.numPages) {
-                                        myState.currentPage = desiredPage;
-                                        document.getElementById("current_page").value = desiredPage;
-                                        render();
-                                    }
-                                }
-                            });
-                        document.getElementById('zoom_in')
-                            .addEventListener('click', (e) => {
-                                if(myState.pdf == null) return;
-                                myState.zoom += 0.5;
-
-                                render();
-                            });
-                        document.getElementById('zoom_out')
-                            .addEventListener('click', (e) => {
-                                if(myState.pdf == null) return;
-                                myState.zoom -= 0.5;
-
-                                render();
-                            });
-
-                    </script>
-                    {% endfor %}
-
                     {% if object.author.pk == request.user.pk %}
                     <div class="container float-start">
                         <a href="{% url 'announce:list' %}" class="btn btn-secondary">Back</a>
@@ -330,8 +230,141 @@
                     {% endif %}
 
                 </div>
+
+
+                {% for f in files_list %}
+                AA
+                <div>
+                    <object
+                        data='{{ f.files.url }}'
+                        type="application/pdf"
+                        width="500"
+                        height="678"
+                        >
+
+                        <iframe
+                            src='{{ f.files.url }}'
+                            width="500"
+                            height="678"
+                            >
+                            <p>This browser does not support PDF!</p>
+                        </iframe>
+                    </object>
+                </div>
+                {% endfor %}
+
             </div>
         </div>
     </section>
     {% include 'components/photoswipe.html' %}
     {% endblock content %}
+
+
+    {% comment %}
+    <div id="my_pdf_viewer">
+        <div id="canvas_container" class="d-flex justify-content-center">
+            <canvas id="pdf_renderer"></canvas>
+        </div>
+
+        <br>
+        <div id="navigation_controls" class="d-flex justify-content-center">
+            <button class="btn btn-outline-dark" id="go_previous">
+                <i class="bi bi-arrow-left-square"></i>
+            </button>
+            <input id="current_page" value="1" type="number" style="margin-left: 5px; margin-right: 5px;" />
+            <button class="btn btn-outline-dark" id="go_next">
+                <i class="bi bi-arrow-right-square"></i>
+            </button>
+        </div>
+
+        <div id="zoom_controls" class="d-flex justify-content-center" style="margin-top: 5px;">  
+            <button class="btn btn-outline-info" id="zoom_in" style="margin-right:5px;">+</button>
+            <button class="btn btn-outline-info" id="zoom_out">-</button>
+        </div>
+    </div>
+
+    <script>
+        var myState = {
+            pdf: null,
+            currentPage: 1,
+            zoom: 1
+        }
+
+        pdfjsLib.getDocument('{{ f.files.url }}').then((pdf) => {
+
+            myState.pdf = pdf;
+            render();
+
+        });
+
+        function render() {
+            myState.pdf.getPage(myState.currentPage).then((page) => {
+
+                var canvas = document.getElementById("pdf_renderer");
+                var ctx = canvas.getContext('2d');
+
+                var viewport = page.getViewport(myState.zoom);
+
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                page.render({
+                    canvasContext: ctx,
+                    viewport: viewport
+                });
+            });
+        }
+
+        document.getElementById('go_previous')
+            .addEventListener('click', (e) => {
+                if(myState.pdf == null|| myState.currentPage == 1) 
+                    return;
+
+                myState.currentPage -= 1;
+                document.getElementById("current_page").value = myState.currentPage;
+                render();
+            });
+        document.getElementById('go_next')
+            .addEventListener('click', (e) => {
+                if(myState.pdf == null || myState.currentPage > myState.pdf._pdfInfo.numPages) 
+                    return;
+
+                myState.currentPage += 1;
+                document.getElementById("current_page").value = myState.currentPage;
+                render();
+            });
+        document.getElementById('current_page')
+            .addEventListener('keypress', (e) => {
+                if(myState.pdf == null) return;
+
+                // Get key code
+                var code = (e.keyCode ? e.keyCode : e.which);
+
+                // If key code matches that of the Enter key
+                if(code == 13) {
+                    var desiredPage = document.getElementById('current_page').valueAsNumber;
+
+                    if(desiredPage >= 1 && desiredPage <= myState.pdf._pdfInfo.numPages) {
+                        myState.currentPage = desiredPage;
+                        document.getElementById("current_page").value = desiredPage;
+                        render();
+                    }
+                }
+            });
+        document.getElementById('zoom_in')
+            .addEventListener('click', (e) => {
+                if(myState.pdf == null) return;
+                myState.zoom += 0.5;
+
+                render();
+            });
+        document.getElementById('zoom_out')
+            .addEventListener('click', (e) => {
+                if(myState.pdf == null) return;
+                myState.zoom -= 0.5;
+
+                render();
+            });
+
+    </script>
+    {% endcomment %}

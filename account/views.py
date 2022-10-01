@@ -3,11 +3,13 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Fri Sep, 30 2022, 19:24 273
+# Last Modified Date: Sat Oct, 01 2022, 17:35 274
 # Last Modified By  : lu5her <lu5her@mail>
+from datetime import datetime
 from re import L
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.views import PasswordChangeView
+from django.contrib.contenttypes.models import Q
 from django.shortcuts import HttpResponseRedirect, get_object_or_404, redirect, render
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
@@ -30,6 +32,9 @@ from account.forms import (
     ProfileForm,
     UserForm,
 )
+
+from announce.models import Announce
+
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 
@@ -40,6 +45,10 @@ class HomeView(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        context['announce'] = Announce.objects.all()
+        context['not_read']       = Announce.objects.filter(
+            ~Q(author             = self.request.user) & ~Q(reads__id=self.request.user.id)
+        )
         return context
 
 class RegisterView(CreateView):

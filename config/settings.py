@@ -3,7 +3,7 @@
 # File              : settings.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 22 2022, 15:05 265
-# Last Modified Date: Fri Sep, 30 2022, 13:45 273
+# Last Modified Date: Sat Oct, 01 2022, 16:53 274
 # Last Modified By  : lu5her <lu5her@mail>
 """
 Django settings for config project.
@@ -150,3 +150,5 @@ MEDIA_ROOT = Path.joinpath(BASE_DIR, 'media')
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
