@@ -18,7 +18,7 @@
         </a>
         <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="#">
+            <a href="{% url 'announce:list' %}">
               <i class="bi bi-circle"></i><span>Announce</span>
             </a>
           </li>
@@ -64,6 +64,15 @@
           <span>User List</span>
         </a>
       </li><!-- End Profile Page Nav -->
+
+      {% if request.user.is_superuser %}
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'admin:index' %}">
+          <i class="bi bi-at"></i>
+          <span>Admin Page</span>
+        </a>
+      </li><!-- End Profile Page Nav -->
+      {% endif %}
 
     </ul>
 

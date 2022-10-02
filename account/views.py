@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Sat Oct, 01 2022, 19:27 274
+# Last Modified Date: Sat Oct, 01 2022, 21:05 274
 # Last Modified By  : lu5her <lu5her@mail>
 from datetime                           import datetime
 from re                                 import L
@@ -15,7 +15,10 @@ from django.contrib.auth.models         import User
 from django.contrib.auth.forms          import PasswordChangeForm,   UserCreationForm
 from django.contrib.auth.mixins         import LoginRequiredMixin
 from django.urls                        import reverse_lazy
-from django.views.generic               import (
+from django.contrib                     import messages
+from django.contrib.auth                import update_session_auth_hash
+
+from django.views.generic import (
     CreateView,
     DetailView,
     ListView,
@@ -33,10 +36,11 @@ from account.forms import (
     UserForm,
 )
 
-from announce.models import Announce
+from announce.models import (
+    Announce,
+    Comment,
+)
 
-from django.contrib      import messages
-from django.contrib.auth import update_session_auth_hash
 
 # Create your views here.
 
@@ -46,9 +50,13 @@ class HomeView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context             = super().get_context_data(*args, **kwargs)
         context['announce'] = Announce.objects.all()
-        context['not_read'] = Announce.objects.filter(
-            ~Q(author       = self.request.user) & ~Q(reads__id=self.request.user.id)
-        )
+        context['recent_comment'] = Comment.objects.all().order_by('-created_at')[:5]
+        try:
+            context['not_read'] = Announce.objects.filter(
+                ~Q(author       = self.request.user) & ~Q(reads__id=self.request.user.id)
+            )
+        except:
+            pass
         return context
 
 class RegisterView(CreateView):
