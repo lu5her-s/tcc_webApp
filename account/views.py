@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Sat Oct, 01 2022, 21:05 274
+# Last Modified Date: Mon Oct, 03 2022, 09:18 276
 # Last Modified By  : lu5her <lu5her@mail>
 from datetime                           import datetime
 from re                                 import L
@@ -134,3 +134,19 @@ class MembersListView(LoginRequiredMixin, ListView):
 class MembersDetailView(LoginRequiredMixin, DetailView):
     model         = User
     template_name = 'account/profile.html'
+
+def sector_list(request, pk):
+    qs = Profile.objects.filter(sector__pk=pk).exclude(user__is_superuser=True)
+    context = {
+        'object_list' : qs,
+        'bc_title': Sector.objects.get(pk=pk).name
+    }
+    return render(request, 'account/other_list.html', context)
+
+def position_list(request, pk):
+    qs = Profile.objects.filter(position__pk=pk)
+    context = {
+        'object_list': qs,
+        'bc_title': Position.objects.get(pk=pk).name
+    }
+    return render(request, 'account/other_list.html', context)

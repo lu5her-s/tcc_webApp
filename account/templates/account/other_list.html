@@ -7,11 +7,12 @@
 
 {% block content %}
 <div class="pagetitle">
-    <h1>All Members List</h1>
+    <h1>All Members In {{ bc_title|title }}</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item active">Members</li>
+            <li class="breadcrumb-item"><a href="{% url 'account:members' %}">Members</a></li>
+            <li class="breadcrumb-item active">{{ bc_title|title }}</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -27,7 +28,7 @@
 
 
                     <div class="card-body">
-                        <h5 class="card-title">{{ title }} <span>| List</span></h5>
+                        <h5 class="card-title">{{ bc_title|capfirst }} <span>| List</span></h5>
 
                         <table class="table table-hover datatable" id="dataTable">
                             <thead>
@@ -42,11 +43,11 @@
                             <tbody>
                                 {% for member in object_list %}
                                 <tr>
-                                    <th scope="row"><a href="{% url 'account:sectors' pk=member.profile.sector.pk %}">{{ member.profile.sector.name }}</a></th>
-                                    <td><a href="{% url 'account:member' pk=member.pk %}">{{ member.profile.rank.name }} {{ member.get_full_name }}</a></td>
-                                    <td><a href="{% url 'account:positions' pk=member.profile.position.pk %}" class="text-primary">{{ member.profile.position.name }}</a></td>
-                                    <td>{{ member.profile.place }}</td>
-                                    <td>{{ member.profile.phone }}</td>
+                                    <th scope="row"><a href="#">{{ member.sector.name }}</a></th>
+                                    <td><a href="{% url 'account:member' pk=member.pk %}">{{ member.rank.name }} {{ member.user.get_full_name }}</a></td>
+                                    <td><a href="#" class="text-primary">{{ member.position.name }}</a></td>
+                                    <td>{{ member.place }}</td>
+                                    <td>{{ member.phone }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

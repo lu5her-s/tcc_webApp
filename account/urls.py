@@ -3,7 +3,7 @@
 # File              : urls.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 15:34 272
-# Last Modified Date: Fri Sep, 30 2022, 19:28 273
+# Last Modified Date: Mon Oct, 03 2022, 08:13 276
 # Last Modified By  : lu5her <lu5her@mail>
 from django.urls import path
 
@@ -20,4 +20,6 @@ urlpatterns = [
     path('members/', views.MembersListView.as_view(), name='members'),
     path('member/<int:pk>/', views.MembersDetailView.as_view(), name='member'),
 
+    path('sectors/<int:pk>/', views.sector_list, name='sectors'),
+    path('positions/<int:pk>/', views.position_list, name='positions'),
 ]
