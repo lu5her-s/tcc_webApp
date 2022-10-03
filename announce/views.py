@@ -96,7 +96,7 @@ class AnnounceDetailView(LoginRequiredMixin, DetailView):
 
 class AnnounceCreateView(LoginRequiredMixin, CreateView):
     login_url     = reverse_lazy('login')
-    template_name = 'announce/announce_form.html'
+    template_name = 'announce/form.html'
     form_class    = AnnounceForm
     success_url   = reverse_lazy('announce:list')
 
@@ -161,7 +161,7 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
 
 class AnnounceUpdateView(LoginRequiredMixin, UpdateView):
     login_url     = reverse_lazy('login')
-    template_name = 'announce/announce_form.html'
+    template_name = 'announce/form.html'
     model         = Announce
     form_class    = AnnounceForm
     pk            = None
@@ -204,13 +204,14 @@ class AnnounceUpdateView(LoginRequiredMixin, UpdateView):
 
             if files:
                 for file in files:
-                    try:
-                        a_file = InboxFile.objects.get(inbox=form_id)
-                        a_file.files = file
-                        a_file.save()
-                    except ObjectDoesNotExist:
-                        a_file = InboxFile.objects.create(inbox=form_id, files=file)
-                        a_file.save()
+                    a_file = AnnounceFile.objects.create(announce=form_id, files=file)
+                    # try:
+                        # a_file = AnnounceFile.objects.get(announce=form_id)
+                        # a_file.files = file
+                        # a_file.save()
+                    # except ObjectDoesNotExist:
+                        # a_file = AnnounceFile.objects.create(announce=form_id, files=file)
+                        # a_file.save()
             else:
                 form_save.save()
 

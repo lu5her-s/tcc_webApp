@@ -217,41 +217,19 @@
 
 
                     {% if object.author.pk == request.user.pk %}
-                    <div class="container float-start">
-                        <a href="{% url 'announce:list' %}" class="btn btn-secondary">Back</a>
-                        <a href="{% url 'announce:delete' pk=object.pk %}" class="btn btn-danger">Delete</a>
-                        <a href="{% url 'announce:update' pk=object.pk %}" class="btn btn-success">Update</a>
+                    <div class="container float-start text-center">
+                        <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">Back</a>
+                        <a href="{% url 'announce:delete' pk=object.pk %}" class="btn btn-lg btn-danger">Delete</a>
+                        <a href="{% url 'announce:update' pk=object.pk %}" class="btn btn-lg btn-success">Update</a>
                     </div>
                     {% else %}
-                    <div class="container float-start">
-                        <a href="{% url 'announce:list' %}" class="btn btn-secondary">List</a>
-                        <a href="{% url 'home' %}" class="btn btn-info">Home</a>
+                    <div class="container float-start text-center">
+                        <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">List</a>
+                        <a href="{% url 'home' %}" class="btn btn-lg btn-info">Home</a>
                     </div>
                     {% endif %}
 
                 </div>
-
-
-                {% for f in files_list %}
-                AA
-                <div>
-                    <object
-                        data='{{ f.files.url }}'
-                        type="application/pdf"
-                        width="500"
-                        height="678"
-                        >
-
-                        <iframe
-                            src='{{ f.files.url }}'
-                            width="500"
-                            height="678"
-                            >
-                            <p>This browser does not support PDF!</p>
-                        </iframe>
-                    </object>
-                </div>
-                {% endfor %}
 
             </div>
         </div>

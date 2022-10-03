@@ -11,13 +11,13 @@ class LineTokenMultiple(forms.ModelMultipleChoiceField):
         return obj.name
 
 class AnnounceForm(forms.ModelForm):
-    files  = forms.FileField(widget=forms.ClearableFileInput(attrs={'class': 'w3-input', 'multiple' : True}), label="เอกสารที่เกี่ยวข้อง", required=False)
-    images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'class': 'w3-input', 'multiple': True}), label="รูปภาพ", required=False)
+    files  = forms.FileField(widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'multiple' : True}), label="เอกสารที่เกี่ยวข้อง", required=False)
+    images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'multiple': True}), label="รูปภาพ", required=False)
     tokens = LineTokenMultiple(
         queryset = LineToken.objects.all(),
         label    = "การแจ้งเตือน",
         widget   = widgets.CheckboxSelectMultiple(),
-        required = False
+        required = False,
     )
 
     class Meta:

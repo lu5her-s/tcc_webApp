@@ -3,11 +3,11 @@
 # File              : admin.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 10:01 272
-# Last Modified Date: Thu Sep, 29 2022, 10:01 272
+# Last Modified Date: Mon Oct, 03 2022, 21:11 276
 # Last Modified By  : lu5her <lu5her@mail>
 from django.contrib import admin
 
-from account.models import Profile, Rank, Sector, Position
+from account.models import LineToken, Profile, Rank, Sector, Position
 
 # Register your models here.
 
@@ -15,3 +15,4 @@ admin.site.register(Profile)
 admin.site.register(Rank)
 admin.site.register(Sector)
 admin.site.register(Position)
+admin.site.register(LineToken)

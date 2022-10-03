@@ -28,7 +28,17 @@
 
 
                     <div class="card-body">
-                        <h5 class="card-title">{{ title }} <span>| List</span></h5>
+                        <h5 class="card-title">{{ title }} 
+                            <span>| List</span>
+                            <span>
+                                <a href="{% url 'announce:create' %}" class="align-right btn btn-success" style="float: right">
+                                    <i class="bi bi-plus">
+                                        Create
+                                    </i>
+                                </a>
+                            </span>
+                        </h5>
+                        <br>
 
                         <table class="table table-hover datatable" id="dataTable">
                             <thead>
@@ -49,6 +59,8 @@
                                     <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }}</td>
                                     {% if not object in read and not object.author == request.user %}
                                     <td><span href="#" class="badge bg-warning text-black">Not Read</span></td>
+                                    {% elif object.author == request.user %}
+                                    <td><span href="#" class="badge bg-secondary">Own</span></td>
                                     {% else %}
                                     <td><span href="#" class="badge bg-success">Accepted</span></td>
                                     {% endif %}

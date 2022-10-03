@@ -1258,3 +1258,9 @@ h6 {
   font-size: 13px;
   color: #012970;
 }
+
+.checkbox-group {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+}
