@@ -22,7 +22,7 @@ from announce.models import (
     Comment
 )
 
-# from app_config.sendline import Sendline
+from config.sendline import Sendline
 
 # Create your views here.
 
@@ -138,7 +138,7 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
                 path = reverse_lazy('announce:detail', args=[str(form_id.pk)])
                 url  = 'http://' + host + path
                 head = '\nมี : ' + form_save.is_type.name + 'ใหม่'
-                body = '\nเรื่อง : ' + form_save.name + '\n' + 'รายละเอียดเพิ่มเติม :' + url
+                body = '\nเรื่อง : ' + form_save.title + '\n' + 'รายละเอียดเพิ่มเติม :' + url
 
                 for token_id in tokens:
                     token = LineToken.objects.get(id=token_id).token

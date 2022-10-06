@@ -125,6 +125,7 @@
                                     <a href="{% url 'announce:detail' pk=form.instance.pk %}" class="btn btn-lg btn-secondary">Back</a>
                                     <button type="submit" class="btn btn-lg btn-success">Update</button>
                                 {% else %}
+                                <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">Back</a>
                                 <button type="submit" class="btn btn-lg btn-success">Create</button>
                                 <button type="reset" class="btn btn-lg btn-warning">Reset</button>
                                 {% endif %}
