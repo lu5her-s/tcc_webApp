@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
@@ -40,7 +41,7 @@ class AnnounceListView(LoginRequiredMixin, ListView):
     model               = Announce
     template_name       = 'announce/announce.html'
     # context_object_name = 'announce_list'
-    paginate_by         = 20
+    # paginate_by         = 20
     ordering            = ('-created_at')
 
     def get_context_data(self, **kwargs):
@@ -48,6 +49,10 @@ class AnnounceListView(LoginRequiredMixin, ListView):
         context['read']  = Announce.objects.filter(reads__id=self.request.user.id)
         context['title'] = "ประชาสัมพันธ์"
         return context
+
+    def get_queryset(self, **kwargs):
+        qs = Announce.objects.filter(is_delete=False)
+        return qs
 
 def announce_read(request, pk):
     announce = get_object_or_404(Announce, pk=request.POST.get('announce_id'))
@@ -241,7 +246,7 @@ class AnnounceNotReadView(LoginRequiredMixin, ListView):
 
 class AnnounceDeleteView(LoginRequiredMixin, DeleteView):
     login_url     = reverse_lazy('login')
-    template_name = 'announce/announce_delete.html'
+    template_name = 'announce/delete.html'
     model         = Announce
     success_url   = reverse_lazy('announce:list')
 
@@ -249,7 +254,25 @@ class AnnounceDeleteView(LoginRequiredMixin, DeleteView):
         context             = super().get_context_data(**kwargs)
         context['header']   = 'ยืนยันการลบ'
         context['btn_text'] = 'ลบ'
+        context['images'] = AnnounceImage.objects.filter(announce=self.get_object())
+        context['files'] = AnnounceFile.objects.filter(announce=self.get_object())
         return context
+
+    def get_success_url(self):
+        messages.success(self.request, 'Announce has been Delete')
+        return reverse_lazy('announce:list')
+
+    def post(self, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            self.object.is_delete = True
+            self.object.save()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return super().post(s*args, **kwargs)
+
+
 
 def my_announce(request, user):
     qs = Announce.objects.filter(author=user)
