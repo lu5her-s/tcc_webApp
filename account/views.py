@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Mon Oct, 03 2022, 09:18 276
+# Last Modified Date: Thu Oct, 06 2022, 21:58 279
 # Last Modified By  : lu5her <lu5her@mail>
 from datetime                           import datetime
 from re                                 import L
@@ -47,6 +47,7 @@ from announce.models import (
 class HomeView(TemplateView):
     template_name = 'base.html'
 
+    # TODO : make context
     def get_context_data(self, *args, **kwargs):
         context             = super().get_context_data(*args, **kwargs)
         context['announce'] = Announce.objects.all()

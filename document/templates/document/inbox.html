@@ -1,18 +1,20 @@
+
 {% extends "base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
 {% load tags %}
 {% load tz %}
 
-{% block title %}Announce{% endblock title %}
+{% block title %}Inbox List{% endblock title %}
 
 {% block content %}
 <div class="pagetitle">
-    <h1>All Announce List</h1>
+    <h1>All {{ request.user.profile.sector.name|title }} Inbox</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item active">Announce</li>
+            <li class="breadcrumb-item"><a href="{% url 'document:home' %}">Document Home</a></li>
+            <li class="breadcrumb-item active">Inbox List</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -31,9 +33,9 @@
                         <h5 class="card-title">{{ title }} 
                             <span>| List</span>
                             <span>
-                                <a href="{% url 'announce:create' %}" class="align-right btn btn-success" style="float: right">
+                                <a href="{% url 'document:create' %}" class="align-right btn btn-success" style="float: right">
                                     <i class="bi bi-plus">
-                                        Create
+                                        New
                                     </i>
                                 </a>
                             </span>
@@ -43,20 +45,20 @@
                         <table class="table table-hover datatable" id="dataTable">
                             <thead>
                                 <tr>
-                                    <th scope="col">Type</th>
-                                    <th scope="col">Status</th>
+                                    <th scope="col">Rev.no</th>
+                                    <th scope="col">Urgency</th>
+                                    <th scope="col">Doc No</th>
                                     <th scope="col">Title</th>
-                                    <th scope="col">Created On</th>
-                                    <th scope="col">Progress</th>
+                                    <th scope="col">...</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for object in object_list %}
                                 <tr>
-                                    <th scope="row">{{ object.is_type.name }}</th>
-                                    <td><a href="#">{{ object.status.name }}</a></td>
-                                    <td><a href="{% url 'announce:detail' pk=object.pk %}" class="text-primary">{{ object.title }}</a></td>
-                                    <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }}</td>
+                                    <th scope="row">{{ object.recieve_number }}</th>
+                                    <td><a href="#">{{ object.urgency }}</a></td>
+                                    <td><a href="{% url 'announce:detail' pk=object.pk %}" class="text-primary">{{ object.doc_number }}</a></td>
+                                    <td>{{ object.title|truncatechars:50 }}</td>
                                     {% if not object in read and not object.author == request.user %}
                                     <td><span href="#" class="badge bg-warning text-black">Not Read</span></td>
                                     {% elif object.author == request.user %}

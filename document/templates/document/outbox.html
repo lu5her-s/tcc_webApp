@@ -1,18 +1,20 @@
+
 {% extends "base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
 {% load tags %}
 {% load tz %}
 
-{% block title %}Announce{% endblock title %}
+{% block title %}Inbox List{% endblock title %}
 
 {% block content %}
 <div class="pagetitle">
-    <h1>All Announce List</h1>
+    <h1>All {{ request.user.profile.sector.name|title }} Outbox</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item active">Announce</li>
+            <li class="breadcrumb-item"><a href="{% url 'document:home' %}">Document Home</a></li>
+            <li class="breadcrumb-item active">Inbox List</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -31,9 +33,9 @@
                         <h5 class="card-title">{{ title }} 
                             <span>| List</span>
                             <span>
-                                <a href="{% url 'announce:create' %}" class="align-right btn btn-success" style="float: right">
+                                <a href="{% url 'document:create' %}" class="align-right btn btn-success" style="float: right">
                                     <i class="bi bi-plus">
-                                        Create
+                                        New
                                     </i>
                                 </a>
                             </span>

@@ -1,0 +1,337 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Document Inbox Detail{% endblock title %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>{{ object.title }}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'document:home' %}">Document Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'document:inbox' %}">Inbox List</a></li>
+            <li class="breadcrumb-item active">{{ object.recieve_number }} detail</li>
+        </ol>
+    </nav>
+    </div><!-- End Page Title -->
+
+
+    <section class="section">
+        <div class="row">
+
+            <div class="col-xl-12">
+
+                <!-- Recent Job -->
+                <div class="col-12">
+                    <div class="card overflow-auto">
+
+
+                        <div class="card-body">
+                            <h6 class="card-title"> Detail | <span> {{ object.title }}</span></h6>
+                            <table class="table">
+                                <tr>
+                                    <th>Type</th>
+                                    <td>{{ object.is_type }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Status</th>
+                                    <td>{{ object.status }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Author</th>
+                                    <td>{{ object.author.profile.rank }} {{ object.author.get_full_name }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Created at</th>
+                                    <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }} 
+                                        เวลา {{ object.created_at|timezone:"Asia/Bangkok"|date:"H:i" }} น.
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th class="text-center">รายละเอียด</th>
+                                </tr>
+                                <tr>
+                                    <td>{{ object.detail|safe|linebreaks }}</td>
+                                </tr>
+                            </table>
+
+                            {% comment %}{% for img in images %}{% endcomment %}
+                                {% comment %}<img src="{{ img.images.url }}" alt="">{% endcomment %}
+                                {% comment %}{{ img.images.url }}{% endcomment %}
+                            {% comment %}{% endfor %}{% endcomment %}
+
+
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Image | <span>{{ object.title }}</span></h5>
+
+                            <!-- Slides with indicators -->
+                            <div id="gallery">
+                                {% if images %}
+                                {% for item in images %}
+                                {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
+                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                                </a> {% endcomment %}
+                                <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
+                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                                </a>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {% if files_list %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">File | <span>{{ object.title }}</span></h5>
+                            {% for f in files_list %}
+
+                            <iframe src="{{ f.files.url }}" frameborder="0" style="width: 100%; height: 800px;"></iframe>
+                            <br>
+                            {% comment %}<a href="{{ f.files.url }}" target="_blank">เอกสารที่เกี่ยวข้อง--{{ f.files.name }}</a>{% endcomment %}
+
+                            {% comment %}<p>Download - <a href="{{ f.files.url }}">เอกสารนี้</a></p>{% endcomment %}
+                            {% with f.files.name|split:"/" as file %}
+                            <p>Download - <a href="{{ f.files.url }}">{{ file|last }}</a></p>
+                            {% comment %}{{ file|last }}{% endcomment %}
+                            {% endwith %}
+
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                    {% endif %}
+
+
+                    <!-- Reader sector -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">จำนวนผู้อ่าน</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">อ่านแล้วจำนวน {{ number_of_reader }} คน</h6>
+                            {% if not request.user == object.author %}
+                            <form method="post" action="{% url 'announce:read' pk=object.pk %}">
+                                {% csrf_token %}
+                                {% if is_read %}
+                                <p class="card-text"><button type="submit" name="announce_id" value="{{ object.pk }}" class="btn btn-success">
+                                        <i class="bi bi-check-circle"></i> อ่านแล้ว
+                                    </button>
+                                </p>
+                                {% else %}
+                                <p class="card-text"><button type="submit" name="announce_id" value="{{ object.pk }}" class="btn btn-warning">
+                                        <i class="bi bi-exclamation-circle"></i> ยังไม่อ่าน
+                                    </button>
+                                </p>
+                                {% endif %}
+                            </form>
+                            {% endif %}
+
+                            {% if request.user == object.author %}
+                            <p class="card-text">รายชื่อกำลังพลที่อ่านแล้ว</p>
+                            <ol>
+                                {% for reader in object.reads.all %}
+                                <li>{{ reader.profile.rank }} {{ reader.get_full_name }} - 
+                                    {{ reader.profile.sector }} ({{ reader.profile.place }})
+                                </li>
+                                {% endfor %}
+                            </ol>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- comment sector -->
+
+                    <div class="card">
+                        <div class="card-body">
+                            {% if comments %}
+                            <h5 class="card-title">ความคิดเห็น <span>| {{ comments_count }} ความคิดเห็น</span></h5>
+                            <div class="container">
+                                {% for comment in comments %}
+                                <div class="row">
+                                    <div class="col-sm-8 m2">
+                                        <img src="{{ comment.author.profile.image.url }}" class="img-thumbnail rounded-circle float-start" style="margin-right: 12px;" width="15%" alt="">
+                                        <p class="mute">
+                                            {{ comment.author.profile.rank.name }} {{ comment.get_full_name }}
+                                            <span class="small">{{ comment.created_at|timezone:"Asia/Bangkok"|thaidate }} ({{ comment.created_at|timezone:"Asia/Bangkok"|timesince }})</span>
+                                        </p>
+                                        <p>
+                                            {{ comment.comment }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <hr>
+
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <h5 class="card-title">ความคิดเห็น <span>| {{ comments_count }} ยังไม่มีความคิดเห็น</span></h5>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">ความคิดเห็น <span>| แสดงความคิดเห็น</span></h5>
+                            <div class="container">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="announce_id" value="{{ object.pk }}">
+                                    <div class="row mb-3">
+                                        {% comment %}<label for="comment" class="col-sm-2 col-form-label">แสดงความคิดเห็น</label>{% endcomment %}
+                                        <div class="col-sm-12">
+                                            <textarea class="form-control" name="comment" id="comment" style="height: 100px; width: 100%;"></textarea>
+                                        </div>
+                                    </div>
+                                    <p class="card-text float-end"><button type="submit" class="btn btn-primary">แสดงความคิดเห็น</button></p>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {% if object.author.pk == request.user.pk %}
+                    <div class="container float-start text-center">
+                        <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">Back</a>
+                        <a href="{% url 'announce:delete' pk=object.pk %}" class="btn btn-lg btn-danger">Delete</a>
+                        <a href="{% url 'announce:update' pk=object.pk %}" class="btn btn-lg btn-success">Update</a>
+                    </div>
+                    {% else %}
+                    <div class="container float-start text-center">
+                        <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">List</a>
+                        <a href="{% url 'home' %}" class="btn btn-lg btn-info">Home</a>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+    {% include 'components/photoswipe.html' %}
+    {% endblock content %}
+
+
+    {% comment %}
+    <div id="my_pdf_viewer">
+        <div id="canvas_container" class="d-flex justify-content-center">
+            <canvas id="pdf_renderer"></canvas>
+        </div>
+
+        <br>
+        <div id="navigation_controls" class="d-flex justify-content-center">
+            <button class="btn btn-outline-dark" id="go_previous">
+                <i class="bi bi-arrow-left-square"></i>
+            </button>
+            <input id="current_page" value="1" type="number" style="margin-left: 5px; margin-right: 5px;" />
+            <button class="btn btn-outline-dark" id="go_next">
+                <i class="bi bi-arrow-right-square"></i>
+            </button>
+        </div>
+
+        <div id="zoom_controls" class="d-flex justify-content-center" style="margin-top: 5px;">  
+            <button class="btn btn-outline-info" id="zoom_in" style="margin-right:5px;">+</button>
+            <button class="btn btn-outline-info" id="zoom_out">-</button>
+        </div>
+    </div>
+
+    <script>
+        var myState = {
+            pdf: null,
+            currentPage: 1,
+            zoom: 1
+        }
+
+        pdfjsLib.getDocument('{{ f.files.url }}').then((pdf) => {
+
+            myState.pdf = pdf;
+            render();
+
+        });
+
+        function render() {
+            myState.pdf.getPage(myState.currentPage).then((page) => {
+
+                var canvas = document.getElementById("pdf_renderer");
+                var ctx = canvas.getContext('2d');
+
+                var viewport = page.getViewport(myState.zoom);
+
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                page.render({
+                    canvasContext: ctx,
+                    viewport: viewport
+                });
+            });
+        }
+
+        document.getElementById('go_previous')
+            .addEventListener('click', (e) => {
+                if(myState.pdf == null|| myState.currentPage == 1) 
+                    return;
+
+                myState.currentPage -= 1;
+                document.getElementById("current_page").value = myState.currentPage;
+                render();
+            });
+        document.getElementById('go_next')
+            .addEventListener('click', (e) => {
+                if(myState.pdf == null || myState.currentPage > myState.pdf._pdfInfo.numPages) 
+                    return;
+
+                myState.currentPage += 1;
+                document.getElementById("current_page").value = myState.currentPage;
+                render();
+            });
+        document.getElementById('current_page')
+            .addEventListener('keypress', (e) => {
+                if(myState.pdf == null) return;
+
+                // Get key code
+                var code = (e.keyCode ? e.keyCode : e.which);
+
+                // If key code matches that of the Enter key
+                if(code == 13) {
+                    var desiredPage = document.getElementById('current_page').valueAsNumber;
+
+                    if(desiredPage >= 1 && desiredPage <= myState.pdf._pdfInfo.numPages) {
+                        myState.currentPage = desiredPage;
+                        document.getElementById("current_page").value = desiredPage;
+                        render();
+                    }
+                }
+            });
+        document.getElementById('zoom_in')
+            .addEventListener('click', (e) => {
+                if(myState.pdf == null) return;
+                myState.zoom += 0.5;
+
+                render();
+            });
+        document.getElementById('zoom_out')
+            .addEventListener('click', (e) => {
+                if(myState.pdf == null) return;
+                myState.zoom -= 0.5;
+
+                render();
+            });
+
+    </script>
+    {% endcomment %}
