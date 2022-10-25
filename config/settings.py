@@ -3,7 +3,7 @@
 # File              : settings.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 22 2022, 15:05 265
-# Last Modified Date: Mon Oct, 17 2022, 15:58 290
+# Last Modified Date: Fri Oct, 21 2022, 07:54 294
 # Last Modified By  : lu5her <lu5her@mail>
 """
 Django settings for config project.

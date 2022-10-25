@@ -66,6 +66,7 @@ class Document(models.Model):
     created_at      = models.DateTimeField(auto_now_add=True)
     assigned_sector = models.ManyToManyField(Sector, related_name='assigned_sector')
     # assigned_user   = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="user_operator")
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"หนังสือที่ {self.doc_number} ลงวันที่ {self.doc_date} เรื่อง {self.title}"
@@ -79,7 +80,7 @@ class Department(models.Model):
 
     document        = models.ForeignKey(Document, on_delete=models.CASCADE)
     # sector = models.ForeignKey(Sector, on_delete=models.CASCADE)
-    recieved        = models.BooleanField(default=False)
+    # recieved        = models.BooleanField(default=False)
     reciever        = models.ForeignKey(User, on_delete=models.CASCADE)
     recieved_at     = models.DateTimeField(auto_now_add=True)
     # assigned_user = models.ForeignKey(Profile, on_delete=models.CASCADE)

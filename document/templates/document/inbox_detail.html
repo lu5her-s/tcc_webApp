@@ -9,13 +9,13 @@
 
 {% block content %}
 <div class="pagetitle">
-    <h1>{{ object.title }}</h1>
+    <h1>{{ object.doc_number }}</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="{% url 'document:home' %}">Document Home</a></li>
             <li class="breadcrumb-item"><a href="{% url 'document:inbox' %}">Inbox List</a></li>
-            <li class="breadcrumb-item active">{{ object.recieve_number }} detail</li>
+            <li class="breadcrumb-item active">{{ object.doc_number }}</li>
         </ol>
     </nav>
     </div><!-- End Page Title -->
@@ -32,21 +32,21 @@
 
 
                         <div class="card-body">
-                            <h6 class="card-title"> Detail | <span> {{ object.title }}</span></h6>
+                            <h6 class="card-title"> Detail | <span> {{ object.doc_number }}</span></h6>
                             <table class="table">
                                 <tr>
-                                    <th>Type</th>
-                                    <td>{{ object.is_type }}</td>
+                                    <th>Urgency</th>
+                                    <td>{{ object.urgency }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>Status</th>
-                                    <td>{{ object.status }}</td>
+                                    <th>Document Number</th>
+                                    <td>{{ object.doc_number }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>Author</th>
-                                    <td>{{ object.author.profile.rank }} {{ object.author.get_full_name }}</td>
+                                    <th>From</th>
+                                    <td>{{ object.author.profile.sector.name }}</td>
                                 </tr>
 
                                 <tr>
@@ -66,157 +66,61 @@
                                 </tr>
                             </table>
 
-                            {% comment %}{% for img in images %}{% endcomment %}
-                                {% comment %}<img src="{{ img.images.url }}" alt="">{% endcomment %}
-                                {% comment %}{{ img.images.url }}{% endcomment %}
-                            {% comment %}{% endfor %}{% endcomment %}
 
 
                         </div>
                     </div>
 
 
-                    <div class="card">
+                    {% if not accepted %}
+                    <div class="card text-center">
                         <div class="card-body">
-                            <h5 class="card-title">Image | <span>{{ object.title }}</span></h5>
-
-                            <!-- Slides with indicators -->
-                            <div id="gallery">
-                                {% if images %}
-                                {% for item in images %}
-                                {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
-                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                                </a> {% endcomment %}
-                                <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
-                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                                </a>
-                                {% endfor %}
-                                {% endif %}
-                            </div>
-
+                            <h5 class="card-title">Not Accepted | <span>{{ object.doc_number }}</span></h5>
+                            <a href="{% url 'document:accept' pk=object.pk %}"><button class="btn btn-success">Accept</button></a>
                         </div>
-                    </div>
-
-                    {% if files_list %}
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">File | <span>{{ object.title }}</span></h5>
-                            {% for f in files_list %}
-
-                            <iframe src="{{ f.files.url }}" frameborder="0" style="width: 100%; height: 800px;"></iframe>
-                            <br>
-                            {% comment %}<a href="{{ f.files.url }}" target="_blank">เอกสารที่เกี่ยวข้อง--{{ f.files.name }}</a>{% endcomment %}
-
-                            {% comment %}<p>Download - <a href="{{ f.files.url }}">เอกสารนี้</a></p>{% endcomment %}
-                            {% with f.files.name|split:"/" as file %}
-                            <p>Download - <a href="{{ f.files.url }}">{{ file|last }}</a></p>
-                            {% comment %}{{ file|last }}{% endcomment %}
-                            {% endwith %}
-
-                            {% endfor %}
-                        </div>
-
-                    </div>
-                    {% endif %}
-
-
-                    <!-- Reader sector -->
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">จำนวนผู้อ่าน</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">อ่านแล้วจำนวน {{ number_of_reader }} คน</h6>
-                            {% if not request.user == object.author %}
-                            <form method="post" action="{% url 'announce:read' pk=object.pk %}">
-                                {% csrf_token %}
-                                {% if is_read %}
-                                <p class="card-text"><button type="submit" name="announce_id" value="{{ object.pk }}" class="btn btn-success">
-                                        <i class="bi bi-check-circle"></i> อ่านแล้ว
-                                    </button>
-                                </p>
-                                {% else %}
-                                <p class="card-text"><button type="submit" name="announce_id" value="{{ object.pk }}" class="btn btn-warning">
-                                        <i class="bi bi-exclamation-circle"></i> ยังไม่อ่าน
-                                    </button>
-                                </p>
-                                {% endif %}
-                            </form>
-                            {% endif %}
-
-                            {% if request.user == object.author %}
-                            <p class="card-text">รายชื่อกำลังพลที่อ่านแล้ว</p>
-                            <ol>
-                                {% for reader in object.reads.all %}
-                                <li>{{ reader.profile.rank }} {{ reader.get_full_name }} - 
-                                    {{ reader.profile.sector }} ({{ reader.profile.place }})
-                                </li>
-                                {% endfor %}
-                            </ol>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <!-- comment sector -->
-
-                    <div class="card">
-                        <div class="card-body">
-                            {% if comments %}
-                            <h5 class="card-title">ความคิดเห็น <span>| {{ comments_count }} ความคิดเห็น</span></h5>
-                            <div class="container">
-                                {% for comment in comments %}
-                                <div class="row">
-                                    <div class="col-sm-8 m2">
-                                        <img src="{{ comment.author.profile.image.url }}" class="img-thumbnail rounded-circle float-start" style="margin-right: 12px;" width="15%" alt="">
-                                        <p class="mute">
-                                            {{ comment.author.profile.rank.name }} {{ comment.get_full_name }}
-                                            <span class="small">{{ comment.created_at|timezone:"Asia/Bangkok"|thaidate }} ({{ comment.created_at|timezone:"Asia/Bangkok"|timesince }})</span>
-                                        </p>
-                                        <p>
-                                            {{ comment.comment }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <hr>
-
-                                {% endfor %}
-                            </div>
-                            {% else %}
-                            <h5 class="card-title">ความคิดเห็น <span>| {{ comments_count }} ยังไม่มีความคิดเห็น</span></h5>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">ความคิดเห็น <span>| แสดงความคิดเห็น</span></h5>
-                            <div class="container">
-                                <form method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="announce_id" value="{{ object.pk }}">
-                                    <div class="row mb-3">
-                                        {% comment %}<label for="comment" class="col-sm-2 col-form-label">แสดงความคิดเห็น</label>{% endcomment %}
-                                        <div class="col-sm-12">
-                                            <textarea class="form-control" name="comment" id="comment" style="height: 100px; width: 100%;"></textarea>
-                                        </div>
-                                    </div>
-                                    <p class="card-text float-end"><button type="submit" class="btn btn-primary">แสดงความคิดเห็น</button></p>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    {% if object.author.pk == request.user.pk %}
-                    <div class="container float-start text-center">
-                        <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">Back</a>
-                        <a href="{% url 'announce:delete' pk=object.pk %}" class="btn btn-lg btn-danger">Delete</a>
-                        <a href="{% url 'announce:update' pk=object.pk %}" class="btn btn-lg btn-success">Update</a>
                     </div>
                     {% else %}
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Accepted | <span>{{ object.doc_number }}</span></h5>
+                            <table class="table">
+                                <tr>
+                                    <td>Reciever : {{ accepted.reciever.profile.rank.name }} {{ accepted.reciever.get_full_name }} </td>
+                                </tr>
+                                <tr>
+                                    <td>Recieved at : {{ accepted.recieved_at|thaidate }}
+                                        เวลา {{ accepted.recieved_at|date:"H:i" }} น.
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    {% endif %}
+
+                    {% comment %}<div class="card">{% endcomment %}
+                        {% comment %}<div class="card-body">{% endcomment %}
+                            {% comment %}<h5 class="card-title">Assigned Sector | <span>{{ object.doc_number }}</span></h5>{% endcomment %}
+
+                            {% comment %}<ul>{% endcomment %}
+                                {% comment %}{% for sector in object.assigned_sector.all %}{% endcomment %}
+                                {% comment %}<li>{% endcomment %}
+                                    {% comment %}{{ sector }}{% endcomment %}
+                                    {% comment %}{% if sector.pk in department.all %}{% endcomment %}
+                                        {% comment %}accepted{% endcomment %}
+                                    {% comment %}{% else %}{% endcomment %}
+                                        {% comment %}not accepted{% endcomment %}
+                                    {% comment %}{% endif %}{% endcomment %}
+                                {% comment %}</li>{% endcomment %}
+                                {% comment %}{% endfor %}{% endcomment %}
+                            {% comment %}</ul>{% endcomment %}
+                        {% comment %}</div>{% endcomment %}
+                    {% comment %}</div>{% endcomment %}
+
                     <div class="container float-start text-center">
-                        <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">List</a>
+                        <a href="{% url 'document:inbox' %}" class="btn btn-lg btn-secondary">List</a>
                         <a href="{% url 'home' %}" class="btn btn-lg btn-info">Home</a>
                     </div>
-                    {% endif %}
 
                 </div>
 

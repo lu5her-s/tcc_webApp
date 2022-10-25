@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
@@ -14,7 +13,7 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="{% url 'document:home' %}">Document Home</a></li>
-            <li class="breadcrumb-item active">Inbox List</li>
+            <li class="breadcrumb-item active">Outbox List</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -46,26 +45,27 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Type</th>
-                                    <th scope="col">Status</th>
+                                    <th scope="col">Send to</th>
                                     <th scope="col">Title</th>
                                     <th scope="col">Created On</th>
-                                    <th scope="col">Progress</th>
+                                    <th scope="col">...</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for object in object_list %}
                                 <tr>
                                     <th scope="row">{{ object.is_type.name }}</th>
-                                    <td><a href="#">{{ object.status.name }}</a></td>
-                                    <td><a href="{% url 'announce:detail' pk=object.pk %}" class="text-primary">{{ object.title }}</a></td>
-                                    <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }}</td>
-                                    {% if not object in read and not object.author == request.user %}
-                                    <td><span href="#" class="badge bg-warning text-black">Not Read</span></td>
-                                    {% elif object.author == request.user %}
-                                    <td><span href="#" class="badge bg-secondary">Own</span></td>
-                                    {% else %}
-                                    <td><span href="#" class="badge bg-success">Accepted</span></td>
-                                    {% endif %}
+                                    {% comment %}<td><a href="#">{{ object.assigned_sector.all }}</a></td>{% endcomment %}
+                                    <td>
+                                        <ul>
+                                        {% for sector in object.assigned_sector.all %}
+                                        <li>{{ sector }}</li>
+                                        {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td>{{ object.title|text_wrap:10 }}</td>
+                                    <td>{{ object.created_at|thaidate }}</td>
+                                    <td><a href="#" class="btn btn-sm btn-info">Detail</a></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

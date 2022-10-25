@@ -1,4 +1,5 @@
 from django import template
+from textwrap import wrap
 
 register = template.Library()
 
@@ -115,3 +116,7 @@ def ReadNumber(number):
 @register.filter(name='split')
 def split(value, key):
     return value.split(key)
+
+@register.filter
+def text_wrap(text, width=25):
+    return ' '.join(wrap(text, width))
