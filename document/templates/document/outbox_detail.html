@@ -1,0 +1,316 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Document Outbox Detail{% endblock title %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>{{ object.doc_number }}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'document:home' %}">Document Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'document:outbox' %}">Outbox List</a></li>
+            <li class="breadcrumb-item active">{{ object.doc_number }}</li>
+        </ol>
+    </nav>
+    </div><!-- End Page Title -->
+
+
+    <section class="section">
+        <div class="row">
+
+            <div class="col-xl-12">
+
+                <!-- Recent Job -->
+                <div class="col-12">
+                    <div class="card overflow-auto">
+
+
+                        <div class="card-body">
+                            <h6 class="card-title"> Detail | <span> {{ object.doc_number }}</span></h6>
+                            <table class="table">
+                                <tr>
+                                    <th>Recieve Number</th>
+                                    <td>{{ object.recieve_number }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Urgency</th>
+                                    <td>{{ object.urgency }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Document Number</th>
+                                    <td>{{ object.doc_number }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Document Date</th>
+                                    <td>{{ object.doc_date|thaidate }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Title</th>
+                                    <td>{{ object.title|text_wrap:25 }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>From</th>
+                                    <td>{{ object.author.profile.sector.name }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Created at</th>
+                                    <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }} 
+                                        เวลา {{ object.created_at|timezone:"Asia/Bangkok"|date:"H:i" }} น.
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th class="text-center">รายละเอียด</th>
+                                </tr>
+                                <tr>
+                                    <td>{{ object.detail|safe|linebreaks }}</td>
+                                </tr>
+                            </table>
+
+
+
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">Assigned Sector | <span>{{ object.doc_number }}</span></h5>
+                            <table class="table">
+                                    {% for sector in object.assigned_sector.all %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}. {{ sector.name }} </td>
+                                            <td>
+                                            {% if sector.pk in accepted %}
+                                            {% comment %}<a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal" {% endcomment %}
+                                                                               {% comment %}data-bs-title="{{ sector.name }}"{% endcomment %}
+                                                                               {% comment %}data-bs-reciever="{{ sector.reciever }}"{% endcomment %}
+                                                                               {% comment %}>{% endcomment %}
+                                                <i class="bi bi-check-circle text-success"></i>
+                                                <small class="text-success">accepted</small>
+                                            {% comment %}</a> {% endcomment %}
+                                            {% else %}
+                                                <i class="bi bi-x-circle text-danger"></i>
+                                                <small class="text-danger">Not accepted</small>
+                                            {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </ol>
+                            </table>
+                        </div>
+                    </div>
+
+
+                    {% comment %}<div class="card">{% endcomment %}
+                        {% comment %}<div class="card-body">{% endcomment %}
+                            {% comment %}<h5 class="card-title">Assigned Sector | <span>{{ object.doc_number }}</span></h5>{% endcomment %}
+
+                            {% comment %}<ul>{% endcomment %}
+                                {% comment %}{% for sector in object.assigned_sector.all %}{% endcomment %}
+                                {% comment %}<li>{% endcomment %}
+                                    {% comment %}{{ sector }}{% endcomment %}
+                                    {% comment %}{% if sector.pk in department.all %}{% endcomment %}
+                                        {% comment %}accepted{% endcomment %}
+                                    {% comment %}{% else %}{% endcomment %}
+                                        {% comment %}not accepted{% endcomment %}
+                                    {% comment %}{% endif %}{% endcomment %}
+                                {% comment %}</li>{% endcomment %}
+                                {% comment %}{% endfor %}{% endcomment %}
+                            {% comment %}</ul>{% endcomment %}
+                        {% comment %}</div>{% endcomment %}
+                    {% comment %}</div>{% endcomment %}
+
+                    <div class="container float-start text-center">
+                        <a href="{% url 'document:inbox' %}" class="btn btn-lg btn-secondary">List</a>
+                        <a href="{% url 'home' %}" class="btn btn-lg btn-info">Home</a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        {% comment %}<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Open modal for @mdo</button>{% endcomment %}
+    </section>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="myTitle"></div>
+
+                        <div class="mb-3">
+                            <h4>Reciever:</h4>
+                            <h5 id="reciever-name"></h5>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Message:</label>
+                            <textarea class="form-control" id="message-text"></textarea>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Send message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <script>
+
+            var exampleModal = document.getElementById('exampleModal')
+            exampleModal.addEventListener('show.bs.modal', function (event) {
+                // Button that triggered the modal
+                var button = event.relatedTarget
+                // Extract info from data-bs-* attributes
+                var recipient = button.getAttribute('data-bs-whatever')
+
+                var title = button.getAttribute('data-bs-title')
+                var reciever = button.getAttribute('data-bs-reciever')
+
+                // If necessary, you could initiate an AJAX request here
+                // and then do the updating in a callback.
+                //
+                // Update the modal's content.
+                var modalTitle = exampleModal.querySelector('.modal-title')
+                var modalBodyInput = exampleModal.querySelector('#reciever-name')
+
+                var modalmyTitle = exampleModal.querySelector('.myTitle')
+
+                modalTitle.textContent = 'Document to ' + title
+                modalBodyInput.innerHTML = reciever
+                modalmyTitle.innerHTML = recipient
+            })
+        </script>
+
+    {% include 'components/photoswipe.html' %}
+    {% endblock content %}
+
+
+    {% comment %}
+    <div id="my_pdf_viewer">
+        <div id="canvas_container" class="d-flex justify-content-center">
+            <canvas id="pdf_renderer"></canvas>
+        </div>
+
+        <br>
+        <div id="navigation_controls" class="d-flex justify-content-center">
+            <button class="btn btn-outline-dark" id="go_previous">
+                <i class="bi bi-arrow-left-square"></i>
+            </button>
+            <input id="current_page" value="1" type="number" style="margin-left: 5px; margin-right: 5px;" />
+            <button class="btn btn-outline-dark" id="go_next">
+                <i class="bi bi-arrow-right-square"></i>
+            </button>
+        </div>
+
+        <div id="zoom_controls" class="d-flex justify-content-center" style="margin-top: 5px;">  
+            <button class="btn btn-outline-info" id="zoom_in" style="margin-right:5px;">+</button>
+            <button class="btn btn-outline-info" id="zoom_out">-</button>
+        </div>
+    </div>
+
+    <script>
+        var myState = {
+            pdf: null,
+            currentPage: 1,
+            zoom: 1
+        }
+
+        pdfjsLib.getDocument('{{ f.files.url }}').then((pdf) => {
+
+            myState.pdf = pdf;
+            render();
+
+        });
+
+        function render() {
+            myState.pdf.getPage(myState.currentPage).then((page) => {
+
+                var canvas = document.getElementById("pdf_renderer");
+                var ctx = canvas.getContext('2d');
+
+                var viewport = page.getViewport(myState.zoom);
+
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                page.render({
+                    canvasContext: ctx,
+                    viewport: viewport
+                });
+            });
+        }
+
+        document.getElementById('go_previous')
+            .addEventListener('click', (e) => {
+                if(myState.pdf == null|| myState.currentPage == 1) 
+                    return;
+
+                myState.currentPage -= 1;
+                document.getElementById("current_page").value = myState.currentPage;
+                render();
+            });
+        document.getElementById('go_next')
+            .addEventListener('click', (e) => {
+                if(myState.pdf == null || myState.currentPage > myState.pdf._pdfInfo.numPages) 
+                    return;
+
+                myState.currentPage += 1;
+                document.getElementById("current_page").value = myState.currentPage;
+                render();
+            });
+        document.getElementById('current_page')
+            .addEventListener('keypress', (e) => {
+                if(myState.pdf == null) return;
+
+                // Get key code
+                var code = (e.keyCode ? e.keyCode : e.which);
+
+                // If key code matches that of the Enter key
+                if(code == 13) {
+                    var desiredPage = document.getElementById('current_page').valueAsNumber;
+
+                    if(desiredPage >= 1 && desiredPage <= myState.pdf._pdfInfo.numPages) {
+                        myState.currentPage = desiredPage;
+                        document.getElementById("current_page").value = desiredPage;
+                        render();
+                    }
+                }
+            });
+        document.getElementById('zoom_in')
+            .addEventListener('click', (e) => {
+                if(myState.pdf == null) return;
+                myState.zoom += 0.5;
+
+                render();
+            });
+        document.getElementById('zoom_out')
+            .addEventListener('click', (e) => {
+                if(myState.pdf == null) return;
+                myState.zoom -= 0.5;
+
+                render();
+            });
+
+    </script>
+    {% endcomment %}

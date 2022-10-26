@@ -44,28 +44,29 @@
                         <table class="table table-hover datatable" id="dataTable">
                             <thead>
                                 <tr>
-                                    <th scope="col">Type</th>
+                                    <th scope="col">No.</th>
+                                    <th scope="col">Urgency</th>
+                                    <th scope="col">Doc no.</th>
+                                    <th scope="col">Doc Date</th>
                                     <th scope="col">Send to</th>
-                                    <th scope="col">Title</th>
-                                    <th scope="col">Created On</th>
                                     <th scope="col">...</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for object in object_list %}
                                 <tr>
-                                    <th scope="row">{{ object.is_type.name }}</th>
-                                    {% comment %}<td><a href="#">{{ object.assigned_sector.all }}</a></td>{% endcomment %}
+                                    <th scope="row">{{ object.recieve_number }}</th>
+                                    <td scope="row">{{ object.urgency }}</td>
+                                    <td scope="row">{{ object.doc_number }}</td>
+                                    <td>{{ object.doc_date|thaidate }}</td>
                                     <td>
                                         <ul>
-                                        {% for sector in object.assigned_sector.all %}
-                                        <li>{{ sector }}</li>
-                                        {% endfor %}
+                                            {% for sector in object.assigned_sector.all %}
+                                            <li>{{ sector.name }}</li>
+                                            {% endfor %}
                                         </ul>
                                     </td>
-                                    <td>{{ object.title|text_wrap:10 }}</td>
-                                    <td>{{ object.created_at|thaidate }}</td>
-                                    <td><a href="#" class="btn btn-sm btn-info">Detail</a></td>
+                                    <td><a href="{% url 'document:outbox-detail' pk=object.pk %}" class="btn btn-sm btn-info">Detail</a></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

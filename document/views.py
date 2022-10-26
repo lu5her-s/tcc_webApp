@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Oct, 06 2022, 23:34 279
-# Last Modified Date: Tue Oct, 25 2022, 23:57 298
+# Last Modified Date: Wed Oct, 26 2022, 15:51 299
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.contrib.auth.mixins         import LoginRequiredMixin
@@ -133,6 +133,13 @@ class OutboxDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        try:
+            d =  Document.objects.get(pk=self.get_object().pk).department_set.all().values_list('reciever__profile__sector', flat=True)
+            context['accepted'] = d
+        except:
+            context['accepted'] = None
+        context['all_accepted'] = Document.objects.get(pk=self.get_object().pk).department_set.all().values_list('reciever__profile__sector__pk')
+        context['accept_detail'] = Department.objects.filter(document=self.get_object())
         return context
 
 class DocumentUpdateView(LoginRequiredMixin, UpdateView):
