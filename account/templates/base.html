@@ -111,7 +111,7 @@
                                 </div>
                             </div><!-- End Revenue Card -->
 
-                            <!-- Dummy Card -->
+                            <!-- Journal Card -->
                             <div class="col-xxl-4 col-md-6">
                                 <div class="card info-card bg-card">
 
@@ -132,15 +132,15 @@
                                     </div>
 
                                 </div>
-                            </div><!-- End Dummy Card -->
+                            </div><!-- End Journal Card -->
 
-                            <!-- Dummy Card -->
+                            <!-- Asset Card -->
                             <div class="col-xxl-4 col-md-6">
                                 <div class="card info-card bg-card">
 
-                                    <a href="{% url 'document:home' %}">
+                                    <a href="#">
                                         <div class="card-body">
-                                            <h5 class="card-title">Document <span>| To Me</span></h5>
+                                            <h5 class="card-title">Asset <span>| To Me</span></h5>
 
                                             <div class="d-flex align-items-center">
                                                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -173,8 +173,8 @@
                                                     <i class="bi bi-book"></i>
                                                 </div>
                                                 <div class="ps-3">
-                                                    <h6>dddd</h6>
-                                                    <span class="text-danger small pt-1 fw-bold">12</span> <span class="text-muted small pt-2 ps-1">Today</span>
+                                                    <h6>{{ all_inbox }}</h6>
+                                                    <span class="text-danger small pt-1 fw-bold">{{ new_inbox }}</span> <span class="text-muted small pt-2 ps-1">Not Accepted</span>
 
                                                 </div>
                                             </div>

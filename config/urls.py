@@ -3,7 +3,7 @@
 # File              : urls.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 22 2022, 15:06 265
-# Last Modified Date: Tue Oct, 18 2022, 21:21 291
+# Last Modified Date: Thu Oct, 27 2022, 20:18 300
 # Last Modified By  : lu5her <lu5her@mail>
 """config URL Configuration
 
@@ -40,6 +40,7 @@ urlpatterns = [
     path('account/', include('django.contrib.auth.urls')),
     path('announce/', include('announce.urls')),
     path('document/', include('document.urls')),
+    path('journal/', include('journal.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

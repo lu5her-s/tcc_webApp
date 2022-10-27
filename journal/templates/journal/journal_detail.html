@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Journal{% endblock title %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>{{ object.title }}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'journal:list' %}">Journal List</a></li>
+            <li class="breadcrumb-item active">{{ object.title }}</li>
+        </ol>
+    </nav>
+    </div><!-- End Page Title -->
+
+
+    <section class="section">
+        <div class="row">
+
+            <div class="col-xl-12">
+
+                <!-- Recent Job -->
+                <div class="col-12">
+                    <div class="card overflow-auto">
+
+                        <div class="card-body">
+                            <h6 class="card-title"> Detail | <span> {{ object.title }}</span></h6>
+                            <table class="table">
+                                <tr>
+                                    <th>ประเภท</th>
+                                    <td>{{ object.category }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Status</th>
+                                    <td>{{ object.status }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Author</th>
+                                    <td>{{ object.author.profile.rank }} {{ object.author.get_full_name }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Created at</th>
+                                    <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }} 
+                                        เวลา {{ object.created_at|timezone:"Asia/Bangkok"|date:"H:i" }} น.
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th class="text-center">รายละเอียด</th>
+                                </tr>
+                                <tr>
+                                    <td>{{ object.body|safe|linebreaks }}</td>
+                                </tr>
+                            </table>
+
+                            {% comment %}{% for img in images %}{% endcomment %}
+                                {% comment %}<img src="{{ img.images.url }}" alt="">{% endcomment %}
+                                {% comment %}{{ img.images.url }}{% endcomment %}
+                            {% comment %}{% endfor %}{% endcomment %}
+
+
+                        </div>
+                    </div>
+
+                    {% if images %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Image | <span>{{ object.title }}</span></h5>
+
+                            <!-- Slides with indicators -->
+                            <div id="gallery">
+                                {% for item in images %}
+                                {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
+                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                                </a> {% endcomment %}
+                                <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
+                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                                </a>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if object.author.pk == request.user.pk %}
+                    <div class="container float-start text-center">
+                        <a href="{% url 'journal:list' %}" class="btn btn-lg btn-secondary">Back</a>
+                        <a href="{% url 'journal:delete' pk=object.pk %}" class="btn btn-lg btn-danger">Delete</a>
+                        <a href="{% url 'journal:update' pk=object.pk %}" class="btn btn-lg btn-success">Update</a>
+                    </div>
+                    {% else %}
+                    <div class="container float-start text-center">
+                        <a href="{% url 'journal:list' %}" class="btn btn-lg btn-secondary">List</a>
+                        <a href="{% url 'home' %}" class="btn btn-lg btn-info">Home</a>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+    {% include 'components/photoswipe.html' %}
+    {% endblock content %}

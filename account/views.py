@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Thu Oct, 06 2022, 21:58 279
+# Last Modified Date: Thu Oct, 27 2022, 12:10 300
 # Last Modified By  : lu5her <lu5her@mail>
 from datetime                           import datetime
 from re                                 import L
@@ -40,6 +40,7 @@ from announce.models import (
     Announce,
     Comment,
 )
+from document.models import Department, Document
 
 
 # Create your views here.
@@ -49,15 +50,20 @@ class HomeView(TemplateView):
 
     # TODO : make context
     def get_context_data(self, *args, **kwargs):
-        context             = super().get_context_data(*args, **kwargs)
-        context['announce'] = Announce.objects.all()
+        context                   = super().get_context_data(*args, **kwargs)
+        context['announce']       = Announce.objects.all()
         context['recent_comment'] = Comment.objects.all().order_by('-created_at')[:5]
+        all_inbox                 = Document.objects.filter(assigned_sector = self.request.user.profile.sector).count()
+        context['all_inbox']      = all_inbox
+        all_department            = Department.objects.filter(reciever__profile__sector = self.request.user.profile.sector).count()
+        context['new_inbox']      = str(all_inbox - all_department)
         try:
             context['not_read'] = Announce.objects.filter(
                 ~Q(author       = self.request.user) & ~Q(reads__id=self.request.user.id)
             )
         except:
             pass
+
         return context
 
 class RegisterView(CreateView):
