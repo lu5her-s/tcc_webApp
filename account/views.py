@@ -3,9 +3,9 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Thu Oct, 27 2022, 12:10 300
+# Last Modified Date: Fri Oct, 28 2022, 20:09 301
 # Last Modified By  : lu5her <lu5her@mail>
-from datetime                           import datetime
+import datetime
 from re                                 import L
 from django.contrib.auth                import update_session_auth_hash
 from django.contrib.auth.views          import PasswordChangeView
@@ -41,6 +41,7 @@ from announce.models import (
     Comment,
 )
 from document.models import Department, Document
+from journal.models import Journal
 
 
 # Create your views here.
@@ -63,6 +64,13 @@ class HomeView(TemplateView):
             )
         except:
             pass
+        context['journal'] = Journal.objects.filter(author=self.request.user)
+        today_min               = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
+        today_max               = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
+        context['today_journal'] = Journal.objects.filter(
+            author__profile__sector = self.request.user.profile.sector,
+            created_at__range=(today_min, today_max)
+        )
 
         return context
 

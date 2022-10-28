@@ -139,6 +139,7 @@ class JournalDeleteView(LoginRequiredMixin, DeleteView):
         context['title']    = 'Delete'
         context['header']   = 'ลบบันทึกการปฏิบัติงาน'
         context['btn_text'] = 'ยืนยันการลบ'
+        context['images'] = JournalImage.objects.filter(journal=self.get_object())
         return context
 
 def JournalCategoriesView(request, pk):

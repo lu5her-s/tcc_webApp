@@ -32,42 +32,42 @@
 
 
                         <div class="card-body">
-                            <h6 class="card-title"> Detail | <span> {{ object.doc_number }}</span></h6>
+                            <h6 class="card-title"> รายละเอียด | <span> {{ object.doc_number }}</span></h6>
                             <table class="table">
                                 <tr>
-                                    <th>Recieve Number</th>
+                                    <th>เลขทะเบียนรับ</th>
                                     <td>{{ object.recieve_number }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>Urgency</th>
+                                    <th>ความเร่งด่วน</th>
                                     <td>{{ object.urgency }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>Document Number</th>
+                                    <th>เลขที่เอกสาร</th>
                                     <td>{{ object.doc_number }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>Document Date</th>
+                                    <th>ลงวันที่</th>
                                     <td>{{ object.doc_date|thaidate }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>Title</th>
+                                    <th>เรื่อง</th>
                                     <td>{{ object.title|text_wrap:25 }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>From</th>
+                                    <th>จาก</th>
                                     <td>{{ object.author.profile.sector.name }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>Created at</th>
-                                    <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }} 
-                                        เวลา {{ object.created_at|timezone:"Asia/Bangkok"|date:"H:i" }} น.
+                                    <th>ส่งเมื่อ</th>
+                                    <td>{{ object.created_at|thaidate }} 
+                                        เวลา {{ object.created_at|date:"H:i" }} น.
                                     </td>
                                 </tr>
                             </table>
@@ -89,7 +89,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title text-center">Assigned Sector | <span>{{ object.doc_number }}</span></h5>
+                            <h5 class="card-title text-center">แผนกที่ส่งให้ | <span>{{ object.doc_number }}</span></h5>
                             <table class="table">
                                     {% for sector in object.assigned_sector.all %}
                                         <tr>
@@ -101,11 +101,11 @@
                                                                                {% comment %}data-bs-reciever="{{ sector.reciever }}"{% endcomment %}
                                                                                {% comment %}>{% endcomment %}
                                                 <i class="bi bi-check-circle text-success"></i>
-                                                <small class="text-success">accepted</small>
+                                                <small class="text-success">ตอบรับแล้ว</small>
                                             {% comment %}</a> {% endcomment %}
                                             {% else %}
                                                 <i class="bi bi-x-circle text-danger"></i>
-                                                <small class="text-danger">Not accepted</small>
+                                                <small class="text-danger">ยังไม่ตอบรับ</small>
                                             {% endif %}
                                             </td>
                                         </tr>

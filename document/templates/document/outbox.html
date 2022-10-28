@@ -4,11 +4,11 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Inbox List{% endblock title %}
+{% block title %}Outbox List{% endblock title %}
 
 {% block content %}
 <div class="pagetitle">
-    <h1>All {{ request.user.profile.sector.name|title }} Outbox</h1>
+    <h1>กล่องขาออก : {{ request.user.profile.sector.name|title }}</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
@@ -34,7 +34,7 @@
                             <span>
                                 <a href="{% url 'document:create' %}" class="align-right btn btn-success" style="float: right">
                                     <i class="bi bi-plus">
-                                        New
+                                        สร้างเอกสาร
                                     </i>
                                 </a>
                             </span>
@@ -44,11 +44,11 @@
                         <table class="table table-hover datatable" id="dataTable">
                             <thead>
                                 <tr>
-                                    <th scope="col">No.</th>
-                                    <th scope="col">Urgency</th>
-                                    <th scope="col">Doc no.</th>
-                                    <th scope="col">Doc Date</th>
-                                    <th scope="col">Send to</th>
+                                    <th scope="col">เลขรับ</th>
+                                    <th scope="col">ความเร่งด่วน</th>
+                                    <th scope="col">เลขที่เอกสาร</th>
+                                    <th scope="col">ลงวันที่</th>
+                                    <th scope="col">ส่งถึง</th>
                                     <th scope="col">...</th>
                                 </tr>
                             </thead>

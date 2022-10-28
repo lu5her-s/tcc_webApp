@@ -41,6 +41,9 @@
                         <a href="{{ user.profile.instagram }}" class="instagram"><i class="bi bi-instagram"></i></a>
                         {% comment %}<a href="{{ request.user.profile.line_id }}" class="linkedin"><i class="bi bi-line"></i></a>{% endcomment %}
                     </div>
+                    <div class="social-links mt-2">
+                        <i class="bi bi-line">{{ user.profile.line_id }}</i>
+                    </div>
                 </div>
             </div>
 
@@ -85,7 +88,7 @@
                             <h5 class="card-title">Profile Details</h5>
 
                             <div class="row">
-                                <div class="col-lg-3 col-md-4 label ">Full Name</div>
+                                <div class="col-lg-3 col-md-4 label ">ยศ ชื่อ-สกุล</div>
                                 {% if user.get_full_name %}
                                 <div class="col-lg-9 col-md-8">{{ user.profile.rank.name }} {{ user.get_full_name }}</div>
                                 {% else %}
@@ -94,7 +97,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-lg-3 col-md-4 label">Sector</div>
+                                <div class="col-lg-3 col-md-4 label">สังกัด</div>
                                 {% if user.profile.sector %}
                                 <div class="col-lg-9 col-md-8">{{ user.profile.sector }}</div>
                                 {% else %}
@@ -103,7 +106,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-lg-3 col-md-4 label">Job</div>
+                                <div class="col-lg-3 col-md-4 label">ตำแหน่ง</div>
                                 {% if user.profile.position %}
                                 <div class="col-lg-9 col-md-8">{{ user.profile.position }}</div>
                                 {% else %}
@@ -112,7 +115,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-lg-3 col-md-4 label">Place</div>
+                                <div class="col-lg-3 col-md-4 label">สถานที่ทำงาน</div>
                                 {% if user.profile.place %}
                                 <div class="col-lg-9 col-md-8">{{ user.profile.place }}</div>
                                 {% else %}
@@ -121,7 +124,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-lg-3 col-md-4 label">Address</div>
+                                <div class="col-lg-3 col-md-4 label">ที่อยู่</div>
                                 {% if user.profile.address %}
                                 <div class="col-lg-9 col-md-8">{{ user.profile.address }}</div>
                                 {% else %}
@@ -130,7 +133,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-lg-3 col-md-4 label">Phone</div>
+                                <div class="col-lg-3 col-md-4 label">โทรศัพท์</div>
                                 {% if user.profile.phone %}
                                 <div class="col-lg-9 col-md-8">{{ user.profile.phone }}</div>
                                 {% else %}
@@ -284,7 +287,7 @@
                                 </div>
 
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    <button type="submit" class="btn btn-primary">บันทึก</button>
                                 </div>
                             </form><!-- End Profile Edit Form -->
 

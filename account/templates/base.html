@@ -19,6 +19,9 @@
         <!-- Google Fonts -->
         <link href="https://fonts.gstatic.com" rel="preconnect">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        {% comment %}<link href="https://fonts.googleapis.com/css2?family=Krub:wght@300&display=swap" rel="stylesheet">{% endcomment %}
 
         <!-- Vendor CSS Files -->
         <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -68,7 +71,7 @@
 
                                     <a href="{% url 'announce:list' %}">
                                         <div class="card-body">
-                                            <h5 class="card-title">Announce <span>| All</span></h5>
+                                            <h5 class="card-title">ประชาสัมพันธ์/สั่งการ <span>| All</span></h5>
 
                                             <div class="d-flex align-items-center">
                                                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -77,7 +80,7 @@
                                                 <div class="ps-3">
                                                     <h6>{{ announce.count }}</h6>
                                                     {% if user.is_authenticated %}
-                                                    <span class="text-success small pt-1 fw-bold">{{ not_read.count }}</span> <span class="text-muted small pt-2 ps-1">Not Read</span>
+                                                    <span class="text-success small pt-1 fw-bold">{{ not_read.count }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่อ่าน</span>
                                                     {% endif %}
 
                                                 </div>
@@ -92,21 +95,22 @@
                             <div class="col-xxl-4 col-md-6">
                                 <div class="card info-card bg-card">
 
+                                    <a href="#">
+                                        <div class="card-body">
+                                            <h5 class="card-title">การมอบหมาย <span>| All</span></h5>
 
-                                    <div class="card-body">
-                                        <h5 class="card-title">Assigned <span>| All</span></h5>
+                                            <div class="d-flex align-items-center">
+                                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                    <i class="bi bi-briefcase text-danger"></i>
+                                                </div>
+                                                <div class="ps-3">
+                                                    <h6>dddd</h6>
+                                                    <span class="text-success small pt-1 fw-bold">8</span> <span class="text-muted small pt-2 ps-1">ยังไม่ตอบรับ</span>
 
-                                        <div class="d-flex align-items-center">
-                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                <i class="bi bi-briefcase text-danger"></i>
-                                            </div>
-                                            <div class="ps-3">
-                                                <h6>dddd</h6>
-                                                <span class="text-success small pt-1 fw-bold">8</span> <span class="text-muted small pt-2 ps-1">Not Accepted</span>
-
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </a>
 
                                 </div>
                             </div><!-- End Revenue Card -->
@@ -115,21 +119,22 @@
                             <div class="col-xxl-4 col-md-6">
                                 <div class="card info-card bg-card">
 
+                                    <a href="{% url 'journal:list' %}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">การปฏิบัติงาน <span>| All</span></h5>
 
-                                    <div class="card-body">
-                                        <h5 class="card-title">Journal <span>| All</span></h5>
+                                            <div class="d-flex align-items-center">
+                                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                                    <i class="bi bi-clipboard-plus text-info"></i>
+                                                </div>
+                                                <div class="ps-3">
+                                                    <h6>{{ journal.count }}</h6>
+                                                    <span class="text-success small pt-1 fw-bold">{{ today_journal.count }}</span> <span class="text-muted small pt-2 ps-1">วันนี้</span>
 
-                                        <div class="d-flex align-items-center">
-                                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                <i class="bi bi-app text-danger"></i>
-                                            </div>
-                                            <div class="ps-3">
-                                                <h6>dddd</h6>
-                                                <span class="text-success small pt-1 fw-bold">12</span> <span class="text-muted small pt-2 ps-1">Today</span>
-
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </a>
 
                                 </div>
                             </div><!-- End Journal Card -->
@@ -140,15 +145,15 @@
 
                                     <a href="#">
                                         <div class="card-body">
-                                            <h5 class="card-title">Asset <span>| To Me</span></h5>
+                                            <h5 class="card-title">สิ่งรับผิดชอบ <span>| To Me</span></h5>
 
                                             <div class="d-flex align-items-center">
                                                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-book text-danger"></i>
+                                                    <i class="bi bi-collection" style="color: seagreen"></i>
                                                 </div>
                                                 <div class="ps-3">
                                                     <h6>dddd</h6>
-                                                    <span class="text-success small pt-1 fw-bold">8</span> <span class="text-muted small pt-2 ps-1">Today</span>
+                                                    <span class="text-success small pt-1 fw-bold">8</span> <span class="text-muted small pt-2 ps-1">สิ่งรับผิดชอบ</span>
 
                                                 </div>
                                             </div>
@@ -166,15 +171,15 @@
 
                                     <a href="{% url 'document:home' %}">
                                         <div class="card-body">
-                                            <h5 class="card-title">Document <span>| To {{ request.user.profile.sector.name }}</span></h5>
+                                            <h5 class="card-title">สารบรรณ <span>| To {{ request.user.profile.sector.name }}</span></h5>
 
                                             <div class="d-flex align-items-center">
                                                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-book"></i>
+                                                    <i class="bi bi-book" style="color: darkgreen"></i>
                                                 </div>
                                                 <div class="ps-3">
                                                     <h6>{{ all_inbox }}</h6>
-                                                    <span class="text-danger small pt-1 fw-bold">{{ new_inbox }}</span> <span class="text-muted small pt-2 ps-1">Not Accepted</span>
+                                                    <span class="text-danger small pt-1 fw-bold">{{ new_inbox }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่ตอบรับ</span>
 
                                                 </div>
                                             </div>
@@ -192,7 +197,7 @@
 
 
                                     <div class="card-body">
-                                        <h5 class="card-title">Asset <span>| List All</span></h5>
+                                        <h5 class="card-title">ทรัพย์สิน <span>| List All</span></h5>
 
                                         <div class="d-flex align-items-center">
                                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -200,7 +205,7 @@
                                             </div>
                                             <div class="ps-3">
                                                 <h6>dddd</h6>
-                                                <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">Withdraw</span>
+                                                <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">ไม่พร้อม</span>
 
                                             </div>
                                         </div>
@@ -346,7 +351,7 @@
                         <div class="card">
 
                             <div class="card-body pb-0">
-                                <h5 class="card-title">Comments <span>| Recent</span></h5>
+                                <h5 class="card-title">Comments <span>| ล่าสุด</span></h5>
 
                                 <div class="news">
                                 {% for comment in recent_comment %}

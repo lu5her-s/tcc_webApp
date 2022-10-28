@@ -43,25 +43,25 @@
 
 
                         <div class="card-body">
-                            <h6 class="card-title"> Detail | <span> {{ object.title }}</span></h6>
+                            <h6 class="card-title"> รายละเอียด | <span> {{ object.title }}</span></h6>
                             <table class="table">
                                 <tr>
-                                    <th>Type</th>
+                                    <th>ประเภท</th>
                                     <td>{{ object.is_type }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>Status</th>
+                                    <th>สถานะ</th>
                                     <td>{{ object.status }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>Author</th>
+                                    <th>ผู้เขียน</th>
                                     <td>{{ object.author.profile.rank }} {{ object.author.get_full_name }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>Created at</th>
+                                    <th>เมื่อ</th>
                                     <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }} 
                                         เวลา {{ object.created_at|timezone:"Asia/Bangkok"|date:"H:i" }} น.
                                     </td>
@@ -218,14 +218,14 @@
 
                     {% if object.author.pk == request.user.pk %}
                     <div class="container float-start text-center">
-                        <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">Back</a>
-                        <a href="{% url 'announce:delete' pk=object.pk %}" class="btn btn-lg btn-danger">Delete</a>
-                        <a href="{% url 'announce:update' pk=object.pk %}" class="btn btn-lg btn-success">Update</a>
+                        <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                        <a href="{% url 'announce:delete' pk=object.pk %}" class="btn btn-lg btn-danger">ลบ</a>
+                        <a href="{% url 'announce:update' pk=object.pk %}" class="btn btn-lg btn-success">แก้ไข</a>
                     </div>
                     {% else %}
                     <div class="container float-start text-center">
-                        <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">List</a>
-                        <a href="{% url 'home' %}" class="btn btn-lg btn-info">Home</a>
+                        <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                        <a href="{% url 'home' %}" class="btn btn-lg btn-info">หน้าหลัก</a>
                     </div>
                     {% endif %}
 

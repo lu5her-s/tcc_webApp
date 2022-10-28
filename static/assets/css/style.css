@@ -1,15 +1,15 @@
-/**
-* Template Name: NiceAdmin - v2.4.0
-* Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
-
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
 :root {
   scroll-behavior: smooth;
+}
+
+@font-face {
+  font-family: 'Krub'; /* Define the custom font name */
+  src:  url('https://fonts.googleapis.com/css2?family=Krub:wght@300&display=swap'),
+        /*url('myfont.woff') format('woff'); [> Define where the font can be downloaded <]*/
+  unicode-range: U+0E00–U+0E7F; /* Define the available characters */
 }
 
 body {

@@ -34,22 +34,22 @@
                             <h6 class="card-title"> Delete | <span> {{ object.title }}</span></h6>
                             <table class="table">
                                 <tr>
-                                    <th>Type</th>
+                                    <th>ประเภท</th>
                                     <td>{{ object.is_type }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>Status</th>
+                                    <th>สถานะ</th>
                                     <td>{{ object.status }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>Author</th>
+                                    <th>ผู้เขียน</th>
                                     <td>{{ object.author.profile.rank }} {{ object.author.get_full_name }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>Created at</th>
+                                    <th>สร้างเมื่อ</th>
                                     <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }} 
                                         เวลา {{ object.created_at|timezone:"Asia/Bangkok"|date:"H:i" }} น.
                                     </td>
@@ -76,8 +76,8 @@
                     <div class="container float-start text-center">
                         <form method="post">
                             {% csrf_token %}
-                            <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">Back</a>
-                            <button type="submit" class="btn btn-lg btn-danger">Delete</button>
+                            <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">ยกเลิก</a>
+                            <button type="submit" class="btn btn-lg btn-danger">ยืนยันการลบ</button>
                         </form>
                     </div>
 
