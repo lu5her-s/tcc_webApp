@@ -1,4 +1,5 @@
 {% load static %}
+{% load tags %}
 
 <!-- ======= Sidebar ======= -->
   <aside id="sidebar" class="sidebar">
@@ -34,6 +35,19 @@
               <i class="bi bi-circle"></i><span>การปฏิบัติงาน</span>
             </a>
           </li>
+
+          <li>
+            {% if request.user|has_group:"Staff" %}
+            <a href="{% url 'assign:staff-list' %}">
+              <i class="bi bi-circle"></i><span>การมอบหมายงาน</span>
+            </a>
+            {% else %}
+            <a href="{% url 'assign:list' %}">
+              <i class="bi bi-circle"></i><span>การมอบหมายงาน</span>
+            </a>
+            {% endif %}
+          </li>
+
        </ul>
       </li><!-- End Components Nav -->
 

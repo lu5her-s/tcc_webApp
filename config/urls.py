@@ -3,7 +3,7 @@
 # File              : urls.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 22 2022, 15:06 265
-# Last Modified Date: Thu Oct, 27 2022, 20:18 300
+# Last Modified Date: Fri Oct, 28 2022, 23:31 301
 # Last Modified By  : lu5her <lu5her@mail>
 """config URL Configuration
 
@@ -34,13 +34,14 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('test/', TemplateView.as_view(template_name="test.html"), name='test'),
     path('', views.HomeView.as_view(), name="home"),
-    
+
     #internal url
     path('account/', include('account.urls')),
     path('account/', include('django.contrib.auth.urls')),
     path('announce/', include('announce.urls')),
     path('document/', include('document.urls')),
     path('journal/', include('journal.urls')),
+    path('assign/', include('assign.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

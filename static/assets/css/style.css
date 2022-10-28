@@ -5,15 +5,9 @@
   scroll-behavior: smooth;
 }
 
-@font-face {
-  font-family: 'Krub'; /* Define the custom font name */
-  src:  url('https://fonts.googleapis.com/css2?family=Krub:wght@300&display=swap'),
-        /*url('myfont.woff') format('woff'); [> Define where the font can be downloaded <]*/
-  unicode-range: U+0E00–U+0E7F; /* Define the available characters */
-}
-
 body {
-  font-family: "Open Sans", sans-serif, Impact, Haettenschweiler, 'Arial Narrow Bold';
+  /*font-family: "Open Sans", sans-serif, Impact, Haettenschweiler, 'Arial Narrow Bold';*/
+  font-family: "Krub", sans-serif, Impact, Haettenschweiler, 'Arial Narrow Bold';
   background: #f6f9ff;
   color: #444444;
 }

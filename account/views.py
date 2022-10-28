@@ -3,10 +3,9 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Fri Oct, 28 2022, 20:09 301
+# Last Modified Date: Sat Oct, 29 2022, 00:08 302
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
-from re                                 import L
 from django.contrib.auth                import update_session_auth_hash
 from django.contrib.auth.views          import PasswordChangeView
 from django.contrib.contenttypes.models import Q
@@ -46,7 +45,7 @@ from journal.models import Journal
 
 # Create your views here.
 
-class HomeView(TemplateView):
+class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'base.html'
 
     # TODO : make context
@@ -58,12 +57,6 @@ class HomeView(TemplateView):
         context['all_inbox']      = all_inbox
         all_department            = Department.objects.filter(reciever__profile__sector = self.request.user.profile.sector).count()
         context['new_inbox']      = str(all_inbox - all_department)
-        try:
-            context['not_read'] = Announce.objects.filter(
-                ~Q(author       = self.request.user) & ~Q(reads__id=self.request.user.id)
-            )
-        except:
-            pass
         context['journal'] = Journal.objects.filter(author=self.request.user)
         today_min               = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
         today_max               = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
@@ -71,6 +64,12 @@ class HomeView(TemplateView):
             author__profile__sector = self.request.user.profile.sector,
             created_at__range=(today_min, today_max)
         )
+        try:
+            context['not_read'] = Announce.objects.filter(
+                ~Q(author       = self.request.user) & ~Q(reads__id=self.request.user.id)
+            )
+        except:
+            pass
 
         return context
 

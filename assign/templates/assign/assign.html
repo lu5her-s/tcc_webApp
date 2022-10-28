@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Assign{% endblock title %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>มอบหมายการปฏิบัติงาน</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active">assign list</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section profile">
+    <div class="row">
+
+        <div class="col-xl-12">
+
+            <!-- Recent Job -->
+            <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+
+                    <div class="card-body">
+                        <h5 class="card-title">{{ title }} 
+                            <span>| List</span>
+                            {% if request.user|has_group:"Staff" %}
+                            <span>
+                                <a href="{% url 'assign:create' %}" class="align-right btn btn-success" style="float: right">
+                                    <i class="bi bi-plus">
+                                        มอบหมายงาน
+                                    </i>
+                                </a>
+                            </span>
+                            {% endif %}
+                        </h5>
+                        <br>
+
+                        <table class="table table-hover datatable" id="dataTable">
+                            {% if request.user|has_group:"Staff" %}
+
+                            <thead>
+                                <tr>
+                                    <th scope="col">เรื่อง</th>
+                                    <th scope="col">มอบหมายให้</th>
+                                    <th scope="col">เมื่อ</th>
+                                    <th scope="col">สถานะ</th>
+                                    <th scope="col">การตอบรับ</th>
+                                    <th scope="col">...</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for object in object_list %}
+                                <tr>
+                                    <th>{{ object.title }}</th>
+                                    <td>{{ object.assigned_to.rank }}{{ object.assigned_to.user.get_full_name }}</td>
+                                    <td>{{ object.created_at|thaidate }}</td>
+                                    <td>
+                                        {% if object.status %}
+                                        {{ object.status.name }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if object.accepted %}
+                                        <i class="bi bi-check-circle" style="color: green"></i>&nbsp;ตอบรับแล้ว
+                                        {% else %}
+                                        <i class="bi bi-x-circle" style="color: red"></i>&nbsp;ยังไม่ตอบรับ
+                                        {% endif %}
+                                    </td>
+                                    <td><a href="{% url 'assign:detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            {% else %}
+                            <thead>
+                                <tr>
+                                    <th scope="col">เรื่อง</th>
+                                    <th scope="col">ผู้มอบหมาย</th>
+                                    <th scope="col">มอบหมายเมื่อ</th>
+                                    <th scope="col">สถานะ</th>
+                                    <th scope="col">การตอบรับ</th>
+                                    <th scope="col">...</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for object in object_list %}
+                                <tr>
+                                    <td>{{ object.title }}</td>
+                                    <td>{{ object.author.profile.rank }}{{ object.author.get_full_name }}</td>
+                                    <td>{{ object.created_at|thaidate }}</td>
+                                    <td>
+                                        {% if object.status %}
+                                        {{ object.status.name }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </td>
+                                    <!--<td>{{ object.accepted }}</td>-->
+                                    <td>
+                                        {% if object.accepted %}
+                                        <i class="bi bi-check-circle" style="color:green"></i>&nbsp;ตอบรับแล้ว
+                                        {% else %}
+                                        <i class="bi bi-x-circle" style="color:red"></i>&nbsp;ยังไม่ตอบรับ
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'assign:detail' pk=object.pk %}" class="badge bg-secondary">Detail</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            {% endif %}
+                        </table>
+
+                    </div>
+
+                </div>
+            </div><!-- End Announce List -->
+            {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
+
+        </div>
+
+    </div>
+    </div>
+</section>
+{% endblock content %}
