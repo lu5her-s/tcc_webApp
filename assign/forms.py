@@ -3,7 +3,7 @@
 # File              : forms.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Fri Oct, 28 2022, 21:13 301
-# Last Modified Date: Sat Oct, 29 2022, 00:15 302
+# Last Modified Date: Sat Oct, 29 2022, 11:36 302
 # Last Modified By  : lu5her <lu5her@mail>
 from django import forms
 from django.forms import widgets
@@ -13,7 +13,7 @@ from account.models import Profile
 
 from account.models import LineToken
 
-from assign.models import Assign, AssignProgress
+from assign.models import Assign, AssignImage, AssignProgress
 
 #class LineTokenMultiple(forms.ModelMultipleChoiceField):
     #def label_form_instance(self, obj: LineToken) -> str:
@@ -74,3 +74,23 @@ class NoteForm(forms.ModelForm):
     class Meta:
         model = AssignProgress
         fields = ('note',)
+
+        widgets = {
+            'note': widgets.Textarea(attrs={'class': 'form-control'}),
+        }
+
+        labels = {
+            'note': 'บันทึก',
+        }
+
+class CloseAssignForm(forms.ModelForm):
+    class Meta:
+        model = AssignImage
+        fields = ('images',)
+
+        widgets = {
+            'images': widgets.FileInput(attrs={'class': 'form-control', 'required': False}),
+        }
+        labels = {
+            'images': 'ภาพการทำงาน',
+        }
