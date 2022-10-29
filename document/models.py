@@ -78,6 +78,7 @@ class Department(models.Model):
     for accepted document from header
     """
 
+    # document        = models.ManyToMany(Document, on_delete=models.CASCADE)
     document        = models.ForeignKey(Document, on_delete=models.CASCADE)
     # sector = models.ForeignKey(Sector, on_delete=models.CASCADE)
     # recieved        = models.BooleanField(default=False)

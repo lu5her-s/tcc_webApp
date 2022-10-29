@@ -66,7 +66,11 @@
                                             {% endfor %}
                                         </ul>
                                     </td>
-                                    <td><a href="{% url 'document:outbox-detail' pk=object.pk %}" class="btn btn-sm btn-info">Detail</a></td>
+                                    <td>
+                                        <a href="{% url 'document:outbox-detail' pk=object.pk %}">
+                                            <span class="badge bg-secondary">Detail</span>
+                                        </a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

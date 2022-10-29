@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Sat Oct, 29 2022, 00:08 302
+# Last Modified Date: Sun Oct, 30 2022, 00:12 303
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.contrib.auth                import update_session_auth_hash
@@ -41,6 +41,7 @@ from announce.models import (
 )
 from document.models import Department, Document
 from journal.models import Journal
+from assign.models import Assign
 
 
 # Create your views here.
@@ -70,6 +71,12 @@ class HomeView(LoginRequiredMixin, TemplateView):
             )
         except:
             pass
+        if self.request.user.groups.filter(name="Staff"):
+            context['assign'] = Assign.objects.filter(author=self.request.user)
+            context['wait_assign'] = Assign.objects.filter(author=self.request.user, accepted=False)
+        else:
+            context['assign'] = Assign.objects.filter(assigned_to__user=self.request.user)
+            context['wait_assign'] = Assign.objects.filter(assigned_to__user=self.request.user, accepted=False)
 
         return context
 

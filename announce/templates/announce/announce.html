@@ -58,11 +58,11 @@
                                     <td><a href="{% url 'announce:detail' pk=object.pk %}" class="text-primary">{{ object.title }}</a></td>
                                     <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }}</td>
                                     {% if not object in read and not object.author == request.user %}
-                                    <td><span href="#" class="badge bg-warning text-black">Not Read</span></td>
+                                    <td><a href="{% url 'announce:detail' pk=object.pk %}"><span  class="badge bg-warning text-black">Not Read</span></a></td>
                                     {% elif object.author == request.user %}
-                                    <td><span href="#" class="badge bg-secondary">Own</span></td>
+                                    <td><a href="{% url 'announce:detail' pk=object.pk %}"><span href="#" class="badge bg-secondary">Own</span></a></td>
                                     {% else %}
-                                    <td><span href="#" class="badge bg-success">Accepted</span></td>
+                                    <td><a href="{% url 'announce:detail' pk=object.pk %}"><span href="#" class="badge bg-success">Accepted</span></a></td>
                                     {% endif %}
                                 </tr>
                                 {% endfor %}

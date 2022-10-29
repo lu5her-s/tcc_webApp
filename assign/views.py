@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Fri Oct, 28 2022, 21:12 301
-# Last Modified Date: Fri Oct, 28 2022, 23:39 301
+# Last Modified Date: Sun Oct, 30 2022, 00:24 303
 # Last Modified By  : lu5her <lu5her@mail>
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
@@ -17,6 +17,7 @@ from django.views.generic import (
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from account.models import Profile
 
 from assign.forms import AssignForm, ProgressForm, NoteForm
 from assign.models import (

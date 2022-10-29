@@ -3,7 +3,7 @@
 # File              : forms.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Fri Oct, 28 2022, 21:13 301
-# Last Modified Date: Sat Oct, 29 2022, 11:36 302
+# Last Modified Date: Sun Oct, 30 2022, 00:30 303
 # Last Modified By  : lu5her <lu5her@mail>
 from django import forms
 from django.forms import widgets
@@ -48,7 +48,7 @@ class AssignForm(forms.ModelForm):
                 'body'        : widgets.Textarea(attrs    = {'class': 'form-control'}),
                 # 'body'        : RichTextField(),
                 # 'detail' : CKEditorWidget(attrs={'class': 'w3-input'}),
-                'assigned_to' : widgets.Select(attrs      = {'class': 'form-select'}),
+                'assigned_to' : widgets.Select(attrs      = {'class': 'form-select', 'placeholder': 'เลือกผู้ปฏิบัติงาน'}),
                 'author'      : widgets.HiddenInput(attrs = {'class': 'form-control', 'id': 'author'}),
                 }
         labels = {
@@ -63,7 +63,7 @@ class ProgressForm(forms.ModelForm):
         fields = ('status',)
 
         widgets = {
-                'status' : widgets.Select(attrs={'class': 'form-control'}),
+                'status' : widgets.Select(attrs={'class': 'form-select'}),
                 #'note': widgets.Textarea(attrs={'class': 'form-control'}),
                 }
         labels = {
@@ -76,7 +76,7 @@ class NoteForm(forms.ModelForm):
         fields = ('note',)
 
         widgets = {
-            'note': widgets.Textarea(attrs={'class': 'form-control'}),
+            'note': widgets.Textarea(attrs={'class': 'form-control', 'rows':3}),
         }
 
         labels = {

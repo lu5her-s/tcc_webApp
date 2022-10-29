@@ -139,7 +139,7 @@
                             </div>
 
                             <input type="hidden" name="assign_id" value="{{ object.pk }}">
-                            <button class="btn" style="float: right; background-color: purple; color: white;" type="submit">อัพเดท</button>
+                            <button class="btn btn-lg" style="float: right; background-color: purple; color: white;" type="submit">อัพเดท</button>
                         </form>
                         {% endif %}
                     </div>
@@ -169,15 +169,15 @@
 
                 {% if object.author.pk == request.user.pk %}
                 <div class="container float-start text-center">
-                    <a href="{% url 'journal:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                    <a href="{% url 'journal:delete' pk=object.pk %}" class="btn btn-lg btn-danger">ลบ</a>
-                    <a href="{% url 'journal:update' pk=object.pk %}" class="btn btn-lg btn-success">แก้ไข</a>
+                    <a href="{% url 'assign:staff-list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                    <a href="{% url 'assign:delete' pk=object.pk %}" class="btn btn-lg btn-danger">ลบ</a>
+                    <a href="{% url 'assign:update' pk=object.pk %}" class="btn btn-lg btn-success">แก้ไข</a>
                 </div>
                 {% else %}
                 <div class="container float-start text-center">
-                    <a href="{% url 'journal:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                    <a href="{% url 'assign:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
                     <a href="{% url 'home' %}" class="btn btn-lg btn-info">หน้าหลัก</a>
-                    <a href="#" class="btn btn-lg btn-success">ปิดงาน</a>
+                    {% comment %}<a href="#" class="btn btn-lg btn-success">ปิดงาน</a>{% endcomment %}
                 </div>
                 {% endif %}
 
