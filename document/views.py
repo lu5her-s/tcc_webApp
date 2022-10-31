@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Oct, 06 2022, 23:34 279
-# Last Modified Date: Sat Oct, 29 2022, 21:26 302
+# Last Modified Date: Mon Oct, 31 2022, 22:19 304
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.contrib.auth.mixins         import LoginRequiredMixin
@@ -92,6 +92,7 @@ class InboxListView(LoginRequiredMixin, ListView):
         context['title'] = 'กล่องขาเข้า'
         # pk_list = Department.objects.all().sector_set.filter(name=self.request.user.profile.sector.name).values_list('reciever__profile__sector', flat=True)
         pk_list = Department.objects.filter(reciever__profile__sector = self.request.user.profile.sector).values_list('document__pk', flat=True)
+        # pk_list = Department.objects.filter(reciever__profile__sector = self.request.user.profile.sector)
         context['all_accepted'] = pk_list
         
         return context
@@ -140,7 +141,7 @@ class OutboxDetailView(LoginRequiredMixin, DetailView):
             context['accepted'] = d
         except:
             context['accepted'] = None
-        context['all_accepted'] = Document.objects.get(pk=self.get_object().pk).department_set.all().values_list('reciever__profile__sector__pk')
+        context['all_accepted'] = Document.objects.get(pk=self.get_object().pk).department_set.all().values_list('reciever__profile__sector__pk', flat=True)
         context['accept_detail'] = Department.objects.filter(document=self.get_object())
         return context
 

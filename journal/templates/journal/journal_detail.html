@@ -16,19 +16,32 @@
             <li class="breadcrumb-item active">{{ object.title }}</li>
         </ol>
     </nav>
-    </div><!-- End Page Title -->
+</div><!-- End Page Title -->
 
 
-    <section class="section">
-        <div class="row">
+<section class="section">
+    <div class="row">
 
-            <div class="col-xl-12">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body pt-3">
+                    <ul class="nav nav-tabs nav-tabs-bordered">
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
+                                รายละเอียด
+                            </button>
+                        </li>
+                        {% if images %}
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#image">
+                                ภาพการทำงาน
+                            </button>
+                        </li>{% endif %}
+                    </ul>
 
-                <!-- Recent Job -->
-                <div class="col-12">
-                    <div class="card overflow-auto">
-
-                        <div class="card-body">
+                    <!-- start tab content -->
+                    <div class="tab-content pt-2">
+                        <div id="detail" class="tab-pane fade show active">
                             <h6 class="card-title"> รายละเอียด | <span> {{ object.title }}</span></h6>
                             <table class="table">
                                 <tr>
@@ -40,11 +53,6 @@
                                     <th>สถานะ</th>
                                     <td>{{ object.status }}</td>
                                 </tr>
-
-                                {% comment %}<tr>{% endcomment %}
-                                    {% comment %}<th>ผู้สร้าง</th>{% endcomment %}
-                                    {% comment %}<td>{{ object.author.profile.rank }} {{ object.author.get_full_name }}</td>{% endcomment %}
-                                {% comment %}</tr>{% endcomment %}
 
                                 <tr>
                                     <th>สร้างเมื่อ</th>
@@ -63,18 +71,9 @@
                                 </tr>
                             </table>
 
-                            {% comment %}{% for img in images %}{% endcomment %}
-                                {% comment %}<img src="{{ img.images.url }}" alt="">{% endcomment %}
-                                {% comment %}{{ img.images.url }}{% endcomment %}
-                            {% comment %}{% endfor %}{% endcomment %}
+                        </div><!-- end detail -->
 
-
-                        </div>
-                    </div>
-
-                    {% if images %}
-                    <div class="card">
-                        <div class="card-body">
+                        <div id="image" class="tab-pane fade pt-3">
                             <h5 class="card-title">Image | <span>{{ object.title }}</span></h5>
 
                             <!-- Slides with indicators -->
@@ -84,32 +83,21 @@
                                     <img height="150" width="150" src="{{ item.images.url }}" alt="">
                                 </a> {% endcomment %}
                                 <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
-                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                                    <img height="250" width="250" src="{{ item.images.url }}" alt="">
                                 </a>
                                 {% endfor %}
                             </div>
 
                         </div>
                     </div>
-                    {% endif %}
 
-                    {% if object.author.pk == request.user.pk %}
-                    <div class="container float-start text-center">
-                        <a href="{% url 'journal:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                        <a href="{% url 'journal:delete' pk=object.pk %}" class="btn btn-lg btn-danger">ลบ</a>
-                        <a href="{% url 'journal:update' pk=object.pk %}" class="btn btn-lg btn-success">แก้ไข</a>
-                    </div>
-                    {% else %}
-                    <div class="container float-start text-center">
-                        <a href="{% url 'journal:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                        <a href="{% url 'home' %}" class="btn btn-lg btn-info">หน้าหลัก</a>
-                    </div>
-                    {% endif %}
+                </div><!-- end image -->
 
-                </div>
+            </div><!-- end tab content -->
 
-            </div>
         </div>
-    </section>
-    {% include 'components/photoswipe.html' %}
-    {% endblock content %}
+    </div>
+
+</section>
+{% include 'components/photoswipe.html' %}
+{% endblock content %}

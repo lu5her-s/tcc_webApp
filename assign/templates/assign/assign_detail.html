@@ -20,195 +20,194 @@
             <li class="breadcrumb-item active">{{ object.title }}</li>
         </ol>
     </nav>
-    </div><!-- End Page Title -->
+</div><!-- End Page Title -->
 
 
-    <section class="section">
-        <div class="row">
+<section class="section">
+    <div class="row">
 
-            <div class="col-xl-12">
-                <div class="card">
-                    <div class="card-body pt-3">
-                        <ul class="nav nav-tabs nav-tabs-bordered">
-                            <li class="nav-item">
-                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
-                                    รายละเอียด
-                                </button>
-                            </li>
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body pt-3">
+                    <ul class="nav nav-tabs nav-tabs-bordered">
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
+                                รายละเอียด
+                            </button>
+                        </li>
 
-                            <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#notes">
-                                    บันทึกการทำงาน
-                                </button>
-                            </li>
-                        </ul>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#notes">
+                                บันทึกการทำงาน
+                            </button>
+                        </li>
+                    </ul>
 
-                        <div class="tab-content pt-2">
+                    <div class="tab-content pt-2">
 
-                            <div id="detail" class="tab-pane fade show active">
-                                <h6 class="card-title"> รายละเอียด | <span> {{ object.title }}</span></h6>
-                                <table class="table">
-                                    <tr>
-                                        <th>เรื่อง</th>
-                                        <td>{{ object.title }}</td>
-                                    </tr>
+                        <div id="detail" class="tab-pane fade show active">
+                            <h6 class="card-title"> รายละเอียด | <span> {{ object.title }}</span></h6>
+                            <table class="table">
+                                <tr>
+                                    <th>เรื่อง</th>
+                                    <td>{{ object.title }}</td>
+                                </tr>
 
-                                    <tr>
-                                        <th>มอบหมายให้</th>
-                                        <td>{{ object.assigned_to.rank }}{{ object.assigned_to.user.get_full_name }}</td>
-                                    </tr>
+                                <tr>
+                                    <th>มอบหมายให้</th>
+                                    <td>{{ object.assigned_to.rank }}{{ object.assigned_to.user.get_full_name }}</td>
+                                </tr>
 
-                                    <tr>
-                                        <th>สถานะ</th>
-                                        {% if object.accepted %}
-                                        <td>
-                                            <i class="bi bi-check-circle" style="color: green;"></i>
-                                            ตอบรับแล้ว เมื่อ<br>
-                                            {{ object.accepted_on|thaidate }} เวลา 
-                                            {{ object.accepted_on|date:"H:i" }} น.
-                                        </td>
-                                        {% else %}
-                                        <td>
-                                            <i class="bi bi-x-circle" style="color:red"></i>
-                                            ยังไม่ตอบรับ
-                                        </td>
-                                        {% endif %}
-                                    </tr>
-
-                                    {% comment %}<tr>{% endcomment %}
-                                        {% comment %}<th>ผู้สร้าง</th>{% endcomment %}
-                                        {% comment %}<td>{{ object.author.profile.rank }} {{ object.author.get_full_name }}</td>{% endcomment %}
-                                        {% comment %}</tr>{% endcomment %}
-
-                                    <tr>
-                                        <th>สร้างเมื่อ</th>
-                                        <td>{{ object.created_at|thaidate }} 
-                                            เวลา {{ object.created_at|date:"H:i" }} น.
-                                        </td>
-                                    </tr>
-                                </table>
-
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <th class="text-center">รายละเอียด</th>
-                                    </tr>
-                                    <tr>
-                                        <td>{{ object.body|safe|linebreaks }}</td>
-                                    </tr>
-                                </table>
-
-                            </div><!-- end detail -->
-
-                            <div id="notes" class="tab-pane fade pt-3">
-                                {% if note %}
-                                <h5 class="card-title">บันทึกการทำงาน | <span>{{ object.title }}</span></h5>
-                                <table class="table table-borderless">
-                                    {% for n in note %}
-                                    <tr style="border-bottom: 2px dashed grey;">
-                                        {% if n.status is not None %}<td>({{ n.status }}) : </td>{% endif %}
-                                        <td>{{ n.note|linebreaks }}</td>
-                                        <td>{{ n.created_at|thaidate }} เวลา {{ n.created_at|date:"H:m" }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </table>
-                                {% else %}
-                                    {% if request.user == object.author %}
-                                        <h5><i class="bi bi-x-circle" style="color: red;">ยังไม่ตอบรับการมอบหมายงาน</i></h5>
-                                        <p>รอ 
-                                            <a href="{% url 'account:member' pk=object.assigned_to.user.pk %}">
-                                                {{ object.assigned_to.rank }} {{ object.assigned_to.user.get_full_name }}
-                                            </a> ตอบรับงาน 
-                                        </p>
-                                        {% comment %}<p><a href="{% url 'account:member' pk=object.assigned_to.user.pk %}">รายละเอียด</a></p>{% endcomment %}
-                                    {% endif %}
-                                {% endif %}
-
-                                {% if request.user.profile == object.assigned_to %}
-                                    <h5 class="card-title">การตอบรับการมอบหมาย | <span>{{ object.title }}</span></h5>
-                                    {% if not object.accepted %}
-                                        <p>
-                                            <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
-                                            <span>
-                                                กรุณาตอบรับการมอบหมายงานจาก
-                                                <a href="{% url 'account:member' pk=object.author.pk %}">
-                                                     {{ object.author.profile.rank }}{{ object.author.get_full_name }}
-                                                </a>
-                                            </span>
-                                        </p>
-                                        <center>
-                                            <a href="{% url 'assign:accept' pk=object.pk %}" class="btn btn-success">ตอบรับงาน</a>
-                                        </center>
+                                <tr>
+                                    <th>สถานะ</th>
+                                    {% if object.accepted %}
+                                    <td>
+                                        <i class="bi bi-check-circle" style="color: green;"></i>
+                                        ตอบรับแล้ว เมื่อ<br>
+                                        {{ object.accepted_on|thaidate }} เวลา 
+                                        {{ object.accepted_on|date:"H:i" }} น.
+                                    </td>
                                     {% else %}
-                                    <form method="post" enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                        {{ form.media }}
-                                        <div class="row mb-3">
-                                            <label for="{{ form.status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.status.label }}</label>
-                                            <div class="col-md-8 col-lg-9">
-                                                {{ form.status }}
-                                            </div>
-                                        </div>
+                                    <td>
+                                        <i class="bi bi-x-circle" style="color:red"></i>
+                                        ยังไม่ตอบรับ
+                                    </td>
+                                    {% endif %}
+                                </tr>
 
-                                        <div class="row mb-3">
-                                            <label for="{{ Noteform.note.name }}" class="col-md-4 col-lg-3 col-form-label">{{ note_form.note.label }}</label>
-                                            <div class="col-md-8 col-lg-9">
-                                                {{ note_form.note }}
-                                            </div>
-                                        </div>
+                                {% comment %}<tr>{% endcomment %}
+                                    {% comment %}<th>ผู้สร้าง</th>{% endcomment %}
+                                    {% comment %}<td>{{ object.author.profile.rank }} {{ object.author.get_full_name }}</td>{% endcomment %}
+                                    {% comment %}</tr>{% endcomment %}
 
-                                        <input type="hidden" name="assign_id" value="{{ object.pk }}">
-                                        <button class="btn btn-lg" style="float: right; background-color: purple; color: white;" type="submit">อัพเดท</button>
-                                    </form>
-                                {% endif %}
+                                <tr>
+                                    <th>สร้างเมื่อ</th>
+                                    <td>{{ object.created_at|thaidate }} 
+                                        เวลา {{ object.created_at|date:"H:i" }} น.
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th class="text-center">รายละเอียด</th>
+                                </tr>
+                                <tr>
+                                    <td>{{ object.body|safe|linebreaks }}</td>
+                                </tr>
+                            </table>
+
+                        </div><!-- end detail -->
+
+                        <div id="notes" class="tab-pane fade pt-3">
+                            {% if note %}
+                            <h5 class="card-title">บันทึกการทำงาน | <span>{{ object.title }}</span></h5>
+                            <table class="table table-borderless">
+                                {% for n in note %}
+                                <tr style="border-bottom: 2px dashed grey;">
+                                    {% if n.status is not None %}<td>({{ n.status }}) : </td>{% endif %}
+                                    <td>{{ n.note|linebreaks }}</td>
+                                    <td>{{ n.created_at|thaidate }} เวลา {{ n.created_at|date:"H:m" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                            {% else %}
+                            {% if request.user == object.author %}
+                            <h5><i class="bi bi-x-circle" style="color: red;">ยังไม่ตอบรับการมอบหมายงาน</i></h5>
+                            <p>รอ 
+                                <a href="{% url 'account:member' pk=object.assigned_to.user.pk %}">
+                                    {{ object.assigned_to.rank }} {{ object.assigned_to.user.get_full_name }}
+                                </a> ตอบรับงาน 
+                            </p>
+                            {% comment %}<p><a href="{% url 'account:member' pk=object.assigned_to.user.pk %}">รายละเอียด</a></p>{% endcomment %}
+                            {% endif %}
                             {% endif %}
 
-                            </div><!-- end notes -->
+                            {% if request.user.profile == object.assigned_to %}
+                            <h5 class="card-title">การตอบรับการมอบหมาย | <span>{{ object.title }}</span></h5>
+                            {% if not object.accepted %}
+                            <p>
+                                <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
+                                <span>
+                                    กรุณาตอบรับการมอบหมายงานจาก
+                                    <a href="{% url 'account:member' pk=object.author.pk %}">
+                                        {{ object.author.profile.rank }}{{ object.author.get_full_name }}
+                                    </a>
+                                </span>
+                            </p>
+                            <center>
+                                <a href="{% url 'assign:accept' pk=object.pk %}" class="btn btn-success">ตอบรับงาน</a>
+                            </center>
+                            {% else %}
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ form.media }}
+                                <div class="row mb-3">
+                                    <label for="{{ form.status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.status.label }}</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        {{ form.status }}
+                                    </div>
+                                </div>
 
-                        </div><!-- end tab-content -->
+                                <div class="row mb-3">
+                                    <label for="{{ Noteform.note.name }}" class="col-md-4 col-lg-3 col-form-label">{{ note_form.note.label }}</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        {{ note_form.note }}
+                                    </div>
+                                </div>
 
-                            </div><!--end card-->
-                </div><!-- end col -->
+                                <input type="hidden" name="assign_id" value="{{ object.pk }}">
+                                <button class="btn btn-lg" style="float: right; background-color: purple; color: white;" type="submit">อัพเดท</button>
+                            </form>
+                            {% endif %}
+                            {% endif %}
 
-                <!-- Assign Job -->
-                {% if images %}
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Image | <span>{{ object.title }}</span></h5>
+                        </div><!-- end notes -->
 
-                        <!-- Slides with indicators -->
-                        <div id="gallery">
-                            {% for item in images %}
-                            {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
-                                <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                            </a> {% endcomment %}
-                            <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
-                                <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                            </a>
-                            {% endfor %}
-                        </div>
+                    </div><!-- end tab-content -->
 
+                </div><!--end card-->
+            </div><!-- end col -->
+
+            <!-- Assign Job -->
+            {% if images %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Image | <span>{{ object.title }}</span></h5>
+
+                    <!-- Slides with indicators -->
+                    <div id="gallery">
+                        {% for item in images %}
+                        {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
+                            <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                        </a> {% endcomment %}
+                        <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
+                            <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                        </a>
+                        {% endfor %}
                     </div>
-                </div>
-                {% endif %}
 
-                {% if object.author.pk == request.user.pk %}
-                <div class="container float-start text-center">
-                    <a href="{% url 'assign:staff-list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                    <a href="{% url 'assign:delete' pk=object.pk %}" class="btn btn-lg btn-danger">ลบ</a>
-                    <a href="{% url 'assign:update' pk=object.pk %}" class="btn btn-lg btn-success">แก้ไข</a>
                 </div>
-                {% else %}
-                <div class="container float-start text-center">
-                    <a href="{% url 'assign:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                    <a href="{% url 'home' %}" class="btn btn-lg btn-info">หน้าหลัก</a>
-                    {% comment %}<a href="#" class="btn btn-lg btn-success">ปิดงาน</a>{% endcomment %}
-                </div>
-                {% endif %}
-
             </div>
+            {% endif %}
+
+            {% if object.author.pk == request.user.pk %}
+            <div class="container float-start text-center">
+                <a href="{% url 'assign:staff-list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                <a href="{% url 'assign:delete' pk=object.pk %}" class="btn btn-lg btn-danger">ลบ</a>
+                <a href="{% url 'assign:update' pk=object.pk %}" class="btn btn-lg btn-success">แก้ไข</a>
+            </div>
+            {% else %}
+            <div class="container float-start text-center">
+                <a href="{% url 'assign:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                <a href="{% url 'home' %}" class="btn btn-lg btn-info">หน้าหลัก</a>
+                {% comment %}<a href="#" class="btn btn-lg btn-success">ปิดงาน</a>{% endcomment %}
+            </div>
+            {% endif %}
 
         </div>
-        </div>
-    </section>
-    {% include 'components/photoswipe.html' %}
-    {% endblock content %}
+
+    </div>
+</section>
+{% include 'components/photoswipe.html' %}
+{% endblock content %}
