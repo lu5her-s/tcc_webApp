@@ -92,7 +92,7 @@
                             <tbody>
                                 {% for object in object_list %}
                                 <tr>
-                                    <td>{{ object.title }}</td>
+                                    <td>{{ object.title|text_wrap:20 }}</td>
                                     <td>{{ object.author.profile.rank }}{{ object.author.get_full_name }}</td>
                                     <td>{{ object.created_at|thaidate }}</td>
                                     <td>
@@ -102,7 +102,7 @@
                                         -
                                         {% endif %}
                                     </td>
-                                    <!--<td>{{ object.accepted }}</td>-->
+                                    {% comment %}<td>{{ object.accepted }}</td>{% endcomment %}
                                     <td>
                                         {% if object.accepted %}
                                         <i class="bi bi-check-circle" style="color:green"></i>&nbsp;ตอบรับแล้ว

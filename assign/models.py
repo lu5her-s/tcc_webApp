@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Fri Oct, 28 2022, 21:17 301
-# Last Modified Date: Fri Oct, 28 2022, 21:40 301
+# Last Modified Date: Mon Oct, 31 2022, 16:59 304
 # Last Modified By  : lu5her <lu5her@mail>
 from datetime                   import datetime
 from django.db                  import models
@@ -73,6 +73,7 @@ class AssignProgress(models.Model):
     assign     = models.ForeignKey(Assign,       on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     note       = models.TextField(null=True, blank=True)
+    status = models.TextField(null=True, blank=True)
 
     class Meta:
         verbose_name        = "Progress"

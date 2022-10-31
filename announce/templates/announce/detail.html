@@ -37,199 +37,107 @@
 
             <div class="col-xl-12">
 
-                <!-- Recent Job -->
-                <div class="col-12">
-                    <div class="card overflow-auto">
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <ul class="nav nav-tabs nav-tabs-bordered">
+                            <li class="nav-item">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
+                                    รายละเอียด
+                                </button>
+                            </li>
 
+                            {% if images %}
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#images">
+                                    รูปภาพประกอบประชาสัมพันธ์/สั่งการ
+                                </button>
+                            </li>
+                            {% endif %}
 
-                        <div class="card-body">
-                            <h6 class="card-title"> รายละเอียด | <span> {{ object.title }}</span></h6>
-                            <table class="table">
-                                <tr>
-                                    <th>ประเภท</th>
-                                    <td>{{ object.is_type }}</td>
-                                </tr>
+                            {% if files_list %}
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#files">
+                                    ไฟล์ประกอบประชาสัมพันธ์/สั่งการ
+                                </button>
+                            </li>
+                            {% endif %}
+                        </ul>
 
-                                <tr>
-                                    <th>สถานะ</th>
-                                    <td>{{ object.status }}</td>
-                                </tr>
+                        <div class="tab-content pt-2">
+                            <div id="detail" class="tab-pane fade show active">
+                                <h6 class="card-title"> รายละเอียด | <span> {{ object.title }}</span></h6>
+                                <table class="table">
+                                    <tr>
+                                        <th>ประเภท</th>
+                                        <td>{{ object.is_type }}</td>
+                                    </tr>
 
-                                <tr>
-                                    <th>ผู้เขียน</th>
-                                    <td>{{ object.author.profile.rank }} {{ object.author.get_full_name }}</td>
-                                </tr>
+                                    <tr>
+                                        <th>สถานะ</th>
+                                        <td>{{ object.status }}</td>
+                                    </tr>
 
-                                <tr>
-                                    <th>เมื่อ</th>
-                                    <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }} 
-                                        เวลา {{ object.created_at|timezone:"Asia/Bangkok"|date:"H:i" }} น.
-                                    </td>
-                                </tr>
-                            </table>
+                                    <tr>
+                                        <th>ผู้เขียน</th>
+                                        <td>{{ object.author.profile.rank }} {{ object.author.get_full_name }}</td>
+                                    </tr>
 
-                            <table class="table table-borderless">
-                                <tr>
-                                    <th class="text-center">รายละเอียด</th>
-                                </tr>
-                                <tr>
-                                    <td>{{ object.detail|safe|linebreaks }}</td>
-                                </tr>
-                            </table>
+                                    <tr>
+                                        <th>เมื่อ</th>
+                                        <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }}
+                                            เวลา {{ object.created_at|timezone:"Asia/Bangkok"|date:"H:i" }} น.
+                                        </td>
+                                    </tr>
+                                </table>
 
-                            {% comment %}{% for img in images %}{% endcomment %}
-                                {% comment %}<img src="{{ img.images.url }}" alt="">{% endcomment %}
-                                {% comment %}{{ img.images.url }}{% endcomment %}
-                            {% comment %}{% endfor %}{% endcomment %}
-
-
-                        </div>
-                    </div>
-
-
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Image | <span>{{ object.title }}</span></h5>
-
-                            <!-- Slides with indicators -->
-                            <div id="gallery">
-                                {% if images %}
-                                {% for item in images %}
-                                {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
-                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                                </a> {% endcomment %}
-                                <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
-                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                                </a>
-                                {% endfor %}
-                                {% endif %}
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <th class="text-center">รายละเอียด</th>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ object.detail|safe|linebreaks }}</td>
+                                    </tr>
+                                </table>
                             </div>
 
-                        </div>
-                    </div>
-
-                    {% if files_list %}
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">File | <span>{{ object.title }}</span></h5>
-                            {% for f in files_list %}
-
-                            <iframe src="{{ f.files.url }}" frameborder="0" style="width: 100%; height: 800px;"></iframe>
-                            <br>
-                            {% comment %}<a href="{{ f.files.url }}" target="_blank">เอกสารที่เกี่ยวข้อง--{{ f.files.name }}</a>{% endcomment %}
-
-                            {% comment %}<p>Download - <a href="{{ f.files.url }}">เอกสารนี้</a></p>{% endcomment %}
-                            {% with f.files.name|split:"/" as file %}
-                            <p>Download - <a href="{{ f.files.url }}">{{ file|last }}</a></p>
-                            {% comment %}{{ file|last }}{% endcomment %}
-                            {% endwith %}
-
-                            {% endfor %}
-                        </div>
-
-                    </div>
-                    {% endif %}
-
-
-                    <!-- Reader sector -->
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">จำนวนผู้อ่าน</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">อ่านแล้วจำนวน {{ number_of_reader }} คน</h6>
-                            {% if not request.user == object.author %}
-                            <form method="post" action="{% url 'announce:read' pk=object.pk %}">
-                                {% csrf_token %}
-                                {% if is_read %}
-                                <p class="card-text"><button type="submit" name="announce_id" value="{{ object.pk }}" class="btn btn-success">
-                                        <i class="bi bi-check-circle"></i> อ่านแล้ว
-                                    </button>
-                                </p>
-                                {% else %}
-                                <p class="card-text"><button type="submit" name="announce_id" value="{{ object.pk }}" class="btn btn-warning">
-                                        <i class="bi bi-exclamation-circle"></i> ยังไม่อ่าน
-                                    </button>
-                                </p>
-                                {% endif %}
-                            </form>
-                            {% endif %}
-
-                            {% if request.user == object.author %}
-                            <p class="card-text">รายชื่อกำลังพลที่อ่านแล้ว</p>
-                            <ol>
-                                {% for reader in object.reads.all %}
-                                <li>{{ reader.profile.rank }} {{ reader.get_full_name }} - 
-                                    {{ reader.profile.sector }} ({{ reader.profile.place }})
-                                </li>
-                                {% endfor %}
-                            </ol>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <!-- comment sector -->
-
-                    <div class="card">
-                        <div class="card-body">
-                            {% if comments %}
-                            <h5 class="card-title">ความคิดเห็น <span>| {{ comments_count }} ความคิดเห็น</span></h5>
-                            <div class="container">
-                                {% for comment in comments %}
-                                <div class="row">
-                                    <div class="col-sm-8 m2">
-                                        <img src="{{ comment.author.profile.image.url }}" class="img-thumbnail rounded-circle float-start" style="margin-right: 12px;" width="15%" alt="">
-                                        <p class="mute">
-                                            {{ comment.author.profile.rank.name }} {{ comment.get_full_name }}
-                                            <span class="small">{{ comment.created_at|timezone:"Asia/Bangkok"|thaidate }} ({{ comment.created_at|timezone:"Asia/Bangkok"|timesince }})</span>
-                                        </p>
-                                        <p>
-                                            {{ comment.comment }}
-                                        </p>
-                                    </div>
+                            <div id="images" class="tab-pane fade pt-3">
+                                <h6 class="card-title"> รูปภาพประกอบประชาสัมพันธ์ | <span> {{ object.title }}</span></h6>
+                                <div id="gallery">
+                                    {% for item in images %}
+                                    {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
+                                        <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                                    </a> {% endcomment %}
+                                    <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
+                                        <img height="250" width="250" src="{{ item.images.url }}" alt="">
+                                    </a>
+                                    {% endfor %}
                                 </div>
-                                <hr>
+                            </div>
+
+                            <div id="files" class="tab-pane fade pt-3">
+                                <h6 class="card-title"> ไฟล์ประกอบประชาสัมพันธ์ | <span> {{ object.title }}</span></h6>
+                                {% for f in files_list %}
+
+                                <iframe src="{{ f.files.url }}" frameborder="0" style="width: 100%; height: 800px;"></iframe>
+                                <br>
+                                {% comment %}<a href="{{ f.files.url }}" target="_blank">เอกสารที่เกี่ยวข้อง--{{ f.files.name }}</a>{% endcomment %}
+
+                                {% comment %}<p>Download - <a href="{{ f.files.url }}">เอกสารนี้</a></p>{% endcomment %}
+                                {% with f.files.name|split:"/" as file %}
+                                <p>Download - <a href="{{ f.files.url }}">{{ file|last }}</a></p>
+                                {% comment %}{{ file|last }}{% endcomment %}
+                                {% endwith %}
 
                                 {% endfor %}
+
                             </div>
-                            {% else %}
-                            <h5 class="card-title">ความคิดเห็น <span>| {{ comments_count }} ยังไม่มีความคิดเห็น</span></h5>
-                            {% endif %}
-                        </div>
-                    </div>
 
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">ความคิดเห็น <span>| แสดงความคิดเห็น</span></h5>
-                            <div class="container">
-                                <form method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="announce_id" value="{{ object.pk }}">
-                                    <div class="row mb-3">
-                                        {% comment %}<label for="comment" class="col-sm-2 col-form-label">แสดงความคิดเห็น</label>{% endcomment %}
-                                        <div class="col-sm-12">
-                                            <textarea class="form-control" name="comment" id="comment" style="height: 100px; width: 100%;"></textarea>
-                                        </div>
-                                    </div>
-                                    <p class="card-text float-end"><button type="submit" class="btn btn-primary">แสดงความคิดเห็น</button></p>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                        </div><!-- End Tab -->
 
-
-                    {% if object.author.pk == request.user.pk %}
-                    <div class="container float-start text-center">
-                        <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                        <a href="{% url 'announce:delete' pk=object.pk %}" class="btn btn-lg btn-danger">ลบ</a>
-                        <a href="{% url 'announce:update' pk=object.pk %}" class="btn btn-lg btn-success">แก้ไข</a>
                     </div>
-                    {% else %}
-                    <div class="container float-start text-center">
-                        <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                        <a href="{% url 'home' %}" class="btn btn-lg btn-info">หน้าหลัก</a>
-                    </div>
-                    {% endif %}
-
                 </div>
+
+                <!-- Announce Detail -->
 
             </div>
         </div>
@@ -255,7 +163,7 @@
             </button>
         </div>
 
-        <div id="zoom_controls" class="d-flex justify-content-center" style="margin-top: 5px;">  
+        <div id="zoom_controls" class="d-flex justify-content-center" style="margin-top: 5px;">
             <button class="btn btn-outline-info" id="zoom_in" style="margin-right:5px;">+</button>
             <button class="btn btn-outline-info" id="zoom_out">-</button>
         </div>
@@ -295,7 +203,7 @@
 
         document.getElementById('go_previous')
             .addEventListener('click', (e) => {
-                if(myState.pdf == null|| myState.currentPage == 1) 
+                if(myState.pdf == null|| myState.currentPage == 1)
                     return;
 
                 myState.currentPage -= 1;
@@ -304,7 +212,7 @@
             });
         document.getElementById('go_next')
             .addEventListener('click', (e) => {
-                if(myState.pdf == null || myState.currentPage > myState.pdf._pdfInfo.numPages) 
+                if(myState.pdf == null || myState.currentPage > myState.pdf._pdfInfo.numPages)
                     return;
 
                 myState.currentPage += 1;
