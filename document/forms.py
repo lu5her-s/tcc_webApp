@@ -3,7 +3,7 @@
 # File              : forms.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Tue Oct, 18 2022, 16:49 291
-# Last Modified Date: Fri Oct, 21 2022, 00:12 294
+# Last Modified Date: Tue Nov, 01 2022, 15:00 305
 # Last Modified By  : lu5her <lu5her@mail>
 from django          import forms
 from django.forms    import widgets
@@ -25,14 +25,14 @@ class DocumentForm(forms.ModelForm):
     """DocumentForm.
     for create document or recieve document
     """
-    assigned_sector = forms.ModelMultipleChoiceField(
-         queryset = Sector.objects.all(), 
-         widget   = widgets.CheckboxSelectMultiple(attrs={
-             'class': 'form-check-inline',
-             'multiple': True,
-         }),
-         label    = 'สำเนาให้แผนก',
-     )
+#     assigned_sector = forms.ModelMultipleChoiceField(
+         # queryset = Sector.objects.all(), 
+         # widget   = widgets.CheckboxSelectMultiple(attrs={
+             # 'class': 'form-checkbox-inline',
+             # 'multiple': True,
+         # }),
+         # label    = 'สำเนาให้แผนก',
+     # )
 
     class Meta:
         model   = Document
@@ -54,7 +54,8 @@ class DocumentForm(forms.ModelForm):
             'report_to':       widgets.TextInput(attrs={'class':          'form-control'}),
             'operation':       widgets.Select(attrs={'class':             'form-select'}),
             'file':            widgets.ClearableFileInput(attrs={'class': 'form-control'}),
-            'assigned_sector': widgets.CheckboxSelectMultiple(attrs={'class': 'form-check-inline'}),
+            # 'assigned_sector': widgets.CheckboxSelectMultiple(attrs={'class': 'form-check-inline'}),
+            'assigned_sector': widgets.SelectMultiple(attrs={'class': 'select'}),
             # 'status':        widgets.HiddenInput(attrs={'class':        'form-control', 'id':  'status'}),
         }
 

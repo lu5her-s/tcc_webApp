@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Fri Oct, 28 2022, 21:12 301
-# Last Modified Date: Mon Oct, 31 2022, 18:06 304
+# Last Modified Date: Tue Nov, 01 2022, 21:14 305
 # Last Modified By  : lu5her <lu5her@mail>
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
@@ -95,11 +95,13 @@ class AssignCreateView(LoginRequiredMixin, CreateView):
     success_url   = reverse_lazy('assign:staff-list')
 
     def get(self, request, *args, **kwargs):
+        members = Profile.objects.all().exclude(user=self.request.user)
         context = {
-            'form'     : self.form_class,
-            'title'    : 'Create',
-            'header'   : 'สร้างการมอบหมายงาน',
-            'btn_text' : 'มอบหมาย'
+            'form':     self.form_class,
+            'title':    'Create',
+            'header':   'สร้างการมอบหมายงาน',
+            'btn_text': 'มอบหมาย',
+            'members':  members,
         }
         return render(request, self.template_name, context)
 
