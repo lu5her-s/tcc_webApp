@@ -3,7 +3,7 @@
 # File              : settings.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 22 2022, 15:05 265
-# Last Modified Date: Fri Oct, 28 2022, 21:22 301
+# Last Modified Date: Wed Nov, 02 2022, 19:39 306
 # Last Modified By  : lu5her <lu5her@mail>
 """
 Django settings for config project.
@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'document',
     'journal',
     'assign',
+    'car',
 
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

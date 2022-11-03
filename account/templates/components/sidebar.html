@@ -31,12 +31,6 @@
           </li>
 
           <li>
-            <a href="{% url 'journal:list' %}">
-              <i class="bi bi-circle"></i><span>การปฏิบัติงาน</span>
-            </a>
-          </li>
-
-          <li>
             {% if request.user|has_group:"Staff" %}
             <a href="{% url 'assign:staff-list' %}">
               <i class="bi bi-circle"></i><span>การมอบหมายงาน</span>
@@ -46,6 +40,18 @@
               <i class="bi bi-circle"></i><span>การมอบหมายงาน</span>
             </a>
             {% endif %}
+          </li>
+
+          <li>
+            <a href="{% url 'journal:list' %}">
+              <i class="bi bi-circle"></i><span>การปฏิบัติงาน</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'car:list' %}">
+              <i class="bi bi-circle"></i><span>ยานพาหนะ</span>
+            </a>
           </li>
 
        </ul>

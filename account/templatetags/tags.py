@@ -120,3 +120,8 @@ def split(value, key):
 @register.filter
 def text_wrap(text, width=25):
     return ' '.join(wrap(text, width))
+
+@register.filter(name='fuel')
+def get_fuel(fuel_now, fuel_max):
+    current = (fuel_now / fuel_max) * 100
+    return current

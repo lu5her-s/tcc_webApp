@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Car Management{% endblock title %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>Car {{ title }}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'car:list' %}">การจัดการยานพาหนะ</a></li>
+            <li class="breadcrumb-item active">เพิ่มยานพาหนะ</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section profile">
+    <div class="row">
+
+        <div class="col-xl-12">
+
+            <div class="card">
+                <div class="card-body pt-3">
+                    <!-- Bordered Tabs -->
+                    <ul class="nav nav-tabs nav-tabs-bordered">
+
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Car Add Form</button>
+                        </li>
+
+                    </ul>
+                    <div class="tab-content pt-2">
+
+                        <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
+                        {% if form.instance %}
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form.media }}
+                             
+                            {# {{ form|crispy }} #}
+                            
+                            <div class="row mb-3">
+                                <label for="{{ form.type.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.type.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.type }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.number.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.number.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.number }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.manufacturer.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.manufacturer.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.manufacturer }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.capacity.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.capacity.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.capacity }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.fuel_max.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.fuel_max.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.fuel_max }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.fuel_rate.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.fuel_rate.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.fuel_rate }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.fuel_now.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.fuel_now.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.fuel_now }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.mile_now.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.mile_now.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.mile_now }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.responsible_man.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.responsible_man.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.responsible_man }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.status.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.status }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.car_avatar.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.car_avatar.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.car_avatar }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.images.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.images.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.images }}
+                                </div>
+                            </div>
+
+                            {% if images %}
+                            <p class="w3-text w3-disabled">ภาพปัจจุบัน</p>
+                            {% for image in images %}
+                            <img src="{{ image.images.url }}" class="w3-image" width="150" height="100">
+                            {% endfor %}
+                            <br>
+                            {% endif %}
+
+                            <br>
+
+                            <div class="text-center">
+                                {% if btn_text == 'อัพเดท' %}
+                                    <a href="{% url 'journal:detail' pk=form.instance.pk %}" class="btn btn-lg btn-secondary">Back</a>
+                                    <button type="submit" class="btn btn-lg btn-success">Update</button>
+                                {% else %}
+                                <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">Back</a>
+                                <button type="submit" class="btn btn-lg btn-success">Create</button>
+                                <button type="reset" class="btn btn-lg btn-warning">Reset</button>
+                                {% endif %}
+                            </div>
+
+                        </form>
+
+                        {% else %}
+                        {{ form|crispy }}
+
+                        {% endif %}
+
+                    </div><!-- End Bordered Tabs -->
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock content %}
+

@@ -13,9 +13,9 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
             {% if request.user|has_group:"Staff" %}
-            <li class="breadcrumb-item"><a href="{% url 'assign:staff-list' %}">Journal List</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'assign:staff-list' %}">Assign List</a></li>
             {% else %}
-            <li class="breadcrumb-item"><a href="{% url 'assign:list' %}">Journal List</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'assign:list' %}">Assign List</a></li>
             {% endif %}
             <li class="breadcrumb-item active">{{ object.title }}</li>
         </ol>
@@ -39,6 +39,7 @@
                         <li class="nav-item">
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#notes">
                                 บันทึกการทำงาน
+                                {% if not object.accepted %}<sup><i class="bi bi-exclamation-circle" style="color: red;"></i></sup>{% endif %}
                             </button>
                         </li>
                     </ul>

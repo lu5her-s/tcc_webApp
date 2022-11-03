@@ -3,7 +3,7 @@
 # File              : forms.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Fri Oct, 28 2022, 21:13 301
-# Last Modified Date: Sun Oct, 30 2022, 00:30 303
+# Last Modified Date: Thu Nov, 03 2022, 09:39 307
 # Last Modified By  : lu5her <lu5her@mail>
 from django import forms
 from django.forms import widgets
@@ -39,6 +39,11 @@ class AssignForm(forms.ModelForm):
             # label='มอบงานหมายให้',
             # #widget=widgets.Select(attrs={'class': 'form-control'})
             # )
+
+    def __init__(self, current_user, *args, **kwargs):
+        super(AssignForm, self).__init__(*args, **kwargs)
+        # user = User.objects.get(user=current_user)
+        self.fields['assigned_to'].queryset = Profile.objects.exclude(id=current_user.id)
 
     class Meta:
         model   = Assign

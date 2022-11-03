@@ -25,6 +25,9 @@
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Krub:wght@300&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -60,44 +63,48 @@
               <div class="card mb-3">
 
                 <div class="card-body">
-                    {% if messages %}
-                    {{ messages }}
-                    {% endif %}
+                  {% if messages %}
+                  <ul class="messages">
+                    {% for message in messages %}
+                      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                  </ul>
+                  {% endif %}
 
                   <div class="pt-4 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
-                    <p class="text-center small">Enter your username & password to login</p>
+                    <h5 class="card-title text-center pb-0 fs-4">กรุณาเข้าสู่ระบบเพื่อใช้งาน</h5>
+                    <p class="text-center small">ใส่ชื่อผู้ใช้งาน & รหัสผ่านเพื่อเข้าสู่ระบบ</p>
                   </div>
 
                   <form method="post" class="row g-3 needs-validation" novalidate>
                       {% csrf_token %}
 
                     <div class="col-12">
-                      <label for="yourUsername" class="form-label">Username</label>
+                      <label for="yourUsername" class="form-label">ชื่อผู้ใช้งาน</label>
                       <div class="input-group has-validation">
                         <span class="input-group-text" id="inputGroupPrepend">@</span>
                         <input type="text" name="username" class="form-control" id="yourUsername" required>
-                        <div class="invalid-feedback">Please enter your username.</div>
+                        <div class="invalid-feedback">กรุณาใส่ชื่อผู้ใช้งาน</div>
                       </div>
                     </div>
 
                     <div class="col-12">
-                      <label for="yourPassword" class="form-label">Password</label>
+                      <label for="yourPassword" class="form-label">รหัสผ่าน</label>
                       <input type="password" name="password" class="form-control" id="yourPassword" required>
-                      <div class="invalid-feedback">Please enter your password!</div>
+                      <div class="invalid-feedback">กรุณาใส่รหัสผ่าน!</div>
                     </div>
 
+                    {% comment %}<div class="col-12">{% endcomment %}
+                      {% comment %}<div class="form-check">{% endcomment %}
+                        {% comment %}<input class="form-check-input" type="checkbox" name="remember" value="true" id="rememberMe">{% endcomment %}
+                        {% comment %}<label class="form-check-label" for="rememberMe">Remember me</label>{% endcomment %}
+                      {% comment %}</div>{% endcomment %}
+                    {% comment %}</div>{% endcomment %}
                     <div class="col-12">
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="remember" value="true" id="rememberMe">
-                        <label class="form-check-label" for="rememberMe">Remember me</label>
-                      </div>
+                      <button class="btn btn-primary w-100" type="submit">เข้าสู่ระบบ</button>
                     </div>
                     <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit">Login</button>
-                    </div>
-                    <div class="col-12">
-                        <p class="small mb-0">Don't have account? <a href="{% url 'account:register' %}">Create an account</a></p>
+                        <p class="small mb-0">ยังไม่มีบัญชีผู้ใช้งาน? <a href="{% url 'account:register' %}">ลงทะเบียน</a></p>
                     </div>
                   </form>
 

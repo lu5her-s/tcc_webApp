@@ -3,11 +3,11 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Fri Oct, 28 2022, 21:12 301
-# Last Modified Date: Tue Nov, 01 2022, 21:14 305
+# Last Modified Date: Thu Nov, 03 2022, 11:15 307
 # Last Modified By  : lu5her <lu5her@mail>
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
+from django.http          import HttpResponseRedirect
+from django.shortcuts     import get_object_or_404, redirect, render
+from django.urls          import reverse, reverse_lazy
 from django.views.generic import (
     ListView,
     CreateView,
@@ -16,10 +16,10 @@ from django.views.generic import (
     DeleteView,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
-from account.models import Profile
+from django.db.models           import Q
+from account.models             import Profile
 
-from assign.forms import AssignForm, ProgressForm, NoteForm
+from assign.forms  import AssignForm, ProgressForm, NoteForm
 from assign.models import (
     Assign,
     AssignImage,
@@ -97,7 +97,7 @@ class AssignCreateView(LoginRequiredMixin, CreateView):
     def get(self, request, *args, **kwargs):
         members = Profile.objects.all().exclude(user=self.request.user)
         context = {
-            'form':     self.form_class,
+            'form':     self.form_class(current_user=self.request.user.profile),
             'title':    'Create',
             'header':   'สร้างการมอบหมายงาน',
             'btn_text': 'มอบหมาย',
@@ -106,7 +106,7 @@ class AssignCreateView(LoginRequiredMixin, CreateView):
         return render(request, self.template_name, context)
 
     def post(self, request):
-        form = self.form_class(request.POST, request.FILES)
+        form = self.form_class(request.user.profile, request.POST, request.FILES)
 
         if form.is_valid():
             images    = request.FILES.getlist('images')

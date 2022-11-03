@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Car Management{% endblock title %}
+
+{% block content %}
+
+<style type="text/css" media="screen">
+.hide {
+    display: none;
+}
+
+.myDIV:hover + .hide {
+    display: inline;
+}
+</style>
+
+<div class="pagetitle">
+    <h1>การจัดการยานพาหนะ</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active">car list</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section profile">
+    <div class="row">
+
+        <div class="col-xl-12">
+
+            <!-- Recent Job -->
+            <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+
+                    <div class="card-body">
+                        <h5 class="card-title">{{ title }} 
+                            <span>| List</span>
+                            {% if request.user|has_group:"Car" %}
+                            <span>
+                                <a href="{% url 'car:create' %}" class="align-right btn btn-success" style="float: right">
+                                    <i class="bi bi-plus">
+                                        เพิ่มยานพาหนะ
+                                    </i>
+                                </a>
+                            </span>
+                            {% endif %}
+                        </h5>
+                        <br>
+
+                        <table class="table table-hover datatable" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ภาพ</th>
+                                    <th scope="col">หมายเลขทะเบียน</th>
+                                    <th scope="col">ประเภท</th>
+                                    <th scope="col">จำนวนผู้โดยสาร</th>
+                                    <th scope="col">เชื้อเพลิง</th>
+                                    <th scope="col">สถานะ</th>
+                                    <th scope="col">...</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for object in object_list %}
+                                <tr>
+                                    <td style="width:30%;" id="image">
+                                        <span class="myDIV"><img src="{{ object.car_avatar.url }}" width="50%"></span class>
+                                        <span class="hide"><img src="{{ object.car_avatar.url }}" width="150%"></span>
+                                    </td>
+                                    <td>{{ object.number }}</td>
+                                    <td>{{ object.type.name }}</td>
+                                    <td>{{ object.capacity }}</td>
+                                    <td>
+                                        {% comment %}{{ object.fuel_now }}/{{ object.fuel_max }}{% endcomment %}
+                                        {% with fuel_current=object.fuel_now fuel_max=object.fuel_max %}
+                                            <p style="text-align:center;">{{ fuel_current|fuel:fuel_max }}%</p>
+                                            {% with fuel_current|fuel:fuel_max as per %}
+                                                {% if per > 80 %}
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-striped bg-success" 
+                                                             role="progressbar" 
+                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max }}%" 
+                                                             aria-valuenow="{{ object.fuel_now }}" 
+                                                             aria-valuemin="0" 
+                                                             aria-valuemax="{{ object.fuel_max }}">
+                                                            {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
+                                                        </div>
+                                                    </div>
+                                                {% elif per > 50 %}
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-striped bg-warning" 
+                                                             role="progressbar" 
+                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max }}%;
+                                                                color: black;" 
+                                                             aria-valuenow="{{ object.fuel_now }}" 
+                                                             aria-valuemin="0" 
+                                                             aria-valuemax="{{ object.fuel_max }}">
+                                                            {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-striped bg-danger" 
+                                                             role="progressbar" 
+                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max }}%" 
+                                                             aria-valuenow="{{ object.fuel_now }}" 
+                                                             aria-valuemin="0" 
+                                                             aria-valuemax="{{ object.fuel_max }}">
+                                                            {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            {% endwith %} 
+                                        {% endwith %}
+                                    </td>
+                                    <td>{{ object.status.name }}</td>
+                                    <td><a href="#" class="badge bg-secondary">เพิ่มเติม</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+            </div><!-- End Announce List -->
+            {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
+
+        </div>
+
+    </div>
+    </div>
+
+</section>
+{% endblock content %}
