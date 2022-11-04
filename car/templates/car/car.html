@@ -6,16 +6,23 @@
 
 {% block title %}Car Management{% endblock title %}
 
-{% block content %}
 
+{% block content %}
 <style type="text/css" media="screen">
+
 .hide {
+    /*visibility: hidden;*/
     display: none;
+    /*z-index: 1;*/
 }
 
 .myDIV:hover + .hide {
-    display: inline;
+    display: inline-block;
+    position: absolute;
+    width: 30%;
+    z-index: 1;
 }
+
 </style>
 
 <div class="pagetitle">
@@ -118,7 +125,9 @@
                                         {% endwith %}
                                     </td>
                                     <td>{{ object.status.name }}</td>
-                                    <td><a href="#" class="badge bg-secondary">เพิ่มเติม</a></td>
+                                    <td>
+                                        <a href="#" class="badge bg-secondary">เพิ่มเติม</a>
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

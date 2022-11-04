@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 02 2022, 14:37 306
-# Last Modified Date: Fri Nov, 04 2022, 00:50 308
+# Last Modified Date: Sat Nov, 05 2022, 00:40 309
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.db import models
@@ -26,6 +26,14 @@ def get_image_name(instance : object, filename : str) -> str:
     return f"Car/{car_number}/{filename}"
 
 def get_image_fix(instance: object, filename: str) -> str:
+    """get_image_fix.
+
+    :param instance:
+    :type instance: object
+    :param filename:
+    :type filename: str
+    :rtype: str
+    """
     car_number = instance.car.number
     return f"Car/Fix/{car_number}/{filename}"
 

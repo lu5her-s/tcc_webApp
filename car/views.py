@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.views.generic import (
     CreateView,
+    DetailView,
     ListView,
 )
 from car.forms import CarForm
@@ -60,3 +61,7 @@ class CarCreateView(LoginRequiredMixin, CreateView):
         else:
             form = self.form_class()
         return super().post(request, *args, **kwargs)
+
+
+class CarDetailView(LoginRequiredMixin, DetailView):
+    pass

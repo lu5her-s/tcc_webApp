@@ -141,6 +141,91 @@
 
             </div>
         </div>
+
+        <!-- reader sector -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">จำนวนผู้อ่าน| <span> ทั้งหมด {{ number_of_reader }} คน</span></h5>
+                {% comment %}<h6 class="card-subtitle mb-2 text-muted">อ่านแล้วจำนวน {{ number_of_reader }} คน</h6>{% endcomment %}
+                {% if not request.user == object.author %}
+                <form method="post" action="{% url 'announce:read' pk=object.pk %}">
+                    {% csrf_token %}
+                    {% if is_read %}
+                    <p class="card-text"><button type="submit" name="announce_id" value="{{ object.pk }}" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> อ่านแล้ว
+                        </button>
+                    </p>
+                    {% else %}
+                    <p class="card-text"><button type="submit" name="announce_id" value="{{ object.pk }}" class="btn btn-warning">
+                            <i class="bi bi-exclamation-circle"></i> ยังไม่อ่าน
+                        </button>
+                    </p>
+                    {% endif %}
+                </form>
+                {% endif %}
+
+                {% if request.user == object.author %}
+                <p class="card-text">รายชื่อกำลังพลที่อ่านแล้ว</p>
+                <ol>
+                    {% for reader in object.reads.all %}
+                    <li>{{ reader.profile.rank }} {{ reader.get_full_name }} - 
+                        {{ reader.profile.sector }} ({{ reader.profile.place }})
+                    </li>
+                    {% endfor %}
+                </ol>
+                {% endif %}
+            </div>
+        </div><!-- end reader -->
+
+
+        <!-- comment sector -->
+        <div class="card">
+            <div class="card-body">
+                {% if comments %}
+                <h5 class="card-title">ความคิดเห็น <span>| {{ comments_count }} ความคิดเห็น</span></h5>
+                <div class="container">
+                    {% for comment in comments %}
+                    <div class="row">
+                        <div class="col-sm-8 m2">
+                            <img src="{{ comment.author.profile.image.url }}" class="img-thumbnail rounded-circle float-start" style="margin-right: 12px;" width="15%" alt="">
+                            <p class="mute">
+                                จาก <b>{{ comment.author.profile.rank.name }} {{ comment.author.get_full_name }}</b> เมื่อ
+                                <span class="small">{{ comment.created_at|timezone:"Asia/Bangkok"|thaidate }} ({{ comment.created_at|timezone:"Asia/Bangkok"|timesince }})</span>
+                            </p>
+                            <p>
+                                {{ comment.comment }}
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+
+                    {% endfor %}
+                </div>
+                {% else %}
+                <h5 class="card-title">ความคิดเห็น <span>| {{ comments_count }} ยังไม่มีความคิดเห็น</span></h5>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">ความคิดเห็น <span>| แสดงความคิดเห็น</span></h5>
+                <div class="container">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="announce_id" value="{{ object.pk }}">
+                        <div class="row mb-3">
+                            {% comment %}<label for="comment" class="col-sm-2 col-form-label">แสดงความคิดเห็น</label>{% endcomment %}
+                            <div class="col-sm-12">
+                                <textarea class="form-control" name="comment" id="comment" style="height: 100px; width: 100%;"></textarea>
+                            </div>
+                        </div>
+                        <p class="card-text float-end"><button type="submit" class="btn btn-primary">แสดงความคิดเห็น</button></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     </section>
     {% include 'components/photoswipe.html' %}
     {% endblock content %}
