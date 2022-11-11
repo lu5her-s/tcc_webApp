@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+
+{% block title %}Car Booking{% endblock title %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+<div class="pagetitle">
+    <h1>Car Booking {{ bc_title }}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'car:list' %}">Car List</a></li>
+            <li class="breadcrumb-item active">Car Booking</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section profile">
+    <div class="row">
+
+        <div class="col-xl-12">
+
+            <div class="card">
+                <div class="card-body pt-3">
+                    <!-- Bordered Tabs -->
+                    <ul class="nav nav-tabs nav-tabs-bordered">
+
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Booking Form</button>
+                        </li>
+
+                    </ul>
+                    <div class="tab-content pt-2">
+
+                        <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
+                        {% if form.instance %}
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form.media }}
+
+                            {% comment %}{{ form|crispy }}{% endcomment %}
+
+                            <div class="row mb-3">
+                                <label for="{{ form.title.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.title.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.title }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.body.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.body.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.body }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.assigned_to.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.assigned_to.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.assigned_to }}
+                                </div>
+                            </div>
+
+                            {% if images %}
+                            <p class="w3-text w3-disabled">ภาพปัจจุบัน</p>
+                            {% for image in images %}
+                            <img src="{{ image.images.url }}" class="w3-image" width="150" height="100">
+                            {% endfor %}
+                            <br>
+                            {% endif %}
+
+                            <br>
+
+
+                            <div class="row mb-3">
+                                <div class="col-md-8 col-lg-9">
+                                    <input name="{{ form.author.name }}" type="hidden" class="form-control" id="{{ form.author.name }}" value="{{ request.user.pk }}">
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                {% if btn_text == 'อัพเดท' %}
+                                    <a href="{% url 'journal:detail' pk=form.instance.pk %}" class="btn btn-lg btn-secondary">Back</a>
+                                    <button type="submit" class="btn btn-lg btn-success">Update</button>
+                                {% else %}
+                                <a href="{% url 'assign:staff-list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                                <button type="submit" class="btn btn-lg btn-success">มอบหมาย</button>
+                                <button type="reset" class="btn btn-lg btn-warning">Reset</button>
+                                {% endif %}
+                            </div>
+
+                        </form>
+
+                        {% else %}
+                        {{ form|crispy }}
+
+                        {% endif %}
+
+                    </div><!-- End Bordered Tabs -->
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            //change selectboxes to selectize mode to be searchable
+            $("select").select2({
+                width: '100%',
+            });
+        });
+    </script>
+</section>
+{% endblock content %}
+

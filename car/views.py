@@ -7,11 +7,14 @@ from django.views.generic import (
     DetailView,
     ListView,
 )
-from car.forms import CarForm
+from car.forms import BookingForm, CarForm
 
 from car.models import (
     Car,
+    CarFix,
     CarImage,
+    CarBooking,
+    Refuel,
 )
 
 # Create your views here.
@@ -64,4 +67,34 @@ class CarCreateView(LoginRequiredMixin, CreateView):
 
 
 class CarDetailView(LoginRequiredMixin, DetailView):
-    pass
+    template_name = 'car/detail.html'
+    model = Car
+
+    def get_context_data(self, **kwargs):
+        self.object = self.get_object()
+        context = super().get_context_data(**kwargs)
+        context['car_use'] = CarBooking.objects.filter(car=self.object)
+        context['refuel'] = Refuel.objects.filter(car=self.object)
+        context['car_fix'] = CarFix.objects.filter(car=self.object)
+        return context
+
+
+# TODO : make booking views
+class CarBookingView(LoginRequiredMixin, CreateView):
+
+    """Docstring for CarBookingView. """
+
+    model = CarBooking
+    template_name = 'car/booking.html'
+    form_class = BookingForm
+
+    def get(self, request, pk):
+        car = get_object_or_404(Car, pk=pk)
+        # form = self.form_class(kwargs={'car_id': car.id})
+        context = {
+            'form': self.form_class,
+            'title': 'Booking',
+            'header': 'จองยานพาหนะ',
+            'test_pk': pk,
+        }
+        return render(request, self.template_name, context)

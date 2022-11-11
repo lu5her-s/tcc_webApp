@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Fri Oct, 28 2022, 21:12 301
-# Last Modified Date: Thu Nov, 03 2022, 11:15 307
+# Last Modified Date: Fri Nov, 11 2022, 17:11 315
 # Last Modified By  : lu5her <lu5her@mail>
 from django.http          import HttpResponseRedirect
 from django.shortcuts     import get_object_or_404, redirect, render
@@ -97,7 +97,7 @@ class AssignCreateView(LoginRequiredMixin, CreateView):
     def get(self, request, *args, **kwargs):
         members = Profile.objects.all().exclude(user=self.request.user)
         context = {
-            'form':     self.form_class(current_user=self.request.user.profile),
+            'form':     self.form_class(current_user=self.request.user.profile.pk),
             'title':    'Create',
             'header':   'สร้างการมอบหมายงาน',
             'btn_text': 'มอบหมาย',
@@ -106,7 +106,7 @@ class AssignCreateView(LoginRequiredMixin, CreateView):
         return render(request, self.template_name, context)
 
     def post(self, request):
-        form = self.form_class(request.user.profile, request.POST, request.FILES)
+        form = self.form_class(request.user.profile.pk, request.POST, request.FILES)
 
         if form.is_valid():
             images    = request.FILES.getlist('images')
@@ -159,7 +159,7 @@ class AssignUpdateView(LoginRequiredMixin, UpdateView):
 
 
     def get(self, request, *args, **kwargs):
-        form   = self.form_class(instance=self.get_object())
+        form   = self.form_class(current_user=request.user.profile.pk, instance=self.get_object())
         images = AssignImage.objects.filter(assign=self.get_object())
 
         context = {
@@ -172,7 +172,7 @@ class AssignUpdateView(LoginRequiredMixin, UpdateView):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, request.FILES, instance=self.get_object())
+        form = self.form_class(request.user.profile.id, request.POST, request.FILES, instance=self.get_object())
 
         if form.is_valid():
             images    = request.FILES.getlist('images')

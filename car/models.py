@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 02 2022, 14:37 306
-# Last Modified Date: Sat Nov, 05 2022, 00:40 309
+# Last Modified Date: Fri Nov, 11 2022, 22:54 315
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.db import models
@@ -99,20 +99,21 @@ class Car(models.Model):
         verbose_name_plural = 'Car'
 
     def __str__(self) -> str:
-        fuel_now: float = self.fuel_now
-        fuel_max: float = self.fuel_max
-        percent: float = (fuel_now/fuel_max)*100
+        fuel_now = self.fuel_now
+        fuel_max = self.fuel_max
+        percent = (fuel_now/fuel_max)*100
         return f"{self.type.name} เลขทะเบียน {self.number} สถานภาพเชื้อเพลิง {self.fuel_now}/{self.fuel_max}({percent} %)"
 
 
-class CarUse(models.Model):
+class CarBooking(models.Model):
     """CarUse. for request use car init request change status car to pending"""
 
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     requester = models.ForeignKey(User, on_delete=models.CASCADE, related_name='requester_car')
     mission = models.TextField()
     driver = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='driver', null=True, blank=True)
-    passenger = models.TextField(null=True, blank=True)
+    passenger = models.PositiveIntegerField(default=1)
+    controler = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
     approver = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='use_approver')
     requested_at = models.DateTimeField()
     mile_current = models.PositiveIntegerField(null=True, blank=True)
@@ -122,8 +123,8 @@ class CarUse(models.Model):
     approve_status = models.ForeignKey(ApproveStatus, on_delete=models.CASCADE, related_name='use_approve_status')
 
     class Meta:
-        verbose_name = 'Car Use'
-        verbose_name_plural = 'Car Use'
+        verbose_name = 'Car Booking'
+        verbose_name_plural = 'Car Booking'
 
     def __str__(self) -> str:
         year: int = datetime.date.today().year + 543

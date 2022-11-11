@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import widgets
 
-from car.models import Car
+from car.models import Car, CarBooking
 
 class CarForm(forms.ModelForm):
     images = forms.ImageField(
@@ -43,4 +43,30 @@ class CarForm(forms.ModelForm):
             'responsible_man': 'ผู้รับผิดชอบ',
             'status':          'สถานะ',
             'car_avatar':      'ภาพยานพาหนะ',
+        }
+
+
+class BookingForm(forms.ModelForm):
+    class Meta:
+        model = CarBooking
+        fields = (
+            'mission',
+            'passenger',
+            'controler',
+            'approver',
+            'driver',
+        )
+        widgets = {
+            'mission':   widgets.Textarea(attrs={'class': 'form-control'}),
+            'passenger': widgets.NumberInput(attrs={'class': 'form-control'}),
+            'controler': widgets.Select(attrs={'class': 'form-select'}),
+            'approver':  widgets.Select(attrs={'class': 'form-select'}),
+            'driver':    widgets.Select(attrs={'class': 'form-select'}),
+        }
+        labels = {
+            'mission': 'ภารกิจ',
+            'passenger': 'จำนวนผู้โดยสาร',
+            'controler': 'ผู้ควบคุม',
+            'approver': 'ผู้อนุมัติ',
+            'driver': 'พลขับ',
         }

@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Car Management{% endblock title %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>{{ object.title }}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'car:list' %}">Car List</a></li>
+            <li class="breadcrumb-item active">{{ object.number }}</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+
+<section class="section">
+    <div class="row">
+
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body pt-3">
+                    <ul class="nav nav-tabs nav-tabs-bordered">
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
+                                รายละเอียด
+                            </button>
+                        </li>
+                        {% if images %}
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#image">
+                                ภาพการทำงาน
+                            </button>
+                        </li>{% endif %}
+                    </ul>
+
+                    <!-- start tab content -->
+                    <div class="tab-content pt-2">
+                        <div id="detail" class="tab-pane fade show active">
+                            <h6 class="card-title"> รายละเอียด | <span> {{ object.number }}</span></h6>
+                            <table class="table">
+                                <tr>
+                                    <th>ประเภท</th>
+                                    <td>{{ object.type }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>หมายเลขทะเบียน</th>
+                                    <td>{{ object.number }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>สถานภาพเชื้อเพลิง</th>
+                                    <td>
+                                        {% with fuel_current=object.fuel_now fuel_max=object.fuel_max %}
+                                        <p style="text-align:center;">
+                                            {{ fuel_current|fuel:fuel_max }}%
+                                            ({{ object.fuel_now }}/{{ object.fuel_max }})
+                                        </p>
+                                        {% with fuel_current|fuel:fuel_max as per %}
+                                        {% if per > 80 %}
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-striped bg-success" 
+                                                 role="progressbar" 
+                                                 style="width: {{ object.fuel_now|fuel:object.fuel_max }}%" 
+                                                 aria-valuenow="{{ object.fuel_now }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="{{ object.fuel_max }}">
+                                                {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
+                                            </div>
+                                        </div>
+                                        {% elif per > 50 %}
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-striped bg-warning" 
+                                                 role="progressbar" 
+                                                 style="width: {{ object.fuel_now|fuel:object.fuel_max }}%;
+                                                 color: black;" 
+                                                 aria-valuenow="{{ object.fuel_now }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="{{ object.fuel_max }}">
+                                                {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-striped bg-danger" 
+                                                 role="progressbar" 
+                                                 style="width: {{ object.fuel_now|fuel:object.fuel_max }}%" 
+                                                 aria-valuenow="{{ object.fuel_now }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="{{ object.fuel_max }}">
+                                                {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% endwith %} 
+                                        {% endwith %}
+
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>สถานะ</th>
+                                    <td>{{ object.status }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>จำนวนผู้โดยสาร</th>
+                                    <td>{{ object.capacity }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>เลขไมล์</th>
+                                    <td>{{ object.mile_now }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>ผู้รับผิดชอบ</th>
+                                    <td>{{ object.responsible_man }}</td>
+                                </tr>
+
+                            </table>
+
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th class="text-center">ภาพยานพาหนะ</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <center>
+                                            <img src="{{ object.car_avatar.url }}" width="100%">
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div><!-- end detail -->
+
+                        <div id="image" class="tab-pane fade pt-3">
+                            <h5 class="card-title">Image | <span>{{ object.title }}</span></h5>
+
+                            <!-- Slides with indicators -->
+                            <div id="gallery">
+                                {% for item in images %}
+                                {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
+                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                                </a> {% endcomment %}
+                                <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
+                                    <img height="250" width="250" src="{{ item.images.url }}" alt="">
+                                </a>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div><!-- end image -->
+
+                <!-- TODO: make condition for button -->
+                <div class="container float-start text-center">
+                    <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">Back</a>
+                    <!-- FIX: send pk to booking view -->
+                    <a href="{% url 'car:booking' pk=object.pk %}" class="btn btn-lg btn-info">Booking</a>
+                    <a href="#" class="btn btn-lg btn-danger">Refuel</a>
+                    <a href="#" class="btn btn-lg btn-warning">Maintenance</a>
+                </div>
+                <br />
+
+                <br />
+                </div>
+
+            </div><!-- end tab content -->
+
+        </div>
+    </div>
+
+</section>
+{% include 'components/photoswipe.html' %}
+{% endblock content %}

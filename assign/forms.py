@@ -3,7 +3,7 @@
 # File              : forms.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Fri Oct, 28 2022, 21:13 301
-# Last Modified Date: Thu Nov, 03 2022, 09:39 307
+# Last Modified Date: Fri Nov, 11 2022, 22:58 315
 # Last Modified By  : lu5her <lu5her@mail>
 from django import forms
 from django.forms import widgets
@@ -43,7 +43,7 @@ class AssignForm(forms.ModelForm):
     def __init__(self, current_user, *args, **kwargs):
         super(AssignForm, self).__init__(*args, **kwargs)
         # user = User.objects.get(user=current_user)
-        self.fields['assigned_to'].queryset = Profile.objects.exclude(id=current_user.id)
+        self.fields['assigned_to'].queryset = Profile.objects.exclude(pk=current_user)
 
     class Meta:
         model   = Assign
@@ -57,10 +57,11 @@ class AssignForm(forms.ModelForm):
                 'author'      : widgets.HiddenInput(attrs = {'class': 'form-control', 'id': 'author'}),
                 }
         labels = {
-                'title'  : 'ชื่อเรื่อง',
-                'body'   : 'รายละเอียด',
-                'author' : 'ผู้เขียน',
-                }
+            'title':       'ชื่อเรื่อง',
+            'body':        'รายละเอียด',
+            'author':      'ผู้เขียน',
+            'assigned_to': 'มอบงานหมายให้',
+        }
 
 class ProgressForm(forms.ModelForm):
     class Meta:

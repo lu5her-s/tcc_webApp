@@ -6,7 +6,7 @@ from car.models import (
     CarStatus,
     CarFix,
     CarType,
-    CarUse,
+    CarBooking,
     Refuel,
     CarImage,
 )
@@ -14,7 +14,7 @@ from car.models import (
 # Register your models here.
 
 # admin.site.register(Car)
-admin.site.register(CarUse)
+admin.site.register(CarBooking)
 admin.site.register(CarStatus)
 admin.site.register(CarFix)
 admin.site.register(CarType)
