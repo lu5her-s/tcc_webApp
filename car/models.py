@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 02 2022, 14:37 306
-# Last Modified Date: Fri Nov, 11 2022, 22:54 315
+# Last Modified Date: Sat Nov, 12 2022, 23:25 316
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.db import models
@@ -173,7 +173,7 @@ class Refuel(models.Model):
 
 class CarImage(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    images = models.ImageField(upload_to='get_file_name', blank=True, null=True)
+    images = models.ImageField(upload_to='get_image_name', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Car Image'

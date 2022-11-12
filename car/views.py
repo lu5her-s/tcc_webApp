@@ -79,22 +79,21 @@ class CarDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-# TODO : make booking views
-class CarBookingView(LoginRequiredMixin, CreateView):
+# DONE: make booking list views
+class CarBookingListView(LoginRequiredMixin, ListView):
 
-    """Docstring for CarBookingView. """
-
-    model = CarBooking
+    """Docstring for CarBookingListView. """
     template_name = 'car/booking.html'
-    form_class = BookingForm
+    model = CarBooking
 
-    def get(self, request, pk):
-        car = get_object_or_404(Car, pk=pk)
-        # form = self.form_class(kwargs={'car_id': car.id})
-        context = {
-            'form': self.form_class,
-            'title': 'Booking',
-            'header': 'จองยานพาหนะ',
-            'test_pk': pk,
-        }
-        return render(request, self.template_name, context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รายการขอใช้ยานพาหนะ'
+        return context
+
+
+# TODO: make booking create view
+class CarBookingCreateView(LoginRequiredMixin, CreateView):
+    template_name = 'car/booking_form.html'
+    model = CarBooking
+    form_class = BookingForm
