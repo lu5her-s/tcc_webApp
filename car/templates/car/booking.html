@@ -33,11 +33,11 @@
                         <h5 class="card-title">{{ title }} 
                             <span>| List</span>
                             <span>
-                                <a href="{% url 'car:booking-create' %}" class="align-right btn btn-success" style="float: right">
-                                    <i class="bi bi-plus">
-                                        ขอใช้ยานพาหนะ
-                                    </i>
-                                </a>
+                                {% comment %}<a href="{% url 'car:booking-create' %}" class="align-right btn btn-success" style="float: right">{% endcomment %}
+                                    {% comment %}<i class="bi bi-plus">{% endcomment %}
+                                        {% comment %}ขอใช้ยานพาหนะ{% endcomment %}
+                                    {% comment %}</i>{% endcomment %}
+                                {% comment %}</a>{% endcomment %}
                             </span>
                         </h5>
                         <br>
@@ -56,55 +56,29 @@
                             <tbody>
                                 {% for object in object_list %}
                                 <tr>
-                                    <td>{{ object.number }}</td>
-                                    <td>{{ object.type.name }}</td>
-                                    <td>{{ object.capacity }}</td>
+                                    <td>{{ object.car.number }}</td>
+                                    <td>{{ object.mission }}</td>
+                                    <td>{{ object.requested_at|thaidate }}</td>
+                                    <td>{{ object.controler }}</td>
+                                    <td>{{ object.approver }}</td>
                                     <td>
-                                        {% comment %}{{ object.fuel_now }}/{{ object.fuel_max }}{% endcomment %}
-                                        {% with fuel_current=object.fuel_now fuel_max=object.fuel_max %}
-                                            <p style="text-align:center;">{{ fuel_current|fuel:fuel_max }}%</p>
-                                            {% with fuel_current|fuel:fuel_max as per %}
-                                                {% if per > 80 %}
-                                                    <div class="progress">
-                                                        <div class="progress-bar progress-bar-striped bg-success" 
-                                                             role="progressbar" 
-                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max }}%" 
-                                                             aria-valuenow="{{ object.fuel_now }}" 
-                                                             aria-valuemin="0" 
-                                                             aria-valuemax="{{ object.fuel_max }}">
-                                                            {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
-                                                        </div>
-                                                    </div>
-                                                {% elif per > 50 %}
-                                                    <div class="progress">
-                                                        <div class="progress-bar progress-bar-striped bg-warning" 
-                                                             role="progressbar" 
-                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max }}%;
-                                                                color: black;" 
-                                                             aria-valuenow="{{ object.fuel_now }}" 
-                                                             aria-valuemin="0" 
-                                                             aria-valuemax="{{ object.fuel_max }}">
-                                                            {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
-                                                        </div>
-                                                    </div>
-                                                {% else %}
-                                                    <div class="progress">
-                                                        <div class="progress-bar progress-bar-striped bg-danger" 
-                                                             role="progressbar" 
-                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max }}%" 
-                                                             aria-valuenow="{{ object.fuel_now }}" 
-                                                             aria-valuemin="0" 
-                                                             aria-valuemax="{{ object.fuel_max }}">
-                                                            {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
-                                                        </div>
-                                                    </div>
-                                                {% endif %}
-                                            {% endwith %} 
-                                        {% endwith %}
-                                    </td>
-                                    <td>{{ object.status.name }}</td>
-                                    <td>
-                                        <a href="{% url 'car:detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a>
+                                        <!-- add detail booking -->
+                                        <a href="{% url 'car:booking-detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a>
+                                        <!-- if current user is approver -->
+                                        {% if request.user.profile == object.approver %}
+                                        <button 
+                                            type="button"
+                                            id="approve_button"
+                                            {% comment %}href="{% url 'car:booking-detail' pk=object.pk %}" {% endcomment %}
+                                            data-bs-target="#exampleModal" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-pk="{{ object.pk }}"
+                                            data-bs-link="{% url 'car:detail' pk=object.pk %}"
+                                            class="badge bg-warning text-black"
+                                            >
+                                            {{ object.approve_status.name }}
+                                        </button>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -120,7 +94,62 @@
         </div>
 
     </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">Recipient:</label>
+                            <input type="text" class="form-control" id="recipient-name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">Message:</label>
+                            <textarea class="form-control" id="message-text"></textarea>
+                        </div>
+                        <div class="showLink">
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Send message</button>
+                </div>
+            </div>
+        </div>
     </div>
 
 </section>
+
+<script>
+    $(document).ready(() => {
+        $("#dataTable").DataTable({
+            "fnDrawCallback" : function(oSettings) {
+                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+                } else {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+                }
+            },
+            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+        });
+    });
+
+    // FIX: edit url and template for show modal
+    $(document).ready(function () {
+        $('#approve_button').on('click', function () {
+            var dataURL = $(this).attr('data-bs-link');
+            $('.showLink').load(dataURL);
+        });
+    });
+
+    // TODO: make modal for update approve_status
+
+</script>
 {% endblock content %}

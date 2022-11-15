@@ -13,7 +13,8 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="{% url 'car:list' %}">Car List</a></li>
-            <li class="breadcrumb-item active">{{ object.number }}</li>
+            <li class="breadcrumb-item"><a href="{% url 'car:booking' %}">Booking List</a></li>
+            <li class="breadcrumb-item active">{{ object.car.number }}</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -42,11 +43,11 @@
                     <!-- start tab content -->
                     <div class="tab-content pt-2">
                         <div id="detail" class="tab-pane fade show active">
-                            <h6 class="card-title"> รายละเอียด | <span> {{ object.number }}</span></h6>
+                            <h6 class="card-title"> รายละเอียด | <span> การขอใช้งาน {{ object.car.number }}</span></h6>
                             <table class="table">
                                 <tr>
-                                    <th>ประเภท</th>
-                                    <td>{{ object.type }}</td>
+                                    <th>ภารกิจ</th>
+                                    <td>{{ object.mission }}</td>
                                 </tr>
 
                                 <tr>
@@ -57,20 +58,20 @@
                                 <tr>
                                     <th>สถานภาพเชื้อเพลิง</th>
                                     <td>
-                                        {% with fuel_current=object.fuel_now fuel_max=object.fuel_max %}
+                                        {% with fuel_current=object.car.fuel_now fuel_max=object.car.fuel_max %}
                                         <p style="text-align:center;">
                                             {{ fuel_current|fuel:fuel_max }}%
-                                            ({{ object.fuel_now }}/{{ object.fuel_max }})
+                                            ({{ object.car.fuel_now }}/{{ object.car.fuel_max }})
                                         </p>
                                         {% with fuel_current|fuel:fuel_max as per %}
                                         {% if per > 80 %}
                                         <div class="progress">
                                             <div class="progress-bar progress-bar-striped bg-success" 
                                                  role="progressbar" 
-                                                 style="width: {{ object.fuel_now|fuel:object.fuel_max }}%" 
-                                                 aria-valuenow="{{ object.fuel_now }}" 
+                                                 style="width: {{ object.car.fuel_now|fuel:object.car.fuel_max }}%" 
+                                                 aria-valuenow="{{ object.car.fuel_now }}" 
                                                  aria-valuemin="0" 
-                                                 aria-valuemax="{{ object.fuel_max }}">
+                                                 aria-valuemax="{{ object.car.fuel_max }}">
                                                 {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
                                             </div>
                                         </div>
@@ -78,11 +79,11 @@
                                         <div class="progress">
                                             <div class="progress-bar progress-bar-striped bg-warning" 
                                                  role="progressbar" 
-                                                 style="width: {{ object.fuel_now|fuel:object.fuel_max }}%;
+                                                 style="width: {{ object.car.fuel_now|fuel:object.car.fuel_max }}%;
                                                  color: black;" 
-                                                 aria-valuenow="{{ object.fuel_now }}" 
+                                                 aria-valuenow="{{ object.car.fuel_now }}" 
                                                  aria-valuemin="0" 
-                                                 aria-valuemax="{{ object.fuel_max }}">
+                                                 aria-valuemax="{{ object.car.fuel_max }}">
                                                 {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
                                             </div>
                                         </div>
@@ -90,10 +91,10 @@
                                         <div class="progress">
                                             <div class="progress-bar progress-bar-striped bg-danger" 
                                                  role="progressbar" 
-                                                 style="width: {{ object.fuel_now|fuel:object.fuel_max }}%" 
-                                                 aria-valuenow="{{ object.fuel_now }}" 
+                                                 style="width: {{ object.car.fuel_now|fuel:object.car.fuel_max }}%" 
+                                                 aria-valuenow="{{ object.car.fuel_now }}" 
                                                  aria-valuemin="0" 
-                                                 aria-valuemax="{{ object.fuel_max }}">
+                                                 aria-valuemax="{{ object.car.fuel_max }}">
                                                 {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
                                             </div>
                                         </div>
@@ -164,10 +165,8 @@
                 <!-- TODO: make condition for button -->
                 <div class="container float-start text-center">
                     <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                    <!-- FIX: send pk to booking view -->
-                    <a href="{% url 'car:booking-create' pk=object.pk %}" class="btn btn-lg btn-info">ขอใช้งาน</a>
-                    <a href="#" class="btn btn-lg btn-warning">เติมน้ำมัน</a>
-                    <a href="#" class="btn btn-lg btn-danger">ซ่อมบำรุง</a>
+                    <a href="#" class="btn btn-lg btn-info">อัพเดท</a>
+                    <button type="reset" href="#" class="btn btn-lg btn-warning">Reset</button>
                 </div>
                 <br />
 

@@ -41,7 +41,7 @@
                         </h5>
                         <br>
 
-                        <table class="table table-hover datatable" id="dataTable">
+                        <table class="table table-hover" id="dataTable">
                             {% if request.user|has_group:"Staff" %}
 
                             <thead>
@@ -128,6 +128,20 @@
         </div>
 
     </div>
-    </div>
 </section>
+
+<script>
+    $(document).ready(() => {
+        $("#dataTable").DataTable({
+            "fnDrawCallback" : function(oSettings) {
+                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+                } else {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+                }
+            },
+            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+        });
+    });
+</script>
 {% endblock content %}

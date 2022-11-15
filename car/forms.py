@@ -3,6 +3,14 @@ from django.forms import widgets
 
 from car.models import Car, CarBooking
 
+
+class DateInput(widgets.DateTimeBaseInput):
+    """DateInput."""
+
+    input_type = 'date'
+    format_key = 'DATE_INPUT_FORMATS'
+
+
 class CarForm(forms.ModelForm):
     images = forms.ImageField(
         widget = widgets.ClearableFileInput(
@@ -50,18 +58,30 @@ class BookingForm(forms.ModelForm):
     class Meta:
         model = CarBooking
         fields = (
+            'car',
             'mission',
             'passenger',
             'controler',
             'approver',
             'driver',
+            'requested_at',
+            'approve_status',
+            'requester',
         )
         widgets = {
-            'mission':   widgets.Textarea(attrs={'class': 'form-control'}),
+            'car': widgets.HiddenInput(attrs={'class': 'form-control'}),
+            'mission':   widgets.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'passenger': widgets.NumberInput(attrs={'class': 'form-control'}),
             'controler': widgets.Select(attrs={'class': 'form-select'}),
             'approver':  widgets.Select(attrs={'class': 'form-select'}),
             'driver':    widgets.Select(attrs={'class': 'form-select'}),
+            'approve_status': widgets.Select(attrs={'class': 'form-select'}),
+            'requested_at': widgets.DateTimeInput(
+                attrs={'class': 'form-control',
+                       'type': 'datetime-local'},
+                format='%Y-%m-%dT%H:%M'
+            ),
+            'requester': widgets.HiddenInput(attrs={'class': 'form-control'}),
         }
         labels = {
             'mission': 'ภารกิจ',
@@ -69,4 +89,20 @@ class BookingForm(forms.ModelForm):
             'controler': 'ผู้ควบคุม',
             'approver': 'ผู้อนุมัติ',
             'driver': 'พลขับ',
+            'requested_at': 'วันที่ใช้งาน',
+            'approve_status': 'สถานะ',
+        }
+
+
+class ApproveForm(forms.ModelForm):
+    class Meta:
+        model = CarBooking
+        fields = (
+            'approve_status',
+        )
+        widgets = {
+            'approve_status': widgets.Select(attrs={'class': 'form-select'}),
+        }
+        labels = {
+            'approve_status': 'สถานะการขอใช้',
         }

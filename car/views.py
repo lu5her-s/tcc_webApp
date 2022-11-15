@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -7,9 +7,10 @@ from django.views.generic import (
     DetailView,
     ListView,
 )
-from car.forms import BookingForm, CarForm
+from car.forms import ApproveForm, BookingForm, CarForm
 
 from car.models import (
+    ApproveStatus,
     Car,
     CarFix,
     CarImage,
@@ -97,3 +98,54 @@ class CarBookingCreateView(LoginRequiredMixin, CreateView):
     template_name = 'car/booking_form.html'
     model = CarBooking
     form_class = BookingForm
+    success_url = reverse_lazy('car:booking')
+
+    def get(self, *args, **kwargs):
+        context = {
+            'form' : self.form_class,
+            'car_ref': kwargs['pk'],
+        }
+        return render(self.request, self.template_name, context)
+
+    def post(self, request, **kwargs):
+        form = self.form_class(request.POST)
+        
+        if form.is_valid():
+            form_save = form.save()
+            return redirect(self.success_url)
+        else:
+            print(form.errors)
+            form = self.form_class()
+        context = {
+            'from': form,
+            'car_ref': kwargs['pk'],
+        }
+        return render(request, self.template_name, context)
+
+
+class CarBookingDetailView(LoginRequiredMixin, DetailView):
+    model = CarBooking
+    template_name = 'car/booking_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+def update_approve(request, pk):
+    """TODO: Docstring for update_approve.
+    :returns: TODO
+
+    """
+    # booking = CarBooking.objects.get(pk=pk)
+    form = ApproveForm()
+    if request.method == 'POST':
+        form = ApproveForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return reverse_lazy('car:booking-detail', kwargs={'pk': pk})
+    else:
+        form = ApproveForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'car/car.html', context)

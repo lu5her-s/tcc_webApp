@@ -41,7 +41,7 @@
                         </h5>
                         <br>
 
-                        <table class="table table-hover datatable" id="dataTable">
+                        <table class="table table-hover" id="dataTable">
                             <thead>
                                 <tr>
                                     <th scope="col">เอกสารเลขที่</th>
@@ -58,7 +58,7 @@
                                     <td><a href="#">{{ object.urgency }}</a></td>
                                     <th scope="row">{{ object.author.profile.sector.name }}</th>
                                     {% comment %}<td>{{ object.title|truncatechars:50 }}</td>{% endcomment %}
-                                    <td>{{ object.title|text_wrap:20 }}</td>
+                                    <td>{{ object.title|text_wrap:10 }}</td>
                                     <td>
                                       {% comment %}<button class="btn btn-sm btn-info" id="myModal" {% endcomment %}
                                           {% comment %}data-bs-toggle="modal" {% endcomment %}
@@ -164,6 +164,20 @@
         modalBodyInput.value = recipient
         modalmyTitle.innerHTML = recipient
     })
+
+    $(document).ready(() => {
+        $("#dataTable").DataTable({
+            "fnDrawCallback" : function(oSettings) {
+                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+                } else {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+                }
+            },
+            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+        });
+    });
+
 </script>
 {% endblock content %}
 

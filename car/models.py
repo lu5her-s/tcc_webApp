@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 02 2022, 14:37 306
-# Last Modified Date: Sat Nov, 12 2022, 23:25 316
+# Last Modified Date: Mon Nov, 14 2022, 21:26 318
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.db import models
@@ -129,7 +129,7 @@ class CarBooking(models.Model):
     def __str__(self) -> str:
         year: int = datetime.date.today().year + 543
         if self.requester.profile:
-            return f"ใบขอใช้รถเลขที่ {self.pk}/{year} - {self.car.number} ผู้ขอใช้ {self.requester.profile.rank} {self.request_user.get_full_name()}"
+            return f"ใบขอใช้รถเลขที่ {self.pk}/{year} - {self.car.number} ผู้ขอใช้ {self.requester.profile.rank} {self.requester.get_full_name()}"
         else:
             return f"ใบขอใช้รถเลขที่ {self.pk}/{year} - {self.car.number} ผู้ขอใช้ {self.requester.get_full_name()}"
 

@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="pagetitle">
-    <h1>Car {{ title }}</h1>
+    <h1>Car {{ title }}{{ car_ref.number }}</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
@@ -40,109 +40,78 @@
                             {% csrf_token %}
                             {{ form.media }}
                              
-                            {# {{ form|crispy }} #}
+                            {% comment %}{{ form|crispy }}{% endcomment %}
                             
                             <div class="row mb-3">
-                                <label for="{{ form.type.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.type.label }}</label>
+                                <label for="{{ form.mission.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.mission.label }}</label>
                                 <div class="col-md-8 col-lg-9">
-                                    {{ form.type }}
+                                    {{ form.mission }}
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label for="{{ form.number.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.number.label }}</label>
+                                <label for="{{ form.passenger.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.passenger.label }}</label>
                                 <div class="col-md-8 col-lg-9">
-                                    {{ form.number }}
+                                    {{ form.passenger }}
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label for="{{ form.manufacturer.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.manufacturer.label }}</label>
+                                <label for="{{ form.controler.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.controler.label }}</label>
                                 <div class="col-md-8 col-lg-9">
-                                    {{ form.manufacturer }}
+                                    {{ form.controler }}
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label for="{{ form.capacity.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.capacity.label }}</label>
+                                <label for="{{ form.approver.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approver.label }}</label>
                                 <div class="col-md-8 col-lg-9">
-                                    {{ form.capacity }}
+                                    {{ form.approver }}
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label for="{{ form.fuel_max.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.fuel_max.label }}</label>
+                                <label for="{{ form.driver.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.driver.label }}</label>
                                 <div class="col-md-8 col-lg-9">
-                                    {{ form.fuel_max }}
+                                    {{ form.driver }}
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label for="{{ form.fuel_rate.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.fuel_rate.label }}</label>
+                                <label for="{{ form.approve_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approve_status.label }}</label>
                                 <div class="col-md-8 col-lg-9">
-                                    {{ form.fuel_rate }}
+                                    {{ form.approve_status }}
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label for="{{ form.fuel_now.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.fuel_now.label }}</label>
+                                <label for="{{ form.requested_at.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.requested_at.label }}</label>
                                 <div class="col-md-8 col-lg-9">
-                                    {{ form.fuel_now }}
+                                    {{ form.requested_at }}
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label for="{{ form.mile_now.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.mile_now.label }}</label>
                                 <div class="col-md-8 col-lg-9">
-                                    {{ form.mile_now }}
+                                    <input name="{{ form.requester.name }}" type="hidden" class="form-control" id="{{ form.requester.name }}" value="{{ request.user.pk }}">
                                 </div>
                             </div>
-
                             <div class="row mb-3">
-                                <label for="{{ form.responsible_man.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.responsible_man.label }}</label>
                                 <div class="col-md-8 col-lg-9">
-                                    {{ form.responsible_man }}
+                                    <input name="{{ form.car.name }}" type="hidden" class="form-control" id="{{ form.car.name }}" value="{{ car_ref }}">
                                 </div>
                             </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.status.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.status }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.car_avatar.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.car_avatar.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.car_avatar }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.images.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.images.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.images }}
-                                </div>
-                            </div>
-
-                            {% if images %}
-                            <p class="w3-text w3-disabled">ภาพปัจจุบัน</p>
-                            {% for image in images %}
-                            <img src="{{ image.images.url }}" class="w3-image" width="150" height="100">
-                            {% endfor %}
-                            <br>
-                            {% endif %}
-
-                            <br>
+                            
+                            {% comment %}<input type="hidden" name="{{ form.car.name }}" value="{{ car_ref }}">{% endcomment %}
+                            {% comment %}<input type="hidden" name="{{ form.requester.name }}" value="{{ request.user }}">{% endcomment %}
 
                             <div class="text-center">
                                 {% if btn_text == 'อัพเดท' %}
                                     <a href="{% url 'journal:detail' pk=form.instance.pk %}" class="btn btn-lg btn-secondary">Back</a>
                                     <button type="submit" class="btn btn-lg btn-success">Update</button>
                                 {% else %}
-                                <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">Back</a>
-                                <button type="submit" class="btn btn-lg btn-success">Create</button>
+                                <a href="{% url 'car:detail' pk=car_ref %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                                <button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>
                                 <button type="reset" class="btn btn-lg btn-warning">Reset</button>
                                 {% endif %}
                             </div>
@@ -161,6 +130,15 @@
 
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            //change selectboxes to selectize mode to be searchable
+            $("select").select2({
+                width: '100%',
+            });
+        });
+    </script>
 </section>
+
 {% endblock content %}
 
