@@ -51,79 +51,43 @@
                                 </tr>
 
                                 <tr>
-                                    <th>หมายเลขทะเบียน</th>
-                                    <td>{{ object.number }}</td>
+                                    <th>ประเภทยานพาหนะ</th>
+                                    <td>{{ object.car.type.name }}</td>
                                 </tr>
 
                                 <tr>
-                                    <th>สถานภาพเชื้อเพลิง</th>
-                                    <td>
-                                        {% with fuel_current=object.car.fuel_now fuel_max=object.car.fuel_max %}
-                                        <p style="text-align:center;">
-                                            {{ fuel_current|fuel:fuel_max }}%
-                                            ({{ object.car.fuel_now }}/{{ object.car.fuel_max }})
-                                        </p>
-                                        {% with fuel_current|fuel:fuel_max as per %}
-                                        {% if per > 80 %}
-                                        <div class="progress">
-                                            <div class="progress-bar progress-bar-striped bg-success" 
-                                                 role="progressbar" 
-                                                 style="width: {{ object.car.fuel_now|fuel:object.car.fuel_max }}%" 
-                                                 aria-valuenow="{{ object.car.fuel_now }}" 
-                                                 aria-valuemin="0" 
-                                                 aria-valuemax="{{ object.car.fuel_max }}">
-                                                {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
-                                            </div>
-                                        </div>
-                                        {% elif per > 50 %}
-                                        <div class="progress">
-                                            <div class="progress-bar progress-bar-striped bg-warning" 
-                                                 role="progressbar" 
-                                                 style="width: {{ object.car.fuel_now|fuel:object.car.fuel_max }}%;
-                                                 color: black;" 
-                                                 aria-valuenow="{{ object.car.fuel_now }}" 
-                                                 aria-valuemin="0" 
-                                                 aria-valuemax="{{ object.car.fuel_max }}">
-                                                {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
-                                            </div>
-                                        </div>
-                                        {% else %}
-                                        <div class="progress">
-                                            <div class="progress-bar progress-bar-striped bg-danger" 
-                                                 role="progressbar" 
-                                                 style="width: {{ object.car.fuel_now|fuel:object.car.fuel_max }}%" 
-                                                 aria-valuenow="{{ object.car.fuel_now }}" 
-                                                 aria-valuemin="0" 
-                                                 aria-valuemax="{{ object.car.fuel_max }}">
-                                                {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                        {% endwith %} 
-                                        {% endwith %}
+                                    <th>หมายเลขทะเบียน</th>
+                                    <td><a href="{% url 'car:detail' pk=object.car.pk %}" target="_blank">{{ object.car.number }}</a></td>
+                                </tr>
 
+                                <tr>
+                                    <th>วันที่ขอใช้งาน</th>
+                                    <td>
+                                        {{ object.requested_at|thaidate }}
+                                        เวลา {{ object.requested_at|date:"H:m" }} น.
                                     </td>
                                 </tr>
 
                                 <tr>
+                                    <th>ผู้ควบคุม</th>
+                                        <td><a href="{% url 'account:member' pk=object.controler.pk %}" target="_blank">{{ object.controler }}</a></td>
+                                </tr>
+
+                                <tr>
+                                    <th>พลขับ</th>
+                                    <td><a href="{% url 'account:member' pk=object.driver.pk %}" target="_blank">{{ object.driver }}</a></td>
+                                </tr>
+
+                                <tr>
+                                    <th>ผู้อนุมัติ</th>
+                                    <td><a href="{% url 'account:member' pk=object.approver.pk %}" target="_blank">{{ object.approver }}</a></td>
+                                </tr>
+
+                                <tr>
                                     <th>สถานะ</th>
-                                    <td>{{ object.status }}</td>
+                                    <td>{{ object.approve_status.name }}</td>
                                 </tr>
 
-                                <tr>
-                                    <th>จำนวนผู้โดยสาร</th>
-                                    <td>{{ object.capacity }}</td>
-                                </tr>
-
-                                <tr>
-                                    <th>เลขไมล์</th>
-                                    <td>{{ object.mile_now }}</td>
-                                </tr>
-
-                                <tr>
-                                    <th>ผู้รับผิดชอบ</th>
-                                    <td>{{ object.responsible_man }}</td>
-                                </tr>
 
                             </table>
 
@@ -165,8 +129,10 @@
                 <!-- TODO: make condition for button -->
                 <div class="container float-start text-center">
                     <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                    {% if request.user.profile == object.requester or request.user.profile == object.approver %}
                     <a href="#" class="btn btn-lg btn-info">อัพเดท</a>
                     <button type="reset" href="#" class="btn btn-lg btn-warning">Reset</button>
+                    {% endif %}
                 </div>
                 <br />
 

@@ -66,18 +66,11 @@
                                         <a href="{% url 'car:booking-detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a>
                                         <!-- if current user is approver -->
                                         {% if request.user.profile == object.approver %}
-                                        <button 
-                                            type="button"
-                                            id="approve_button"
-                                            {% comment %}href="{% url 'car:booking-detail' pk=object.pk %}" {% endcomment %}
-                                            data-bs-target="#exampleModal" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-pk="{{ object.pk }}"
-                                            data-bs-link="{% url 'car:detail' pk=object.pk %}"
-                                            class="badge bg-warning text-black"
-                                            >
-                                            {{ object.approve_status.name }}
-                                        </button>
+                                        {% comment %}<button id="approve_button" class="badge bg-warning text-black"{% endcomment %}
+                                                                    {% comment %}data-bs-toggle="modal"{% endcomment %}
+                                                                    {% comment %}data-bs-target="#approve_form"{% endcomment %}
+                                            {% comment %}>{{ object.approve_status.name }}</button> {% endcomment %}
+                                        <a class="badge bg-warning text-black" href="#" disable>{{ object.approve_status.name }}</a>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -95,35 +88,40 @@
 
     </div>
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Modal Form -->
+    <div id="approve_form" class="modal fade" 
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">New message</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 id="modalTitle" class="modal-title">Update Approve</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Recipient:</label>
-                            <input type="text" class="form-control" id="recipient-name">
+                <div id="modalBody" class="modal-body">
+                    <form action="#">
+                        <div class="row mb-3">
+                            <label for="{{ form.approve_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approve_status.label }}</label>
+                            <div class="col-md-8 col-lg-9">
+                                {{ form.approve_status }}
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="message-text" class="col-form-label">Message:</label>
-                            <textarea class="form-control" id="message-text"></textarea>
-                        </div>
-                        <div class="showLink">
-
-                        </div>
+                        {% comment %}<div class="row mb-3">{% endcomment %}
+                            {% comment %}<label for="{{ form.approve_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approve_status.label }}</label>{% endcomment %}
+                            <div class="col-md-8 col-lg-9">
+                                {{ form.car_ref }}
+                            </div>
+                        {% comment %}</div>{% endcomment %}
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Send message</button>
+                    <button id="submitButton" class="btn btn-primary">Ok</button>
                 </div>
             </div>
         </div>
-    </div>
+    </div> <!-- end modal -->
 
 </section>
 
@@ -142,14 +140,6 @@
     });
 
     // FIX: edit url and template for show modal
-    $(document).ready(function () {
-        $('#approve_button').on('click', function () {
-            var dataURL = $(this).attr('data-bs-link');
-            $('.showLink').load(dataURL);
-        });
-    });
-
-    // TODO: make modal for update approve_status
 
 </script>
 {% endblock content %}

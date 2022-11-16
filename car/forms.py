@@ -95,6 +95,12 @@ class BookingForm(forms.ModelForm):
 
 
 class ApproveForm(forms.ModelForm):
+    car_ref = forms.CharField(
+        widget=widgets.HiddenInput(attrs={
+            'class': 'form-control',
+        }),
+        label="สถานะการขอใช้"
+    )
     class Meta:
         model = CarBooking
         fields = (

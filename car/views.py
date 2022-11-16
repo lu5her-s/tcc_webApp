@@ -15,6 +15,7 @@ from car.models import (
     CarFix,
     CarImage,
     CarBooking,
+    CarStatus,
     Refuel,
 )
 
@@ -90,6 +91,7 @@ class CarBookingListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'รายการขอใช้ยานพาหนะ'
+        context['form'] = ApproveForm()
         return context
 
 
@@ -112,6 +114,9 @@ class CarBookingCreateView(LoginRequiredMixin, CreateView):
         
         if form.is_valid():
             form_save = form.save()
+            car = Car.objects.get(pk=kwargs['pk'])
+            car.status = CarStatus.objects.get(name="จอง")
+            car.save()
             return redirect(self.success_url)
         else:
             print(form.errors)

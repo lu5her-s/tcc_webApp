@@ -164,8 +164,10 @@
                 <!-- TODO: make condition for button -->
                 <div class="container float-start text-center">
                     <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                    <!-- FIX: send pk to booking view -->
+                    <!-- DONE: send pk to booking view -->
+                    {% if object.status.name == 'พร้อมใช้งาน' %}
                     <a href="{% url 'car:booking-create' pk=object.pk %}" class="btn btn-lg btn-info">ขอใช้งาน</a>
+                    {% endif %}
                     <a href="#" class="btn btn-lg btn-warning">เติมน้ำมัน</a>
                     <a href="#" class="btn btn-lg btn-danger">ซ่อมบำรุง</a>
                 </div>
