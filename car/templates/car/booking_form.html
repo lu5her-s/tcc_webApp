@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="pagetitle">
-    <h1>Car {{ title }}{{ car_ref.number }}</h1>
+    <h1>Car {{ title }}{{ test_var }}</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
@@ -106,13 +106,16 @@
                             {% comment %}<input type="hidden" name="{{ form.requester.name }}" value="{{ request.user }}">{% endcomment %}
 
                             <div class="text-center">
-                                {% if btn_text == 'อัพเดท' %}
-                                    <a href="{% url 'journal:detail' pk=form.instance.pk %}" class="btn btn-lg btn-secondary">Back</a>
-                                    <button type="submit" class="btn btn-lg btn-success">Update</button>
-                                {% else %}
                                 <a href="{% url 'car:detail' pk=car_ref %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                                <button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>
-                                <button type="reset" class="btn btn-lg btn-warning">Reset</button>
+                                {% if form is instance %}
+                                    {% if request.user == object.requester or request.user.profile == object.approver %}
+                                        <button type="submit" class="btn btn-lg btn-success">อัพเดท</button>
+                                        {% comment %}<button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>{% endcomment %}
+                                    {% endif %}
+                                        {% comment %}<button type="reset" class="btn btn-lg btn-warning">Reset</button>{% endcomment %}
+                                {% else %}
+                                    <button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>
+                                    <button type="reset" class="btn btn-lg btn-warning">Reset</button>
                                 {% endif %}
                             </div>
 

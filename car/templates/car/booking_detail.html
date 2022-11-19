@@ -91,47 +91,14 @@
 
                             </table>
 
-                            <table class="table table-borderless">
-                                <tr>
-                                    <th class="text-center">ภาพยานพาหนะ</th>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <center>
-                                            <img src="{{ object.car_avatar.url }}" width="100%">
-                                        </center>
-                                    </td>
-                                </tr>
-                            </table>
-
                         </div><!-- end detail -->
-
-                        <div id="image" class="tab-pane fade pt-3">
-                            <h5 class="card-title">Image | <span>{{ object.title }}</span></h5>
-
-                            <!-- Slides with indicators -->
-                            <div id="gallery">
-                                {% for item in images %}
-                                {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
-                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                                </a> {% endcomment %}
-                                <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
-                                    <img height="250" width="250" src="{{ item.images.url }}" alt="">
-                                </a>
-                                {% endfor %}
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div><!-- end image -->
 
                 <!-- TODO: make condition for button -->
                 <div class="container float-start text-center">
                     <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                    {% if request.user.profile == object.requester or request.user.profile == object.approver %}
-                    <a href="#" class="btn btn-lg btn-info">อัพเดท</a>
-                    <button type="reset" href="#" class="btn btn-lg btn-warning">Reset</button>
+                    {% if request.user == object.requester or request.user.profile == object.approver %}
+                    <a href="{% url 'car:booking-update' pk=object.pk %}" class="btn btn-lg btn-info">อัพเดท</a>
+                    {% comment %}<button type="reset" href="#" class="btn btn-lg btn-warning">Reset</button>{% endcomment %}
                     {% endif %}
                 </div>
                 <br />

@@ -6,6 +6,8 @@ from django.views.generic import (
     CreateView,
     DetailView,
     ListView,
+    UpdateView,
+    View,
 )
 from car.forms import ApproveForm, BookingForm, CarForm
 
@@ -154,3 +156,42 @@ def update_approve(request, pk):
         'form': form,
     }
     return render(request, 'car/car.html', context)
+
+
+class CarBookingUpdateView(LoginRequiredMixin, UpdateView):
+    template_name = 'car/booking_form.html'
+    model = CarBooking
+    form_class = BookingForm
+
+    def get_success_url(self):
+        self.object = self.get_object()
+        return reverse('car:booking-detail', kwargs = {'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        self.object = self.get_object()
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form_class(instance=self.object)
+        context['car_ref'] = self.object.car.pk
+        context['test_var'] = self.object.car.number
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, instance=self.get_object())
+        if form.is_valid():
+            form.save()
+            return redirect(self.get_success_url())
+        else:
+            form = self.form_class(instance=self.object)
+        context = {
+            'form': self.form_class(instance=self.get_object())
+        }
+        return render(request, self.template_name, context)
+
+
+class CarHomeView(LoginRequiredMixin, View):
+    template_name = 'car/home.html'

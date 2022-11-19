@@ -136,6 +136,9 @@
                                     <!-- NOTE: make booking list for show status -->
                                     <td>
                                         <a href="{% url 'car:detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a>
+                                        {% if object.approve_status.name == 'รออนุมัติ' %}
+                                            <a href="{% url 'car:detail' pk=object.pk %}" class="badge bg-success">เพิ่มเติม</a>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}

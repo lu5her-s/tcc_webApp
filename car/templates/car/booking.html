@@ -64,13 +64,10 @@
                                     <td>
                                         <!-- add detail booking -->
                                         <a href="{% url 'car:booking-detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a>
-                                        <!-- if current user is approver -->
-                                        {% if request.user.profile == object.approver %}
-                                        {% comment %}<button id="approve_button" class="badge bg-warning text-black"{% endcomment %}
-                                                                    {% comment %}data-bs-toggle="modal"{% endcomment %}
-                                                                    {% comment %}data-bs-target="#approve_form"{% endcomment %}
-                                            {% comment %}>{{ object.approve_status.name }}</button> {% endcomment %}
-                                        <a class="badge bg-warning text-black" href="#" disable>{{ object.approve_status.name }}</a>
+                                        {% if object.approve_status.name == 'อนุมัติ' %}
+                                            <a class="badge bg-success" href="#">{{ object.approve_status }}</a>
+                                        {% else %}
+                                            <a class="badge bg-warning text-black" href="#">{{ object.approve_status }}</a>
                                         {% endif %}
                                     </td>
                                 </tr>

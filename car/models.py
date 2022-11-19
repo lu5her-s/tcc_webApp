@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 02 2022, 14:37 306
-# Last Modified Date: Mon Nov, 14 2022, 21:26 318
+# Last Modified Date: Thu Nov, 17 2022, 21:12 321
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.db import models
@@ -108,7 +108,7 @@ class Car(models.Model):
 class CarBooking(models.Model):
     """CarUse. for request use car init request change status car to pending"""
 
-    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='car_booking')
     requester = models.ForeignKey(User, on_delete=models.CASCADE, related_name='requester_car')
     mission = models.TextField()
     driver = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='driver', null=True, blank=True)
