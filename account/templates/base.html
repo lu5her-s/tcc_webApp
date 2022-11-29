@@ -397,7 +397,8 @@
 
         {% include "components/footer.html" %}
 
-        <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+        <a id="back-to-top" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+        {% comment %}<button type="button" id="toTop" class="btn btn-secondary justify-content-center"><i class="bi bi-arrow-up-short"></i></button>{% endcomment %}
 
 
         <!-- Vendor JS Files -->
@@ -427,5 +428,23 @@
         $(document).ready(function () {
             $('#repairTable').DataTable();
         });
+
+        $(document).ready(function(){
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 20) {
+                    $('#back-to-top').fadeIn();
+                } else {
+                    $('#back-to-top').fadeOut();
+                }
+            });
+            // scroll body to 0px on click
+            $('#back-to-top').click(function () {
+                $('body,html').animate({
+                    scrollTop: 0
+                }, 400);
+                return false;
+            });
+        });
     </script>
+
 </html>

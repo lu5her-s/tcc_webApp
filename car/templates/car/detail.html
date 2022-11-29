@@ -150,8 +150,8 @@
                                 {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
                                     <img height="150" width="150" src="{{ item.images.url }}" alt="">
                                 </a> {% endcomment %}
-                                <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
-                                    <img height="250" width="250" src="{{ item.images.url }}" alt="">
+                                <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})" />
+                                    <img height="250" width="250" src="{{ item.images.url }}" alt="" />
                                 </a>
                                 {% endfor %}
                             </div>
@@ -168,19 +168,23 @@
                     {% if object.status.name == 'พร้อมใช้งาน' %}
                     <a href="{% url 'car:booking-create' pk=object.pk %}" class="btn btn-lg btn-info">ขอใช้งาน</a>
                     {% endif %}
+                    {% if object.pk == booking_list %}
+                    {% if request.user == booking.requester or request.user.profile == booking.driver %}
+                    <a href="#" class="btn btn-lg btn-success">คืนยานพาหนะ</a>
+                    {% endif %}
+                    {% endif %}
                     <a href="#" class="btn btn-lg btn-warning">เติมน้ำมัน</a>
                     <a href="#" class="btn btn-lg btn-danger">ซ่อมบำรุง</a>
                 </div>
                 <br />
 
                 <br />
-                </div>
+            </div>
 
-            </div><!-- end tab content -->
+        </div><!-- end tab content -->
 
-        </div>
     </div>
 
 </section>
-{% include 'components/photoswipe.html' %}
+{% comment %}{% include 'components/photoswipe.html' %}{% endcomment %}
 {% endblock content %}

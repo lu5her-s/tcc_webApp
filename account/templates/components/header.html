@@ -189,8 +189,8 @@
                     <li class="dropdown-header">
                         {% if request.user.first_name and request.user.last_name %}
                         <h6>{{ request.user.get_full_name }}</h6>
-                        {% if request.user.profile.rank %}
-                        <span>{{ request.user.profile.rank.name }}</span>
+                        {% if request.user.profile.position %}
+                        <span>{{ request.user.profile.position.name }}</span>
                         {% endif %}
                         {% else %}
                         <p class="small mb-0">Update Profile <a href="{% url 'account:profile' %}">Here</a></p>

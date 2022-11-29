@@ -1,4 +1,16 @@
-from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# File              : views.py
+# Author            : lu5her <lu5her@mail>
+# Date              : Wed Nov, 23 2022, 19:31 327
+# Last Modified Date: Wed Nov, 23 2022, 21:30 327
+# Last Modified By  : lu5her <lu5her@mail>
+from django.shortcuts import (
+    HttpResponse,
+    get_object_or_404,
+    redirect,
+    render
+)
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -80,6 +92,12 @@ class CarDetailView(LoginRequiredMixin, DetailView):
         context['car_use'] = CarBooking.objects.filter(car=self.object)
         context['refuel'] = Refuel.objects.filter(car=self.object)
         context['car_fix'] = CarFix.objects.filter(car=self.object)
+        try:
+            context['booking_list'] = Car.objects.get(pk=self.object.pk).car_booking.get().car.pk
+            context['booking'] = Car.objects.get(pk=self.object.pk).car_booking.get()
+        except:
+            context['booking_list'] = None
+            context['booking'] = None
         return context
 
 
@@ -113,7 +131,7 @@ class CarBookingCreateView(LoginRequiredMixin, CreateView):
 
     def post(self, request, **kwargs):
         form = self.form_class(request.POST)
-        
+
         if form.is_valid():
             form_save = form.save()
             car = Car.objects.get(pk=kwargs['pk'])
@@ -193,5 +211,10 @@ class CarBookingUpdateView(LoginRequiredMixin, UpdateView):
         return render(request, self.template_name, context)
 
 
-class CarHomeView(LoginRequiredMixin, View):
-    template_name = 'car/home.html'
+class WaitApproveListView(LoginRequiredMixin, ListView):
+    template_name = 'car/wait_approve.html'
+    model = CarBooking
+
+    def get_queryset(self):
+        qs = CarBooking.objects.filter(approve_status__name='รออนุมัติ')
+        return qs

@@ -11,4 +11,5 @@ urlpatterns = [
     path('booking/create/<int:pk>/', views.CarBookingCreateView.as_view(), name='booking-create'),
     path('booking/detail/<int:pk>/', views.CarBookingDetailView.as_view(), name='booking-detail'),
     path('booking/update/<int:pk>/', views.CarBookingUpdateView.as_view(), name='booking-update'),
+    path('booking/wait/', views.WaitApproveListView.as_view(), name='wait_approve'),
 ]

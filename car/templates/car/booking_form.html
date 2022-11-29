@@ -106,23 +106,22 @@
                             {% comment %}<input type="hidden" name="{{ form.requester.name }}" value="{{ request.user }}">{% endcomment %}
 
                             <div class="text-center">
-                                <a href="{% url 'car:detail' pk=car_ref %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                                {% if form is instance %}
+                                {% comment %}{% if form.instance %}{% endcomment %}
                                     {% if request.user == object.requester or request.user.profile == object.approver %}
+                                        <a href="{% url 'car:detail' pk=car_ref %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
                                         <button type="submit" class="btn btn-lg btn-success">อัพเดท</button>
                                         {% comment %}<button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>{% endcomment %}
+                                    {% else %}
+                                        <a href="{% url 'car:detail' pk=car_ref %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                                        <button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>
+                                        <button type="reset" class="btn btn-lg btn-warning">Reset</button>
                                     {% endif %}
-                                        {% comment %}<button type="reset" class="btn btn-lg btn-warning">Reset</button>{% endcomment %}
-                                {% else %}
-                                    <button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>
-                                    <button type="reset" class="btn btn-lg btn-warning">Reset</button>
-                                {% endif %}
                             </div>
 
                         </form>
 
                         {% else %}
-                        {{ form|crispy }}
+                        {% comment %}{{ form|crispy }}{% endcomment %}
 
                         {% endif %}
 

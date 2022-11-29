@@ -33,11 +33,11 @@
                         <h5 class="card-title">{{ title }} 
                             <span>| List</span>
                             <span>
-                                <a href="{% url 'car:wait_approve' %}" class="align-right btn btn-warning" style="float: right">
-                                    <i class="bi bi-calendar-minus">
-                                        รออนุมัติใช้งาน
-                                    </i>
-                                </a>
+                                {% comment %}<a href="{% url 'car:booking-create' %}" class="align-right btn btn-success" style="float: right">{% endcomment %}
+                                    {% comment %}<i class="bi bi-plus">{% endcomment %}
+                                        {% comment %}ขอใช้ยานพาหนะ{% endcomment %}
+                                    {% comment %}</i>{% endcomment %}
+                                {% comment %}</a>{% endcomment %}
                             </span>
                         </h5>
                         <br>

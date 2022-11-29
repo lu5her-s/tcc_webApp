@@ -112,3 +112,7 @@ class ApproveForm(forms.ModelForm):
         labels = {
             'approve_status': 'สถานะการขอใช้',
         }
+
+
+class CarReturnForm(forms.Form):
+    pass
