@@ -115,4 +115,9 @@ class ApproveForm(forms.ModelForm):
 
 
 class CarReturnForm(forms.Form):
-    pass
+    mile_current = forms.IntegerField(
+        label="Current Miles",
+        required=False,
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'miles now'})
+    )

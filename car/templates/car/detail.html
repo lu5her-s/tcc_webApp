@@ -31,10 +31,10 @@
                                 รายละเอียด
                             </button>
                         </li>
-                        {% if images %}
+                        {% if booking %}
                         <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#image">
-                                ภาพการทำงาน
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#booking">
+                                การขอใช้ยานพาหนะ
                             </button>
                         </li>{% endif %}
                     </ul>
@@ -44,6 +44,8 @@
                         <div id="detail" class="tab-pane fade show active">
                             <h6 class="card-title"> รายละเอียด | <span> {{ object.number }}</span></h6>
                             <table class="table">
+                                {% comment %}<p>{{ booking }}</p>{% endcomment %}
+                                {% comment %}<p>{{ car_fix }}</p>{% endcomment %}
                                 <tr>
                                     <th>ประเภท</th>
                                     <td>{{ object.type }}</td>
@@ -110,7 +112,7 @@
                                 </tr>
 
                                 <tr>
-                                    <th>จำนวนผู้โดยสาร</th>
+                                    <th>จำนวนความจุผู้โดยสาร</th>
                                     <td>{{ object.capacity }}</td>
                                 </tr>
 
@@ -141,25 +143,42 @@
 
                         </div><!-- end detail -->
 
-                        <div id="image" class="tab-pane fade pt-3">
-                            <h5 class="card-title">Image | <span>{{ object.title }}</span></h5>
+                        <!-- booking tab -->
+                        <div id="booking" class="tab-pane fade pt-3">
+                            <h5 class="card-title">รายการขอใช้ยานพาหนะ | <span>{{ object.number }}</span></h5>
 
-                            <!-- Slides with indicators -->
-                            <div id="gallery">
-                                {% for item in images %}
-                                {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
-                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                                </a> {% endcomment %}
-                                <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})" />
-                                    <img height="250" width="250" src="{{ item.images.url }}" alt="" />
-                                </a>
-                                {% endfor %}
-                            </div>
+                            <!-- table booking list with search -->
+                            <table id="dataTable" class="table table-hover datatable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ภารกิจ</th>
+                                        <th scope="col">วันที่ขอใช้งาน</th>
+                                        <th scope="col">ผู้ควบคุม</th>
+                                        <th scope="col">ผู้อนุมัติ</th>
+                                        <th scope="col">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for bk in booking_list %}
+                                    <tr>
+                                        <td>
+                                            <a href="#">
+                                                {{ bk.mission }}
+                                            </a>
+                                        </td>
+                                        <td>{{ bk.requested_at|thaidate }}</td>
+                                        <td>{{ bk.controler }}</td>
+                                        <td>{{ bk.approver }}</td>
+                                        <td>{{ bk.car.status }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
 
                         </div>
                     </div>
 
-                </div><!-- end image -->
+                </div><!-- end booking -->
 
                 <!-- TODO: make condition for button -->
                 <div class="container float-start text-center">
@@ -168,9 +187,9 @@
                     {% if object.status.name == 'พร้อมใช้งาน' %}
                     <a href="{% url 'car:booking-create' pk=object.pk %}" class="btn btn-lg btn-info">ขอใช้งาน</a>
                     {% endif %}
-                    {% if object.pk == booking_list %}
+                    {% if object.pk == booking.car.pk %}
                     {% if request.user == booking.requester or request.user.profile == booking.driver %}
-                    <a href="#" class="btn btn-lg btn-success">คืนยานพาหนะ</a>
+                    <a href="{% url 'car:return-car' pk=object.pk %}" class="btn btn-lg btn-success">คืนยานพาหนะ</a>
                     {% endif %}
                     {% endif %}
                     <a href="#" class="btn btn-lg btn-warning">เติมน้ำมัน</a>

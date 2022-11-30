@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 02 2022, 14:37 306
-# Last Modified Date: Thu Nov, 17 2022, 21:12 321
+# Last Modified Date: Thu Dec, 01 2022, 00:16 335
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.db import models
@@ -137,7 +137,7 @@ class CarBooking(models.Model):
 class CarFix(models.Model):
     """CarFix. request to fix car change status car to in maintenance"""
 
-    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='car_fix')
     issue = RichTextField(null=True, blank=True)
     cost_expect = models.PositiveIntegerField(default=0)
     fix_requester = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -157,7 +157,7 @@ class CarFix(models.Model):
 
 
 class Refuel(models.Model):
-    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='car_refuel')
     refuel = models.PositiveIntegerField(default=0)
     refueler = models.ForeignKey(User, on_delete=models.CASCADE, related_name='refueler')
     refueled_at = models.DateTimeField(auto_now_add=True)

@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Return{% endblock title %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>Car {{ title }}{{ test_var }}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'car:list' %}">การจัดการยานพาหนะ</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'car:booking' %}">การขอใช้ยานพาหนะ</a></li>
+            <li class="breadcrumb-item active">ขอใช้ยานพาหนะ</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section profile">
+    <div class="row">
+
+        <div class="col-xl-12">
+
+            <div class="card">
+                <div class="card-body pt-3">
+                    <!-- Bordered Tabs -->
+                    <ul class="nav nav-tabs nav-tabs-bordered">
+
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Car Add Form</button>
+                        </li>
+
+                    </ul>
+                    <div class="tab-content pt-2">
+
+                        <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
+                        {% if form.instance %}
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form.media }}
+                             
+                            {{ form|crispy }}
+                            
+                            <div class="row mb-3">
+                                <label for="{{ form.mission.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.mission.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.mission }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.passenger.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.passenger.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.passenger }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.controler.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.controler.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.controler }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.approver.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approver.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.approver }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.driver.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.driver.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.driver }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.approve_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approve_status.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.approve_status }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.requested_at.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.requested_at.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.requested_at }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-8 col-lg-9">
+                                    <input name="{{ form.requester.name }}" type="hidden" class="form-control" id="{{ form.requester.name }}" value="{{ request.user.pk }}">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-8 col-lg-9">
+                                    <input name="{{ form.car.name }}" type="hidden" class="form-control" id="{{ form.car.name }}" value="{{ car_ref }}">
+                                </div>
+                            </div>
+                            
+                            {% comment %}<input type="hidden" name="{{ form.car.name }}" value="{{ car_ref }}">{% endcomment %}
+                            {% comment %}<input type="hidden" name="{{ form.requester.name }}" value="{{ request.user }}">{% endcomment %}
+
+                            <div class="text-center">
+                                {% comment %}{% if form.instance %}{% endcomment %}
+                                    {% if request.user == object.requester or request.user.profile == object.approver %}
+                                        <a href="{% url 'car:detail' pk=car_ref %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                                        <button type="submit" class="btn btn-lg btn-success">อัพเดท</button>
+                                        {% comment %}<button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>{% endcomment %}
+                                    {% else %}
+                                        <a href="{% url 'car:detail' pk=car_ref %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                                        <button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>
+                                        <button type="reset" class="btn btn-lg btn-warning">Reset</button>
+                                    {% endif %}
+                            </div>
+
+                        </form>
+
+                        {% else %}
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <br />
+                            <button class="btn btn-info">Ok Test</button>
+                        </form>
+                        <br />
+                        {{ car.number }} <br />
+                        {{ car.mile_now }} <br />
+                        {{ car.fuel_rate }} <br />
+
+                        {% if form.is_valid %}
+                            distance = {{ distance }} <br />
+                            fuel use = {{ fuel_use|floatformat:2 }}
+                        {% endif %}
+
+                    {% endif %}
+
+                    </div><!-- End Bordered Tabs -->
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            //change selectboxes to selectize mode to be searchable
+            $("select").select2({
+                width: '100%',
+            });
+        });
+
+        $(document).ready(function(){
+            $("#myBtn").click(function(){
+                $("#myModal").modal();
+            });
+        });
+    </script>
+</section>
+
+{% endblock content %}
+

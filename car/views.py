@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 23 2022, 19:31 327
-# Last Modified Date: Wed Nov, 23 2022, 21:30 327
+# Last Modified Date: Thu Dec, 01 2022, 00:49 335
 # Last Modified By  : lu5her <lu5her@mail>
 from django.shortcuts import (
     HttpResponse,
@@ -18,10 +18,11 @@ from django.views.generic import (
     CreateView,
     DetailView,
     ListView,
+    TemplateView,
     UpdateView,
     View,
 )
-from car.forms import ApproveForm, BookingForm, CarForm
+from car.forms import ApproveForm, BookingForm, CarForm, CarReturnForm
 
 from car.models import (
     ApproveStatus,
@@ -93,11 +94,17 @@ class CarDetailView(LoginRequiredMixin, DetailView):
         context['refuel'] = Refuel.objects.filter(car=self.object)
         context['car_fix'] = CarFix.objects.filter(car=self.object)
         try:
-            context['booking_list'] = Car.objects.get(pk=self.object.pk).car_booking.get().car.pk
+            context['booking_list'] = Car.objects.get(pk=self.object.pk).car_booking.all()
             context['booking'] = Car.objects.get(pk=self.object.pk).car_booking.get()
+            # context['fix_list'] = CarFix.objects.filter(car=self.object.pk).car.pk
+            # context['fixing'] = CarFix.objects.get(car=self.object.pk)
+            # context['fix_list'] = Car.objects.get(pk=self.object.pk).car_fix.get().car.pk
+            # context['car_fix'] = Car.objects.get(pk=self.object.pk).car_fix.get()
         except:
             context['booking_list'] = None
             context['booking'] = None
+            # context['fix_list'] = None
+            # context['fixing'] = None
         return context
 
 
@@ -218,3 +225,22 @@ class WaitApproveListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         qs = CarBooking.objects.filter(approve_status__name='รออนุมัติ')
         return qs
+
+def ReturnCar(request, pk):
+    form = CarReturnForm()
+    car = Car.objects.get(pk=pk)
+    distance: int = 0
+    fuel_use: float = 0
+    if request.method == 'POST':
+        form = CarReturnForm(request.POST)
+        distance = int(request.POST.get('mile_current')) - car.mile_now
+        fuel_use = distance / car.fuel_rate
+    else:
+        form = CarReturnForm()
+    context = {
+        'form': form,
+        'car': car,
+        'distance': distance,
+        'fuel_use': fuel_use,
+    }
+    return render(request, 'car/return.html', context)
