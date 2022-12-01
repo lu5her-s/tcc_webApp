@@ -3,10 +3,11 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 23 2022, 19:31 327
-# Last Modified Date: Thu Dec, 01 2022, 00:49 335
+# Last Modified Date: Thu Dec, 01 2022, 21:20 335
 # Last Modified By  : lu5her <lu5her@mail>
 from django.shortcuts import (
     HttpResponse,
+    HttpResponseRedirect,
     get_object_or_404,
     redirect,
     render
@@ -211,7 +212,7 @@ class CarBookingUpdateView(LoginRequiredMixin, UpdateView):
             form.save()
             return redirect(self.get_success_url())
         else:
-            form = self.form_class(instance=self.object)
+            form = self.form_class(instance=self.get_object())
         context = {
             'form': self.form_class(instance=self.get_object())
         }
@@ -229,12 +230,13 @@ class WaitApproveListView(LoginRequiredMixin, ListView):
 def ReturnCar(request, pk):
     form = CarReturnForm()
     car = Car.objects.get(pk=pk)
-    distance: int = 0
+    distance: float = 0
     fuel_use: float = 0
     if request.method == 'POST':
         form = CarReturnForm(request.POST)
-        distance = int(request.POST.get('mile_current')) - car.mile_now
-        fuel_use = distance / car.fuel_rate
+        distance :float = round((float(request.POST.get('mile_current')) - car.mile_now),2)
+        fuel_use :float = distance / car.fuel_rate
+        print(request.POST['mile_current'])
     else:
         form = CarReturnForm()
     context = {
@@ -244,3 +246,10 @@ def ReturnCar(request, pk):
         'fuel_use': fuel_use,
     }
     return render(request, 'car/return.html', context)
+
+def UseCar(request, pk):
+    car = Car.objects.get(pk=pk)
+    car_status = CarStatus.objects.get(name='กำลังใช้งาน')
+    car.status = car_status
+    car.save()
+    return HttpResponseRedirect(reverse('car:booking'))

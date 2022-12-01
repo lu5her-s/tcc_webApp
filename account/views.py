@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Sun Oct, 30 2022, 00:12 303
+# Last Modified Date: Thu Dec, 01 2022, 20:03 335
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.contrib.auth                import update_session_auth_hash
@@ -131,6 +131,7 @@ def update_profile(request):
         profile.instagram  = request.POST['instagram']
         profile.line_id    = request.POST['line_id']
         profile.line_token = request.POST['line_token']
+        profile.about      = request.POST['about']
 
         profile.save()
         return HttpResponseRedirect(reverse_lazy('account:profile'))

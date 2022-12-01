@@ -185,12 +185,7 @@
                     <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
                     <!-- DONE: send pk to booking view -->
                     {% if object.status.name == 'พร้อมใช้งาน' %}
-                    <a href="{% url 'car:booking-create' pk=object.pk %}" class="btn btn-lg btn-info">ขอใช้งาน</a>
-                    {% endif %}
-                    {% if object.pk == booking.car.pk %}
-                    {% if request.user == booking.requester or request.user.profile == booking.driver %}
-                    <a href="{% url 'car:return-car' pk=object.pk %}" class="btn btn-lg btn-success">คืนยานพาหนะ</a>
-                    {% endif %}
+                        <a href="{% url 'car:booking-create' pk=object.pk %}" class="btn btn-lg btn-info">ขอใช้งาน</a>
                     {% endif %}
                     <a href="#" class="btn btn-lg btn-warning">เติมน้ำมัน</a>
                     <a href="#" class="btn btn-lg btn-danger">ซ่อมบำรุง</a>

@@ -43,7 +43,7 @@
                     <!-- start tab content -->
                     <div class="tab-content pt-2">
                         <div id="detail" class="tab-pane fade show active">
-                            <h6 class="card-title"> รายละเอียด | <span> การขอใช้งาน {{ object.car.number }}</span></h6>
+                            <h6 class="card-title"> รายละเอียด | <span> การขอใช้งาน ที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h6>
                             <table class="table">
                                 <tr>
                                     <th>ภารกิจ</th>
@@ -95,9 +95,14 @@
 
                 <!-- TODO: make condition for button -->
                 <div class="container float-start text-center">
-                    <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                    <a href="{% url 'car:booking' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
                     {% if request.user == object.requester or request.user.profile == object.approver %}
-                    <a href="{% url 'car:booking-update' pk=object.pk %}" class="btn btn-lg btn-info">อัพเดท</a>
+                        {% if object.car.status.name == 'จอง' and object.approve_status.name == 'อนุมัติ' %}
+                            <a href="{% url 'car:use-car' pk=object.car.pk %}" class="btn btn-lg btn-info">Use {{ object.car.pk }}</a>
+                        {% elif object.car.status.name == 'กำลังใช้งาน' %}
+                            <a href="#" class="btn btn-lg btn-success">Return</a>
+                        {% endif %}
+                    <a href="{% url 'car:booking-update' pk=object.pk %}" class="btn btn-lg btn-warning">อัพเดท</a>
                     {% comment %}<button type="reset" href="#" class="btn btn-lg btn-warning">Reset</button>{% endcomment %}
                     {% endif %}
                 </div>

@@ -127,14 +127,14 @@
                             <br />
                             <button class="btn btn-info">Ok Test</button>
                         </form>
-                        <br />
+                        {% comment %}<br />{% endcomment %}
                         {{ car.number }} <br />
                         {{ car.mile_now }} <br />
                         {{ car.fuel_rate }} <br />
 
                         {% if form.is_valid %}
                             distance = {{ distance }} <br />
-                            fuel use = {{ fuel_use|floatformat:2 }}
+                            fuel use = {{ fuel_use|floatformat:"2" }}
                         {% endif %}
 
                     {% endif %}

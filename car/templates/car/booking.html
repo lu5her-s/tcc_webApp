@@ -45,6 +45,7 @@
                         <table class="table table-hover datatable" id="dataTable">
                             <thead>
                                 <tr>
+                                    <th scope="col">ใบขอใช้รถเลขที่</th>
                                     <th scope="col">หมายเลขทะเบียน</th>
                                     <th scope="col">ภารกิจ</th>
                                     <th scope="col">วันที่ขอใช้งาน</th>
@@ -56,6 +57,11 @@
                             <tbody>
                                 {% for object in object_list %}
                                 <tr>
+                                    <td>
+                                        <a href="{% url 'car:booking-detail' pk=object.pk %}">
+                                            {{ object.pk }}/{{ object.created_at.year|thaiyear }}
+                                        </a>
+                                    </td>
                                     <td>{{ object.car.number }}</td>
                                     <td>{{ object.mission }}</td>
                                     <td>{{ object.requested_at|thaidate }}</td>

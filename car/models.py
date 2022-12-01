@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 02 2022, 14:37 306
-# Last Modified Date: Thu Dec, 01 2022, 00:16 335
+# Last Modified Date: Thu Dec, 01 2022, 23:12 335
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.db import models
@@ -91,7 +91,7 @@ class Car(models.Model):
     responsible_man = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='responsible_man')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    mile_now = models.PositiveIntegerField(default=0)
+    mile_now = models.FloatField(default=0.0)
     car_avatar = models.ImageField(upload_to='Car/', null=True, blank=True)
 
     class Meta:
@@ -116,11 +116,12 @@ class CarBooking(models.Model):
     controler = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
     approver = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='use_approver')
     requested_at = models.DateTimeField()
-    mile_current = models.PositiveIntegerField(null=True, blank=True)
-    distance = models.PositiveIntegerField(default=0)
+    mile_current = models.FloatField(null=True, blank=True)
+    distance = models.FloatField(default=0)
     return_at = models.DateTimeField(null=True, blank=True)
     fuel_use = models.FloatField(default=0.0)
     approve_status = models.ForeignKey(ApproveStatus, on_delete=models.CASCADE, related_name='use_approve_status')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Car Booking'
@@ -158,7 +159,7 @@ class CarFix(models.Model):
 
 class Refuel(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='car_refuel')
-    refuel = models.PositiveIntegerField(default=0)
+    refuel = models.FloatField(default=0.0)
     refueler = models.ForeignKey(User, on_delete=models.CASCADE, related_name='refueler')
     refueled_at = models.DateTimeField(auto_now_add=True)
     note = RichTextField(null=True, blank=True)
