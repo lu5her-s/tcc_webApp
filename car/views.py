@@ -3,8 +3,9 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 23 2022, 19:31 327
-# Last Modified Date: Thu Dec, 01 2022, 21:20 335
+# Last Modified Date: Fri Dec, 02 2022, 22:31 336
 # Last Modified By  : lu5her <lu5her@mail>
+from django.db.models import Q
 from django.shortcuts import (
     HttpResponse,
     HttpResponseRedirect,
@@ -84,6 +85,16 @@ class CarCreateView(LoginRequiredMixin, CreateView):
         return super().post(request, *args, **kwargs)
 
 
+class CarUpdateView(LoginRequiredMixin, UpdateView):
+    template_name = 'car/create.html'
+    form_class = CarForm
+    model = Car
+    # success_url = reverse_lazy('car:detail', kwargs={'pk': self.get_object().pk})
+
+    def get_success_url(self):
+        return reverse_lazy('car:detail', kwargs={'pk': self.get_object().pk})
+
+
 class CarDetailView(LoginRequiredMixin, DetailView):
     template_name = 'car/detail.html'
     model = Car
@@ -119,11 +130,22 @@ class CarBookingListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'รายการขอใช้ยานพาหนะ'
-        context['form'] = ApproveForm()
         return context
 
+    def get_queryset(self):
+        if self.request.user.groups.filter(name="Car").exists() or self.request.user.groups.filter(name="Staff"):
+            qs = CarBooking.objects.all()
 
-# TODO: make booking create view
+        else:
+            qs = CarBooking.objects.filter(
+                Q(requester=self.request.user) |
+                Q(driver=self.request.user.profile) |
+                Q(approver=self.request.user.profile)
+            )
+        return qs
+
+
+# DONE: make booking create view
 class CarBookingCreateView(LoginRequiredMixin, CreateView):
     template_name = 'car/booking_form.html'
     model = CarBooking

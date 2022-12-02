@@ -95,7 +95,14 @@
           <i class="bi bi-person"></i>
           <span>กำลังพล</span>
         </a>
-      </li><!-- End Profile Page Nav -->
+      </li><!-- End Profile List Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'contact' %}">
+          <i class="bi bi-envelope"></i>
+          <span>Contact Us</span>
+        </a>
+      </li><!-- End Profile List Page Nav -->
 
       {% if request.user.is_superuser %}
       <li class="nav-item">
@@ -103,7 +110,7 @@
           <i class="bi bi-at"></i>
           <span>Admin Page</span>
         </a>
-      </li><!-- End Profile Page Nav -->
+      </li><!-- End Admin Page -->
       {% endif %}
 
     </ul>

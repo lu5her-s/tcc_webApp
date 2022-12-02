@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Thu Dec, 01 2022, 20:03 335
+# Last Modified Date: Fri Dec, 02 2022, 18:24 336
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.contrib.auth                import update_session_auth_hash
@@ -172,3 +172,7 @@ def position_list(request, pk):
         'bc_title': Position.objects.get(pk=pk).name
     }
     return render(request, 'account/other_list.html', context)
+
+
+class ContactView(LoginRequiredMixin, TemplateView):
+    template_name = 'account/contact.html'

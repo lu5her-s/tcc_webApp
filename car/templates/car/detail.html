@@ -162,7 +162,7 @@
                                     {% for bk in booking_list %}
                                     <tr>
                                         <td>
-                                            <a href="#">
+                                            <a href="{% url 'car:booking-detail' pk=bk.pk %}">
                                                 {{ bk.mission }}
                                             </a>
                                         </td>
@@ -189,6 +189,9 @@
                     {% endif %}
                     <a href="#" class="btn btn-lg btn-warning">เติมน้ำมัน</a>
                     <a href="#" class="btn btn-lg btn-danger">ซ่อมบำรุง</a>
+                    {% if request.user|has_group:"Car" %}
+                        <a href="{% url 'car:update' pk=object.pk %}" class="btn btn-lg btn-warning">แก้ไข</a>
+                    {% endif %}
                 </div>
                 <br />
 

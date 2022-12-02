@@ -88,6 +88,13 @@
                                     <td>{{ object.approve_status.name }}</td>
                                 </tr>
 
+                                {% if object.mile_current %}
+                                <tr>
+                                    <th>Mile</th>
+                                    <td>Have Miles Not null</td>
+                                </tr>
+                                {% endif %}
+
 
                             </table>
 
@@ -96,14 +103,16 @@
                 <!-- TODO: make condition for button -->
                 <div class="container float-start text-center">
                     <a href="{% url 'car:booking' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                    {% if request.user == object.requester or request.user.profile == object.approver %}
-                        {% if object.car.status.name == 'จอง' and object.approve_status.name == 'อนุมัติ' %}
-                            <a href="{% url 'car:use-car' pk=object.car.pk %}" class="btn btn-lg btn-info">Use {{ object.car.pk }}</a>
-                        {% elif object.car.status.name == 'กำลังใช้งาน' %}
-                            <a href="#" class="btn btn-lg btn-success">Return</a>
+                    {% if not object.mile_current %}
+                        {% if request.user == object.requester or request.user.profile == object.driver or request.user.profile == object.approver %}
+                            {% if object.car.status.name == 'จอง' and object.approve_status.name == 'อนุมัติ' %}
+                                <a href="{% url 'car:use-car' pk=object.car.pk %}" class="btn btn-lg btn-info">Use {{ object.car.pk }}</a>
+                            {% elif object.car.status.name == 'กำลังใช้งาน' %}
+                                <a href="{% url 'car:return-car' pk=object.car.pk %}" class="btn btn-lg btn-success">Return</a>
+                            {% endif %}
+                            <a href="{% url 'car:booking-update' pk=object.pk %}" class="btn btn-lg btn-warning">อัพเดท</a>
+                        {% comment %}<button type="reset" href="#" class="btn btn-lg btn-warning">Reset</button>{% endcomment %}
                         {% endif %}
-                    <a href="{% url 'car:booking-update' pk=object.pk %}" class="btn btn-lg btn-warning">อัพเดท</a>
-                    {% comment %}<button type="reset" href="#" class="btn btn-lg btn-warning">Reset</button>{% endcomment %}
                     {% endif %}
                 </div>
                 <br />
