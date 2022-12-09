@@ -61,8 +61,8 @@
                                     <td>
                                         {% with fuel_current=object.fuel_now fuel_max=object.fuel_max %}
                                         <p style="text-align:center;">
-                                            {{ fuel_current|fuel:fuel_max }}%
-                                            ({{ object.fuel_now }}/{{ object.fuel_max }})
+                                            {{ fuel_current|fuel:fuel_max|floatformat:"2" }}%
+                                            ({{ object.fuel_now|floatformat:"2" }}/{{ object.fuel_max }})
                                         </p>
                                         {% with fuel_current|fuel:fuel_max as per %}
                                         {% if per > 80 %}
@@ -169,7 +169,11 @@
                                         <td>{{ bk.requested_at|thaidate }}</td>
                                         <td>{{ bk.controler }}</td>
                                         <td>{{ bk.approver }}</td>
+                                        {% if not bk.mile_in %}
                                         <td>{{ bk.car.status }}</td>
+                                        {% else %}
+                                        <td>เสร็จสิ้น</td>
+                                        {% endif %}
                                     </tr>
                                     {% endfor %}
                                 </tbody>

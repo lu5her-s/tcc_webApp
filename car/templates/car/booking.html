@@ -72,10 +72,14 @@
                                     <td>
                                         <!-- add detail booking -->
                                         <a href="{% url 'car:booking-detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a>
-                                        {% if object.approve_status.name == 'อนุมัติ' %}
-                                            <a class="badge bg-success" href="#">{{ object.approve_status }}</a>
+                                        {% if not object.approve_status.name == 'เสร็จสิ้น' %}
+                                            {% if object.approve_status.name == 'อนุมัติ' %}
+                                                <a class="badge bg-success" href="#">{{ object.approve_status }}</a>
+                                            {% else %}
+                                                <a class="badge bg-warning text-black" href="#">{{ object.approve_status }}</a>
+                                            {% endif %}
                                         {% else %}
-                                            <a class="badge bg-warning text-black" href="#">{{ object.approve_status }}</a>
+                                            <p class="badge bg-info text-black" href="#">{{ object.approve_status.name }}</p>
                                         {% endif %}
                                     </td>
                                 </tr>

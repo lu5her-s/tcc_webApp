@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% load tags %}d
 
 {% block title %}Return{% endblock title %}
 
@@ -28,13 +29,21 @@
                     <ul class="nav nav-tabs nav-tabs-bordered">
 
                         <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Car Add Form</button>
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Car Return Form</button>
                         </li>
 
                     </ul>
                     <div class="tab-content pt-2">
 
                         <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
+                        ใบขอใช้รถเลขที่ {{ booking.pk }}/{{ booking.requested_at.year|thaiyear }} <br />
+                        ภารกิจ {{ booking.mission }} <br />
+                        พลขับ {{ booking.driver }} <br />
+                        ผู้อนุมัติ {{ booking.approver }} <br />
+                        จำนวนผู้โดยสาร {{ booking.passenger }} <br />
+
+                        <br />
+
                         {% if form.instance %}
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
@@ -128,13 +137,21 @@
                             <button class="btn btn-info">Ok Test</button>
                         </form>
                         {% comment %}<br />{% endcomment %}
-                        {{ car.number }} <br />
-                        {{ car.mile_now }} <br />
-                        {{ car.fuel_rate }} <br />
+                        ทะเบียน {{ car.number }} <br />
+                        ไมล์รถก่อนใช้งาน {{ car.mile_now }} <br />
+                        อัตราน้ำมัน {{ car.fuel_rate }} <br />
+                        ไมล์หลังใช้งาน {{ mile_now }} <br />
+                        -------------- <br />
+                        น้ำมัน {{ car.fuel_now }} <br />
+                        คงเหลือ {{ fuel_now|floatformat:"2" }} <br />
+                        -------------- <br />
+                        การจอง {{ booking.pk }} <br />
+                        พลขับ {{ booking.driver }} <br />
+                        mile_out {{ booking.mile_out }} <br />
 
                         {% if form.is_valid %}
-                            distance = {{ distance }} <br />
-                            fuel use = {{ fuel_use|floatformat:"2" }}
+                            ระยะทาง = {{ distance }} <br />
+                            ใช้น้ำมันไป = {{ fuel_use|floatformat:"2" }}
                         {% endif %}
 
                     {% endif %}
@@ -147,20 +164,6 @@
         </div>
     </div>
 
-    <script>
-        $(document).ready(function () {
-            //change selectboxes to selectize mode to be searchable
-            $("select").select2({
-                width: '100%',
-            });
-        });
-
-        $(document).ready(function(){
-            $("#myBtn").click(function(){
-                $("#myModal").modal();
-            });
-        });
-    </script>
 </section>
 
 {% endblock content %}

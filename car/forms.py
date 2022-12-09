@@ -78,8 +78,9 @@ class BookingForm(forms.ModelForm):
             'approve_status': widgets.Select(attrs={'class': 'form-select'}),
             'requested_at': widgets.DateTimeInput(
                 attrs={'class': 'form-control',
-                       'type': 'datetime-local'},
-                format='%Y-%m-%dT%H:%M'
+                       'type': 'datetime-local',
+                       'id': 'datepicker'},
+                format='yyyy-MM-ddThh:mm'
             ),
             'requester': widgets.HiddenInput(attrs={'class': 'form-control'}),
         }

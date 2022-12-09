@@ -3,8 +3,9 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 23 2022, 19:31 327
-# Last Modified Date: Fri Dec, 02 2022, 22:31 336
+# Last Modified Date: Thu Dec, 08 2022, 22:29 342
 # Last Modified By  : lu5her <lu5her@mail>
+import datetime
 from django.db.models import Q
 from django.shortcuts import (
     HttpResponse,
@@ -156,6 +157,7 @@ class CarBookingCreateView(LoginRequiredMixin, CreateView):
         context = {
             'form' : self.form_class,
             'car_ref': kwargs['pk'],
+            'car': Car.objects.get(pk=kwargs['pk']),
         }
         return render(self.request, self.template_name, context)
 
@@ -251,14 +253,30 @@ class WaitApproveListView(LoginRequiredMixin, ListView):
 
 def ReturnCar(request, pk):
     form = CarReturnForm()
-    car = Car.objects.get(pk=pk)
+    booking = CarBooking.objects.get(pk=pk)
+    car = Car.objects.get(pk=booking.car.pk)
+    # booking.mile_out = car.mile_now
+    
     distance: float = 0
     fuel_use: float = 0
     if request.method == 'POST':
         form = CarReturnForm(request.POST)
-        distance :float = round((float(request.POST.get('mile_current')) - car.mile_now),2)
-        fuel_use :float = distance / car.fuel_rate
-        print(request.POST['mile_current'])
+        if form.is_valid():
+            distance :float = round((float(request.POST.get('mile_current')) - car.mile_now),2)
+            fuel_use :float = distance / car.fuel_rate
+            booking.mile_out = car.mile_now
+            booking.distance = distance
+            booking.mile_in = request.POST['mile_current']
+            booking.return_at = datetime.datetime.now()
+            booking.fuel_use = fuel_use
+            booking.approver = ApproveStatus.objects.get(name='เสร็จสิ้น')
+            car.mile_now = request.POST['mile_current']
+            car.fuel_now = car.fuel_now - fuel_use
+            car.status = CarStatus.objects.get(name='พร้อมใช้งาน')
+            booking.save()
+            car.save()
+            return redirect(reverse_lazy('car:booking'))
+        # print(request.POST['mile_current'])
     else:
         form = CarReturnForm()
     context = {
@@ -266,6 +284,9 @@ def ReturnCar(request, pk):
         'car': car,
         'distance': distance,
         'fuel_use': fuel_use,
+        'mile_now': car.mile_now + distance,
+        'fuel_now': car.fuel_now - fuel_use,
+        'booking': booking,
     }
     return render(request, 'car/return.html', context)
 

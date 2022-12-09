@@ -12,7 +12,7 @@
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="{% url 'car:list' %}">การจัดการยานพาหนะ</a></li>
             <li class="breadcrumb-item"><a href="{% url 'car:booking' %}">การขอใช้ยานพาหนะ</a></li>
-            <li class="breadcrumb-item active">ขอใช้ยานพาหนะ</li>
+            <li class="breadcrumb-item active">{{ car.type.name }} ทะเบียน {{ car.number }}</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -28,13 +28,14 @@
                     <ul class="nav nav-tabs nav-tabs-bordered">
 
                         <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Car Add Form</button>
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">{{ car.type.name }} {{ car.number }}</button>
                         </li>
 
                     </ul>
                     <div class="tab-content pt-2">
 
                         <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
+                        {% comment %}การขอใช้ยานพาหนะ หมายเลขทะเบียน {{ car.number }}{% endcomment %}
                         {% if form.instance %}
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
@@ -140,6 +141,7 @@
             });
         });
     </script>
+
 </section>
 
 {% endblock content %}

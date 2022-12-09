@@ -79,6 +79,11 @@
                                 </tr>
 
                                 <tr>
+                                    <th>จำนวนผู้โดยสาร</th>
+                                    <td>{{ object.passenger }} คน</td>
+                                </tr>
+
+                                <tr>
                                     <th>ผู้อนุมัติ</th>
                                     <td><a href="{% url 'account:member' pk=object.approver.pk %}" target="_blank">{{ object.approver }}</a></td>
                                 </tr>
@@ -88,10 +93,26 @@
                                     <td>{{ object.approve_status.name }}</td>
                                 </tr>
 
-                                {% if object.mile_current %}
+                                {% if object.mile_in %}
                                 <tr>
-                                    <th>Mile</th>
-                                    <td>Have Miles Not null</td>
+                                    <th>ไมล์ออก</th>
+                                    <td>{{ object.mile_out }}</td>
+                                </tr>
+                                <tr>
+                                    <th>ไมล์เข้า</th>
+                                    <td>{{ object.mile_in }}</td>
+                                </tr>
+                                <tr>
+                                    <th>ระยะทาง</th>
+                                    <td>{{ object.distance }} กม.</td>
+                                </tr>
+                                <tr>
+                                    <th>ใช้นำมันไป</th>
+                                    <td>{{ object.fuel_use }} ลิตร</td>
+                                </tr>
+                                <tr>
+                                    <th>คืนเมื่อ</th>
+                                    <td>{{ object.return_at|thaidate }} เวลา {{ object.return_at|timezone:"Asia/Bangkok"|date:"H:i" }} น.</td>
                                 </tr>
                                 {% endif %}
 
@@ -108,9 +129,11 @@
                             {% if object.car.status.name == 'จอง' and object.approve_status.name == 'อนุมัติ' %}
                                 <a href="{% url 'car:use-car' pk=object.car.pk %}" class="btn btn-lg btn-info">Use {{ object.car.pk }}</a>
                             {% elif object.car.status.name == 'กำลังใช้งาน' %}
-                                <a href="{% url 'car:return-car' pk=object.car.pk %}" class="btn btn-lg btn-success">Return</a>
+                                <a href="{% url 'car:return-car' pk=object.pk %}" class="btn btn-lg btn-success">Return</a>
                             {% endif %}
+                            {% if not object.mile_in %}
                             <a href="{% url 'car:booking-update' pk=object.pk %}" class="btn btn-lg btn-warning">อัพเดท</a>
+                            {% endif %}
                         {% comment %}<button type="reset" href="#" class="btn btn-lg btn-warning">Reset</button>{% endcomment %}
                         {% endif %}
                     {% endif %}

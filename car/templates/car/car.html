@@ -91,13 +91,13 @@
                                     <td>
                                         {% comment %}{{ object.fuel_now }}/{{ object.fuel_max }}{% endcomment %}
                                         {% with fuel_current=object.fuel_now fuel_max=object.fuel_max %}
-                                            <p style="text-align:center;">{{ fuel_current|fuel:fuel_max }}%</p>
+                                            <p style="text-align:center;">{{ fuel_current|fuel:fuel_max|floatformat:"2" }}%</p>
                                             {% with fuel_current|fuel:fuel_max as per %}
                                                 {% if per > 80 %}
                                                     <div class="progress">
                                                         <div class="progress-bar progress-bar-striped bg-success" 
                                                              role="progressbar" 
-                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max }}%" 
+                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max|floatformat:"2" }}%" 
                                                              aria-valuenow="{{ object.fuel_now }}" 
                                                              aria-valuemin="0" 
                                                              aria-valuemax="{{ object.fuel_max }}">
@@ -108,7 +108,7 @@
                                                     <div class="progress">
                                                         <div class="progress-bar progress-bar-striped bg-warning" 
                                                              role="progressbar" 
-                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max }}%;
+                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max|floatformat:"2" }}%;
                                                                 color: black;" 
                                                              aria-valuenow="{{ object.fuel_now }}" 
                                                              aria-valuemin="0" 
@@ -120,7 +120,7 @@
                                                     <div class="progress">
                                                         <div class="progress-bar progress-bar-striped bg-danger" 
                                                              role="progressbar" 
-                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max }}%" 
+                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max|floatformat:"2" }}%" 
                                                              aria-valuenow="{{ object.fuel_now }}" 
                                                              aria-valuemin="0" 
                                                              aria-valuemax="{{ object.fuel_max }}">
