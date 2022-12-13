@@ -1,3 +1,4 @@
+from ckeditor.fields import RichTextField, RichTextFormField
 from django import forms
 from django.forms import widgets
 
@@ -80,7 +81,7 @@ class BookingForm(forms.ModelForm):
                 attrs={'class': 'form-control',
                        'type': 'datetime-local',
                        'id': 'datepicker'},
-                format='yyyy-MM-ddThh:mm'
+                # format='yyyy-MM-ddThh:mm'
             ),
             'requester': widgets.HiddenInput(attrs={'class': 'form-control'}),
         }
@@ -117,8 +118,39 @@ class ApproveForm(forms.ModelForm):
 
 class CarReturnForm(forms.Form):
     mile_current = forms.FloatField(
-        label="Current Miles",
+        label="เลขไมล์ปัจจุบัน",
         required=False,
         min_value=0,
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'miles now', 'step': '0.1'})
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'เลขไมล์ปัจจุบัน', 'step': '0.1'})
+    )
+
+
+class CarRefuelForm(forms.Form):
+    mile_refuel = forms.FloatField(
+        label="ไมล์เติมน้ำมัน",
+        required=False,
+        min_value=0,
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder':'ไมล์เติมน้ำมัน',
+                'step': '0.1',
+            }
+        )
+    )
+    note = RichTextFormField(
+        label='บันทึก',
+        required=False,
+    )
+    refuel = forms.FloatField(
+        label="จำนวนน้ำมันที่เติม",
+        required=True,
+        min_value=1.0,
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'จำนวนน้ำมันที่เติม (ลิตร)',
+                'step': '0.1',
+            }
+        )
     )

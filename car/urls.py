@@ -17,4 +17,5 @@ urlpatterns = [
     path('return/<int:pk>/', views.ReturnCar, name='return-car'),
     # path('return/<int:pk>/', views.ReturnCar.as_view(), name='return-car'),
     path('use/<int:pk>/', views.UseCar, name='use-car'),
+    path('refuel/<int:pk>/', views.RefurlCar, name='refuel'),
 ]

@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 02 2022, 14:37 306
-# Last Modified Date: Wed Dec, 07 2022, 11:18 341
+# Last Modified Date: Tue Dec, 13 2022, 16:45 347
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.db import models
@@ -161,6 +161,7 @@ class CarFix(models.Model):
 class Refuel(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='car_refuel')
     refuel = models.FloatField(default=0.0)
+    mile_refuel = models.FloatField(null=True, blank=True)
     refueler = models.ForeignKey(User, on_delete=models.CASCADE, related_name='refueler')
     refueled_at = models.DateTimeField(auto_now_add=True)
     note = RichTextField(null=True, blank=True)

@@ -13,7 +13,7 @@
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="{% url 'car:list' %}">การจัดการยานพาหนะ</a></li>
             <li class="breadcrumb-item"><a href="{% url 'car:booking' %}">การขอใช้ยานพาหนะ</a></li>
-            <li class="breadcrumb-item active">ขอใช้ยานพาหนะ</li>
+            <li class="breadcrumb-item active">คืนยานพาหนะ</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -36,125 +36,87 @@
                     <div class="tab-content pt-2">
 
                         <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
-                        ใบขอใช้รถเลขที่ {{ booking.pk }}/{{ booking.requested_at.year|thaiyear }} <br />
-                        ภารกิจ {{ booking.mission }} <br />
-                        พลขับ {{ booking.driver }} <br />
-                        ผู้อนุมัติ {{ booking.approver }} <br />
-                        จำนวนผู้โดยสาร {{ booking.passenger }} <br />
-
                         <br />
 
-                        {% if form.instance %}
+                        <table class="table">
+                            <tr>
+                                <th>ใบขอใช้รถเลขที่</th>
+                                <td>{{ booking.pk }}/{{ booking.requested_at.year|thaiyear }}</td>
+                            </tr>
+
+                            <tr>
+                                <th>ภารกิจ</th>
+                                <td>{{ booking.mission }}</td>
+                            </tr>
+
+                            <tr>
+                                <th>หมายเลขทะเบียน</th>
+                                <td>
+                                    <a href="{% url 'car:detail' pk=car.pk %}" target="_blank">
+                                        {{ car.number }}
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>วันที่ขอใช้งาน</th>
+                                <td>{{ booking.requested_at|thaidate }} เวลา {{ booking.requested_at|date:"H:m" }} น.</td>
+                            </tr>
+
+                            <tr>
+                                <th>ผู้ควบคุม</th>
+                                <td><a href="{% url 'account:member' pk=booking.controler.pk %}" target="_blank">{{ booking.controler }}</a></td>
+                            </tr>
+
+                            <tr>
+                                <th>พลขับ</th>
+                                <td><a href="{% url 'account:member' pk=booking.driver.pk %}" target="_blank">{{ booking.driver }}</a></td>
+                            </tr>
+
+                            <tr>
+                                <th>จำนวนผู้โดยสาร</th>
+                                <td>{{ booking.passenger }} คน</td>
+                            </tr>
+
+                            <tr>
+                                <th>ผู้อนุมัติ</th>
+                                <td><a href="{% url 'account:member' pk=booking.approver.pk %}" target="_blank">{{ booking.approver }}</a></td>
+                            </tr>
+
+                            <tr>
+                                <th>ไมล์ออก</th>
+                                <td>{{ car.mile_now }}</td>
+                            </tr>
+
+                        </table>
+
+                        <br />
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form.media }}
-                             
-                            {{ form|crispy }}
-                            
-                            <div class="row mb-3">
-                                <label for="{{ form.mission.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.mission.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.mission }}
-                                </div>
-                            </div>
+
+                            {% comment %}{{ form|crispy }}{% endcomment %}
 
                             <div class="row mb-3">
-                                <label for="{{ form.passenger.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.passenger.label }}</label>
+                                <label for="{{ form.mile_current.name }}" class="col-md-4 col-lg-3 col-form-label"><b>{{ form.mile_current.label }}</b></label>
                                 <div class="col-md-8 col-lg-9">
-                                    {{ form.passenger }}
+                                    {{ form.mile_current }}
                                 </div>
                             </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.controler.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.controler.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.controler }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.approver.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approver.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.approver }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.driver.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.driver.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.driver }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.approve_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approve_status.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.approve_status }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.requested_at.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.requested_at.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.requested_at }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-8 col-lg-9">
-                                    <input name="{{ form.requester.name }}" type="hidden" class="form-control" id="{{ form.requester.name }}" value="{{ request.user.pk }}">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-8 col-lg-9">
-                                    <input name="{{ form.car.name }}" type="hidden" class="form-control" id="{{ form.car.name }}" value="{{ car_ref }}">
-                                </div>
-                            </div>
-                            
-                            {% comment %}<input type="hidden" name="{{ form.car.name }}" value="{{ car_ref }}">{% endcomment %}
-                            {% comment %}<input type="hidden" name="{{ form.requester.name }}" value="{{ request.user }}">{% endcomment %}
 
                             <div class="text-center">
-                                {% comment %}{% if form.instance %}{% endcomment %}
-                                    {% if request.user == object.requester or request.user.profile == object.approver %}
-                                        <a href="{% url 'car:detail' pk=car_ref %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                                        <button type="submit" class="btn btn-lg btn-success">อัพเดท</button>
-                                        {% comment %}<button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>{% endcomment %}
-                                    {% else %}
-                                        <a href="{% url 'car:detail' pk=car_ref %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                                        <button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>
-                                        <button type="reset" class="btn btn-lg btn-warning">Reset</button>
-                                    {% endif %}
+                                <a href="{% url 'car:detail' pk=car.pk %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                                <button type="submit" class="btn btn-lg btn-success">คืนยานพาหนะ</button>
+                                <button type="reset" class="btn btn-lg btn-warning">Reset</button>
                             </div>
 
                         </form>
 
-                        {% else %}
-                        <form method="post">
-                            {% csrf_token %}
-                            {{ form|crispy }}
-                            <br />
-                            <button class="btn btn-info">Ok Test</button>
-                        </form>
-                        {% comment %}<br />{% endcomment %}
-                        ทะเบียน {{ car.number }} <br />
-                        ไมล์รถก่อนใช้งาน {{ car.mile_now }} <br />
-                        อัตราน้ำมัน {{ car.fuel_rate }} <br />
-                        ไมล์หลังใช้งาน {{ mile_now }} <br />
-                        -------------- <br />
-                        น้ำมัน {{ car.fuel_now }} <br />
-                        คงเหลือ {{ fuel_now|floatformat:"2" }} <br />
-                        -------------- <br />
-                        การจอง {{ booking.pk }} <br />
-                        พลขับ {{ booking.driver }} <br />
-                        mile_out {{ booking.mile_out }} <br />
-
                         {% if form.is_valid %}
-                            ระยะทาง = {{ distance }} <br />
-                            ใช้น้ำมันไป = {{ fuel_use|floatformat:"2" }}
+                        ระยะทาง = {{ distance }} <br />
+                        ใช้น้ำมันไป = {{ fuel_use|floatformat:"2" }}
                         {% endif %}
 
-                    {% endif %}
 
                     </div><!-- End Bordered Tabs -->
 

@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 23 2022, 19:31 327
-# Last Modified Date: Thu Dec, 08 2022, 22:29 342
+# Last Modified Date: Tue Dec, 13 2022, 20:54 347
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.db.models import Q
@@ -25,7 +25,7 @@ from django.views.generic import (
     UpdateView,
     View,
 )
-from car.forms import ApproveForm, BookingForm, CarForm, CarReturnForm
+from car.forms import ApproveForm, BookingForm, CarForm, CarRefuelForm, CarReturnForm
 
 from car.models import (
     ApproveStatus,
@@ -234,6 +234,12 @@ class CarBookingUpdateView(LoginRequiredMixin, UpdateView):
         form = self.form_class(request.POST, instance=self.get_object())
         if form.is_valid():
             form.save()
+            # a_status = ApproveStatus.objects.get(pk=request.POST.get('approve_status'))
+            if request.POST['approve_status'] == '3':
+                car = Car.objects.get(pk=request.POST.get('car'))
+                print(car)
+                car.status = CarStatus.objects.get(pk=1)
+                car.save()
             return redirect(self.get_success_url())
         else:
             form = self.form_class(instance=self.get_object())
@@ -296,3 +302,19 @@ def UseCar(request, pk):
     car.status = car_status
     car.save()
     return HttpResponseRedirect(reverse('car:booking'))
+
+
+def RefurlCar(request, pk):
+    car = Car.objects.get(pk=pk)
+    form = CarRefuelForm()
+    if request.method == 'POST':
+        form = CarRefuelForm(request.POST)
+        if form.is_valid():
+            print(request.POST['mile_refuel'])
+            print(request.POST['refuel'])
+            print(request.POST['note'])
+    context = {
+        'car': car,
+        'form': form,
+    }
+    return render(request, 'car/refuel.html', context)

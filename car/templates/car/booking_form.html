@@ -114,7 +114,11 @@
                                         {% comment %}<button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>{% endcomment %}
                                     {% else %}
                                         <a href="{% url 'car:detail' pk=car_ref %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                                        {% if not form is instance %}
                                         <button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>
+                                        {% else %}
+                                        <button type="submit" class="btn btn-lg btn-success">อัพเดท</button>
+                                        {% endif %}
                                         <button type="reset" class="btn btn-lg btn-warning">Reset</button>
                                     {% endif %}
                             </div>

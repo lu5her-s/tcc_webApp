@@ -85,7 +85,11 @@
                                         <span class="myDIV"><img src="{{ object.car_avatar.url }}" width="50%"></span class>
                                         {% comment %}<span class="hide"><img src="{{ object.car_avatar.url }}" width="150%"></span>{% endcomment %}
                                     </td>
-                                    <td>{{ object.number }}</td>
+                                    <td>
+                                        <a href="{% url 'car:detail' pk=object.pk %}">
+                                            {{ object.number }}
+                                        </a>
+                                    </td>
                                     <td>{{ object.type.name }}</td>
                                     <td>{{ object.capacity }}</td>
                                     <td>
