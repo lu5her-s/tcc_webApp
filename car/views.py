@@ -3,9 +3,10 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 23 2022, 19:31 327
-# Last Modified Date: Tue Dec, 13 2022, 20:54 347
+# Last Modified Date: Thu Dec, 15 2022, 23:39 349
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import (
     HttpResponse,
@@ -25,12 +26,21 @@ from django.views.generic import (
     UpdateView,
     View,
 )
-from car.forms import ApproveForm, BookingForm, CarForm, CarRefuelForm, CarReturnForm
+from account.models import Profile
+from car.forms import (
+    ApproveForm,
+    BookingForm,
+    CarForm,
+    CarRefuelForm,
+    CarRequestFixForm,
+    CarReturnForm,
+)
 
 from car.models import (
     ApproveStatus,
     Car,
     CarFix,
+    CarFixImage,
     CarImage,
     CarBooking,
     CarStatus,
@@ -109,15 +119,9 @@ class CarDetailView(LoginRequiredMixin, DetailView):
         try:
             context['booking_list'] = Car.objects.get(pk=self.object.pk).car_booking.all()
             context['booking'] = Car.objects.get(pk=self.object.pk).car_booking.get()
-            # context['fix_list'] = CarFix.objects.filter(car=self.object.pk).car.pk
-            # context['fixing'] = CarFix.objects.get(car=self.object.pk)
-            # context['fix_list'] = Car.objects.get(pk=self.object.pk).car_fix.get().car.pk
-            # context['car_fix'] = Car.objects.get(pk=self.object.pk).car_fix.get()
         except:
             context['booking_list'] = None
             context['booking'] = None
-            # context['fix_list'] = None
-            # context['fixing'] = None
         return context
 
 
@@ -262,7 +266,7 @@ def ReturnCar(request, pk):
     booking = CarBooking.objects.get(pk=pk)
     car = Car.objects.get(pk=booking.car.pk)
     # booking.mile_out = car.mile_now
-    
+
     distance: float = 0
     fuel_use: float = 0
     if request.method == 'POST':
@@ -304,17 +308,102 @@ def UseCar(request, pk):
     return HttpResponseRedirect(reverse('car:booking'))
 
 
-def RefurlCar(request, pk):
+def RefuelCar(request, pk):
     car = Car.objects.get(pk=pk)
     form = CarRefuelForm()
     if request.method == 'POST':
         form = CarRefuelForm(request.POST)
         if form.is_valid():
-            print(request.POST['mile_refuel'])
-            print(request.POST['refuel'])
+            fuel_old = car.fuel_now
+            re_fuel = float(request.POST['refuel'])
+            fuel_new = fuel_old + re_fuel
+            if fuel_new <= car.fuel_max:
+                fuel_new = fuel_new
+            else:
+                fuel_new = car.fuel_max
+            print("Mile :", request.POST['mile_refuel'])
+            print("refuel :", request.POST['refuel'])
+            print("New Fuel : ", fuel_new)
             print(request.POST['note'])
+            refuel_db = Refuel.objects.create(
+                car=car,
+                refuel=re_fuel,
+                mile_refuel=request.POST['mile_refuel'],
+                refueler=request.user,
+                note=request.POST['note']
+            )
+            refuel_db.save()
+            car.fuel_now = fuel_new
+            car.save()
+            return redirect('car:detail', pk=car.id)
     context = {
         'car': car,
         'form': form,
     }
     return render(request, 'car/refuel.html', context)
+
+
+class CarFixCreateView(LoginRequiredMixin, CreateView):
+    model = CarFix
+    template_name = 'car/fix_form.html'
+    # form_class = CarRequestFixForm
+
+    def post(self, request, **kwargs):
+        # get POST data
+        car_pk = kwargs['pk']
+        car = Car.objects.get(pk=car_pk)
+        form = CarRequestFixForm(request.POST, request.FILES)
+        if form.is_valid():
+            fix_db = form.save()
+            # get images and save to CarFixImage
+            images = request.FILES.getlist('images')
+            for image in images:
+                CarFixImage.objects.create(
+                    car_fix=fix_db,
+                    images=image
+                )
+            # redirect to car detail page
+            return redirect('car:detail', pk=car.id)
+        # else:
+            # print(form.errors)
+        context = {
+            'car': car,
+            'form': form,
+        }
+        return render(request, self.template_name, context)
+
+    def get(self, request, **kwargs):
+        # return car and form
+        car_pk = kwargs['pk']
+        car = Car.objects.get(pk=car_pk)
+        form = CarRequestFixForm()
+        # form.fields['approver'] = Profile.objects.filter(user__is_staff=True)
+        context = {
+            'car': car,
+            'form': form,
+        }
+        return render(request, self.template_name, context)
+
+
+class CarRequestFixListView(LoginRequiredMixin, ListView):
+    template_name = 'car/request_fix.html'
+    model = CarFix
+
+
+class CarRequestFixDetailView(LoginRequiredMixin, DetailView):
+    template_name = 'car/fix_detail.html'
+    model = CarFix
+
+    # get_context_data images
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.object = self.get_object()
+        context['images'] = CarFixImage.objects.filter(fix=self.object)
+        return context
+
+
+def CarFixApprove(request, pk):
+    car_fix = CarFix.objects.get(pk=pk)
+    car_fix.status = 'approved'
+    car_fix.save()
+    return redirect('car:fix')

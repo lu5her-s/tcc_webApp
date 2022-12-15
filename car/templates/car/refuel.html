@@ -36,6 +36,29 @@
 
                         <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
                         <br />
+                        
+                        <table class="table">
+
+                            <tr>
+                                <th>ประเภทยานพาหนะ</th>
+                                <td>{{ car.type.name }}</td>
+                            </tr>
+
+                            <tr>
+                                <th>หมายเลขทะเบียน</th>
+                                <td>{{ car.number }}</td>
+                            </tr>
+
+                            <tr>
+                                <th>ปริมาณเชื้อเพลิงปัจจุบัน</th>
+                                <td>{{ car.fuel_now }}/{{ car.fuel_max }} ลิตร</td>
+                            </tr>
+
+                            <tr>
+                                <th>อัตราการใช้เชื้อเพลิง</th>
+                                <td>{{ car.fuel_rate }} ลิตร/กม.</td>
+                            </tr>
+                        </table>
 
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}

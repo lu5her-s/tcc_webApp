@@ -37,6 +37,13 @@
                                 การขอใช้ยานพาหนะ
                             </button>
                         </li>{% endif %}
+                        {% if refuel %}
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#refuel">
+                                การเติมเชื้อเพลิง
+                            </button>
+                        </li>
+                        {% endif %}
                     </ul>
 
                     <!-- start tab content -->
@@ -148,7 +155,7 @@
                             <h5 class="card-title">รายการขอใช้ยานพาหนะ | <span>{{ object.number }}</span></h5>
 
                             <!-- table booking list with search -->
-                            <table id="dataTable" class="table table-hover datatable">
+                            <table id="TableBooking" class="table table-hover datatable">
                                 <thead>
                                     <tr>
                                         <th scope="col">ภารกิจ</th>
@@ -184,31 +191,90 @@
 
                 </div><!-- end booking -->
 
-                <!-- TODO: make condition for button -->
-                <div class="container float-start text-center">
-                    <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                    <!-- DONE: send pk to booking view -->
-                    {% if object.status.name == 'พร้อมใช้งาน' %}
-                    <!-- NOTE: condition for request if fuel more than 15% -->
-                        {% if object.fuel_now|fuel:object.fuel_max > 15 %}
-                            <a href="{% url 'car:booking-create' pk=object.pk %}" class="btn btn-lg btn-info">ขอใช้งาน</a>
-                        {% endif %}
-                    {% endif %}
-                    <a href="{% url 'car:refuel' pk=object.pk %}" class="btn btn-lg btn-warning">เติมน้ำมัน</a>
-                    <a href="#" class="btn btn-lg btn-danger">ซ่อมบำรุง</a>
-                    {% if request.user|has_group:"Car" %}
-                        <a href="{% url 'car:update' pk=object.pk %}" class="btn btn-lg btn-warning">แก้ไข</a>
-                    {% endif %}
-                </div>
-                <br />
+                <!-- refuel tab -->
+                <div id="refuel" class="tab-pane fade pt-3">
+                    <h5 class="card-title">ประวัติการเติมเชื้อเพลิง | <span>{{ object.number }}</span></h5>
 
-                <br />
+                    <!-- table booking list with search -->
+                    <table id="TableRefuel" class="table table-hover datatable">
+                        <thead>
+                            <tr>
+                                <th scope="col">วัน เดือน ปี</th>
+                                <th scope="col">เลขไมล์ตอนเติม</th>
+                                <th scope="col">จำนวนที่เติม</th>
+                                <th scope="col">ผู้เติม</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rf in refuel %}
+                            <tr>
+                                <td>{{ rf.refueled_at|thaidate }} เวลา {{ rf.refueled_at|timezone:"Asia/Bangkok"|date:"H:m" }} น.</td>
+                                <td>{{ rf.mile_refuel }}</td>
+                                <td>{{ rf.refuel|floatformat:"2" }}</td>
+                                <td>{{ rf.refueler.profile.rank }}{{ rf.refueler.get_full_name }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
             </div>
 
-        </div><!-- end tab content -->
+        </div><!-- end booking -->
+
+
+        <!-- TODO: make condition for button -->
+        <div class="container float-start text-center">
+            <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+            <!-- DONE: send pk to booking view -->
+            {% if object.status.name == 'พร้อมใช้งาน' %}
+            <!-- NOTE: condition for request if fuel more than 15% -->
+                {% if object.fuel_now|fuel:object.fuel_max > 15 %}
+                    <a href="{% url 'car:booking-create' pk=object.pk %}" class="btn btn-lg btn-info">ขอใช้งาน</a>
+                {% endif %}
+            {% endif %}
+            <a href="{% url 'car:refuel' pk=object.pk %}" class="btn btn-lg btn-warning">เติมน้ำมัน</a>
+            <a href="{% url 'car:fix-create' pk=object.pk %}" class="btn btn-lg btn-danger">แจ้งซ่อมบำรุง</a>
+            {% if request.user|has_group:"Car" %}
+                <a href="{% url 'car:update' pk=object.pk %}" class="btn btn-lg btn-warning">แก้ไข</a>
+            {% endif %}
+        </div>
+        <br />
+
+        <br />
+    </div>
+
+    </div><!-- end tab content -->
 
     </div>
 
 </section>
 {% comment %}{% include 'components/photoswipe.html' %}{% endcomment %}
+<script>
+    $(document).ready(function(){
+        $("#TableBooking").DataTable({
+            "fnDrawCallback" : function(oSettings) {
+                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+                } else {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+                }
+            },
+            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+        });
+    });
+    $(document).ready(function(){
+        $("#TableRefuel").DataTable({
+            "fnDrawCallback" : function(oSettings) {
+                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+                } else {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+                }
+            },
+            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+        });
+    });
+
+</script>
 {% endblock content %}

@@ -17,5 +17,8 @@ urlpatterns = [
     path('return/<int:pk>/', views.ReturnCar, name='return-car'),
     # path('return/<int:pk>/', views.ReturnCar.as_view(), name='return-car'),
     path('use/<int:pk>/', views.UseCar, name='use-car'),
-    path('refuel/<int:pk>/', views.RefurlCar, name='refuel'),
+    path('refuel/<int:pk>/', views.RefuelCar, name='refuel'),
+    path('fix/create/<int:pk>/', views.CarFixCreateView.as_view(), name='fix-create'),
+    path('fix/', views.CarRequestFixListView.as_view(), name='fix'),
+    path('fix/<int:pk>/', views.CarRequestFixDetailView.as_view(), name='fix-detail'),
 ]

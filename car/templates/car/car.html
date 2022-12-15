@@ -55,7 +55,15 @@
                                     </i>
                                 </a>
                             </span>
+                            <span>
+                                <a href="{% url 'car:fix' %}" class="align-right btn btn-warning" style="float:right; margin-right: 0.5rem;">
+                                    <i class="bi bi-wrench">
+                                        รายการแจ้งซ่อม
+                                    </i>
+                                </a>
+                            </span>
                             {% endif %}
+
                             <span>
                                 <a href="{% url 'car:booking' %}" class="align-right btn btn-info" style="float:right; margin-right: 0.5rem;">
                                     <i class="bi bi-clipboard-data">

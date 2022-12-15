@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Car Management{% endblock title %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>{{ object.title }}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'car:list' %}">Car List</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'car:fix' %}">Fix Request List</a></li>
+            <li class="breadcrumb-item active">{{ object.car.number }}</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+
+<section class="section">
+    <div class="row">
+
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body pt-3">
+                    <ul class="nav nav-tabs nav-tabs-bordered">
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
+                                รายละเอียด
+                            </button>
+                        </li>
+                        {% if images %}
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#image">
+                                ภาพประกอบการรายงาน
+                            </button>
+                        </li>{% endif %}
+                    </ul>
+
+                    <!-- start tab content -->
+                    <div class="tab-content pt-2">
+                        <div id="detail" class="tab-pane fade show active">
+                            <h6 class="card-title"> รายละเอียด | <span> การขอใช้งาน ที่ {{ object.pk }}/{{ object.requested_at.year|thaiyear }}</span></h6>
+                            <table class="table">
+
+                                <tr>
+                                    <th>ประเภทยานพาหนะ</th>
+                                    <td>{{ object.car.type.name }}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>หมายเลขทะเบียน</th>
+                                    <td><a href="{% url 'car:detail' pk=object.car.pk %}" target="_blank">{{ object.car.number }}</a></td>
+                                </tr>
+
+                                <tr>
+                                    <th>วันที่ขอใช้งาน</th>
+                                    <td>
+                                        {{ object.requested_at|thaidate }}
+                                        เวลา {{ object.requested_at|date:"H:m" }} น.
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>ผู้อนุมัติ</th>
+                                    <td><a href="{% url 'account:member' pk=object.approver.pk %}" target="_blank">{{ object.approver }}</a></td>
+                                </tr>
+
+                                <tr>
+                                    <th>สถานะ</th>
+                                    <td>{{ object.approve_status.name }}</td>
+                                </tr>
+
+                            </table>
+                            
+                            <table class="table">
+                                <tr class="text-center">
+                                    <th>อาการ</th>
+                                </tr>
+                                <tr>
+                                    <td>{{ object.issue|safe }}</td>
+                                </tr>
+                            </table>
+
+                        </div><!-- end detail -->
+                        <div id="image" class="tab-pane fade pt-3">
+                            <h5 class="card-title">Image | <span>{{ object.title }}</span></h5>
+
+                            <!-- Slides with indicators -->
+                            <div id="gallery">
+                                {% for item in images %}
+                                {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
+                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                                </a> {% endcomment %}
+                                <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
+                                    <img height="250" width="250" src="{{ item.images.url }}" alt="">
+                                </a>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+
+                <!-- TODO: make condition for button -->
+                <div class="container float-start text-center">
+                    <a href="{% url 'car:booking' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                    <a href="#" class="btn btn-lg btn-warning">อัพเดท</a>
+                    <!-- TODO: if user is Approver redirect to update fix, if user is responsible go to after fix -->
+                </div>
+                <br />
+
+                <br />
+                </div>
+
+            </div><!-- end tab content -->
+
+        </div>
+    </div>
+
+</section>
+{% include 'components/photoswipe.html' %}
+{% endblock content %}

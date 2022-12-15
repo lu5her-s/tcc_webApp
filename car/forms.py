@@ -2,7 +2,7 @@ from ckeditor.fields import RichTextField, RichTextFormField
 from django import forms
 from django.forms import widgets
 
-from car.models import Car, CarBooking
+from car.models import Car, CarBooking, CarFix
 
 
 class DateInput(widgets.DateTimeBaseInput):
@@ -154,3 +154,63 @@ class CarRefuelForm(forms.Form):
             }
         )
     )
+
+
+class CarRequestFixForm(forms.ModelForm):
+    images = forms.ImageField(
+        label='รูปภาพ',
+        required=False,
+        widget=forms.ClearableFileInput(
+            attrs={
+                'class': 'form-control',
+                'multiple': True,
+                'required': False,
+            }
+        )
+    )
+    class Meta:
+        model = CarFix
+        fields = [
+            'car',
+            'issue',
+            'fix_requester',
+            'approver',
+            # 'requested_at',
+            'approve_status',
+            'note',
+            'images',
+        ]
+        widgets = {
+            'car':            forms.HiddenInput(attrs={'class': 'form-control'}),
+            # 'issue':        forms.TextInput(attrs={'class': 'form-control'}),
+            'issue':          RichTextFormField(),
+            # 'cost_expect':    forms.NumberInput(attrs={'class': 'form-control'}),
+            'fix_requester':  forms.HiddenInput(attrs={'class': 'form-control'}),
+            'approver':       forms.Select(attrs={'class': 'form-select'}),
+            # 'requested_at': forms.DateInput(attrs={'class': 'form-control'}),
+            # 'cost_use':       forms.NumberInput(attrs={'class': 'form-control'}),
+            'finished_at':    forms.DateInput(attrs={
+                'class':      'form-control',
+                'type':       'datetime-local',
+            }),
+            'approve_status': forms.Select(attrs={'class': 'form-control'}),
+            'note':           RichTextFormField(),
+        }
+        labels = {
+            # 'car':,
+            'issue': 'อาการ/สารเหตุ',
+            # 'cost_expect': '',
+            # 'fix_requester': '',
+            'approver': 'ผู้อนุมัติ',
+            # 'cost_use': 'ค่าซ่อมบำรุง',
+            # 'finished_at': 'แล้วเสร็จเมื่อ',
+            'approve_status': 'สถานะการอนุมัติ',
+            'note': 'บันทึก',
+        }
+
+        # def init fields approver is profile__use group is Car
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields['approver'].queryset = Profile.objects.filter(
+                user__groups__name='Car'
+            )

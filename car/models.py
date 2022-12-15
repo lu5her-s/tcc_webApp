@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 02 2022, 14:37 306
-# Last Modified Date: Tue Dec, 13 2022, 16:45 347
+# Last Modified Date: Thu Dec, 15 2022, 18:30 349
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.db import models
@@ -136,19 +136,33 @@ class CarBooking(models.Model):
             return f"ใบขอใช้รถเลขที่ {self.pk}/{year} - {self.car.number} ผู้ขอใช้ {self.requester.get_full_name()}"
 
 
+# class for fix status
+class CarFixStatus(models.Model):
+    """CarFixStatus. status of car fix"""
+    name = models.CharField(max_length=50)
+    class Meta:
+        verbose_name = 'Car Fix Status'
+        verbose_name_plural = 'Car Fix Status'
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class CarFix(models.Model):
     """CarFix. request to fix car change status car to in maintenance"""
 
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='car_fix')
     issue = RichTextField(null=True, blank=True)
-    cost_expect = models.PositiveIntegerField(default=0)
+    # cost_expect = models.PositiveIntegerField(default=0)
     fix_requester = models.ForeignKey(User, on_delete=models.CASCADE)
     approver = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='fix_approver')
     requested_at = models.DateTimeField(auto_now_add=True)
-    cost_use = models.PositiveIntegerField(default=0)
+    cost_use = models.PositiveIntegerField(default=0, null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)
     approve_status = models.ForeignKey(ApproveStatus, on_delete=models.CASCADE, related_name='fix_approve_status', null=True, blank=True)
     note = RichTextField(null=True, blank=True)
+    responsible_man = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="responsible", null=True, blank=True)
+    fix_status = models.ForeignKey(CarFixStatus, on_delete=models.CASCADE, related_name='fix_status', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Car Fix'
@@ -171,7 +185,7 @@ class Refuel(models.Model):
         verbose_name_plural = 'Refuel'
 
     def __str__(self) -> str:
-        return f"{self.car.number} จำนวนน้ำมันที่เติม {self.refuel} ผู้เติม {self.get_full_name()}"
+        return f"{self.car.number} จำนวนน้ำมันที่เติม {self.refuel} ผู้เติม {self.refueler.get_full_name()}"
 
 
 class CarImage(models.Model):
@@ -187,6 +201,14 @@ class CarImage(models.Model):
 
 
 class CarFixImage(models.Model):
+    fix = models.ForeignKey(CarFix, on_delete=models.CASCADE)
+    images = models.ImageField(upload_to='get_image_fix', blank=True, null=True)
+
+    def __str__(self) -> str:
+        return f"{self.fix.car.number}"
+
+
+class CarAfterFixImage(models.Model):
     fix = models.ForeignKey(CarFix, on_delete=models.CASCADE)
     images = models.ImageField(upload_to='get_image_fix', blank=True, null=True)
 
