@@ -79,6 +79,18 @@
                                     {{ form.approve_status }}
                                 </div>
                             </div>
+
+                            <!-- if user == object.approver show responsible_man select field -->
+                            {% if request.user.profile == object.approver %}
+                            <div class="row mb-3">
+                                <label for="{{ form.responsible_man.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.responsible_man.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.responsible_man }}
+                                </div>
+                            </div>
+                            {% endif %}
+                            <!-- end if user == object.approver show responsible_man select field -->
+
                             <!-- input file -->
                             <div class="row mb-3">
                                 <label for="{{ form.images.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.images.label }}</label>
@@ -101,12 +113,12 @@
 
                             <div class="text-center">
                                 {% comment %}{% if form.instance %}{% endcomment %}
-                                    {% if request.user == object.requester or request.user.profile == object.approver %}
-                                        <a href="#" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                                    {% if request.user == object.fix_requester or request.user.profile == object.approver %}
+                                        <a href="{% url 'car:fix' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
                                         <button type="submit" class="btn btn-lg btn-success">อัพเดท</button>
                                         {% comment %}<button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>{% endcomment %}
                                     {% else %}
-                                        <a href="#" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                                        <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
                                         <button type="submit" class="btn btn-lg btn-danger">แจ้งซ่อมบำรุง</button>
                                         <button type="reset" class="btn btn-lg btn-warning">Reset</button>
                                     {% endif %}

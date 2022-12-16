@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 23 2022, 19:31 327
-# Last Modified Date: Thu Dec, 15 2022, 23:39 349
+# Last Modified Date: Fri Dec, 16 2022, 23:54 350
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.contrib.auth.models import User
@@ -20,6 +20,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.views.generic import (
     CreateView,
+    DeleteView,
     DetailView,
     ListView,
     TemplateView,
@@ -30,6 +31,7 @@ from account.models import Profile
 from car.forms import (
     ApproveForm,
     BookingForm,
+    CarAfterFixForm,
     CarForm,
     CarRefuelForm,
     CarRequestFixForm,
@@ -39,8 +41,10 @@ from car.forms import (
 from car.models import (
     ApproveStatus,
     Car,
+    CarAfterFixImage,
     CarFix,
     CarFixImage,
+    CarFixStatus,
     CarImage,
     CarBooking,
     CarStatus,
@@ -355,6 +359,12 @@ class CarFixCreateView(LoginRequiredMixin, CreateView):
         form = CarRequestFixForm(request.POST, request.FILES)
         if form.is_valid():
             fix_db = form.save()
+            # chang car status to CarStatus name = "ซ่อมบำรุง"
+            car.status = CarStatus.objects.get(name="ซ่อมบำรุง")
+            car.save()
+            # save CarFix
+            fix_db.car = car
+            fix_db.save()
             # get images and save to CarFixImage
             images = request.FILES.getlist('images')
             for image in images:
@@ -402,8 +412,189 @@ class CarRequestFixDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-def CarFixApprove(request, pk):
-    car_fix = CarFix.objects.get(pk=pk)
-    car_fix.status = 'approved'
-    car_fix.save()
-    return redirect('car:fix')
+def CarAfterFixView(request, pk):
+    fix = CarFix.objects.get(pk=pk)
+    form = CarAfterFixForm()
+    if request.method == 'POST':
+        form = CarAfterFixForm(request.POST, request.FILES)
+        if form.is_valid():
+            fix.note = request.POST['note']
+            fix.cost_use = request.POST['cost_use']
+            fix.fix_mileage = request.POST['fix_mileage']
+            fix.fix_status = CarFixStatus.objects.get(pk=request.POST['fix_status'])
+            # fix finished_at now()
+            fix.finished_at = datetime.datetime.now()
+            # approve_status change to name = "เสร็จสิ้น"
+            fix.approve_status = CarApproveStatus.objects.get(name="เสร็จสิ้น")
+            # save image to CarAfterFixImage
+            for f in request.FILES.getlist('image'):
+                CarAfterFixImage.objects.create(fix=fix, image=f)
+            # save fix
+            fix.save()
+            return redirect('car:fix')
+    context = {
+        'form': form,
+        'fix': fix
+    }
+    return render(request, 'car/after_fix.html', context)
+
+
+class CarFixUpdateView(LoginRequiredMixin, UpdateView):
+    model = CarFix
+    form_class = CarRequestFixForm
+    template_name = 'car/fix_form.html'
+    success_url = reverse_lazy('car:fix')
+
+    def get_context_data(self, **kwargs):
+        fix = CarFix.objects.get(pk=self.kwargs['pk'])
+        car = Car.objects.get(pk=fix.car.pk)
+        images = CarAfterFixImage.objects.filter(fix=fix)
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'แก้ไขการซ่อม'
+        # context['fix'] = fix
+        context['car'] = car
+        context['images'] = images
+        return context
+
+
+class CarFixDeleteView(LoginRequiredMixin, DeleteView):
+    model = CarFix
+    template_name = 'car/fix_confirm_delete.html'
+    success_url = reverse_lazy('car:fix')
+
+
+# function CarFixResponse filter from responsible_man == request.user.profile
+class CarFixResponseView(LoginRequiredMixin, ListView):
+    model = CarFix
+    template_name = 'car/request_fix.html'
+
+    def get_queryset(self):
+        return CarFix.objects.filter(responsible_man=self.request.user.profile)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รายการซ่อมที่รับผิดชอบ'
+        return context
+
+class CarFixResponseDetailView(LoginRequiredMixin, DetailView):
+    model = CarFix
+    template_name = 'car/fix_detail.html'
+
+    def get_context_data(self, **kwargs):
+        fix = CarFix.objects.get(pk=self.kwargs['pk'])
+        car = Car.objects.get(pk=fix.car.pk)
+        images = CarAfterFixImage.objects.filter(fix=fix)
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รายละเอียดการซ่อม'
+        # context['fix'] = fix
+        context['car'] = car
+        context['images'] = images
+        return context
+
+# function car afterfix render CarAfterFixForm
+def car_afterfix(request, pk):
+    fix = CarFix.objects.get(pk=pk)
+    car = Car.objects.get(pk=fix.car.pk)
+    if request.method == 'POST':
+        form = CarAfterFixForm(request.POST, request.FILES)
+        if form.is_valid():
+            fix.cost_used = form.cleaned_data['cost_used']
+            fix.note = form.cleaned_data['note']
+            fix.status = 'AF'
+            fix.save()
+            image = CarAfterFixImage(
+                fix=fix,
+                image=form.cleaned_data['image']
+            )
+            image.save()
+            return redirect('car:fix_detail', pk=fix.pk)
+    else:
+        form = CarAfterFixForm(initial={'fix': fix})
+    context = {
+        'title': 'รายละเอียดการซ่อม',
+        'form': form,
+        'fix': fix,
+        'car': car,
+    }
+    return render(request, 'car/afterfix_form.html', context)
+# function car afterfix render CarAfterFixForm
+def car_afterfix(request, pk):
+    fix = CarFix.objects.get(pk=pk)
+    car = Car.objects.get(pk=fix.car.pk)
+    if request.method == 'POST':
+        form = CarAfterFixForm(request.POST, request.FILES)
+        if form.is_valid():
+            fix.cost_used = form.cleaned_data['cost_used']
+            fix.note = form.cleaned_data['note']
+            fix.status = 'AF'
+            fix.save()
+            image = CarAfterFixImage(
+                fix=fix,
+                image=form.cleaned_data['image']
+            )
+            image.save()
+            return redirect('car:fix_detail', pk=fix.pk)
+    else:
+        form = CarAfterFixForm(initial={'fix': fix})
+    context = {
+        'title': 'รายละเอียดการซ่อม',
+        'form': form,
+        'fix': fix,
+        'car': car,
+    }
+    return render(request, 'car/afterfix_form.html', context)
+# function car afterfix render CarAfterFixForm
+def car_afterfix(request, pk):
+    fix = CarFix.objects.get(pk=pk)
+    car = Car.objects.get(pk=fix.car.pk)
+    if request.method == 'POST':
+        form = CarAfterFixForm(request.POST, request.FILES)
+        if form.is_valid():
+            fix.cost_used = form.cleaned_data['cost_used']
+            fix.note = form.cleaned_data['note']
+            fix.status = 'AF'
+            fix.save()
+            image = CarAfterFixImage(
+                fix=fix,
+                image=form.cleaned_data['image']
+            )
+            image.save()
+            return redirect('car:fix_detail', pk=fix.pk)
+    else:
+        form = CarAfterFixForm(initial={'fix': fix})
+    context = {
+        'title': 'รายละเอียดการซ่อม',
+        'form': form,
+        'fix': fix,
+        'car': car,
+    }
+    return render(request, 'car/afterfix_form.html', context)
+
+
+# function car afterfix render CarAfterFixForm
+def car_afterfix(request, pk):
+    fix = CarFix.objects.get(pk=pk)
+    car = Car.objects.get(pk=fix.car.pk)
+    if request.method == 'POST':
+        form = CarAfterFixForm(request.POST, request.FILES)
+        if form.is_valid():
+            fix.cost_used = form.cleaned_data['cost_used']
+            fix.note = form.cleaned_data['note']
+            #fix_status change to CarFixStatus name="ดำเนินการแล้วเสร็จ"
+            fix_status = CarFixStatus.objects.get(name="ดำเนินการแล้วเสร็จ")
+            fix.fix_status = fix_status
+            fix.save()
+            #car_status change to CarStatus name="พร้อมใช้งาน"
+            car_status = CarStatus.objects.get(name="พร้อมใช้งาน")
+            car.car_status = car_status
+            fix.save()
+            return redirect('car:fix_detail', pk=fix.pk)
+    else:
+        form = CarAfterFixForm(initial={'fix': fix})
+    context = {
+        'title': 'รายละเอียดการซ่อม',
+        'form': form,
+        'fix': fix,
+        'car': car,
+    }
+    return render(request, 'car/afterfix_form.html', context)

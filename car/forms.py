@@ -177,7 +177,8 @@ class CarRequestFixForm(forms.ModelForm):
             'approver',
             # 'requested_at',
             'approve_status',
-            'note',
+            'responsible_man',
+            # 'note',
             'images',
         ]
         widgets = {
@@ -193,8 +194,14 @@ class CarRequestFixForm(forms.ModelForm):
                 'class':      'form-control',
                 'type':       'datetime-local',
             }),
-            'approve_status': forms.Select(attrs={'class': 'form-control'}),
-            'note':           RichTextFormField(),
+            'approve_status': forms.Select(attrs={'class': 'form-select'}),
+            'responsible_man': forms.Select(attrs={'class': 'form-select'}),
+            # 'note':           RichTextFormField(),
+            # 'images':         forms.ClearableFileInput(attrs={'multiple': True}),
+        }
+        help_texts = {
+            'images': 'อัพโหลดรูปภาพที่เกี่ยวข้องกับการซ่อมบำรุง',
+            # 'note':           RichTextFormField(),
         }
         labels = {
             # 'car':,
@@ -205,7 +212,7 @@ class CarRequestFixForm(forms.ModelForm):
             # 'cost_use': 'ค่าซ่อมบำรุง',
             # 'finished_at': 'แล้วเสร็จเมื่อ',
             'approve_status': 'สถานะการอนุมัติ',
-            'note': 'บันทึก',
+            # 'note': 'บันทึก',
         }
 
         # def init fields approver is profile__use group is Car
@@ -214,3 +221,32 @@ class CarRequestFixForm(forms.ModelForm):
             self.fields['approver'].queryset = Profile.objects.filter(
                 user__groups__name='Car'
             )
+
+
+class CarAfterFixForm(forms.Form):
+    fix_status = forms.ChoiceField(
+        label='สถานะการซ่อม',
+        widget=forms.Select
+    )
+    note = RichTextFormField(
+        label='บันทึก',
+        widget=forms.Textarea
+    )
+    cost_use = forms.IntegerField(
+        label='ค่าใช้จ่าย',
+        widget=forms.NumberInput
+    )
+    fixed_image = forms.ImageField(
+        label='รูปภาพการซ่อม',
+        widget=forms.FileInput
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['fix_status'].widget.attrs.update({
+            'class': 'form-select'
+        })
+        self.fields['image'].widget.attrs.update({
+            'class': 'form-control',
+            'required': False,
+        })

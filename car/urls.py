@@ -21,4 +21,6 @@ urlpatterns = [
     path('fix/create/<int:pk>/', views.CarFixCreateView.as_view(), name='fix-create'),
     path('fix/', views.CarRequestFixListView.as_view(), name='fix'),
     path('fix/<int:pk>/', views.CarRequestFixDetailView.as_view(), name='fix-detail'),
+    path('fix/update/<int:pk>/', views.CarFixUpdateView.as_view(), name='fix-update'),
+    path('/after-fix/<int:pk>/', views.car_afterfix, name='after-fix'),
 ]

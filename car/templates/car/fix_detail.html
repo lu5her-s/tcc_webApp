@@ -105,8 +105,8 @@
 
                 <!-- TODO: make condition for button -->
                 <div class="container float-start text-center">
-                    <a href="{% url 'car:booking' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                    <a href="#" class="btn btn-lg btn-warning">อัพเดท</a>
+                    <a href="{% url 'car:fix' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                    <a href="{% url 'car:fix-update' pk=object.pk %}" class="btn btn-lg btn-warning">อัพเดท</a>
                     <!-- TODO: if user is Approver redirect to update fix, if user is responsible go to after fix -->
                 </div>
                 <br />
