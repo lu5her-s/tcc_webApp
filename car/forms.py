@@ -2,7 +2,7 @@ from ckeditor.fields import RichTextField, RichTextFormField
 from django import forms
 from django.forms import widgets
 
-from car.models import Car, CarBooking, CarFix
+from car.models import Car, CarBooking, CarFix, CarFixStatus
 
 
 class DateInput(widgets.DateTimeBaseInput):
@@ -164,7 +164,6 @@ class CarRequestFixForm(forms.ModelForm):
             attrs={
                 'class': 'form-control',
                 'multiple': True,
-                'required': False,
             }
         )
     )
@@ -183,36 +182,23 @@ class CarRequestFixForm(forms.ModelForm):
         ]
         widgets = {
             'car':            forms.HiddenInput(attrs={'class': 'form-control'}),
-            # 'issue':        forms.TextInput(attrs={'class': 'form-control'}),
             'issue':          RichTextFormField(),
-            # 'cost_expect':    forms.NumberInput(attrs={'class': 'form-control'}),
             'fix_requester':  forms.HiddenInput(attrs={'class': 'form-control'}),
             'approver':       forms.Select(attrs={'class': 'form-select'}),
-            # 'requested_at': forms.DateInput(attrs={'class': 'form-control'}),
-            # 'cost_use':       forms.NumberInput(attrs={'class': 'form-control'}),
             'finished_at':    forms.DateInput(attrs={
                 'class':      'form-control',
                 'type':       'datetime-local',
             }),
             'approve_status': forms.Select(attrs={'class': 'form-select'}),
             'responsible_man': forms.Select(attrs={'class': 'form-select'}),
-            # 'note':           RichTextFormField(),
-            # 'images':         forms.ClearableFileInput(attrs={'multiple': True}),
         }
         help_texts = {
             'images': 'อัพโหลดรูปภาพที่เกี่ยวข้องกับการซ่อมบำรุง',
-            # 'note':           RichTextFormField(),
         }
         labels = {
-            # 'car':,
             'issue': 'อาการ/สารเหตุ',
-            # 'cost_expect': '',
-            # 'fix_requester': '',
             'approver': 'ผู้อนุมัติ',
-            # 'cost_use': 'ค่าซ่อมบำรุง',
-            # 'finished_at': 'แล้วเสร็จเมื่อ',
             'approve_status': 'สถานะการอนุมัติ',
-            # 'note': 'บันทึก',
         }
 
         # def init fields approver is profile__use group is Car
@@ -223,30 +209,34 @@ class CarRequestFixForm(forms.ModelForm):
             )
 
 
-class CarAfterFixForm(forms.Form):
-    fix_status = forms.ChoiceField(
-        label='สถานะการซ่อม',
-        widget=forms.Select
-    )
-    note = RichTextFormField(
-        label='บันทึก',
-        widget=forms.Textarea
-    )
-    cost_use = forms.IntegerField(
-        label='ค่าใช้จ่าย',
-        widget=forms.NumberInput
-    )
+class CarAfterFixForm(forms.ModelForm):
     fixed_image = forms.ImageField(
         label='รูปภาพการซ่อม',
-        widget=forms.FileInput
+        required=False,
+        widget=forms.FileInput(
+            attrs={
+                'class': 'form-control',
+                'multiple': True,
+            }
+        )
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['fix_status'].widget.attrs.update({
-            'class': 'form-select'
-        })
-        self.fields['image'].widget.attrs.update({
-            'class': 'form-control',
-            'required': False,
-        })
+    class Meta:
+        model = CarFix
+        fields = [
+            'fix_status',
+            'note',
+            'cost_use',
+            'fixed_image',
+        ]
+        labels = {
+            'fix_status': 'สถานะการซ่อม',
+            'note': 'บันทึกการซ่อมบำรุง',
+            'cost_use': 'ค่าใช้จ่าย',
+            'fixed_image': 'รูปภาพการซ่อม',
+        }
+        widgets = {
+            'fix_status': forms.Select(attrs={'class': 'form-select'}),
+            'note': RichTextFormField(),
+            'cost_use': forms.NumberInput(attrs={'class': 'form-control', 'min_value': 0}),
+        }

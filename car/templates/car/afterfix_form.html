@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Car Fixing{% endblock title %}
+
+{% block content %}
+<div class="pagetitle">
+    <h1>การดำเนินการซ่อมบำรุง {{ title }}{{ test_var }}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'car:list' %}">การจัดการยานพาหนะ</a></li>
+            <li class="breadcrumb-item active">{{ car.type.name }} ทะเบียน {{ car.number }}</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section profile">
+    <div class="row">
+
+        <div class="col-xl-12">
+
+            <div class="card">
+                <div class="card-body pt-3">
+                    <!-- Bordered Tabs -->
+                    <ul class="nav nav-tabs nav-tabs-bordered">
+
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">แจ้งซ่อมบำรุง</button>
+                        </li>
+
+                    </ul>
+                    <div class="tab-content pt-2">
+
+                        <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
+
+                        <table class="table">
+                            <tr>
+                                <th>ประเภท</th>
+                                <td>{{ car.type.name }}</td>
+                            </tr>
+
+                            <tr>
+                                <th>หมายเลขทะเบียน</th>
+                                <td>{{ car.number }}</td>
+                            </tr>
+
+                            <tr>
+                                <th>ภาพยานพาหนะ</th>
+                                <td><img src="{{ car.car_avatar.url }}" alt="car avatar" style="width: 300px;"></td>
+                            </tr>
+
+                            <tr>
+                                <th>ผู้แจ้ง</th>
+                                <td>{{ fix.fix_requester.profile }}</td>
+                            </tr>
+
+                            <tr>
+                                <th>ปัญหา/อาการ</th>
+                                <td>{{ fix.issue|safe }}</td>
+                            </tr>
+                        </table>
+
+                        {% comment %}การขอใช้ยานพาหนะ หมายเลขทะเบียน {{ car.number }}{% endcomment %}
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form.media }}
+                             
+                            {% comment %}{{ form|crispy }}{% endcomment %}
+                            
+                            <div class="row mb-3">
+                                <label for="{{ form.fix_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.fix_status.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.fix_status }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.note.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.note.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.note }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.cost_use.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.cost_use.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.cost_use }}
+                                </div>
+                            </div>
+
+                            <!-- input file -->
+                            <div class="row mb-3">
+                                <label for="{{ form.fixed_image.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.fixed_image.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.fixed_image }}
+                                </div>
+                            </div>
+                            <!-- end input file -->
+
+                            <div class="row mb-3">
+                                <div class="col-md-8 col-lg-9">
+                                    <input name="{{ form.fix_requester.name }}" type="hidden" class="form-control" id="{{ form.requester.name }}" value="{{ request.user.pk }}">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-8 col-lg-9">
+                                    <input name="{{ form.car.name }}" type="hidden" class="form-control" id="{{ form.car.name }}" value="{{ car.pk }}">
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                                <button type="submit" class="btn btn-lg btn-success">บันทึกการซ่อมบำรุง</button>
+                                <button type="reset" class="btn btn-lg btn-warning">Reset</button>
+                            </div>
+
+                        </form>
+
+                    </div><!-- End Bordered Tabs -->
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            //change selectboxes to selectize mode to be searchable
+            $("select").select2({
+                width: '100%',
+            });
+        });
+    </script>
+
+</section>
+
+{% endblock content %}
+

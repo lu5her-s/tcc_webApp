@@ -71,6 +71,18 @@
                                     </i>
                                 </a>
                             </span>
+
+                            <!-- if user not car manager show รายการแจ้งซ่อม if responsible_man show รายการรอซ่อม -->
+                            <!-- if approver show รายการรอมอบหมาย เพื่อมอบหมายให้ responsible_man -->
+                            {% if not request.user.is_staff %}
+                            <span>
+                                <a href="{% url 'car:my-fix' %}" class="align-right btn btn-warning" style="float:right; margin-right: 0.5rem;">
+                                    <i class="bi bi-wrench">
+                                        รายการรอซ่อม
+                                    </i>
+                                </a>
+                            </span>
+                            {% endif %}
                         </h5>
                         <br>
 
