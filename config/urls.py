@@ -3,7 +3,7 @@
 # File              : urls.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 22 2022, 15:06 265
-# Last Modified Date: Fri Dec, 02 2022, 18:19 336
+# Last Modified Date: Tue Dec, 20 2022, 21:42 354
 # Last Modified By  : lu5her <lu5her@mail>
 """config URL Configuration
 
@@ -44,6 +44,7 @@ urlpatterns = [
     path('journal/', include('journal.urls')),
     path('assign/', include('assign.urls')),
     path('car/', include('car.urls')),
+    path('asset/', include('asset.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

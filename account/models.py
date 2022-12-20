@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Sep, 28 2022, 22:02 271
-# Last Modified Date: Thu Nov, 10 2022, 22:48 314
+# Last Modified Date: Tue Dec, 20 2022, 20:46 354
 # Last Modified By  : lu5her <lu5her@mail>
 from django.db import models
 from django.contrib.auth.models import User
@@ -18,6 +18,19 @@ class Sector(models.Model):
 
     def __str__(self) -> str:
         return f"{self.name}"
+
+
+class Department(models.Model):
+    '''
+    This class for department
+    ex: name = "มทบ.29", sector="ปก.ทภ.2"
+    '''
+    name = models.CharField(max_length=200)
+    sector = models.ForeignKey(Sector, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f"{self.name}"
+
 
 # NOTE : class for rank
 class Rank(models.Model):
@@ -42,6 +55,7 @@ class Profile(models.Model):
     rank       = models.ForeignKey(Rank, on_delete=models.CASCADE, blank=True, null=True)
     position   = models.ForeignKey(Position, on_delete=models.CASCADE, blank=True, null=True)
     sector     = models.ForeignKey(Sector, on_delete=models.CASCADE, blank=True, null=True)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True)
     place      = models.CharField(max_length=200, blank=True, null=True)
     phone      = models.CharField(max_length=10, blank=True, null=True)
     image      = models.ImageField(upload_to='Profile/', blank=True, null=True)
@@ -56,21 +70,38 @@ class Profile(models.Model):
     # REVIEW : make return refer
     def __str__(self) -> str:
         if self.rank:
-            # return self.rank.name + self.user.get_full_name() 
-            return f"{self.rank.name} {self.user.get_full_name()}" 
+            # return self.rank.name + self.user.get_full_name()
+            return f"{self.rank.name} {self.user.get_full_name()}"
         else:
             return self.user.username
 
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
+    """create_user_profile.
+    autocreate when user register
+
+    :param sender:
+    :param instance:
+    :param created:
+    :param kwargs:
+    """
     if created:
         Profile.objects.create(user=instance)
 
+
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
+    """save_user_profile.
+    auto create when user register
+
+    :param sender:
+    :param instance:
+    :param kwargs:
+    """
     instance.profile.save()
 
-# REVIEW ; update for token line
+# REVIEW: update for token line
 class LineToken(models.Model):
     ''' add Line token for send line notify '''
     name  = models.CharField(max_length=200)
@@ -78,4 +109,4 @@ class LineToken(models.Model):
     note  = models.TextField(blank=True, null=True)
 
     def __str__(self) -> str:
-        return self.name
+        return f"{self.name} - {self.token}"

@@ -12,6 +12,7 @@ from announce.models import (
 # Register your models here.
 
 # admin.site.register(Announce)
+
 @admin.register(Announce)
 class AnnounceAdmin(admin.ModelAdmin):
     list_display = ('is_type', 'status', 'author', 'title', 'created_at', 'updated_at', 'is_delete',)

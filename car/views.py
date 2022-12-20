@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 23 2022, 19:31 327
-# Last Modified Date: Sat Dec, 17 2022, 23:43 351
+# Last Modified Date: Tue Dec, 20 2022, 15:52 354
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.contrib.auth.models import User
@@ -408,7 +408,7 @@ class CarRequestFixDetailView(LoginRequiredMixin, DetailView):
         self.object = self.get_object()
         qs1 = CarFixImage.objects.filter(fix=self.object)
         qs2 = CarAfterFixImage.objects.filter(fix=self.object)
-        # context['all_imgs'] = list(chain(qs1, qs2))
+        context['all_imgs'] = list(chain(qs1, qs2))
         context['fix_image'] = CarAfterFixImage.objects.filter(fix=self.object)
         context['images'] = CarFixImage.objects.filter(fix=self.object)
         return context
@@ -479,22 +479,6 @@ class CarFixDeleteView(LoginRequiredMixin, DeleteView):
     model = CarFix
     template_name = 'car/fix_confirm_delete.html'
     success_url = reverse_lazy('car:fix')
-
-
-class CarFixResponseDetailView(LoginRequiredMixin, DetailView):
-    model = CarFix
-    template_name = 'car/fix_detail.html'
-
-    def get_context_data(self, **kwargs):
-        fix = CarFix.objects.get(pk=self.kwargs['pk'])
-        car = Car.objects.get(pk=fix.car.pk)
-        images = CarAfterFixImage.objects.filter(fix=fix)
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'รายละเอียดการซ่อม'
-        # context['fix'] = fix
-        context['car'] = car
-        context['images'] = images
-        return context
 
 
 class ResponsibleListView(LoginRequiredMixin, ListView):

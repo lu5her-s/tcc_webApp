@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Asset Management{% endblock title %}
+
+
+{% block content %}
+
+<div class="pagetitle">
+    <h1>การจัดการสินทรัพย์</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active">asset list</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="float-right">
+            <a href="#" class="btn btn-primary">
+                <i class="bi bi-plus"></i> เพิ่มสินทรัพย์
+            </a>
+        </div>
+    </div>
+</div>
+<br>
+
+<!-- asset list -->
+<div class="row">
+    {% for asset in assets %}
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="{% static 'assets/img/profile.png' %}" class="img-fluid rounded-start" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <a href="{% url 'asset_detail' asset.id %}">
+                            <h5 class="card-title">{{ asset.name }}</h5>
+                        </a>
+                        <p class="card-text">{{ asset.description }}</p>
+                        <p class="card-text">
+                            <a href="#" class="btn btn-info">Click</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<!-- end ai gen -->
+
+<section class="section">
+    <div class="row align-items-top">
+        <div class="col-lg-6">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{% static 'assets/img/profile.png' %}" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <a href="#">
+                                <h5 class="card-title">SFP Module</h5>
+                            </a>
+                            <p class="card-text">This is a wider This content is a little bit longer.</p>
+                            <p class="card-text">
+                                <a href="#" class="btn btn-info">Click</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{% static 'assets/img/profile.png' %}" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <a href="#">
+                                <h5 class="card-title">Switch Layer 3</h5>
+                            </a>
+                            <p class="card-text">This is a wider content. This content is a little bit longer.</p>
+                            <p class="card-text">
+                                <a href="#" class="btn btn-info">Click</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{% static 'assets/img/profile.png' %}" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <a href="#">
+                                <h5 class="card-title">Switch Layer 2</h5>
+                            </a>
+                            <p class="card-text">This is a wider car content. This content is a little bit longer.</p>
+                            <p class="card-text">
+                                <a href="#" class="btn btn-info">Click</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-lg-6">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{% static 'assets/img/profile.png' %}" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <a href="#">
+                                <h5 class="card-title">F/O Platform</h5>
+                            </a>
+                            <p class="card-text">This is a wider content. This content is a little bit longer.</p>
+                            <p class="card-text">
+                                <a href="#" class="btn btn-info">Click</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+</section>
+
+<script>
+    $(document).ready(() => {
+        $("#dataTable").DataTable({
+            "fnDrawCallback" : function(oSettings) {
+                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+                } else {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+                }
+            },
+            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+        });
+    });
+</script>
+{% endblock content %}

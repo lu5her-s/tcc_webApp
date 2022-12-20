@@ -44,6 +44,14 @@
                             </button>
                         </li>
                         {% endif %}
+
+                        {% if car_fix %}
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#car_fix">
+                                ประวัติการซ่อมบำรุง
+                            </button>
+                        </li>
+                        {% endif %}
                     </ul>
 
                     <!-- start tab content -->
@@ -186,9 +194,6 @@
                                 </tbody>
                             </table>
 
-                        </div>
-                    </div>
-
                 </div><!-- end booking -->
 
                 <!-- refuel tab -->
@@ -216,11 +221,42 @@
                             {% endfor %}
                         </tbody>
                     </table>
-
                 </div>
+
+                <!-- fix tab -->
+                <div id="car_fix" class="tab-pane fade pt-3">
+                    <h5 class="card-title">ประวัติการซ่อมบำรุง | <span>{{ object.number }}</span></h5>
+
+                    <!-- table booking list with search -->
+                    <table id="TableFix" class="table table-hover datatable">
+                        <thead>
+                            <tr>
+                                <th scope="col">หมายเลขแจ้งซ่อม</th>
+                                <th scope="col">วันที่แจ้ง</th>
+                                <th scope="col">อาการ</th>
+                                <th scope="col">ผู้แจ้ง</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cf in car_fix %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'car:fix-detail' pk=cf.pk %}">
+                                        {{ cf.pk }}/{{ cf.requested_at.year|thaiyear }}
+                                    </a>
+                                </td>
+                                <td>{{ cf.requested_at|thaidate }} เวลา {{ cf.requested_at|timezone:"Asia/Bangkok"|date:"H:m" }} น.</td>
+                                <td>{{ cf.issue|safe }}</td>
+                                <td>{{ cf.fix_requester.profile }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div> <!-- end fix -->
+
             </div>
 
-        </div><!-- end booking -->
+        </div><!-- end tab -->
 
 
         <!-- TODO: make condition for button -->

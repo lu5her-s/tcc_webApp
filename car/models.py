@@ -190,7 +190,7 @@ class Refuel(models.Model):
 
 class CarImage(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    images = models.ImageField(upload_to='get_image_name', blank=True, null=True)
+    images = models.ImageField(upload_to=get_image_name, blank=True, null=True)
 
     class Meta:
         verbose_name = 'Car Image'
@@ -202,7 +202,7 @@ class CarImage(models.Model):
 
 class CarFixImage(models.Model):
     fix = models.ForeignKey(CarFix, on_delete=models.CASCADE)
-    images = models.ImageField(upload_to='get_image_fix', blank=True, null=True)
+    images = models.ImageField(upload_to=get_image_fix, blank=True, null=True)
 
     def __str__(self) -> str:
         return f"{self.fix.car.number}"
