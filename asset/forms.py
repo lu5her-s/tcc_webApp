@@ -3,12 +3,13 @@
 # File              : forms.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Dec, 21 2022, 01:12 355
-# Last Modified Date: Wed Dec, 21 2022, 01:20 355
+# Last Modified Date: Wed Dec, 21 2022, 22:12 355
 # Last Modified By  : lu5her <lu5her@mail>
 from django import forms
 
 from asset.models import (
     Category,
+    StockItem,
     Supplier,
     Network,
 )
@@ -25,6 +26,7 @@ class CategoryForm(forms.ModelForm):
             'description': 'รายละเอียด',
             'image': 'รูปภาพ',
         }
+
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
@@ -43,6 +45,7 @@ class SupplierForm(forms.ModelForm):
             'address': 'ที่อยู่',
             'contact_no': 'เบอร์โทรศัพท์',
         }
+
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.Textarea(attrs={'class': 'form-control'}),
@@ -60,8 +63,68 @@ class NetworkForm(forms.ModelForm):
             'ip_addr': 'ที่อยู่ IP',
             'description': 'รายละเอียด',
         }
+
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'ip_addr': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+
+
+# ModelForm for StockItem
+class StockItemForm(forms.ModelForm):
+    images = forms.ImageField(
+        widget=forms.ClearableFileInput(
+            attrs={
+                'class': 'form-control',
+                'multiple': True,
+            }
+        ),
+        label="ภาพสินทรัพย์",
+        required=False,
+    )
+    class Meta:
+        model = StockItem
+        fields = (
+            'category',
+            'item_name',
+            'manufacturer',
+            'serial',
+            'description',
+            'model_no',
+            'part_no',
+            'price',
+            'supplier',
+            'price',
+            'network',
+            'location',
+            'images',
+        )
+
+        labels = {
+            'category':     'ประเภท',
+            'item_name':    'ชื่อสินค้า',
+            'manufacturer': 'ผู้ผลิต',
+            'serial':       'หมายเลขซีเรียล',
+            'description':  'รายละเอียด',
+            'model_no':     'รุ่น',
+            'part_no':      'หมายเลขอะไหล่',
+            'price':        'ราคา',
+            'supplier':     'ผู้จัดจำหน่าย',
+            'network':      'เครือข่าย',
+            'location':     'สถานที่ติดตั้ง',
+        }
+
+        widgets = {
+            'category':     forms.Select(attrs={'class': 'form-select'}),
+            'item_name':    forms.TextInput(attrs={'class': 'form-control'}),
+            'manufacturer': forms.Select(attrs={'class': 'form-select'}),
+            'serial':       forms.TextInput(attrs={'class': 'form-control'}),
+            'description':  forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'model_no':     forms.TextInput(attrs={'class': 'form-control'}),
+            'part_no':      forms.TextInput(attrs={'class': 'form-control'}),
+            'price':        forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'step': 0.01}),
+            'supplier':     forms.Select(attrs={'class': 'form-select'}),
+            'network':      forms.Select(attrs={'class': 'form-select'}),
+            'location':     forms.Select(attrs={'class': 'form-select'}),
         }

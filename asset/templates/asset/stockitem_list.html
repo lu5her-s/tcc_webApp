@@ -4,145 +4,125 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Asset Management{% endblock title %}
-
+{% block title %}Asset Stock{% endblock title %}
 
 {% block content %}
 
 <div class="pagetitle">
-    <h1>การจัดการสินทรัพย์</h1>
+    <h1>รายการสินทรัพย์ทั้งหมด</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item active">asset list</li>
+            <li class="breadcrumb-item active">asset stock list</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="float-right">
-            <a href="#" class="btn btn-primary">
-                <i class="bi bi-plus"></i> เพิ่มสินทรัพย์
-            </a>
-        </div>
-    </div>
-</div>
-<br>
+<section class="section profile">
+    <div class="row">
 
-<!-- asset list -->
-<div class="row">
-    {% for asset in assets %}
-    <div class="col-md-4">
-        <div class="card mb-3">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="{% static 'assets/img/profile.png' %}" class="img-fluid rounded-start" alt="...">
-                </div>
-                <div class="col-md-8">
+        <div class="col-xl-12">
+
+            <!-- Recent Job -->
+            <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+
                     <div class="card-body">
-                        <a href="{% url 'asset_detail' asset.id %}">
-                            <h5 class="card-title">{{ asset.name }}</h5>
-                        </a>
-                        <p class="card-text">{{ asset.description }}</p>
-                        <p class="card-text">
-                            <a href="#" class="btn btn-info">Click</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-<!-- end ai gen -->
+                        <h5 class="card-title">{{ title }} 
+                            <span>| List</span>
+                        </h5>
+                        <br>
 
-<section class="section">
-    <div class="row align-items-top">
-        <div class="col-lg-6">
-            <div class="card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="{% static 'assets/img/profile.png' %}" class="img-fluid rounded-start" alt="...">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <a href="#">
-                                <h5 class="card-title">SFP Module</h5>
-                            </a>
-                            <p class="card-text">This is a wider This content is a little bit longer.</p>
-                            <p class="card-text">
-                                <a href="#" class="btn btn-info">Click</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-lg-6">
-            <div class="card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="{% static 'assets/img/profile.png' %}" class="img-fluid rounded-start" alt="...">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <a href="#">
-                                <h5 class="card-title">Switch Layer 3</h5>
-                            </a>
-                            <p class="card-text">This is a wider content. This content is a little bit longer.</p>
-                            <p class="card-text">
-                                <a href="#" class="btn btn-info">Click</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        <table class="table table-hover" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ประเภทสินทรัพย์</th>
+                                    <th scope="col">ชื่อสินทรัพย์</th>
+                                    <th scope="col">ยี่ห้อ</th>
+                                    <th scope="col">serial</th>
+                                    <th scope="col">สถานะ</th>
+                                    <th scope="col">การติดตั้ง</th>
+                                    <th scope="col">Network</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for object in object_list %}
+                                <tr>
+                                    <td style="width:30%;" id="image">
+                                        <span class="myDIV"><img src="{{ object.car_avatar.url }}" width="50%"></span class>
+                                        {% comment %}<span class="hide"><img src="{{ object.car_avatar.url }}" width="150%"></span>{% endcomment %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'car:detail' pk=object.pk %}">
+                                            {{ object.number }}
+                                        </a>
+                                    </td>
+                                    <td>{{ object.type.name }}</td>
+                                    <td>{{ object.capacity }}</td>
+                                    <td>
+                                        {% comment %}{{ object.fuel_now }}/{{ object.fuel_max }}{% endcomment %}
+                                        {% with fuel_current=object.fuel_now fuel_max=object.fuel_max %}
+                                            <p style="text-align:center;">{{ fuel_current|fuel:fuel_max|floatformat:"2" }}%</p>
+                                            {% with fuel_current|fuel:fuel_max as per %}
+                                                {% if per > 80 %}
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-striped bg-success" 
+                                                             role="progressbar" 
+                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max|floatformat:"2" }}%" 
+                                                             aria-valuenow="{{ object.fuel_now }}" 
+                                                             aria-valuemin="0" 
+                                                             aria-valuemax="{{ object.fuel_max }}">
+                                                            {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
+                                                        </div>
+                                                    </div>
+                                                {% elif per > 50 %}
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-striped bg-warning" 
+                                                             role="progressbar" 
+                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max|floatformat:"2" }}%;
+                                                                color: black;" 
+                                                             aria-valuenow="{{ object.fuel_now }}" 
+                                                             aria-valuemin="0" 
+                                                             aria-valuemax="{{ object.fuel_max }}">
+                                                            {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-striped bg-danger" 
+                                                             role="progressbar" 
+                                                             style="width: {{ object.fuel_now|fuel:object.fuel_max|floatformat:"2" }}%" 
+                                                             aria-valuenow="{{ object.fuel_now }}" 
+                                                             aria-valuemin="0" 
+                                                             aria-valuemax="{{ object.fuel_max }}">
+                                                            {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            {% endwith %} 
+                                        {% endwith %}
+                                    </td>
+                                    <td>{{ object.status.name }}</td>
 
-        <div class="col-lg-6">
-            <div class="card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="{% static 'assets/img/profile.png' %}" class="img-fluid rounded-start" alt="...">
+                                    <!-- NOTE: make booking list for show status -->
+                                    <td>
+                                        <a href="{% url 'car:detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a>
+                                        {% if object.approve_status.name == 'รออนุมัติ' %}
+                                            <a href="{% url 'car:detail' pk=object.pk %}" class="badge bg-success">เพิ่มเติม</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
                     </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <a href="#">
-                                <h5 class="card-title">Switch Layer 2</h5>
-                            </a>
-                            <p class="card-text">This is a wider car content. This content is a little bit longer.</p>
-                            <p class="card-text">
-                                <a href="#" class="btn btn-info">Click</a>
-                            </p>
-                        </div>
-                    </div>
+
                 </div>
-            </div>
+            </div><!-- End Announce List -->
+            {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
+
         </div>
-    
-        <div class="col-lg-6">
-            <div class="card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="{% static 'assets/img/profile.png' %}" class="img-fluid rounded-start" alt="...">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <a href="#">
-                                <h5 class="card-title">F/O Platform</h5>
-                            </a>
-                            <p class="card-text">This is a wider content. This content is a little bit longer.</p>
-                            <p class="card-text">
-                                <a href="#" class="btn btn-info">Click</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-       
     </div>
 </section>
 

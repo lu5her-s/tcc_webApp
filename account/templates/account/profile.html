@@ -116,8 +116,8 @@
 
                             <div class="row">
                                 <div class="col-lg-3 col-md-4 label">สถานที่ทำงาน</div>
-                                {% if user.profile.place %}
-                                <div class="col-lg-9 col-md-8">{{ user.profile.place }}</div>
+                                {% if user.profile.department %}
+                                <div class="col-lg-9 col-md-8">{{ user.profile.department }}</div>
                                 {% else %}
                                 <div class="col-lg-9 col-md-8">Wait for Update...</div>
                                 {% endif %}
@@ -215,10 +215,10 @@
                                 </div>
 
                                 <div class="row mb-3">
-                                    <label for="{{ profile_form.place.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.place.label }}</label>
+                                    <label for="{{ profile_form.department.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.department.label }}</label>
                                     <div class="col-md-8 col-lg-9">
                                         {% comment %}<input name="country" type="text" class="form-control" id="Country" value="USA">{% endcomment %}
-                                        {{ profile_form.place }}
+                                        {{ profile_form.department }}
                                     </div>
                                 </div>
 

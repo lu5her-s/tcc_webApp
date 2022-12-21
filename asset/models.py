@@ -76,7 +76,7 @@ class StockItem(models.Model):
     model_no = models.CharField(max_length=50, null=True, blank=True)
     part_no = models.CharField(max_length=50, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    network = models.CharField(max_length=50, null=True, blank=True)
+    network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.AVAILABLE)
