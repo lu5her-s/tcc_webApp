@@ -3,7 +3,7 @@
 # File              : forms.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Dec, 21 2022, 01:12 355
-# Last Modified Date: Wed Dec, 21 2022, 22:12 355
+# Last Modified Date: Thu Dec, 22 2022, 16:41 356
 # Last Modified By  : lu5her <lu5her@mail>
 from django import forms
 
@@ -126,5 +126,6 @@ class StockItemForm(forms.ModelForm):
             'price':        forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'step': 0.01}),
             'supplier':     forms.Select(attrs={'class': 'form-select'}),
             'network':      forms.Select(attrs={'class': 'form-select'}),
-            'location':     forms.Select(attrs={'class': 'form-select'}),
+            # 'location':     forms.Select(attrs={'class': 'form-select'}),
+            'location':     forms.HiddenInput(attrs={'class': 'form-select'}),
         }

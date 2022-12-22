@@ -9,12 +9,13 @@
 {% block content %}
 
 <div class="pagetitle">
-    <h1>รายการสินทรัพย์ทั้งหมด</h1>
+    <h1>{{ h_title }}</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">Asset Home</a></li>
-            <li class="breadcrumb-item active">asset stock list</li>
+            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_list' %}">Asset stock list</a></li>
+            <li class="breadcrumb-item active">{{ h_title }} list</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -74,6 +75,7 @@
                                     </td>
                                 </tr>
                                 {% endfor %}
+                            
                             </tbody>
                         </table>
 

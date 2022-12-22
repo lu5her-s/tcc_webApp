@@ -50,6 +50,18 @@ class Network(models.Model):
         return f"{self.name} - {self.ip_addr}"
 
 
+class Manufacturer(models.Model):
+    """
+    Manufacturer. for item description
+    """
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.name
+
+
 class StockItemManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status=StockItem.Status.AVAILABLE)
@@ -72,7 +84,7 @@ class StockItem(models.Model):
     location = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    manufacturer = models.CharField(max_length=50, null=True, blank=True)
+    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, null=True, blank=True)
     model_no = models.CharField(max_length=50, null=True, blank=True)
     part_no = models.CharField(max_length=50, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
@@ -85,7 +97,7 @@ class StockItem(models.Model):
     available = StockItemManager() # Custom manager filter available stock_item
 
     def __str__(self):
-        return f"{self.name} - {self.serial}"
+        return f"{self.item_name} - {self.serial}"
 
     def get_absolute_url(self):
         return reverse('stock:detail', kwargs={'pk': self.pk})

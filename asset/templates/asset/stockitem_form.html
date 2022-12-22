@@ -6,13 +6,13 @@
 
 {% block content %}
 <div class="pagetitle">
-    <h1>Car {{ title }}</h1>
+    <h1>สินทรัพย์ {{ title }}</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">Asset Home</a></li>
             <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_list' %}">Asset List</a></li>
-            <li class="breadcrumb-item active">เพิ่มยานพาหนะ</li>
+            <li class="breadcrumb-item active">เพิ่มสินทรัพย์</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -28,7 +28,7 @@
                     <ul class="nav nav-tabs nav-tabs-bordered">
 
                         <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Car Add Form</button>
+                            <buttont class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Item add Form</buttont>
                         </li>
 
                     </ul>
@@ -112,20 +112,27 @@
                             </div>
 
                             <div class="row mb-3">
-                                <label for="{{ form.location.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.location.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.location }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
                                 <label for="{{ form.images.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.images.label }}</label>
                                 <div class="col-md-8 col-lg-9">
                                     {{ form.images }}
                                 </div>
                             </div>
 
-                            {% if images %}
+                            {% comment %}<div class="row mb-3">{% endcomment %}
+                                {% comment %}<label for="{{ form.location.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.location.label }}</label>{% endcomment %}
+                                {% comment %}<div class="col-md-8 col-lg-9">{% endcomment %}
+                                    {% comment %}{{ form.location }}{% endcomment %}
+                                {% comment %}</div>{% endcomment %}
+                            {% comment %}</div>{% endcomment %}
+
+                            <input 
+                                id="{{ form.location.name }}"
+                                type="hidden" 
+                                name="{{ form.location.name }}" 
+                                value="{{ request.user.profile.department.pk }}"
+                                />
+
+                        {% if images %}
                                 <p class="w3-text w3-disabled">ภาพปัจจุบัน</p>
                                 {% for image in images %}
                                     <img src="{{ image.images.url }}" class="w3-image" width="150" height="100">
@@ -150,6 +157,12 @@
 
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $("select").select2({
+                width: "100%",
+            });
+        });
+    </script>
 </section>
 {% endblock content %}
-

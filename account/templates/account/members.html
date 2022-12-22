@@ -45,7 +45,7 @@
                                     <th scope="row"><a href="{% url 'account:sectors' pk=member.profile.sector.pk %}">{{ member.profile.sector.name }}</a></th>
                                     <td><a href="{% url 'account:member' pk=member.pk %}">{{ member.profile.rank.name }} {{ member.get_full_name }}</a></td>
                                     <td><a href="{% url 'account:positions' pk=member.profile.position.pk %}" class="text-primary">{{ member.profile.position.name }}</a></td>
-                                    <td>{{ member.profile.place }}</td>
+                                    <td>{{ member.profile.department.name }}</td>
                                     <td>{{ member.profile.phone }}</td>
                                 </tr>
                                 {% endfor %}

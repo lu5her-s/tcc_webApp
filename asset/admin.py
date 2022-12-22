@@ -1,6 +1,7 @@
 from django.contrib import admin
 from asset.models import (
     Category,
+    Manufacturer,
     Supplier,
     Network,
     StockItem,
@@ -34,3 +35,4 @@ class StockItemAdmin(admin.ModelAdmin):
     search_fields = ('item_name', 'serial', 'location',)
 
 admin.site.register(StockItemImage)
+admin.site.register(Manufacturer)

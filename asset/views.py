@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render, reverse
+from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
     CreateView,
@@ -10,10 +10,14 @@ from asset.forms import StockItemForm
 
 from asset.models import (
     Category,
+    Manufacturer,
+    Network,
     StockItem,
+    StockItemImage,
 )
 
 # Create your views here.
+
 
 class StockItemListView(LoginRequiredMixin, ListView):
     """
@@ -46,6 +50,7 @@ class StockItemDetailView(LoginRequiredMixin, DetailView):
         qs = StockItem.available.get(pk=self.kwargs['pk'])
         return qs
 
+
 class AssetHomeView(LoginRequiredMixin, TemplateView):
     template_name = 'asset/stockitem_home.html'
 
@@ -66,18 +71,23 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
         # return detail of stock item
         return reverse('asset:stockitem_detail', kwargs={'pk': self.object.pk})
 
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['title'] = self.request.user.profile.department.name
+        return context
+
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
             images = request.FILES.getlist('images')
             # save images to StockItemImage
-            # stockitem = form.save(commit=False)
+            stockitem = form.save(commit=False)
             stockitem.save()
             for image in images:
                 StockItemImage.objects.create(stock_item=stockitem, images=image)
             return redirect(self.get_success_url())
         else:
-            return self.render_to_response(self.get_context_data(form=form))
+            return self.render_to_response(self.get_context_data())
 
 
 class StockAssetListView(LoginRequiredMixin, ListView):
@@ -88,4 +98,46 @@ class StockAssetListView(LoginRequiredMixin, ListView):
         # return stock item filter by department = user profile department
         return StockItem.objects.filter(department=self.request.user.profile.department)
 
+
 # TODO: make list separate from stock asset name from user profile department
+def categories_list(request, pk):
+    """categories_list.
+
+    :param request:
+    :param pk: for get category
+    """
+    # items = StockItem.objects.filter(category__pk=pk)
+    items = get_list_or_404(StockItem, category__pk=pk)
+    context = {
+        'object_list': items,
+        'h_title': Category.objects.get(pk=pk).name
+    }
+    return render(request, 'asset/condition_list.html', context)
+
+
+def manufacturer_list(request, pk):
+    """manufacturer_list.
+
+    :param request:
+    :param pk:
+    """
+    items = get_list_or_404(StockItem, manufacturer__pk=pk)
+    context = {
+        'object_list': items,
+        'h_title': Manufacturer.objects.get(pk=pk).name
+    }
+    return render(request, 'asset/condition_list.html', context)
+
+
+def network_list(request, pk):
+    """network_list.
+
+    :param request:
+    :param pk:
+    """
+    items = get_list_or_404(StockItem, network__pk=pk)
+    context = {
+        'object_list': items,
+        'h_title': Network.objects.get(pk=pk).name
+    }
+    return render(request, 'asset/condition_list.html', context)
