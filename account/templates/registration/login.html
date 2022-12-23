@@ -63,18 +63,22 @@
               <div class="card mb-3">
 
                 <div class="card-body">
-                  {% if messages %}
-                  <ul class="messages">
-                    {% for message in messages %}
-                      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                    {% endfor %}
-                  </ul>
-                  {% endif %}
 
                   <div class="pt-4 pb-2">
                     <h5 class="card-title text-center pb-0 fs-4">กรุณาเข้าสู่ระบบเพื่อใช้งาน</h5>
                     <p class="text-center small">ใส่ชื่อผู้ใช้งาน & รหัสผ่านเพื่อเข้าสู่ระบบ</p>
                   </div>
+
+                  {% if form.non_field_errors %}
+                  {% comment %}<ul class="messages">{% endcomment %}
+                    {% comment %}{% for error in form.non_field_errors %}{% endcomment %}
+                      {% comment %}<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>{% endcomment %}
+                      {% comment %}<li>กรุณากรอกชื่อผู้ใช้และรหัสผ่านให้ถูกต้อง</li>{% endcomment %}
+                      <p class="text-danger text-center">กรุณากรอกชื่อผู้ใช้และรหัสผ่านให้ถูกต้อง</p>
+                    {% comment %}{% endfor %}{% endcomment %}
+                  {% comment %}</ul>{% endcomment %}
+                  {% endif %}
+
 
                   <form method="post" class="row g-3 needs-validation" novalidate>
                       {% csrf_token %}
@@ -104,7 +108,7 @@
                       <button class="btn btn-primary w-100" type="submit">เข้าสู่ระบบ</button>
                     </div>
                     <div class="col-12">
-                        <p class="small mb-0">ยังไม่มีบัญชีผู้ใช้งาน? <a href="{% url 'account:register' %}">ลงทะเบียน</a></p>
+                        <p class="mb-0">ยังไม่มีบัญชีผู้ใช้งาน? <a href="{% url 'account:register' %}">ลงทะเบียน</a></p>
                     </div>
                   </form>
 

@@ -10,11 +10,11 @@
 {% block content %}
 
 <div class="pagetitle">
-    <h1>การจัดการสินทรัพย์</h1>
+    <h1>การจัดการพัสดุ</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item active">asset list</li>
+            <li class="breadcrumb-item active">Asset Home</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -27,7 +27,7 @@
         {% if request.user|has_group:"Stock" %}
         <div class="col-xxl-4 col-md-6">
             <div class="card info-card bg-card">
-                <a href="#">
+                <a href="{% url 'asset:manager_home' %}">
                     <div class="card-body">
                         <h5 class="card-title">การจัดการคลัง <span>| All</span></h5>
                         <div class="d-flex align-items-center">
@@ -50,7 +50,7 @@
             <div class="card info-card bg-card">
                 <a href="#">
                     <div class="card-body">
-                        <h5 class="card-title">รายการที่สินทรัพย์ <span>| All</span></h5>
+                        <h5 class="card-title">รายการพัสดุ <span>| All</span></h5>
                         <div class="d-flex align-items-center">
                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                 <i class="bi bi-bank text-danger"></i>
@@ -74,14 +74,14 @@
             <div class="card info-card bg-card">
                 <a href="{% url 'asset:stockitem_list' %}">
                     <div class="card-body">
-                        <h5 class="card-title">รายการสินทรัพย์ <span>| All</span></h5>
+                        <h5 class="card-title">รายการพัสดุ <span>| All</span></h5>
                         <div class="d-flex align-items-center">
                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                 <i class="bi bi-list-ul text-success"></i>
                             </div>
                             <div class="ps-3">
                                 <h6>List Overall</h6>
-                                <span class="text-success small pt-1 fw-bold">ภาพรวม</span> <span class="text-muted small pt-2 ps-1">รายการสินทรัพย์ทั้งหมด</span>
+                                <span class="text-success small pt-1 fw-bold">ภาพรวม</span> <span class="text-muted small pt-2 ps-1">รายการพัสดุทั้งหมด</span>
 
                             </div>
                         </div>

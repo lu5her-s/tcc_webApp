@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Stock Management{% endblock title %}
+
+
+{% block content %}
+
+<div class="pagetitle">
+    <h1>การจัดการ {{ request.user.profile.department.name }}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">Asset Home</a></li>
+            <li class="breadcrumb-item active">Manager</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<div class="row">
+    <div class="col-12">
+        <a href="{% url 'asset:stockitem_create' %}" 
+           class="btn btn-success"
+           style="float: right;">
+            <i class="bi bi-plus"></i>
+            เพิ่มพัสดุ {{ request.user.profile.department.name }}
+        </a>
+    </div>
+</div>
+<br>
+
+<section class="section dashboard">
+    <div class="row">
+        <!-- Stock asset manager card -->
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card bg-card">
+                <a href="{% url 'asset:manager_list' %}">
+                    <div class="card-body">
+                        <h5 class="card-title">รายการพัสดุ <span>| {{ request.user.profile.department.name }}</span></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-menu-app text-danger"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>{{ request.user.profile.department.name }}</h6>
+                                <span class="text-success small pt-1 fw-bold">จำนวนพัสดุ</span> <span class="text-muted small pt-2 ps-1">list available item in stock</span>
+
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- End Stock manager --> 
+
+        <!-- Show List request item card -->
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card bg-card">
+                <a href="{% url 'asset:stockitem_list' %}">
+                    <div class="card-body">
+                        <h5 class="card-title">รายการขอเบิก <span>| {{ request.user.profile.department.name }}</span></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-layer-backward text-success"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>รายการขอเบิก</h6>
+                                <span class="text-success small pt-1 fw-bold">Count Request</span> <span class="text-muted small pt-2 ps-1">Status not approve</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <!-- End Request List all --> 
+    </div>
+
+    <div class="row">
+        <!-- Stock asset manager card -->
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card bg-card">
+                <a href="#">
+                    <div class="card-body">
+                        <h5 class="card-title">รายการที่อนุมัติ <span>| {{ request.user.profile.department.name }}</span></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-card-checklist text-success"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>รายการที่อนุมัติ</h6>
+                                <span class="text-success small pt-1 fw-bold">Count Approved</span> <span class="text-muted small pt-2 ps-1">All</span>
+
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- End Stock manager --> 
+
+        <!-- Show List request item card -->
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card bg-card">
+                <a href="{% url 'asset:stockitem_list' %}">
+                    <div class="card-body">
+                        <h5 class="card-title">รายการแยกตามประเภท <span>| {{ request.user.profile.department.name }}</span></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-view-stacked text-info"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>รายการแยกตามประเภท</h6>
+                                <span class="text-success small pt-1 fw-bold">Count Less</span> <span class="text-muted small pt-2 ps-1">Item</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <!-- End Request List all --> 
+    </div> <!-- end row -->
+    
+</section>
+
+<script>
+    $(document).ready(() => {
+        $("#dataTable").DataTable({
+            "fnDrawCallback" : function(oSettings) {
+                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+                } else {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+                }
+            },
+            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+        });
+    });
+</script>
+{% endblock content %}

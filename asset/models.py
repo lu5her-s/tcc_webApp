@@ -12,7 +12,7 @@ def stock_image(instance, filename):
     :param instance:get instance from StockItem
     :param filename:get filename to set folder
     """
-    return f"Asset/{instance.name}/{filename}"
+    return f"Asset/{instance.stock_item.item_name}/{filename}"
 
 
 # class categories for stock

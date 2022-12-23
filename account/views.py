@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Fri Dec, 02 2022, 18:24 336
+# Last Modified Date: Fri Dec, 23 2022, 18:00 357
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.contrib.auth                import update_session_auth_hash
@@ -30,6 +30,7 @@ from account.models import (
     Rank,
     Sector,
 )
+from account.models import Department as DP
 from account.forms import (
     ProfileForm,
     UserForm,
@@ -123,7 +124,10 @@ def update_profile(request):
         if request.POST['sector']:
             profile.sector = Sector.objects.get(pk=request.POST['sector'])
 
-        profile.place      = request.POST['place']
+        # profile.place      = request.POST['place']
+        if request.POST['department']:
+            profile.department = DP.objects.get(pk=request.POST['department'])
+
         profile.address    = request.POST['address']
         profile.phone      = request.POST['phone']
         profile.twitter    = request.POST['twitter']
