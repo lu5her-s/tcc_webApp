@@ -185,7 +185,7 @@
                                         <td>{{ bk.controler }}</td>
                                         <td>{{ bk.approver }}</td>
                                         {% if not bk.mile_in %}
-                                        <td>{{ bk.car.status }}</td>
+                                        <td>{{ bk.approve_status }}</td>
                                         {% else %}
                                         <td>เสร็จสิ้น</td>
                                         {% endif %}
@@ -270,7 +270,9 @@
                 {% endif %}
             {% endif %}
             <a href="{% url 'car:refuel' pk=object.pk %}" class="btn btn-lg btn-warning">เติมน้ำมัน</a>
-            <a href="{% url 'car:fix-create' pk=object.pk %}" class="btn btn-lg btn-danger">แจ้งซ่อมบำรุง</a>
+            {% if not object.status.name == 'ซ่อมบำรุง' %}
+                <a href="{% url 'car:fix-create' pk=object.pk %}" class="btn btn-lg btn-danger">แจ้งซ่อมบำรุง</a>
+            {% endif %}
             {% if request.user|has_group:"Car" %}
                 <a href="{% url 'car:update' pk=object.pk %}" class="btn btn-lg btn-warning">แก้ไข</a>
             {% endif %}

@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 23 2022, 19:31 327
-# Last Modified Date: Tue Dec, 20 2022, 15:52 354
+# Last Modified Date: Sun Dec, 25 2022, 21:54 359
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.contrib.auth.models import User
@@ -31,6 +31,7 @@ from django.views.generic import (
 from account.models import Profile
 from car.forms import (
     ApproveForm,
+    ApproverForm,
     BookingForm,
     CarAfterFixForm,
     CarForm,
@@ -456,9 +457,10 @@ class CarFixUpdateView(LoginRequiredMixin, UpdateView):
             fix = form.save()
             # fix_id = get_object_or_404(CarFix, pk=fix.pk)
             # save image
-            for f in request.FILES.getlist('images'):
-                CarFixImage.objects.create(fix=fix, images=f)
-            # save fix
+            if request.FILES.getlist('images'):
+                for f in request.FILES.getlist('images'):
+                    CarFixImage.objects.create(fix=fix, images=f)
+                # save fix
             fix.save()
             return redirect('car:fix-detail', pk=fix.pk)
         return self.render_to_response(self.get_context_data(form=form))
@@ -472,6 +474,8 @@ class CarFixUpdateView(LoginRequiredMixin, UpdateView):
         # context['fix'] = fix
         context['car'] = car
         context['images'] = images
+        # context['form'] = CarRequestFixForm(instance=self.get_object())
+        # context['app_form'] = ApproverForm(instance=self.get_object())
         return context
 
 

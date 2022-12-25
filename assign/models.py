@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Fri Oct, 28 2022, 21:17 301
-# Last Modified Date: Mon Oct, 31 2022, 16:59 304
+# Last Modified Date: Sun Dec, 25 2022, 11:18 359
 # Last Modified By  : lu5her <lu5her@mail>
 from datetime                   import datetime
 from django.db                  import models
@@ -13,13 +13,21 @@ from account.models             import Profile
 
 # Create your models here.
 
+
 def get_image_name(instance, filename):
+    """get_image_name.
+
+    :param instance:
+    :param filename:
+    """
     file_name = instance.title
     #return 'Assign/{}/{}'.format(file_name, filename)
     return f'Assign/{file_name}/{filename}'
 
 
 class AssignStatus(models.Model):
+    """AssignStatus."""
+
     name = models.CharField(max_length=200)
 
     class Meta:
@@ -27,12 +35,14 @@ class AssignStatus(models.Model):
         verbose_name_plural = 'Status'
 
     def __str__(self) -> str:
-        """TODO: Docstring for __str__.
+        """Docstring for __str__.
         """
         return f"{self.name}"
 
 
 class Assign(models.Model):
+    """Assign."""
+
     title       = models.CharField(max_length=200)
     #body        = models.TextField()
     body        = RichTextField()
@@ -57,6 +67,8 @@ class Assign(models.Model):
             return f"{self.title} to {self.assigned_to.get_full_name()} on {self.created_at.strftime('%a, %d %b %Y %H:%M')}"
 
 class AssignImage(models.Model):
+    """AssignImage."""
+
     assign = models.ForeignKey(Assign, on_delete=models.CASCADE)
     images = models.ImageField(upload_to=get_image_name, null=True, blank=True)
 
@@ -68,8 +80,8 @@ class AssignImage(models.Model):
         return f"{self.assign.title}"
 
 class AssignProgress(models.Model):
-
     """For Update Assign Progress"""
+
     assign     = models.ForeignKey(Assign,       on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     note       = models.TextField(null=True, blank=True)

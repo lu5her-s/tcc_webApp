@@ -139,7 +139,7 @@ class StockAssetListView(LoginRequiredMixin, ListView):
         return StockItem.objects.filter(department=self.request.user.profile.department)
 
 
-# TODO: make list separate from stock asset name from user profile department
+# DONE: make list separate from stock asset name from user profile department
 def categories_list(request, pk):
     """categories_list.
 
@@ -199,6 +199,9 @@ class StockManageHomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['stockitems'] = StockItem.objects.filter(
+            location=self.request.user.profile.department
+        )
         return context
 
 

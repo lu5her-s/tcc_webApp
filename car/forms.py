@@ -199,6 +199,7 @@ class CarRequestFixForm(forms.ModelForm):
             'issue': 'อาการ/สารเหตุ',
             'approver': 'ผู้อนุมัติ',
             'approve_status': 'สถานะการอนุมัติ',
+            'responsible_man': 'มอบหมายผู้ดำเนินการ',
         }
 
         # def init fields approver is profile__use group is Car
@@ -239,4 +240,21 @@ class CarAfterFixForm(forms.ModelForm):
             'fix_status': forms.Select(attrs={'class': 'form-select'}),
             'note': RichTextFormField(),
             'cost_use': forms.NumberInput(attrs={'class': 'form-control', 'min_value': 0}),
+        }
+
+
+class ApproverForm(forms.ModelForm):
+    class Meta:
+        model = CarFix
+        fields = {
+            'approve_status',
+            'responsible_man',
+        }
+        widgets = {
+            'approve_status': forms.Select(attrs={'class': 'form-select'}),
+            'responsible_man': forms.Select(attrs={'class': 'form-select'})
+        }
+        labels = {
+            'approve_status': 'สถานะการอนุมัติ',
+            'responsible_man': 'มอบหมายผู้ดำเนินการ',
         }

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% load tags %}
 
 {% block title %}Car Fixing{% endblock title %}
 
@@ -37,6 +38,10 @@
 
                         <table class="table">
                             <tr>
+                                <th>หมายเลขแจ้งซ่อม</th>
+                                <td>{{ object.pk }}/{{ object.requested_at.year|thaiyear }}</td>
+                            </tr>
+                            <tr>
                                 <th>ประเภท</th>
                                 <td>{{ car.type.name }}</td>
                             </tr>
@@ -50,6 +55,41 @@
                                 <th>ภาพยานพาหนะ</th>
                                 <td><img src="{{ car.car_avatar.url }}" alt="car avatar" style="width: 300px;"></td>
                             </tr>
+
+                            {% if request.user.profile == object.approver %}
+                            <tr>
+                                <th>อาการ</th>
+                                <td>{{ object.issue|safe }}</td>
+                            </tr>
+
+                            <tr>
+                                <th>ผู้แจ้ง</th>
+                                <td>{{ object.fix_requester.profile }}</td>
+                            </tr>
+
+                            <tr>
+                                <th>วันที่แจ้ง</th>
+                                <td>{{ object.requested_at|thaidate }} เวลา {{ object.requested_at|date:"H:m" }} น.</td>
+                            </tr>
+
+                                {% if object.images %}
+                                <tr>
+                                    <td>
+                                        <div id="gallery">
+                                            {% for item in images %}
+                                            {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
+                                                <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                                            </a> {% endcomment %}
+                                            <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
+                                                <img height="250" width="250" src="{{ item.images.url }}" alt="">
+                                            </a>
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            {% endif %}
+
                         </table>
 
                         {% comment %}การขอใช้ยานพาหนะ หมายเลขทะเบียน {{ car.number }}{% endcomment %}
@@ -59,6 +99,7 @@
                              
                             {% comment %}{{ form|crispy }}{% endcomment %}
                             
+                            {% comment %}{% if not request.user.profile == object.approver  %}{% endcomment %}
                             <div class="row mb-3">
                                 <label for="{{ form.issue.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.issue.label }}</label>
                                 <div class="col-md-8 col-lg-9">
@@ -73,24 +114,6 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-3">
-                                <label for="{{ form.approve_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approve_status.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.approve_status }}
-                                </div>
-                            </div>
-
-                            <!-- if user == object.approver show responsible_man select field -->
-                            {% if request.user.profile == object.approver %}
-                            <div class="row mb-3">
-                                <label for="{{ form.responsible_man.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.responsible_man.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.responsible_man }}
-                                </div>
-                            </div>
-                            {% endif %}
-                            <!-- end if user == object.approver show responsible_man select field -->
-
                             <!-- input file -->
                             <div class="row mb-3">
                                 <label for="{{ form.images.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.images.label }}</label>
@@ -100,6 +123,24 @@
                             </div>
                             <!-- end input file -->
 
+                            <!-- if user == object.approver show responsible_man select field -->
+                            {% if request.user.profile == object.approver %}
+                            <div class="row mb-3">
+                                <label for="{{ form.approve_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approve_status.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.approve_status }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="{{ form.responsible_man.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.responsible_man.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.responsible_man }}
+                                </div>
+                            </div>
+                            <!-- end if user == object.approver show responsible_man select field -->
+
+                            {% endif %}
                             <div class="row mb-3">
                                 <div class="col-md-8 col-lg-9">
                                     <input name="{{ form.fix_requester.name }}" type="hidden" class="form-control" id="{{ form.requester.name }}" value="{{ request.user.pk }}">
