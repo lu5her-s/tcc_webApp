@@ -156,12 +156,12 @@
                         <a href="{% url 'car:fix' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
                         {% if request.user.profile == object.responsible_man %}
                         <a href="{% url 'car:after-fix' pk=object.pk %}" class="btn btn-lg btn-warning">ซ่อมบำรุง</a>
+                        {% elif request.user.profile == object.approver %}
+                            <a href="{% url 'car:fix-update' pk=object.pk %}" class="btn btn-lg btn-info">มอบหมายช่าง</a>
+                        {% elif request.user == object.fix_requester %}
+                            <a href="{% url 'car:fix-update' pk=object.pk %}" class="btn btn-lg btn-warning">อัพเดท</a>
                         {% else %}
-                            {% if not object.responsible_man %}
-                                <a href="{% url 'car:fix-update' pk=object.pk %}" class="btn btn-lg btn-info">มอบหมายช่าง</a>
-                            {% else %}
-                                <a href="{% url 'car:fix-update' pk=object.pk %}" class="btn btn-lg btn-warning">อัพเดท</a>
-                            {% endif %}
+
                         {% endif %}
                         <!-- TODO: if user is Approver redirect to update fix, if user is responsible go to after fix -->
                     </div>

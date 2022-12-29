@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 23 2022, 19:31 327
-# Last Modified Date: Sun Dec, 25 2022, 21:54 359
+# Last Modified Date: Thu Dec, 29 2022, 16:52 363
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.contrib.auth.models import User
@@ -491,7 +491,7 @@ class ResponsibleListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'รายการซ่อมรถที่รับผิดชอบ'
+        context['title'] = 'รายการซ่อมที่รับผิดชอบ'
         return context
 
     def get_queryset(self):

@@ -47,7 +47,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ title }} 
                             <span>| List</span>
-                            {% if request.user|has_group:"Car" %}
+                            {% if request.user|has_group:"Car Manager" %}
                             <span>
                                 <a href="{% url 'car:create' %}" class="align-right btn btn-success" style="float: right">
                                     <i class="bi bi-plus">
@@ -74,9 +74,9 @@
 
                             <!-- if user not car manager show รายการแจ้งซ่อม if responsible_man show รายการรอซ่อม -->
                             <!-- if approver show รายการรอมอบหมาย เพื่อมอบหมายให้ responsible_man -->
-                            {% if not request.user.is_staff %}
+                            {% if request.user|has_group:"Car" %}
                             <span>
-                                <a href="{% url 'car:my-fix' %}" class="align-right btn btn-warning" style="float:right; margin-right: 0.5rem;">
+                                <a href="{% url 'car:my-fix' %}" class="align-right btn btn-danger" style="float:right; margin-right: 0.5rem;">
                                     <i class="bi bi-wrench">
                                         รายการรอซ่อม
                                     </i>
