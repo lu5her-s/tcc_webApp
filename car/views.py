@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Nov, 23 2022, 19:31 327
-# Last Modified Date: Thu Dec, 29 2022, 16:52 363
+# Last Modified Date: Fri Dec, 30 2022, 00:57 364
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 from django.contrib.auth.models import User
@@ -397,6 +397,11 @@ class CarFixCreateView(LoginRequiredMixin, CreateView):
 class CarRequestFixListView(LoginRequiredMixin, ListView):
     template_name = 'car/request_fix.html'
     model = CarFix
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รายการแจ้งซ่อม'
+        return context
 
 
 class CarRequestFixDetailView(LoginRequiredMixin, DetailView):

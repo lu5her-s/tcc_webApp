@@ -31,7 +31,16 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ title }} 
                             <span>| List</span>
+                            {% if perms.asset.add_stockitem %}
+                            <a href="{% url 'asset:stockitem_create' %}" 
+                               class="btn btn-success"
+                               style="float: right;">
+                                <i class="bi bi-plus"></i>
+                                เพิ่ม
+                            </a>
+                            {% endif %}
                         </h5>
+
                         <br>
 
                         <table class="table table-hover" id="dataTable">

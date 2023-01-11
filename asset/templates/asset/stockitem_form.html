@@ -6,13 +6,13 @@
 
 {% block content %}
 <div class="pagetitle">
-    <h1>สินทรัพย์ {{ title }}</h1>
+    <h1>พัสดุ {{ title }}</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">Asset Home</a></li>
             <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_list' %}">Asset List</a></li>
-            <li class="breadcrumb-item active">เพิ่มสินทรัพย์</li>
+            <li class="breadcrumb-item active">เพิ่มพัสดุ</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -150,7 +150,7 @@
 
                             <div class="text-center">
                                 <a href="{% url 'asset:stockitem_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                                <button type="submit" class="btn btn-lg btn-success">เพิ่มสินทรัพย์</button>
+                                <button type="submit" class="btn btn-lg btn-success">เพิ่มพัสดุ</button>
                                 <button type="reset" class="btn btn-lg btn-warning">Reset</button>
                             </div>
 

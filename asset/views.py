@@ -58,6 +58,27 @@ class StockItemDetailView(LoginRequiredMixin, DetailView):
         return StockItem.objects.get(pk=self.kwargs['pk'])
 
 
+class StockDepartmentListView(LoginRequiredMixin, ListView):
+    """
+    Show ListView filter from department
+    """
+
+    template = 'asset/stockitem_list.html'
+    model = StockItem
+
+    def get_queryset(self):
+        """
+        return item in department as user work
+        """
+        user = self.request.user
+        qs = StockItem.objects.filter(location=user.profile.department)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = self.request.user.profile.department.name
+        return context
+
 class AssetHomeView(LoginRequiredMixin, TemplateView):
     """
     AssetHomeView.

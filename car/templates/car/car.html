@@ -47,7 +47,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ title }} 
                             <span>| List</span>
-                            {% if request.user|has_group:"Car Manager" %}
+                            {% if request.user|has_group:"Car" %}
                             <span>
                                 <a href="{% url 'car:create' %}" class="align-right btn btn-success" style="float: right">
                                     <i class="bi bi-plus">

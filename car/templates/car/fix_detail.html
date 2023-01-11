@@ -86,6 +86,11 @@
                                     <td>{{ object.issue|safe }}</td>
                                 </tr>
 
+                                <tr>
+                                    <th>ผู้แจ้งซ่อม</th>
+                                    <td>{{ object.fix_requester.profile }}</td>
+                                </tr>
+
                                 {% if object.finished_at %}
 
                                 <tr>

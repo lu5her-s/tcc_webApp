@@ -35,7 +35,7 @@
                         </h5>
                         <br>
 
-                        <table class="table table-hover datatable" id="dataTable">
+                        <table class="table table-hover" id="dataTable">
                             <thead>
                                 <tr>
                                     <th scope="col">หมายเลขแจ้งซ่อม</th>
@@ -133,10 +133,8 @@
                     $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
                 }
             },
-            "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
         });
     });
-
-
 </script>
 {% endblock content %}

@@ -24,7 +24,7 @@
         <!-- Stock asset manager card -->
 
         <!-- if user not stock manager show list asset in department -->
-        {% if request.user|has_group:"Stock" %}
+        {% if perms.asset.add_stockitem %}
         <div class="col-xxl-4 col-md-6">
             <div class="card info-card bg-card">
                 <a href="{% url 'asset:manager_home' %}">
@@ -48,7 +48,7 @@
         {% else %}
         <div class="col-xxl-4 col-md-6">
             <div class="card info-card bg-card">
-                <a href="#">
+                <a href="{% url 'asset:department_list' %}">
                     <div class="card-body">
                         <h5 class="card-title">รายการพัสดุ <span>| All</span></h5>
                         <div class="d-flex align-items-center">
