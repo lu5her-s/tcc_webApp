@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Repair Management{% endblock title %}
+
+
+{% block content %}
+
+<div class="pagetitle">
+    <h1>แจ้งซ่อม</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active">Repair Home</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section dashboard">
+    <div class="row justify-content-center">
+        <div class="col-xxl-4 col-md-8">
+            <div class="card info-card bg-card">
+                <a href="#">
+                    <div class="card-body">
+                        <h5 class="card-title">รายการแจ้งซ่อม <span>| ยังไม่ได้ตรวจสอบ</span></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-exclamation-octagon text-danger"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>88 รายการแจ้งซ่อม</h6>
+                                <span class="text-success small pt-1 fw-bold">วันนี้</span> <span class="text-muted small pt-2 ps-1">15 รายการ</span>
+
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Management card -->
+
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card bg-card">
+                <a href="#">
+                    <div class="card-body">
+                        <h5 class="card-title">รายการซ่อมด่วน <span>| รอดำเนินการ</span></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-wrench text-warning"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>999 รอดำเนินการ</h6>
+                                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span class="text-muted small pt-2 ps-1">998 รายการ</span>
+
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card bg-card">
+                <a href="#">
+                    <div class="card-body">
+                        <h5 class="card-title">ซ่อมโดย จนท. <span>| ประจำสถานี</span></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-table text-success"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>199 รอดำเนินการ</h6>
+                                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span class="text-muted small pt-2 ps-1">120 รายการ</span>
+
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <!-- End Management -->
+
+        <!-- second row -->
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card bg-card">
+                <a href="#">
+                    <div class="card-body">
+                        <h5 class="card-title">รอดำเนินการ <span>| ตามวงรอบ</span></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-tags text-info"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>88 รอดำเนินการ</h6>
+                                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span class="text-muted small pt-2 ps-1">15 รายการ</span>
+
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card bg-card">
+                <a href="#">
+                    <div class="card-body">
+                        <h5 class="card-title">รายการยกเลิก <span>| การแจ้งซ่อม</span></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-x-octagon text-secondary"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>88 การยกเลิก</h6>
+                                <span class="text-success small pt-1 fw-bold">วันนี้</span> <span class="text-muted small pt-2 ps-1">15 รายการ</span>
+
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <!-- End List all --> 
+
+    
+    </div>
+</section>
+
+<script>
+    $(document).ready(() => {
+        $("#dataTable").DataTable({
+            "fnDrawCallback" : function(oSettings) {
+                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+                } else {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+                }
+            },
+            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+        });
+    });
+</script>
+{% endblock content %}

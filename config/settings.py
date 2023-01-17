@@ -3,7 +3,7 @@
 # File              : settings.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 22 2022, 15:05 265
-# Last Modified Date: Tue Dec, 20 2022, 21:14 354
+# Last Modified Date: Mon Jan, 16 2023, 22:17 016
 # Last Modified By  : lu5her <lu5her@mail>
 """
 Django settings for config project.
@@ -16,21 +16,28 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
+from dotenv import dotenv_values
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# ENV = Path.joinpath(BASE_DIR, '.env')
+config = dotenv_values('.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-61v=ike9p3)ol&xa33bkw=&ogpw^&*jnh+0zt3afnoq8u5q7)3'
+# SECRET_KEY = 'django-insecure-61v=ike9p3)ol&xa33bkw=&ogpw^&*jnh+0zt3afnoq8u5q7)3'
+# SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = config['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = config['DEBUG']
 
 ALLOWED_HOSTS = ["*"]
 
@@ -57,6 +64,7 @@ INSTALLED_APPS = [
     'assign',
     'car',
     'asset',
+    'repair',
 
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
