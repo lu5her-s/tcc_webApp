@@ -6,6 +6,7 @@ from django.views.generic import (
     TemplateView,
     ListView,
 )
+from django.contrib.auth.models import Group
 
 from .models import Inform
 
@@ -21,13 +22,19 @@ class RepairHome(LoginRequiredMixin, TemplateView):
     ]
     """
 
-    template_name = 'repair/home.html'
+    # template_name = 'repair/home.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['inform'] = Inform.objects.filter(
             status=Inform.RepairStatus.INF)
         return context
+
+    def get_template_names(self):
+        if self.request.user.groups.filter(name="Staff").exists():
+            return 'repair/manager.html'
+        else:
+            return 'repair/home.html'
 
 
 class InformListView(LoginRequiredMixin, ListView):

@@ -44,7 +44,7 @@ class Inform(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.stockitem.name}-{self.created_at}"
+        return f"{self.stockitem.item_name}-{self.created_at}"
 
 
 class InformImage(models.Model):

@@ -13,7 +13,7 @@
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">Repair Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'repair:home' %}">Repair Home</a></li>
             <li class="breadcrumb-item active">Inform list</li>
         </ol>
     </nav>
@@ -31,14 +31,12 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ title }} 
                             <span>| ยังไม่ได้ตรวจสอบ</span>
-                            {% if perms.asset.add_stockitem %}
-                            <a href="{% url 'asset:stockitem_create' %}" 
+                            <a href="#"
                                class="btn btn-success"
                                style="float: right;">
                                 <i class="bi bi-plus"></i>
-                                เพิ่ม
+                                แจ้งซ่อม
                             </a>
-                            {% endif %}
                         </h5>
 
                         <br>
@@ -46,41 +44,35 @@
                         <table class="table table-hover" id="dataTable">
                             <thead>
                                 <tr>
-                                    <th scope="col">ประเภทพัสดุ</th>
+                                    <th scope="col">เลขที่แจ้งซ่อม</th>
                                     <th scope="col">ชื่อพัสดุ</th>
-                                    <th scope="col">ยี่ห้อ</th>
-                                    <th scope="col">serial</th>
-                                    <th scope="col">สถานะ</th>
-                                    <th scope="col">การติดตั้ง</th>
-                                    <th scope="col">Network</th>
+                                    <th scope="col">สถานที่</th>
+                                    <th scope="col">ผู้แจ้ง</th>
+                                    <th scope="col">ประเภท</th>
+                                    <th scope="col">อาการ</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for object in object_list %}
                                 <tr>
                                     <td>
-                                        <a href="{% url 'asset:category_list' pk=object.category.pk %}">
-                                            {{ object.category.name }}
+                                        <a href="#">
+                                            {{ object.pk }}/{{ object.created_at.year|thaiyear }}
                                         </a>
                                     </td>
                                     <td>
                                         <a href="#">
-                                            {{ object.item_name }}
+                                            {{ object.stockitem.item_name }}
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="{% url 'asset:manufacturer_list' pk=object.manufacturer.pk %}">
-                                            {{ object.manufacturer.name }}
+                                        <a href="#">
+                                            {{ object.stockitem.location.name }}
                                         </a>
                                     </td>
-                                    <td>{{ object.serial }}</td>
-                                    <td>{{ object.get_status_display }}</td>
-                                    <td>{{ object.location.name }}</td>
-                                    <td>
-                                        <a href="{% url 'asset:network_list' pk=object.network.pk %}">
-                                            {{ object.network.ip_addr }}
-                                        </a>
-                                    </td>
+                                    <td>{{ object.customer.profile }}</td>
+                                    <td>{{ object.get_issue_category_display }}</td>
+                                    <td>{{ object.issue|safe }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
