@@ -31,14 +31,14 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ title }} 
                             <span>| List</span>
-                            {% if perms.asset.add_stockitem %}
+                            {% comment %}{% if perms.asset.add_stockitem %}{% endcomment %}
                             <a href="{% url 'asset:stockitem_create' %}" 
                                class="btn btn-success"
                                style="float: right;">
                                 <i class="bi bi-plus"></i>
                                 เพิ่ม
                             </a>
-                            {% endif %}
+                            {% comment %}{% endif %}{% endcomment %}
                         </h5>
 
                         <br>
@@ -64,7 +64,7 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#">
+                                        <a href="{% url 'asset:stockitem_detail' pk=object.pk %}">
                                             {{ object.item_name }}
                                         </a>
                                     </td>

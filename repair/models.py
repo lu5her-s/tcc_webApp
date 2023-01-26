@@ -31,6 +31,14 @@ class Inform(models.Model):
         COM = 'COMPLETE', 'แล้วเสร็จ'
         REJ = 'REJECT', 'ยกเลิก'
         WAT = 'WAIT', 'รอวงรอบ'
+        URG = 'URGENCY', 'ซ่อมด่วน'
+        AGN = 'AGENT', 'ซ่อมโดย จนท.ประจำสถานี'
+
+    class Urgency(models.TextChoices):
+        HIG = 'HIGHT', 'สูงสุด'
+        MED = 'MEDIUM', 'ปานกลาง'
+        LOW = 'LOW', 'ทั่วไป'
+
 
     customer = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="customer")
@@ -39,6 +47,9 @@ class Inform(models.Model):
     )
     issue_category = models.CharField(max_length=8, choices=IssueCategory.choices)
     issue = RichTextField()
+    urgency = models.CharField(
+        max_length=8, choices=Urgency.choices, default=Urgency.LOW
+    )
     status = models.CharField(
         max_length=8, choices=RepairStatus.choices, default=RepairStatus.INF)
     created_at = models.DateTimeField(auto_now_add=True)

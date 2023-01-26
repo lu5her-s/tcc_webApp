@@ -1,4 +1,5 @@
-from django.contrib.auth.views import reverse_lazy
+from django.contrib.auth.models import Permission
+from django.contrib.auth.views import HttpResponseRedirect, reverse_lazy
 from django.shortcuts import (
     get_list_or_404,
     get_object_or_404,
@@ -12,6 +13,7 @@ from django.views.generic import (
     ListView,
     DetailView,
     TemplateView,
+    UpdateView,
 )
 from asset.forms import StockItemForm
 
@@ -53,9 +55,10 @@ class StockItemDetailView(LoginRequiredMixin, DetailView):
     model = StockItem
     template_name = 'asset/stockitem_detail.html'
 
-    def get_queryset(self):
-        """ return query item available with pk """
-        return StockItem.objects.get(pk=self.kwargs['pk'])
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['images'] = StockItemImage.objects.filter(stock_item=self.get_object())
+        return context
 
 
 class StockDepartmentListView(LoginRequiredMixin, ListView):
@@ -106,11 +109,11 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
     template_name = 'asset/stockitem_form.html'
     success_url = reverse_lazy('asset:stockitem_list')
 
-    # def get_success_url(self):
-    # """get_success_url."""
-    # # return detail of stock item
-    # self.object = self.get_object()
-    # return reverse('asset:stockitem_detail', kwargs={'pk': self.object.pk})
+    def get_success_url(self):
+        """get_success_url."""
+        # return detail of stock item
+        self.object = self.get_object()
+        return reverse('asset:stockitem_detail', kwargs={'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
         """get_context_data."""
@@ -130,8 +133,14 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
         if form.is_valid():
             images = request.FILES.getlist('images')
             # save images to StockItemImage
+            permissions = Permission.objects.filter(user=self.request.user)
             stockitem = form.save(commit=False)
             stockitem.save()
+
+            if not self.request.user.groups.filter(name="Stock").exists():
+                stockitem.status = StockItem.Status.IN_USE
+                stockitem.save()
+
             for image in images:
                 StockItemImage.objects.create(
                     stock_item=stockitem, images=image)
@@ -247,3 +256,40 @@ class StockManagerListView(LoginRequiredMixin, ListView):
         context['h_title'] = self.request.user.profile.department.name
         context['title'] = 'รายการสินทรัพย์'
         return context
+
+
+class StockItemUpdateView(LoginRequiredMixin, UpdateView):
+    template_name = 'asset/stockitem_form.html'
+    model = StockItem
+    form_class = StockItemForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'แก้ไขรายการพัสดุ'
+        # instance images to field
+        context['images'] = self.object.stockitemimage_set.all()
+        return context
+
+    def post(self, request, **kwargs):
+        self.object = self.get_object()
+        form = self.form_class(request.POST, request.FILES, instance=self.object)
+        if form.is_valid():
+            images = request.FILES.getlist('images')
+            form_save = form.save()
+            form_id = get_list_or_404(StockItem, pk=form_save.pk)
+
+            if images:
+                for image in images:
+                    old_img = StockItemImage.objects.filter(stock_item=self.object)
+                    old_img.delete()
+                    new_img = StockItemImage.objects.create(
+                        stock_item=self.object,
+                        images=image
+                    )
+                    new_img.save()
+            else:
+                form_save.save()
+            return redirect(reverse_lazy('asset:stockitem_list'))
+        else:
+            form = self.form_class(instance=self.object)
+        return render(request, self.template_name, {'form': form})

@@ -1,0 +1,14 @@
+{
+  "exclude": ["**/node_modules", "**/__pycache__"],
+  "ignore": ["**/node_modules", "**/__pycache__"],
+  "include": ["flextensor", "tvm"],
+  "pythonPlatform": "Linux",
+  "pythonVersion": "3.10",
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false,
+  "stubPath": "typings",
+  "typeCheckingMode": "basic",
+  "venvPath": "/home/lu5her/source/python/django/tcc_env/",
+  "venv": "tcc_env"
+}
+

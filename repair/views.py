@@ -1,10 +1,12 @@
 from django.shortcuts import (
     render,
+    reverse,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
     TemplateView,
     ListView,
+    DetailView,
 )
 from django.contrib.auth.models import Group
 
@@ -47,9 +49,14 @@ class InformListView(LoginRequiredMixin, ListView):
     model = Inform
 
     def get_queryset(self):
-        return super().get_queryset().filter(status = Inform.RepairStatus.INF)
+        return super().get_queryset().filter(status=Inform.RepairStatus.INF)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'รายการแจ้งซ่อม'
         return context
+
+
+class InformDetailView(LoginRequiredMixin, DetailView):
+    template_name = 'repair/inform_detail.html'
+    model = Inform

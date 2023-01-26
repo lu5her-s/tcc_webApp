@@ -46,17 +46,17 @@
                                 <tr>
                                     <th scope="col">เลขที่แจ้งซ่อม</th>
                                     <th scope="col">ชื่อพัสดุ</th>
+                                    <th scope="col">อาการ</th>
                                     <th scope="col">สถานที่</th>
                                     <th scope="col">ผู้แจ้ง</th>
-                                    <th scope="col">ประเภท</th>
-                                    <th scope="col">อาการ</th>
+                                    <th scope="col">ความเร่งด่วน</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for object in object_list %}
                                 <tr>
                                     <td>
-                                        <a href="#">
+                                        <a href="{% url 'repair:inform-detail' pk=object.pk %}">
                                             {{ object.pk }}/{{ object.created_at.year|thaiyear }}
                                         </a>
                                     </td>
@@ -65,6 +65,7 @@
                                             {{ object.stockitem.item_name }}
                                         </a>
                                     </td>
+                                    <td>{{ object.issue|safe }}</td>
                                     <td>
                                         <a href="#">
                                             {{ object.stockitem.location.name }}
@@ -72,7 +73,6 @@
                                     </td>
                                     <td>{{ object.customer.profile }}</td>
                                     <td>{{ object.get_issue_category_display }}</td>
-                                    <td>{{ object.issue|safe }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
