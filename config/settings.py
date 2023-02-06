@@ -3,7 +3,7 @@
 # File              : settings.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 22 2022, 15:05 265
-# Last Modified Date: Mon Jan, 16 2023, 22:17 016
+# Last Modified Date: Thu Feb, 02 2023, 17:06 033
 # Last Modified By  : lu5her <lu5her@mail>
 """
 Django settings for config project.
@@ -17,8 +17,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
-from dotenv import dotenv_values
 from pathlib import Path
+from dotenv import dotenv_values
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,6 +45,8 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,6 +57,7 @@ INSTALLED_APPS = [
     # external app
     'crispy_forms',
     'ckeditor',
+    'debug_toolbar',
 
     # internal app
     'account',
@@ -84,6 +87,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -147,7 +151,7 @@ TIME_ZONE = 'Asia/Bangkok'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -172,3 +176,15 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+    # 'localhost',
+]
+
+JAZZMIN_SETTINGS = {
+    "site_title": "TCC Admin",
+    "site_header": "TCC Admin",
+    "site_logo": "assets/img/logo.png",
+    "copyright": "Telecommunication and Network",
+}

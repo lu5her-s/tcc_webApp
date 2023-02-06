@@ -8,11 +8,11 @@
 
 {% block content %}
 <div class="pagetitle">
-    <h1>{{ object.title }}</h1>
+    <h1>{{ title }}เลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'assign:staff-list' %}">Repair Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'repair:home' %}">Repair Home</a></li>
             <li class="breadcrumb-item active">แจ้งซ่อมเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</li>
         </ol>
     </nav>
@@ -61,34 +61,26 @@
                                 </tr>
 
                                 <tr>
-                                    <th>ผู้มอบหมาย</th>
-                                    <td>{{ object.author.profile }}</td>
+                                    <th>ความเร่งด่วน</th>
+                                    <td>{{ object.get_urgency_display }}</td>
                                 </tr>
 
                                 <tr>
                                     <th>สถานะ</th>
-                                    {% if object.accepted %}
                                     <td>
-                                        <i class="bi bi-check-circle" style="color: green;"></i>
-                                        ตอบรับแล้ว เมื่อ<br>
-                                        {{ object.accepted_on|thaidate }} เวลา 
-                                        {{ object.accepted_on|date:"H:i" }} น.
+                                        {{ object.get_status_display }}
                                     </td>
-                                    {% else %}
-                                    <td>
-                                        <i class="bi bi-x-circle" style="color:red"></i>
-                                        ยังไม่ตอบรับ
-                                    </td>
-                                    {% endif %}
                                 </tr>
 
-                                {% comment %}<tr>{% endcomment %}
-                                    {% comment %}<th>ผู้สร้าง</th>{% endcomment %}
-                                    {% comment %}<td>{{ object.author.profile.rank }} {{ object.author.get_full_name }}</td>{% endcomment %}
-                                    {% comment %}</tr>{% endcomment %}
+                                <tr>
+                                    <th>ผู้แจ้ง</th>
+                                    <td>
+                                        {{ object.customer.profile }}
+                                    </td>
+                                </tr>
 
                                 <tr>
-                                    <th>สร้างเมื่อ</th>
+                                    <th>วันที่แจ้ง</th>
                                     <td>{{ object.created_at|thaidate }} 
                                         เวลา {{ object.created_at|date:"H:i" }} น.
                                     </td>
@@ -97,12 +89,36 @@
 
                             <table class="table table-borderless">
                                 <tr>
-                                    <th class="text-center">รายละเอียด</th>
+                                    <th class="text-center">รายละเอียด/อาการ</th>
                                 </tr>
                                 <tr>
-                                    <td>{{ object.body|safe|linebreaks }}</td>
+                                    <td style="padding-left: 3rem;">{{ object.issue|safe }}</td>
                                 </tr>
                             </table>
+
+                            {% if images %}
+                            <br>
+                            
+                            <hr />
+                            {% comment %}<div class="card">{% endcomment %}
+                                {% comment %}<div class="card-body">{% endcomment %}
+                                    <h5 class="card-title">ภาพประกอบ | <span>ใบแจ้งซ่อมที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h5>
+
+                                    <!-- Slides with indicators -->
+                                    <div id="gallery">
+                                        {% for item in images %}
+                                        {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
+                                            <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                                        </a> {% endcomment %}
+                                        <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
+                                            <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                                        </a>
+                                        {% endfor %}
+                                    </div>
+
+                                {% comment %}</div>{% endcomment %}
+                            {% comment %}</div>{% endcomment %}
+                            {% endif %}
 
                         </div><!-- end detail -->
 
@@ -177,36 +193,16 @@
             </div><!-- end col -->
 
             <!-- Assign Job -->
-            {% if images %}
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Image | <span>{{ object.title }}</span></h5>
 
-                    <!-- Slides with indicators -->
-                    <div id="gallery">
-                        {% for item in images %}
-                        {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
-                            <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                        </a> {% endcomment %}
-                        <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
-                            <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                        </a>
-                        {% endfor %}
-                    </div>
-
-                </div>
-            </div>
-            {% endif %}
-
-            {% if object.author.pk == request.user.pk %}
+            {% if perms.repair.change_inform %}
             <div class="container float-start text-center">
-                <a href="{% url 'assign:staff-list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                <a href="{% url 'assign:delete' pk=object.pk %}" class="btn btn-lg btn-danger">ลบ</a>
-                <a href="{% url 'assign:update' pk=object.pk %}" class="btn btn-lg btn-success">แก้ไข</a>
+                <a href="{% url 'repair:inform' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                <a href="#" class="btn btn-lg btn-danger">ลบ</a>
+                <a href="#" class="btn btn-lg btn-success">แก้ไข</a>
             </div>
             {% else %}
             <div class="container float-start text-center">
-                <a href="{% url 'assign:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                <a href="{% url 'repair:inform' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
                 <a href="{% url 'home' %}" class="btn btn-lg btn-info">หน้าหลัก</a>
                 {% comment %}<a href="#" class="btn btn-lg btn-success">ปิดงาน</a>{% endcomment %}
             </div>

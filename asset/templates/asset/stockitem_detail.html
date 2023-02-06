@@ -175,7 +175,7 @@
             {% if object.status == 'AVAILABLE' %}
             <a href="#" class="btn btn-lg btn-warning">ขอเบิก</a>
             {% endif %}
-            {% if perms.asset.change_stockitem %}
+            {% if perms.asset.change_stockitem or request.user.profile.department == object.location %}
                 <a href="{% url 'asset:stockitem_update' pk=object.pk %}" class="btn btn-lg btn-info">แก้ไข</a>
             {% endif %}
         </div>

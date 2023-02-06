@@ -31,7 +31,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ title }} 
                             <span>| ยังไม่ได้ตรวจสอบ</span>
-                            <a href="#"
+                            <a href="{% url 'repair:create-inform' %}"
                                class="btn btn-success"
                                style="float: right;">
                                 <i class="bi bi-plus"></i>
@@ -50,6 +50,9 @@
                                     <th scope="col">สถานที่</th>
                                     <th scope="col">ผู้แจ้ง</th>
                                     <th scope="col">ความเร่งด่วน</th>
+                                    {% if request.user|has_group:"command" %}
+                                        <th scope="col">...</th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -58,6 +61,7 @@
                                     <td>
                                         <a href="{% url 'repair:inform-detail' pk=object.pk %}">
                                             {{ object.pk }}/{{ object.created_at.year|thaiyear }}
+                                            {% comment %}{% if object.approve %}Test{% endif %}{% endcomment %}
                                         </a>
                                     </td>
                                     <td>
@@ -72,7 +76,17 @@
                                         </a>
                                     </td>
                                     <td>{{ object.customer.profile }}</td>
-                                    <td>{{ object.get_issue_category_display }}</td>
+                                    <td>{{ object.get_urgency_display }}
+                                        {% if object.get_status_display == 'แจ้งซ่อม' %}
+                                        <sup>
+                                            <i class="bi bi-exclamation-circle text-danger">
+                                            </i>
+                                        </sup>
+                                        {% endif %}
+                                    </td>
+                                    {% if request.user|has_group:"command" %}
+                                    <td>...</td>
+                                    {% endif %}
                                 </tr>
                                 {% endfor %}
                             </tbody>

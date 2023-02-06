@@ -3,7 +3,7 @@
 # File              : urls.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 22 2022, 15:06 265
-# Last Modified Date: Mon Jan, 16 2023, 16:16 016
+# Last Modified Date: Wed Feb, 01 2023, 21:28 032
 # Last Modified By  : lu5her <lu5her@mail>
 """config URL Configuration
 
@@ -49,3 +49,8 @@ urlpatterns = [
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns

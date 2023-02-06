@@ -41,4 +41,3 @@ class JournalForm(forms.ModelForm):
             'header':     'ผุ้ควบคุม/สั่งการ',
             'created_at': 'วันที่ปฏิบัติงาน',
         }
-

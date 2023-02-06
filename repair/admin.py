@@ -15,7 +15,7 @@ admin.site.register(Repair)
 @admin.register(Inform)
 class InformAdmin(admin.ModelAdmin):
     list_display = ('pk', 'issue_safe', 'issue_category', 'full_name', 'created_at')
-    list_display_links = ('pk',)
+    list_display_links = ('issue_safe',)
     list_filter = ('created_at',)
     search_fields = ('issue',)
 
