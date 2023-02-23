@@ -9,7 +9,7 @@
 {% block content %}
 
 <div class="pagetitle">
-    <h1>รายการแจ้งซ่อม</h1>
+    <h1>รายการแจ้งซ่อม {{ title }}</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
@@ -30,13 +30,15 @@
 
                     <div class="card-body">
                         <h5 class="card-title">{{ title }} 
-                            <span>| ยังไม่ได้ตรวจสอบ</span>
-                            <a href="{% url 'repair:create-inform' %}"
-                               class="btn btn-success"
-                               style="float: right;">
-                                <i class="bi bi-plus"></i>
-                                แจ้งซ่อม
-                            </a>
+                            <span>| </span>
+                            {% if add_inform %}
+                                <a href="{% url 'repair:create-inform' %}"
+                                   class="btn btn-success"
+                                   style="float: right;">
+                                    <i class="bi bi-plus"></i>
+                                    แจ้งซ่อม
+                                </a>
+                            {% endif %}
                         </h5>
 
                         <br>
@@ -65,7 +67,8 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="#">
+                                        <a href="{% url 'asset:stockitem_detail' pk=object.stockitem.pk %}"
+                                            target="_blank">
                                             {{ object.stockitem.item_name }}
                                         </a>
                                     </td>
@@ -73,6 +76,7 @@
                                     <td>
                                         <a href="#">
                                             {{ object.stockitem.location.name }}
+                                            {% comment %}{{ object.status }}{% endcomment %}
                                         </a>
                                     </td>
                                     <td>{{ object.customer.profile }}</td>

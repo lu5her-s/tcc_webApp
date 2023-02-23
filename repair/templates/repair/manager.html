@@ -10,7 +10,7 @@
 {% block content %}
 
 <div class="pagetitle">
-    <h1>แจ้งซ่อม Manager</h1>
+    <h1>จัดการ การแจ้งซ่อม</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
@@ -20,8 +20,9 @@
 </div><!-- End Page Title -->
 
 <section class="section dashboard">
+    <!-- new repair -->
     <div class="row justify-content-center">
-        <div class="col-xxl-4 col-md-8">
+        <div class="col-xxl-4 col-md-6">
             <div class="card info-card bg-card">
                 <a href="{% url 'repair:inform' %}">
                     <div class="card-body">
@@ -46,6 +47,36 @@
             </div>
         </div>
     </div>
+    <!-- end new repair -->
+
+    <!-- wait for approve -->
+    <div class="row justify-content-center">
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card bg-card">
+                <a href="{% url 'repair:inform' %}">
+                    <div class="card-body">
+                        <h5 class="card-title">รายการรออนุมัติ <span>| รออนุมัติ</span></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-bookmark-check text-warning"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>{{ inform.count }} รายการรออนุมัติ</h6>
+                                <span class="text-success small pt-1 fw-bold">
+                                    วันนี้
+                                </span>
+                                <span class="text-muted small pt-2 ps-1">
+                                    {{ today_inf.count }} รายการ
+                                </span>
+
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- end wait approve -->
 
     <div class="row">
         <!-- Management card -->

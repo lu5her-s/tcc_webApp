@@ -17,6 +17,7 @@ from .models import Inform, InformImage
 from .forms import InformForm
 
 # Create your views here.
+# TODO: make manager
 
 
 class RepairHome(LoginRequiredMixin, TemplateView):
@@ -37,13 +38,37 @@ class RepairHome(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['inform'] = Inform.objects.filter(
-            status=Inform.RepairStatus.INFORM)
+            status=Inform.RepairStatus.INFORM
+        )
         today_min = datetime.datetime.combine(
-            datetime.date.today(), datetime.time.min)
+            datetime.date.today(),
+            datetime.time.min
+        )
         today_max = datetime.datetime.combine(
-            datetime.date.today(), datetime.time.max)
+            datetime.date.today(),
+            datetime.time.max
+        )
         context['today_inf'] = Inform.objects.filter(
             created_at__range=(today_min, today_max)
+        )
+
+        context['user_operator'] = Inform.objects.filter(
+            assigned_to=self.request.user.profile,
+            approve=Inform.ApproveStatus.APPROVE
+        )
+        # user dashboard
+        context['user_inform'] = Inform.objects.filter(
+            customer=self.request.user
+        )
+        context['user_today_inform'] = Inform.objects.filter(
+                customer=self.request.user,
+                approve=Inform.ApproveStatus.APPROVE,
+                created_at__range=(today_min, today_max),
+        )
+        context['user_job_inform'] = Inform.objects.filter(
+            customer__profile__department=self.request.user.profile.department,
+            status=Inform.RepairStatus.WAIT,
+            approve=Inform.ApproveStatus.APPROVE
         )
         return context
 
@@ -70,7 +95,8 @@ class InformListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'รายการแจ้งซ่อม'
+        context['title'] = 'ยังไม่ได้ตรวจสอบ'
+        context['add_inform'] = True
         return context
 
 
@@ -81,7 +107,9 @@ class InformDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "การแจ้งซ่อม"
-        context['images'] = InformImage.objects.filter(inform=self.get_object())
+        context['images'] = InformImage.objects.filter(
+            inform=self.get_object()
+        )
         return context
 
 
@@ -114,3 +142,60 @@ class InformCreateView(LoginRequiredMixin, CreateView):
         else:
             print(form.errors)
             return render(request, self.template_name, {'form': form})
+
+
+class InformDepartmentListView(LoginRequiredMixin, ListView):
+    template_name = 'repair/inform.html'
+
+    def get_queryset(self):
+        qs = Inform.objects.filter(
+            stockitem__location=self.request.user.profile.department
+        )
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = self.request.user.profile.department
+        context['add_inform'] = True
+        return context
+
+
+class InformAssignedListView(LoginRequiredMixin, ListView):
+    template_name = 'repair/inform.html'
+
+    def get_queryset(self):
+        qs = Inform.objects.filter(
+            assigned_to=self.request.user.profile
+        )
+        return qs
+
+
+class InformJobDepartmentListView(LoginRequiredMixin, ListView):
+    template_name = 'repair/inform.html'
+
+    def get_queryset(self):
+        qs = []
+        if self.request.user.groups.filter(name="StaffRepair").exists():
+            qs = Inform.objects.filter(
+                status=Inform.RepairStatus.WAIT,
+                approve=Inform.ApproveStatus.APPROVE
+            )
+        elif self.request.user.groups.filter(name="Technical").exists():
+            qs = Inform.objects.filter(
+                assigned_to=self.request.user.profile,
+                status=Inform.RepairStatus.WAIT,
+                approve=Inform.ApproveStatus.APPROVE
+            )
+        else:
+            qs = Inform.objects.filter(
+                customer__profile__department=self.request.user.profile.department,
+                status=Inform.RepairStatus.WAIT,
+                approve=Inform.ApproveStatus.APPROVE
+            )
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รอวงรอบการซ่อมบำรุง'
+        return context
