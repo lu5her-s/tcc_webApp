@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse
 from account.models import Profile
 from django.contrib.auth.models import User
-from asset.models import StockItem
+from asset.models import Category, StockItem
 from ckeditor.fields import RichTextField
 
 # Create your models here.
@@ -31,9 +31,9 @@ class Inform(models.Model):
         REJECT = 'REJ', 'ยกเลิก'
 
     class RepairStatus(models.TextChoices):
-        INFORM = 'INF', 'แจ้งซ่อม'
+        # INFORM = 'INF', 'แจ้งซ่อม'
         # CHECKED = 'CHECKED', 'ตรวจสอบ'
-        WAIT = 'WAT', 'รออนุมัติ'
+        # WAIT = 'WAT', 'รออนุมัติ'
         REPAIR = 'RPR', 'ซ่อม'
         COMPLETE = 'CMP', 'แล้วเสร็จ'
         REJECT = 'REJ', 'ยกเลิก'
@@ -79,14 +79,20 @@ class Inform(models.Model):
     )
     status = models.CharField(
         max_length=8,
-        choices=RepairStatus.choices,
-        default=RepairStatus.INFORM
+        choices=InformStatus.choices,
+        default=InformStatus.INFORM
     )
     approve = models.CharField(
         max_length=8,
         choices=ApproveStatus.choices,
         null=True, blank=True
     )
+    category = models.CharField(
+            max_length=8,
+            choices=RepairCategory.choices,
+            null=True,
+            blank=True
+            )
     assigned_to = models.ForeignKey(
         Profile,
         on_delete=models.CASCADE,

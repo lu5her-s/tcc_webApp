@@ -3,427 +3,427 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-        <title>TCC - {% block title %}TCC Home Portal{% endblock %} </title>
-        <meta content="" name="description">
-        <meta content="" name="keywords">
+    <title>TCC - {% block title %}TCC Home Portal{% endblock %} </title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
 
-        <!-- Favicons -->
-        <link href="{% static 'assets/img/logo.png' %}" rel="icon">
-        {% comment %}<link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">{% endcomment %}
-        <link rel="apple-touch-icon" href="{% static 'assets/img/logo.png' %}">
+    <!-- Favicons -->
+    <link href="{% static 'assets/img/logo.png' %}" rel="icon">
+    {% comment %}<link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">{% endcomment %}
+    <link rel="apple-touch-icon" href="{% static 'assets/img/logo.png' %}">
 
-        <!-- Google Fonts -->
-        <link href="https://fonts.gstatic.com" rel="preconnect">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Krub:wght@300&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Krub:wght@300&display=swap" rel="stylesheet">
 
-        <!-- Vendor CSS Files -->
-        <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-        <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
-        <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
-        <link href="{% static 'assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
-        <link href="{% static 'assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
-        <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
-        {% comment %}<link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">{% endcomment %}
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+    {% comment %}<link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">{% endcomment %}
 
-        <!-- Template Main CSS File -->
-        <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+    <!-- Template Main CSS File -->
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-        <!-- axios -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- axios -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-        <!-- data table -->
-        {% comment %}<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">{% endcomment %}
-        {% comment %}<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>{% endcomment %}
-        {% comment %}<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>{% endcomment %}
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.13.1/date-1.2.0/r-2.4.0/datatables.min.css"/>
-        <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/date-1.2.0/r-2.4.0/datatables.min.js"></script>
+    <!-- data table -->
+    {% comment %}<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">{% endcomment %}
+    {% comment %}<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>{% endcomment %}
+    {% comment %}<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>{% endcomment %}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.13.1/date-1.2.0/r-2.4.0/datatables.min.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/date-1.2.0/r-2.4.0/datatables.min.js"></script>
 
-        <!-- select2 -->
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <!-- select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
-        <!-- for Time picker -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- for Time picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    </head>
+  </head>
 
-    <body>
-        {% include 'components/header.html' with not_read=not_read %}
-        {% include 'components/sidebar.html' %}
-        <main id="main" class="main">
-            {% block content %}
-            <div class="pagetitle">
-                <h1>Dashboard</h1>
-                <nav>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item active">Dashboard</li>
-                    </ol>
-                </nav>
-            </div><!-- End Page Title -->
+  <body>
+    {% include 'components/header.html' with not_read=not_read %}
+    {% include 'components/sidebar.html' %}
+    <main id="main" class="main">
+      {% block content %}
+      <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+          </ol>
+        </nav>
+      </div><!-- End Page Title -->
 
-            <section class="section dashboard">
-                <div class="row">
+      <section class="section dashboard">
+        <div class="row">
 
-                    <!-- Left side columns -->
-                    <div class="col-lg-8">
-                        <div class="row">
+          <!-- Left side columns -->
+          <div class="col-lg-8">
+            <div class="row">
 
-                            <!-- Announce Card -->
-                            <div class="col-xxl-4 col-md-6">
-                                <div class="card info-card bg-card">
-
-
-                                    <a href="{% url 'announce:list' %}">
-                                        <div class="card-body">
-                                            <h5 class="card-title">ประชาสัมพันธ์/สั่งการ <span>| All</span></h5>
-
-                                            <div class="d-flex align-items-center">
-                                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-bell text-danger"></i>
-                                                </div>
-                                                <div class="ps-3">
-                                                    <h6>{{ announce.count }}</h6>
-                                                    {% if user.is_authenticated %}
-                                                    <span class="text-success small pt-1 fw-bold">{{ not_read.count }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่อ่าน</span>
-                                                    {% endif %}
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-
-                                </div>
-                            </div><!-- End Announce Card -->
-
-                            <!-- Assigned Card -->
-                            <!-- DONE : make condition staff and member list url-->
-                            <div class="col-xxl-4 col-md-6">
-                                <div class="card info-card bg-card">
-
-                                    {% if request.user|has_group:"Staff" %}
-                                        <a href="{% url 'assign:staff-list' %}">
-                                    {% else %}
-                                        <a href="{% url 'assign:list' %}">
-                                    {% endif %}
-                                        <div class="card-body">
-                                            <h5 class="card-title">การมอบหมาย <span>| All</span></h5>
-
-                                            <div class="d-flex align-items-center">
-                                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-briefcase text-danger"></i>
-                                                </div>
-                                                <div class="ps-3">
-                                                    <h6>{{ assign.count }}</h6>
-                                                    <span class="text-success small pt-1 fw-bold">{{ wait_assign.count }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่ตอบรับ</span>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-
-                                </div>
-                            </div><!-- End Revenue Card -->
-
-                            <!-- Journal Card -->
-                            <div class="col-xxl-4 col-md-6">
-                                <div class="card info-card bg-card">
-
-                                    <a href="{% url 'journal:list' %}">
-                                        <div class="card-body">
-                                            <h5 class="card-title">การปฏิบัติงาน <span>| All</span></h5>
-
-                                            <div class="d-flex align-items-center">
-                                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-clipboard-plus text-info"></i>
-                                                </div>
-                                                <div class="ps-3">
-                                                    <h6>{{ journal.count }}</h6>
-                                                    <span class="text-success small pt-1 fw-bold">{{ today_journal.count }}</span> <span class="text-muted small pt-2 ps-1">วันนี้</span>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-
-                                </div>
-                            </div><!-- End Journal Card -->
-
-                            <!-- Asset Card -->
-                            <div class="col-xxl-4 col-md-6">
-                                <div class="card info-card bg-card">
-
-                                    <a href="#">
-                                        <div class="card-body">
-                                            <h5 class="card-title">สิ่งรับผิดชอบ <span>| To Me</span></h5>
-
-                                            <div class="d-flex align-items-center">
-                                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-collection" style="color: seagreen"></i>
-                                                </div>
-                                                <div class="ps-3">
-                                                    <h6>dddd</h6>
-                                                    <span class="text-success small pt-1 fw-bold">8</span> <span class="text-muted small pt-2 ps-1">สิ่งรับผิดชอบ</span>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-
-                                </div>
-                            </div><!-- End Dummy Card -->
-
-                            <!-- Document Card -->
-                            <div class="col-xxl-4 col-xl-12">
-
-                                <div class="card info-card bg-card">
+              <!-- Announce Card -->
+              <div class="col-xxl-4 col-md-6">
+                <div class="card info-card bg-card">
 
 
-                                    <a href="{% url 'document:home' %}">
-                                        <div class="card-body">
-                                            <h5 class="card-title">สารบรรณ <span>| {{ request.user.profile.sector.name }}</span></h5>
+                  <a href="{% url 'announce:list' %}">
+                    <div class="card-body">
+                      <h5 class="card-title">ประชาสัมพันธ์/สั่งการ <span>| All</span></h5>
 
-                                            <div class="d-flex align-items-center">
-                                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-book-half" style="color: purple"></i>
-                                                </div>
-                                                <div class="ps-3">
-                                                    <h6>{{ all_inbox }}</h6>
-                                                    <span class="text-danger small pt-1 fw-bold">{{ new_inbox }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่ตอบรับ</span>
-
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </a>
-                                </div>
-
-                            </div><!-- End Document Card -->
-                            
-                            <!-- Recent Request Repair -->
-                            <div class="col-12">
-                                <div class="card top-selling overflow-auto">
-
-
-                                    <div class="card-body pb-0">
-                                        <h5 class="card-title">แจ้งซ่อม <span>| Today</span></h5>
-
-                                        <table class="table table-borderless" id="repairTable">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Dummy</th>
-                                                    <th scope="col">Dummy</th>
-                                                    <th scope="col">Dummy</th>
-                                                    <th scope="col">Dummy</th>
-                                                    <th scope="col">Dummy</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
-                                                    <td><a href="#" class="text-primary fw-bold">Ut inventore ipsa voluptas nulla</a></td>
-                                                    <td>$64</td>
-                                                    <td class="fw-bold">124</td>
-                                                    <td>$5,828</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
-                                                    <td><a href="#" class="text-primary fw-bold">Exercitationem similique doloremque</a></td>
-                                                    <td>$46</td>
-                                                    <td class="fw-bold">98</td>
-                                                    <td>$4,508</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
-                                                    <td><a href="#" class="text-primary fw-bold">Doloribus nisi exercitationem</a></td>
-                                                    <td>$59</td>
-                                                    <td class="fw-bold">74</td>
-                                                    <td>$4,366</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
-                                                    <td><a href="#" class="text-primary fw-bold">Officiis quaerat sint rerum error</a></td>
-                                                    <td>$32</td>
-                                                    <td class="fw-bold">63</td>
-                                                    <td>$2,016</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
-                                                    <td><a href="#" class="text-primary fw-bold">Sit unde debitis delectus repellendus</a></td>
-                                                    <td>$79</td>
-                                                    <td class="fw-bold">41</td>
-                                                    <td>$3,239</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-
-                                    </div>
-
-                                </div>
-                            </div><!-- End Top Selling -->
-
-
-                            <!-- Recent Job -->
-                            <div class="col-12">
-                                <div class="card recent-sales overflow-auto">
-
-
-                                    <div class="card-body">
-                                        <h5 class="card-title">รายการงานวงรอบ<span>| List</span></h5>
-
-                                        <table class="table table-borderless datatable" id="dataTable">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">#</th>
-                                                    <th scope="col">Dummy</th>
-                                                    <th scope="col">Dummy</th>
-                                                    <th scope="col">Dummy</th>
-                                                    <th scope="col">Dummy</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <th scope="row"><a href="#">#2457</a></th>
-                                                    <td>Brandon Jacob</td>
-                                                    <td><a href="#" class="text-primary">At praesentium minu</a></td>
-                                                    <td>$64</td>
-                                                    <td><span class="badge bg-success">Approved</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#">#2147</a></th>
-                                                    <td>Bridie Kessler</td>
-                                                    <td><a href="#" class="text-primary">Blanditiis dolor omnis similique</a></td>
-                                                    <td>$47</td>
-                                                    <td><span class="badge bg-warning">Pending</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#">#2049</a></th>
-                                                    <td>Ashleigh Langosh</td>
-                                                    <td><a href="#" class="text-primary">At recusandae consectetur</a></td>
-                                                    <td>$147</td>
-                                                    <td><span class="badge bg-success">Approved</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#">#2644</a></th>
-                                                    <td>Angus Grady</td>
-                                                    <td><a href="#" class="text-primar">Ut voluptatem id earum et</a></td>
-                                                    <td>$67</td>
-                                                    <td><span class="badge bg-danger">Rejected</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#">#2644</a></th>
-                                                    <td>Raheem Lehner</td>
-                                                    <td><a href="#" class="text-primary">Sunt similique distinctio</a></td>
-                                                    <td>$165</td>
-                                                    <td><span class="badge bg-success">Approved</span></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-
-                                    </div>
-
-                                </div>
-                            </div><!-- End Recent Sales -->
+                      <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                          <i class="bi bi-bell text-danger"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>{{ announce.count }}</h6>
+                          {% if user.is_authenticated %}
+                          <span class="text-success small pt-1 fw-bold">{{ not_read.count }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่อ่าน</span>
+                          {% endif %}
 
                         </div>
-                    </div><!-- End Left side columns -->
-
-                    <!-- Right side columns -->
-                    <div class="col-lg-4">
-
-
-                        <!-- News & Updates Traffic -->
-                        <div class="card">
-
-                            <div class="card-body pb-0">
-                                <h5 class="card-title">Comments <span>| ล่าสุด</span></h5>
-
-                                <div class="news">
-                                {% for comment in recent_comment %}
-
-                                    <div class="post-item clearfix">
-                                        <img src="{{ comment.author.profile.image.url }}" alt="">
-                                        <h4><a href="{% url 'announce:detail' pk=comment.announce.pk %}">in {{ comment.announce.title }}</a></h4>
-                                        <p>{{ comment.comment }}
-                                        </p>
-                                    </div>
-
-                                {% endfor %}
-                                <br>
-                                </div><!-- End sidebar recent posts-->
-
-                            </div>
-                        </div><!-- End News & Updates -->
-
-                    </div><!-- End Right side columns -->
+                      </div>
+                    </div>
+                  </a>
 
                 </div>
-            </section>
+              </div><!-- End Announce Card -->
 
-            {% endblock %}
+              <!-- Assigned Card -->
+              <!-- DONE : make condition staff and member list url-->
+              <div class="col-xxl-4 col-md-6">
+                <div class="card info-card bg-card">
 
-        </main><!-- End #main -->
+                  {% if request.user|has_group:"Staff" %}
+                  <a href="{% url 'assign:staff-list' %}">
+                    {% else %}
+                    <a href="{% url 'assign:list' %}">
+                      {% endif %}
+                      <div class="card-body">
+                        <h5 class="card-title">การมอบหมาย <span>| All</span></h5>
 
-        {% include "components/footer.html" %}
+                        <div class="d-flex align-items-center">
+                          <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-briefcase text-danger"></i>
+                          </div>
+                          <div class="ps-3">
+                            <h6>{{ assign.count }}</h6>
+                            <span class="text-success small pt-1 fw-bold">{{ wait_assign.count }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่ตอบรับ</span>
 
-        <a id="back-to-top" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-        {% comment %}<button type="button" id="toTop" class="btn btn-secondary justify-content-center"><i class="bi bi-arrow-up-short"></i></button>{% endcomment %}
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+
+                </div>
+              </div><!-- End Revenue Card -->
+
+              <!-- Journal Card -->
+              <div class="col-xxl-4 col-md-6">
+                <div class="card info-card bg-card">
+
+                  <a href="{% url 'journal:list' %}">
+                    <div class="card-body">
+                      <h5 class="card-title">การปฏิบัติงาน <span>| All</span></h5>
+
+                      <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                          <i class="bi bi-clipboard-plus text-info"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>{{ journal.count }}</h6>
+                          <span class="text-success small pt-1 fw-bold">{{ today_journal.count }}</span> <span class="text-muted small pt-2 ps-1">วันนี้</span>
+
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+
+                </div>
+              </div><!-- End Journal Card -->
+
+              <!-- Asset Card -->
+              <div class="col-xxl-4 col-md-6">
+                <div class="card info-card bg-card">
+
+                  <a href="{% url 'repair:inform-department' %}">
+                    <div class="card-body">
+                      <h5 class="card-title">รายการแจ้งซ่อม <span>| ของฉัน</span></h5>
+
+                      <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                          <i class="bi bi-wrench" style="color: orange"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>{{ my_inform }}</h6>
+                          <span class="text-success small pt-1 fw-bold">{{ my_ }}</span> <span class="text-muted small pt-2 ps-1">สิ่งรับผิดชอบ</span>
+
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+
+                </div>
+              </div><!-- End Dummy Card -->
+
+              <!-- Document Card -->
+              <div class="col-xxl-4 col-xl-12">
+
+                <div class="card info-card bg-card">
 
 
-        <!-- Vendor JS Files -->
-        <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
-        <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-        <script src="{% static 'assets/vendor/chart.js/chart.min.js' %}"></script>
-        <script src="{% static 'assets/vendor/echarts/echarts.min.js' %}"></script>
-        <script src="{% static 'assets/vendor/quill/quill.min.js' %}"></script>
-        {% comment %}<script src="{% static 'assets/vendor/simple-datatables/simple-datatables.js' %}"></script>{% endcomment %}
-        <script src="{% static 'assets/vendor/tinymce/tinymce.min.js' %}"></script>
-        <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+                  <a href="{% url 'document:home' %}">
+                    <div class="card-body">
+                      <h5 class="card-title">สารบรรณ <span>| {{ request.user.profile.sector.name }}</span></h5>
 
-        <!-- Template Main JS File -->
-        <script src="{% static 'assets/js/main.js' %}"></script>
-        {% comment %}<script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>{% endcomment %}
+                      <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                          <i class="bi bi-book-half" style="color: purple"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>{{ all_inbox }}</h6>
+                          <span class="text-danger small pt-1 fw-bold">{{ new_inbox }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่ตอบรับ</span>
 
-        <!-- Plugin Javascript -->
-        {% comment %}<script src="{% static 'assets/vendor/datatables/jquery.dataTables.js' %}"></script>{% endcomment %}
-        {% comment %}<script src="{% static 'assets/vendor/datatables/dataTables.bootstrap4.js' %}"></script>{% endcomment %}
+                        </div>
+                      </div>
 
-        <!-- Template Main JS File -->
-        {% comment %}<script src="assets/js/main.js"></script>{% endcomment %}
-        {% comment %}<script src="{% static 'assets/js/main.js' %}"></script>{% endcomment %}
-    </body>
+                    </div>
+                  </a>
+                </div>
 
-    <script>
-        $(document).ready(function () {
-            $('#repairTable').DataTable();
-        });
+              </div><!-- End Document Card -->
 
-        $(document).ready(function(){
-            $(window).scroll(function () {
-                if ($(this).scrollTop() > 20) {
-                    $('#back-to-top').fadeIn();
-                } else {
-                    $('#back-to-top').fadeOut();
-                }
-            });
-            // scroll body to 0px on click
-            $('#back-to-top').click(function () {
-                $('body,html').animate({
-                    scrollTop: 0
-                }, 400);
-                return false;
-            });
-        });
-    </script>
+              <!-- Recent Request Repair -->
+              <div class="col-12">
+                <div class="card top-selling overflow-auto">
+
+
+                  <div class="card-body pb-0">
+                    <h5 class="card-title">แจ้งซ่อม <span>| Today</span></h5>
+
+                    <table class="table table-borderless" id="repairTable">
+                      <thead>
+                        <tr>
+                          <th scope="col">Dummy</th>
+                          <th scope="col">Dummy</th>
+                          <th scope="col">Dummy</th>
+                          <th scope="col">Dummy</th>
+                          <th scope="col">Dummy</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
+                          <td><a href="#" class="text-primary fw-bold">Ut inventore ipsa voluptas nulla</a></td>
+                          <td>$64</td>
+                          <td class="fw-bold">124</td>
+                          <td>$5,828</td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
+                          <td><a href="#" class="text-primary fw-bold">Exercitationem similique doloremque</a></td>
+                          <td>$46</td>
+                          <td class="fw-bold">98</td>
+                          <td>$4,508</td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
+                          <td><a href="#" class="text-primary fw-bold">Doloribus nisi exercitationem</a></td>
+                          <td>$59</td>
+                          <td class="fw-bold">74</td>
+                          <td>$4,366</td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
+                          <td><a href="#" class="text-primary fw-bold">Officiis quaerat sint rerum error</a></td>
+                          <td>$32</td>
+                          <td class="fw-bold">63</td>
+                          <td>$2,016</td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
+                          <td><a href="#" class="text-primary fw-bold">Sit unde debitis delectus repellendus</a></td>
+                          <td>$79</td>
+                          <td class="fw-bold">41</td>
+                          <td>$3,239</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                  </div>
+
+                </div>
+              </div><!-- End Top Selling -->
+
+
+              <!-- Recent Job -->
+              <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+
+
+                  <div class="card-body">
+                    <h5 class="card-title">รายการงานวงรอบ<span>| List</span></h5>
+
+                    <table class="table table-borderless datatable" id="dataTable">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Dummy</th>
+                          <th scope="col">Dummy</th>
+                          <th scope="col">Dummy</th>
+                          <th scope="col">Dummy</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row"><a href="#">#2457</a></th>
+                          <td>Brandon Jacob</td>
+                          <td><a href="#" class="text-primary">At praesentium minu</a></td>
+                          <td>$64</td>
+                          <td><span class="badge bg-success">Approved</span></td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#">#2147</a></th>
+                          <td>Bridie Kessler</td>
+                          <td><a href="#" class="text-primary">Blanditiis dolor omnis similique</a></td>
+                          <td>$47</td>
+                          <td><span class="badge bg-warning">Pending</span></td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#">#2049</a></th>
+                          <td>Ashleigh Langosh</td>
+                          <td><a href="#" class="text-primary">At recusandae consectetur</a></td>
+                          <td>$147</td>
+                          <td><span class="badge bg-success">Approved</span></td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#">#2644</a></th>
+                          <td>Angus Grady</td>
+                          <td><a href="#" class="text-primar">Ut voluptatem id earum et</a></td>
+                          <td>$67</td>
+                          <td><span class="badge bg-danger">Rejected</span></td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#">#2644</a></th>
+                          <td>Raheem Lehner</td>
+                          <td><a href="#" class="text-primary">Sunt similique distinctio</a></td>
+                          <td>$165</td>
+                          <td><span class="badge bg-success">Approved</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                  </div>
+
+                </div>
+              </div><!-- End Recent Sales -->
+
+            </div>
+          </div><!-- End Left side columns -->
+
+          <!-- Right side columns -->
+          <div class="col-lg-4">
+
+
+            <!-- News & Updates Traffic -->
+            <div class="card">
+
+              <div class="card-body pb-0">
+                <h5 class="card-title">Comments <span>| ล่าสุด</span></h5>
+
+                <div class="news">
+                  {% for comment in recent_comment %}
+
+                  <div class="post-item clearfix">
+                    <img src="{{ comment.author.profile.image.url }}" alt="">
+                    <h4><a href="{% url 'announce:detail' pk=comment.announce.pk %}">in {{ comment.announce.title }}</a></h4>
+                    <p>{{ comment.comment }}
+                    </p>
+                  </div>
+
+                  {% endfor %}
+                  <br>
+                </div><!-- End sidebar recent posts-->
+
+              </div>
+            </div><!-- End News & Updates -->
+
+          </div><!-- End Right side columns -->
+
+        </div>
+      </section>
+
+      {% endblock %}
+
+    </main><!-- End #main -->
+
+    {% include "components/footer.html" %}
+
+    <a id="back-to-top" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    {% comment %}<button type="button" id="toTop" class="btn btn-secondary justify-content-center"><i class="bi bi-arrow-up-short"></i></button>{% endcomment %}
+
+
+    <!-- Vendor JS Files -->
+    <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/chart.js/chart.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/echarts/echarts.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/quill/quill.min.js' %}"></script>
+    {% comment %}<script src="{% static 'assets/vendor/simple-datatables/simple-datatables.js' %}"></script>{% endcomment %}
+    <script src="{% static 'assets/vendor/tinymce/tinymce.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+    <!-- Template Main JS File -->
+    <script src="{% static 'assets/js/main.js' %}"></script>
+    {% comment %}<script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>{% endcomment %}
+
+    <!-- Plugin Javascript -->
+    {% comment %}<script src="{% static 'assets/vendor/datatables/jquery.dataTables.js' %}"></script>{% endcomment %}
+    {% comment %}<script src="{% static 'assets/vendor/datatables/dataTables.bootstrap4.js' %}"></script>{% endcomment %}
+
+    <!-- Template Main JS File -->
+    {% comment %}<script src="assets/js/main.js"></script>{% endcomment %}
+    {% comment %}<script src="{% static 'assets/js/main.js' %}"></script>{% endcomment %}
+  </body>
+
+  <script>
+    $(document).ready(function () {
+      $('#repairTable').DataTable();
+    });
+
+    $(document).ready(function(){
+      $(window).scroll(function () {
+        if ($(this).scrollTop() > 20) {
+          $('#back-to-top').fadeIn();
+        } else {
+          $('#back-to-top').fadeOut();
+        }
+      });
+      // scroll body to 0px on click
+      $('#back-to-top').click(function () {
+        $('body,html').animate({
+          scrollTop: 0
+        }, 400);
+        return false;
+      });
+    });
+  </script>
 
 </html>
