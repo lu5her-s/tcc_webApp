@@ -36,10 +36,10 @@
                                 <i class="bi bi-clipboard text-danger"></i>
                             </div>
                             <div class="ps-3">
-                                <h6>{{ user_inform.count }} รายการแจ้งซ่อม</h6>
-                                <span class="text-success small pt-1 fw-bold">วันนี้</span>
+                                <h6>{{ department_inform.count }} รายการแจ้งซ่อม</h6>
+                                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span>
                                 <span class="text-muted small pt-2 ps-1">
-                                    {{ user_today_inform.count }} รายการ
+                                    {{ department_inform_done.count }} รายการ
                                 </span>
 
                             </div>
@@ -56,7 +56,7 @@
                 <a href="{% url 'repair:inform-assigned' %}">
                     <div class="card-body">
                         <h5 class="card-title">รายการแจ้งซ่อมที่ต้องดำเนินการ
-                            <span>| {{ request.user.profile }}</span>
+                            <span>| {{ request.user.profile.department }}</span>
                         </h5>
                         <div class="d-flex">
                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
@@ -64,7 +64,7 @@
                             </div>
                             <div class="ps-3">
                                 <h6>{{ user_operator.count }} รายการที่ต้องดำเนินการ</h6>
-                                <span class="text-success small pt-1 fw-bold">วันนี้</span>
+                                <span class="text-success small pt-1 fw-bold">ทั้งหมด</span>
                                 <span class="text-muted small pt-2 ps-1">{{ user_operator.count }} รายการ</span>
                             </div>
                         </div>

@@ -77,27 +77,32 @@ class Inform(models.Model):
         choices=Urgency.choices,
         default=Urgency.LOW
     )
-    status = models.CharField(
+    inform_status = models.CharField(
         max_length=8,
         choices=InformStatus.choices,
         default=InformStatus.INFORM
     )
-    approve = models.CharField(
+    approve_status = models.CharField(
         max_length=8,
         choices=ApproveStatus.choices,
         null=True, blank=True
     )
-    category = models.CharField(
-            max_length=8,
-            choices=RepairCategory.choices,
-            null=True,
-            blank=True
-            )
+    repair_category = models.CharField(
+        max_length=8,
+        choices=RepairCategory.choices,
+        null=True,
+        blank=True
+    )
     assigned_to = models.ForeignKey(
         Profile,
         on_delete=models.CASCADE,
         null=True,
         blank=True
+    )
+    repair_status = models.CharField(
+        max_length=8,
+        choices=RepairStatus.choices,
+        null=True, blank=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
