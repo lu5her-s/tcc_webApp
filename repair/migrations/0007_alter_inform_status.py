@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='inform',
             name='status',
-            field=models.CharField(choices=[('INF', 'แจ้งซ่อม'), ('WAT', 'รออนุมัติ'), ('RPR', 'ซ่อม'), ('CMP', 'แล้วเสร็จ'), ('REJ', 'ยกเลิก')], default='INF', max_length=8),
+            field=models.CharField(choices=[('INF', 'แจ้งซ่อม'), ('WAT', 'รออนุมัติ'), ('RPR', 'ซ่อม'), ('CMP', 'ดำเนินการแล้ว'), ('REJ', 'ยกเลิก')], default='INF', max_length=8),
         ),
     ]

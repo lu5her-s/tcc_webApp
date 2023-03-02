@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('issue_category', models.CharField(choices=[('HARDWARE', 'อุปกรณ์'), ('SOFTWARE', 'ระบบ'), ('OTHER', 'อื่น ๆ')], max_length=8)),
                 ('issue', ckeditor.fields.RichTextField()),
-                ('status', models.CharField(choices=[('INFORM', 'แจ้งซ่อม'), ('CHECKED', 'ตรวจสอบ'), ('REPAIR', 'ซ่อม'), ('COMPLETE', 'แล้วเสร็จ'), ('REJECT', 'ยกเลิก'), ('WAIT', 'รอวงรอบ')], default='INFORM', max_length=8)),
+                ('status', models.CharField(choices=[('INFORM', 'แจ้งซ่อม'), ('CHECKED', 'ตรวจสอบ'), ('REPAIR', 'ซ่อม'), ('COMPLETE', 'ดำเนินการแล้ว'), ('REJECT', 'ยกเลิก'), ('WAIT', 'รอวงรอบ')], default='INFORM', max_length=8)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='customer', to=settings.AUTH_USER_MODEL)),
                 ('stockitem', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='stockitem', to='asset.stockitem')),

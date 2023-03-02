@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 choices=[
                     ("RPR", "ซ่อม"),
-                    ("CMP", "แล้วเสร็จ"),
+                    ("CMP", "ดำเนินการแล้ว"),
                     ("REJ", "ยกเลิก"),
                     ("CLO", "ปิดงาน"),
                 ],

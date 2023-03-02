@@ -38,7 +38,7 @@ class RepairHome(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # for manager
+        # manager dashboard
         context['inform'] = Inform.objects.filter(
             inform_status=Inform.InformStatus.INFORM
         )
@@ -53,8 +53,24 @@ class RepairHome(LoginRequiredMixin, TemplateView):
         context['today_inf'] = Inform.objects.filter(
             created_at__range=(today_min, today_max)
         )
+        context['wait_approve'] = Inform.objects.filter(
+            inform_status=Inform.InformStatus.WAIT,
+        )
+        context['wait_approve_today'] = Inform.objects.filter(
+            inform_status=Inform.InformStatus.WAIT,
+            created_at__range=(today_min, today_max)
+        )
+        context['repair_urgency_wait'] = Inform.objects.filter(
+            inform_status=Inform.ApproveStatus.APPROVE,
+            repair_category=Inform.RepairCategory.URGENCY,
+        )
+        context['repair_urgency_done'] = Inform.objects.filter(
+            inform_status=Inform.ApproveStatus.APPROVE,
+            repair_category=Inform.RepairCategory.URGENCY,
+            repair_status=Inform.RepairStatus.CLOSE
+        )
 
-        # for technical
+        # technical dashboard
         context['user_operator'] = Inform.objects.filter(
             assigned_to=self.request.user.profile,
             approve_status=Inform.ApproveStatus.APPROVE
@@ -86,10 +102,22 @@ class RepairHome(LoginRequiredMixin, TemplateView):
             repair_category=Inform.RepairCategory.WAIT,
             approve_status=Inform.ApproveStatus.APPROVE
         )
+        context['department_job_done'] = Inform.objects.filter(
+            customer__profile__department=self.request.user.profile.department,
+            repair_category=Inform.RepairCategory.WAIT,
+            approve_status=Inform.ApproveStatus.APPROVE,
+            repair_status=Inform.RepairStatus.CLOSE
+        )
         context['department_repair'] = Inform.objects.filter(
             customer__profile__department=self.request.user.profile.department,
             assigned_to__department=self.request.user.profile.department,
             approve_status=Inform.ApproveStatus.APPROVE
+        )
+        context['department_repair_done'] = Inform.objects.filter(
+            customer__profile__department=self.request.user.profile.department,
+            assigned_to__department=self.request.user.profile.department,
+            approve_status=Inform.ApproveStatus.APPROVE,
+            repair_status=Inform.RepairStatus.CLOSE
         )
         return context
 

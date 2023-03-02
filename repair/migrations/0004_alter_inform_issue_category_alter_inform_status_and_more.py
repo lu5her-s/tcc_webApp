@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='inform',
             name='status',
-            field=models.CharField(choices=[('INF', 'แจ้งซ่อม'), ('RPR', 'ซ่อม'), ('CMP', 'แล้วเสร็จ'), ('REJ', 'ยกเลิก'), ('WAT', 'รอวงรอบ'), ('URG', 'ซ่อมด่วน'), ('AGT', 'ซ่อมโดย จนท.ประจำสถานี')], default='INF', max_length=8),
+            field=models.CharField(choices=[('INF', 'แจ้งซ่อม'), ('RPR', 'ซ่อม'), ('CMP', 'ดำเนินการแล้ว'), ('REJ', 'ยกเลิก'), ('WAT', 'รอวงรอบ'), ('URG', 'ซ่อมด่วน'), ('AGT', 'ซ่อมโดย จนท.ประจำสถานี')], default='INF', max_length=8),
         ),
         migrations.AlterField(
             model_name='inform',

@@ -35,7 +35,7 @@ class Inform(models.Model):
         # CHECKED = 'CHECKED', 'ตรวจสอบ'
         # WAIT = 'WAT', 'รออนุมัติ'
         REPAIR = 'RPR', 'ซ่อม'
-        COMPLETE = 'CMP', 'แล้วเสร็จ'
+        COMPLETE = 'CMP', 'ดำเนินการแล้ว'
         REJECT = 'REJ', 'ยกเลิก'
         CLOSE = 'CLO', 'ปิดงาน'
         # WAIT = 'WAT', 'รอวงรอบ'
