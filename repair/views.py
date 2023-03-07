@@ -61,13 +61,34 @@ class RepairHome(LoginRequiredMixin, TemplateView):
             created_at__range=(today_min, today_max)
         )
         context['repair_urgency_wait'] = Inform.objects.filter(
-            inform_status=Inform.ApproveStatus.APPROVE,
+            approve_status=Inform.ApproveStatus.APPROVE,
             repair_category=Inform.RepairCategory.URGENCY,
         )
         context['repair_urgency_done'] = Inform.objects.filter(
-            inform_status=Inform.ApproveStatus.APPROVE,
+            approve_status=Inform.ApproveStatus.APPROVE,
             repair_category=Inform.RepairCategory.URGENCY,
             repair_status=Inform.RepairStatus.CLOSE
+        )
+        context['repair_agent_wait'] = Inform.objects.filter(
+            approve_status=Inform.ApproveStatus.APPROVE,
+            repair_status=Inform.RepairCategory.AGENT
+        )
+        context['repair_agent_done'] = Inform.objects.filter(
+            approve_status=Inform.ApproveStatus.APPROVE,
+            repair_category=Inform.RepairCategory.AGENT,
+            repair_status=Inform.RepairStatus.CLOSE
+        )
+        context['repair_job_wait'] = Inform.objects.filter(
+            repair_category=Inform.RepairCategory.WAIT,
+            approve_status=Inform.ApproveStatus.APPROVE
+        )
+        context['repair_job_done'] = Inform.objects.filter(
+            repair_category=Inform.RepairCategory.WAIT,
+            approve_status=Inform.ApproveStatus.APPROVE,
+            repair_status=Inform.RepairStatus.CLOSE
+        )
+        context['repair_recheck'] = Inform.objects.filter(
+            approve_status=Inform.ApproveStatus.RECHECK,
         )
 
         # technical dashboard
