@@ -90,6 +90,9 @@ class RepairHome(LoginRequiredMixin, TemplateView):
         context['repair_recheck'] = Inform.objects.filter(
             approve_status=Inform.ApproveStatus.RECHECK,
         )
+        context['repair_reject'] = Inform.objects.filter(
+            approve_status=Inform.ApproveStatus.REJECT,
+        )
 
         # technical dashboard
         context['user_operator'] = Inform.objects.filter(

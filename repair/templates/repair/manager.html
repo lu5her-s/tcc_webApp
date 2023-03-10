@@ -113,8 +113,8 @@
                 <i class="bi bi-table text-success"></i>
               </div>
               <div class="ps-3">
-                <h6>199 รอดำเนินการ</h6>
-                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span class="text-muted small pt-2 ps-1">120 รายการ</span>
+                <h6>{{ repair_agent_wait.count }} รอดำเนินการ</h6>
+                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span class="text-muted small pt-2 ps-1">{{ repair_agent_done.count }} รายการ</span>
 
               </div>
             </div>
@@ -135,8 +135,8 @@
                 <i class="bi bi-tags text-info"></i>
               </div>
               <div class="ps-3">
-                <h6>88 รอดำเนินการ</h6>
-                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span class="text-muted small pt-2 ps-1">15 รายการ</span>
+                <h6>{{ repair_job_wait.count }} รอดำเนินการ</h6>
+                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span class="text-muted small pt-2 ps-1">{{ repair_job_done.count }} รายการ</span>
 
               </div>
             </div>
@@ -149,14 +149,14 @@
       <div class="card info-card bg-card">
         <a href="#">
           <div class="card-body">
-            <h5 class="card-title">รายการยกเลิก <span>| การแจ้งซ่อม</span></h5>
+            <h5 class="card-title">รายการตรวจสอบใหม่ <span>| การแจ้งซ่อม</span></h5>
             <div class="d-flex align-items-center">
               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                 <i class="bi bi-x-octagon text-secondary"></i>
               </div>
               <div class="ps-3">
-                <h6>88 การยกเลิก</h6>
-                <span class="text-success small pt-1 fw-bold">วันนี้</span> <span class="text-muted small pt-2 ps-1">15 รายการ</span>
+                <h6>{{ repair_recheck.count }} รายการ</h6>
+                <span class="text-success small pt-1 fw-bold">ยกเลิก</span> <span class="text-muted small pt-2 ps-1">{{ repair_reject.count }} รายการ</span>
 
               </div>
             </div>
