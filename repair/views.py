@@ -154,6 +154,14 @@ class RepairHome(LoginRequiredMixin, TemplateView):
             return 'repair/user_inform.html'
 
 
+# list inform wait approve
+def wait_approve(request):
+    object_list = Inform.objects.filter(
+        inform_status=Inform.InformStatus.WAIT
+    )
+    return render(request, 'repair/inform.html', {'object_list': object_list})
+
+
 # รายการแจ้งซ่อมสำหรับแสดงให้ ระดับ staff
 class InformListView(LoginRequiredMixin, ListView):
     """
@@ -165,7 +173,9 @@ class InformListView(LoginRequiredMixin, ListView):
     model = Inform
 
     def get_queryset(self):
-        return super().get_queryset().filter(status=Inform.InformStatus.INFORM)
+        return super().get_queryset().filter(
+            inform_status=Inform.InformStatus.INFORM
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -279,7 +289,5 @@ class InformJobDepartmentListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'รอวงรอบการซ่อมบำรุง'
-        return context
         context['title'] = 'รอวงรอบการซ่อมบำรุง'
         return context

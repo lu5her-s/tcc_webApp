@@ -10,6 +10,9 @@ urlpatterns = [
          name='inform-detail'),
     path('create/', views.InformCreateView.as_view(), name='create-inform'),
 
+    # manager urlpatterns
+    path('wait_approve/', views.wait_approve, name='wait_approve'),
+
     # for user
     path('inform_department/', views.InformDepartmentListView.as_view(),
          name='inform-department'),
