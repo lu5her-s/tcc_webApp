@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Inform Management{% endblock title %}
+
+{% block content %}
+
+<div class="pagetitle">
+  <h1>รายการแจ้งซ่อม {{ title }}</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'repair:home' %}">Repair Home</a></li>
+      <li class="breadcrumb-item active">Inform list</li>
+    </ol>
+  </nav>
+</div><!-- End Page Title -->
+
+<section class="section profile">
+  <div class="row">
+
+    <div class="col-xl-12">
+
+      <!-- Recent Job -->
+      <div class="col-12">
+        <div class="card recent-sales overflow-auto">
+
+          <div class="card-body">
+            <h5 class="card-title">{{ title }}
+              <span>| </span>
+              {% if add_inform %}
+              <a href="{% url 'repair:create-inform' %}" class="btn btn-success" style="float: right;">
+                <i class="bi bi-plus"></i>
+                แจ้งซ่อม
+              </a>
+              {% endif %}
+            </h5>
+
+            <br>
+
+            <table class="table table-hover" id="dataTable">
+              <thead>
+                <tr>
+                  <th scope="col">เลขที่แจ้งซ่อม</th>
+                  <th scope="col">ชื่อพัสดุ</th>
+                  <th scope="col">อาการ</th>
+                  <th scope="col">สถานที่</th>
+                  <th scope="col">ผู้แจ้ง</th>
+                  <th scope="col">ความเร่งด่วน</th>
+                  {% if request.user|has_group:"command" %}
+                  <th scope="col">...</th>
+                  {% endif %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for object in object_list %}
+                <tr>
+                  <td>
+                    <a href="{% url 'repair:inform-detail' pk=object.pk %}">
+                      {{ object.pk }}/{{ object.created_at.year|thaiyear }}
+                      {% comment %}{% if object.approve %}Test{% endif %}{% endcomment %}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{% url 'asset:stockitem_detail' pk=object.stockitem.pk %}" target="_blank">
+                      {{ object.stockitem.item_name }}
+                    </a>
+                  </td>
+                  <td>{{ object.issue|safe }}</td>
+                  <td>
+                    <a href="#">
+                      {{ object.stockitem.location.name }}
+                      {% comment %}{{ object.status }}{% endcomment %}
+                    </a>
+                  </td>
+                  <td>{{ object.customer.profile }}</td>
+                  <td>{{ object.get_urgency_display }}
+                    {% if object.get_status_display == 'แจ้งซ่อม' %}
+                    <sup>
+                      <i class="bi bi-exclamation-circle text-danger">
+                      </i>
+                    </sup>
+                    {% endif %}
+                  </td>
+                  {% if request.user|has_group:"command" %}
+                  <td>...</td>
+                  {% endif %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+          </div>
+
+        </div>
+      </div><!-- End Announce List -->
+      {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
+
+    </div>
+  </div>
+</section>
+
+<script>
+  $(document).ready(() => {
+    $("#dataTable").DataTable({
+      "fnDrawCallback": function (oSettings) {
+        if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+        } else {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+        }
+      },
+      "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    });
+  });
+</script>
+{% endblock content %}

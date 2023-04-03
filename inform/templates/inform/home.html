@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Inform User Home{% endblock title %}
+
+
+{% block content %}
+
+<div class="pagetitle">
+    <h1>แจ้งซ่อม {{ request.user.profile.department }}</h1>
+    {% comment %}<h5>{{ request.user.profile }}</h5>{% endcomment %}
+    {% comment %}{{ request.path }}{% endcomment %}
+    {% comment %}{% if request.path == '/repair/' %}True{% endif %}{% endcomment %}
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active">Inform Home</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section dashboard">
+    <div class="row justify-content-center">
+        <div class="col-xxl-8 col-md-8">
+            <div class="card info-card bg-card">
+                <a href="{% url 'inform:department_list' %}">
+                    <div class="card-body">
+                        <h5 class="card-title">รายการแจ้งซ่อมทั้งหมด 
+                            <span>| {{ request.user.profile.department }}</span>
+                        </h5>
+                        <div class="d-flex">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-clipboard text-danger"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>{{ inform_department.count }} รายการแจ้งซ่อม</h6>
+                                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span>
+                                <span class="text-muted small pt-2 ps-1">
+                                    {{ inform_department_done.count }} รายการ
+                                </span>
+
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-xxl-8 col-md-8">
+            <div class="card info-card bg-card">
+                <a href="{% url 'inform:agent_list' %}">
+                    <div class="card-body">
+                        <h5 class="card-title">รายการแจ้งซ่อมที่ต้องดำเนินการ
+                            <span>| {{ request.user.profile.department }}</span>
+                        </h5>
+                        <div class="d-flex">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-wrench text-danger"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>{{ inform_department.count }} รายการที่ต้องดำเนินการ</h6>
+                                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span>
+                                <span class="text-muted small pt-2 ps-1">{{ inform_department_done.count }} รายการ</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-xxl-8 col-md-8">
+            <div class="card info-card bg-card">
+                <a href="{% url 'inform:wait_list' %}">
+                    <div class="card-body">
+                        <h5 class="card-title">รายการแจ้งซ่อมรอวงรอบการซ่อมบำรุง 
+                            <span>| {{ request.user.profile.department }}</span>
+                        </h5>
+                        <div class="d-flex">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-arrow-repeat text-danger"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>{{ inform_wait.count }} รายการวงรอบการซ่อมบำรุง</h6>
+                                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span>
+                                <span class="text-muted small pt-2 ps-1">{{ inform_wait_done.count }} รายการ</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+</section>
+
+<script>
+    $(document).ready(() => {
+        $("#dataTable").DataTable({
+            "fnDrawCallback" : function(oSettings) {
+                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+                } else {
+                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+                }
+            },
+            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+        });
+    });
+</script>
+{% endblock content %}

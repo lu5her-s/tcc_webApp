@@ -13,7 +13,7 @@ from django.views.generic import (
     DetailView,
 )
 
-from .models import Inform, InformImage
+from inform.models import Inform, InformImage
 from .forms import InformForm
 
 # Create your views here.

@@ -93,7 +93,7 @@
                           <i class="bi bi-bell text-danger"></i>
                         </div>
                         <div class="ps-3">
-                          <h6>{{ announce.count }}</h6>
+                          <h6>{{ announce.count }} เรื่อง</h6>
                           {% if user.is_authenticated %}
                           <span class="text-success small pt-1 fw-bold">{{ not_read.count }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่อ่าน</span>
                           {% endif %}
@@ -124,7 +124,7 @@
                             <i class="bi bi-briefcase text-danger"></i>
                           </div>
                           <div class="ps-3">
-                            <h6>{{ assign.count }}</h6>
+                            <h6>{{ assign.count }} รายการ</h6>
                             <span class="text-success small pt-1 fw-bold">{{ wait_assign.count }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่ตอบรับ</span>
 
                           </div>
@@ -148,7 +148,7 @@
                           <i class="bi bi-clipboard-plus text-info"></i>
                         </div>
                         <div class="ps-3">
-                          <h6>{{ journal.count }}</h6>
+                          <h6>{{ journal.count }} งาน</h6>
                           <span class="text-success small pt-1 fw-bold">{{ today_journal.count }}</span> <span class="text-muted small pt-2 ps-1">วันนี้</span>
 
                         </div>
@@ -172,7 +172,7 @@
                           <i class="bi bi-wrench" style="color: orange"></i>
                         </div>
                         <div class="ps-3">
-                          <h6>{{ my_inform }}</h6>
+                          <h6>{{ my_inform }} แจ้งซ่อม</h6>
                           <span class="text-success small pt-1 fw-bold">{{ my_ }}</span> <span class="text-muted small pt-2 ps-1">สิ่งรับผิดชอบ</span>
 
                         </div>
@@ -198,7 +198,7 @@
                           <i class="bi bi-book-half" style="color: purple"></i>
                         </div>
                         <div class="ps-3">
-                          <h6>{{ all_inbox }}</h6>
+                          <h6>{{ all_inbox }} ฉบับ</h6>
                           <span class="text-danger small pt-1 fw-bold">{{ new_inbox }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่ตอบรับ</span>
 
                         </div>

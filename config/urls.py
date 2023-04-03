@@ -36,7 +36,7 @@ urlpatterns = [
     path('', views.HomeView.as_view(), name="home"),
     path('contact/', views.ContactView.as_view(), name="contact"),
 
-    #internal url
+    # internal url
     path('account/', include('account.urls')),
     path('account/', include('django.contrib.auth.urls')),
     path('announce/', include('announce.urls')),
@@ -45,6 +45,7 @@ urlpatterns = [
     path('assign/', include('assign.urls')),
     path('car/', include('car.urls')),
     path('asset/', include('asset.urls')),
+    path('inform/', include('inform.urls')),
     path('repair/', include('repair.urls')),
 ]
 

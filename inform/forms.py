@@ -1,11 +1,10 @@
-from ckeditor.fields import RichTextFormField
 from django import forms
-from django.contrib.auth.models import User
-from django.forms import widgets
+from ckeditor.fields import RichTextFormField
 
-from repair.models import Repair
+from repair.forms import widgets
+
 from asset.models import StockItem
-from inform.models import Inform, InformImage
+from .models import Inform
 
 
 class InformForm(forms.ModelForm):
@@ -16,7 +15,7 @@ class InformForm(forms.ModelForm):
                 'multiple': True
             }
         ),
-        label='ภาพประกอบ',
+        label='ภาพประกอบการแจ้งซ่อม',
         required=False
     )
 

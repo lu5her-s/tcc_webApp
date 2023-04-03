@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'assign',
     'car',
     'asset',
+    'inform',
     'repair',
 
 ]
@@ -103,6 +104,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'account.context_processors.assign_not_accepted',
+                'account.context_processors.announce_not_read',
+
+                'account.context_processors.count_total',
             ],
         },
     },
