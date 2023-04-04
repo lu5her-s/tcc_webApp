@@ -12,13 +12,13 @@
     </div><!-- End Logo -->
 
     <!-- TODO: make qs in all web search -->
-    <!-- <div class="search-bar"> -->
-    <!--     <form class="search-form d-flex align-items-center" method="POST" action="#"> -->
-    <!--         <input type="text" name="query" placeholder="Search" title="Enter search keyword"> -->
-    <!--         <button type="submit" title="Search"><i class="bi bi-search"></i></button> -->
-    <!--     </form> -->
-    <!-- </div><!-- End Search Bar --> -->
-    assign={{ assign_not_accepted.count }}::announce={{ announce_not_read.count }}::total={{ count_total }}
+    <div class="search-bar">
+        <form class="search-form d-flex align-items-center" method="GET" action="#">
+            <input type="text" name="query" placeholder="Search" title="Enter search keyword">
+            <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+        </form>
+    </div><!-- End Search Bar -->
+    <!-- assign={{ assign_not_accepted.count }}::announce={{ announce_not_read.count }}::total={{ count_total }} -->
 
     <nav class="header-nav ms-auto">
         <ul class="d-flex align-items-center">
@@ -32,54 +32,64 @@
             {% if request.user.is_authenticated %}
             <li class="nav-item dropdown">
 
-                <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                    <i class="bi bi-bell"></i>
-                      <span class="badge bg-primary badge-number">{{ total }}</span>
-                    </a><!-- End Notification Icon -->
+              {% if count_total %}
+              <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                <i class="bi bi-bell"></i>
+                <span class="badge bg-primary badge-number">{{ count_total }}</span>
+              </a><!-- End Notification Icon -->
+              {% endif %}
 
-                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-                    <li class="dropdown-header">
-                        You have 4 new notifications
-                        <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-                        </li>
-                    <li>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                <li class="dropdown-header">
+                  You have {{ count_total }} new notifications
+                  <!-- <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a> -->
+                </li>
+                      <li>
                         <hr class="dropdown-divider">
-                        </li>
+                      </li>
 
+                    {% if announce_not_read.count %}
                     <li class="notification-item">
-                        <i class="bi bi-exclamation-circle text-warning"></i>
+                      <i class="bi bi-bell text-warning"></i>
+                      <a href="#">
                         <div>
-                            <h4>Lorem Ipsum</h4>
-                            <p>Quae dolorem earum veritatis oditseno</p>
-                            <p>30 min. ago</p>
-                            </div>
-                        </li>
-
-                    <li>
-                        <hr class="dropdown-divider">
-                        </li>
-
-                    <li class="notification-item">
-                        <i class="bi bi-x-circle text-danger"></i>
-                        <div>
-                            <h4>Atque rerum nesciunt</h4>
-                            <p>Quae dolorem earum veritatis oditseno</p>
-                            <p>1 hr. ago</p>
-                            </div>
-                        </li>
+                          <h4>ประชาสัมพันธ์/สั่งการ</h4>
+                          <p>ยังไม่ได้อ่าน</p>
+                          <p>จำนวน {{ announce_not_read.count }} เรื่อง</p>
+                        </div>
+                      </a>
+                    </li>
+                    {% endif %}
 
                     <li>
-                        <hr class="dropdown-divider">
-                        </li>
+                      <hr class="dropdown-divider">
+                    </li>
 
+                    {% if assign_not_accepted.count %}
                     <li class="notification-item">
-                        <i class="bi bi-check-circle text-success"></i>
-                        <div>
-                            <h4>Sit rerum fuga</h4>
-                            <p>Quae dolorem earum veritatis oditseno</p>
-                            <p>2 hrs. ago</p>
-                            </div>
-                        </li>
+                      <i class="bi bi-briefcase text-danger"></i>
+                      <div>
+                        <h4>การมอบหมายงาน</h4>
+                        <p>รอตอบรับ</p>
+                        <p>จำนวน {{ assign_not_accepted.count }} งาน</p>
+                      </div>
+                    </li>
+                    {% endif %}
+
+                    <li>
+                      <hr class="dropdown-divider">
+                    </li>
+
+                    {% if document_not_read.count %}
+                    <li class="notification-item">
+                      <i class="bi bi-check-circle text-success"></i>
+                      <div>
+                        <h4>Sit rerum fuga</h4>
+                        <p>Quae dolorem earum veritatis oditseno</p>
+                        <p>2 hrs. ago</p>
+                      </div>
+                    </li>
+                    {% endif %}
 
                     <li>
                         <hr class="dropdown-divider">
