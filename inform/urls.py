@@ -20,7 +20,9 @@ urlpatterns = [
          name="detail"),
 
     # manager url
-    path('manager_list/', views.InformManagerListView.as_view(),
+    path('manager/list/', views.InformManagerListView.as_view(),
          name='manager_list'),
+    path('manager/wait/', views.InformWaitApproveListView.as_view(),
+         name='manager_wait'),
 
 ]

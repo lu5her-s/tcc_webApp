@@ -59,7 +59,7 @@
                 {% for object in object_list %}
                 <tr>
                   <td>
-                    <a href="{% url 'repair:inform-detail' pk=object.pk %}">
+                    <a href="{% url 'inform:detail' pk=object.pk %}">
                       {{ object.pk }}/{{ object.created_at.year|thaiyear }}
                       {% comment %}{% if object.approve %}Test{% endif %}{% endcomment %}
                     </a>

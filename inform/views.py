@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import HttpResponse, redirect, render, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
@@ -9,7 +10,7 @@ from django.views.generic import (
 
 from inform.forms import InformForm
 
-from .models import Inform
+from .models import Inform, InformImage
 
 # Create your views here.
 
@@ -29,11 +30,18 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
     }
 
     def get_template_names(self):
+        """
+        check user groups
+        for return template_name
+
+        Returns: str:template_name
+            
+        """
         for group in self.request.user.groups.all():
             template_name = self.TEMPLATE_NAMES.get(group.name)
             if template_name:
                 return template_name
-        return 'repair/user_inform.html'
+        return 'inform/user_inform.html'
 
     # def get_template_names(self):
     #
@@ -59,6 +67,16 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
         inform_department = Inform.objects.filter(
             customer__profile__department=department,
         )
+
+        today_min = datetime.datetime.combine(
+            datetime.date.today(),
+            datetime.time.min
+        )
+        today_max = datetime.datetime.combine(
+            datetime.date.today(),
+            datetime.time.max
+        )
+
         inform_department_done = inform_department.filter(
             repair_status=Inform.RepairStatus.CLOSE
         )
@@ -81,6 +99,23 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             repair_status=Inform.RepairStatus.CLOSE
         )
         # end user section
+
+        # manager section
+        wait_check = Inform.objects.filter(
+            inform_status=Inform.InformStatus.INFORM,
+        )
+        wait_today = Inform.objects.filter(
+            inform_status=Inform.InformStatus.INFORM,
+            created_at__range=(today_min, today_max)
+        )
+        wait_approve = Inform.objects.filter(
+            inform_status=Inform.InformStatus.WAIT
+        )
+        wait_approve_today = Inform.objects.filter(
+            inform_status=Inform.InformStatus.WAIT,
+            created_at__range=(today_min, today_max)
+        )
+
         context = {
             'inform_department': inform_department,
             'inform_department_done': inform_department_done,
@@ -88,6 +123,12 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             'inform_agent_done': inform_agent_done,
             'inform_wait': inform_wait,
             'inform_wait_done': inform_wait_done,
+
+            # Manager
+            'wait_check' : wait_check,
+            'wait_today': wait_today,
+            'wait_approve': wait_approve,
+            'wait_approve_today': wait_approve_today,
         }
         return super().get_context_data(**context)
 
@@ -111,6 +152,7 @@ class InformUserListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = self.request.user.profile
+        context['add_inform'] = True
         return context
 
 
@@ -127,6 +169,7 @@ class InformDepartmentListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = self.request.user.profile.department
+        context['add_inform'] = True
         return context
 
 
@@ -185,9 +228,17 @@ class InformCreateView(LoginRequiredMixin, CreateView):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request, request.POST)
+        form = self.form_class(request, request.POST, request.FILES)
         if form.is_valid():
-            print(form.cleaned_data)
+            inform = form.save()
+            if request.FILES:
+                images = request.FILES.getlist('images')
+                for img in images:
+                    a_img = InformImage.objects.create(
+                        inform=inform,
+                        images=img
+                    )
+                    a_img.save()
         return redirect(reverse('inform:user_list'))
 
 
@@ -198,13 +249,18 @@ class InformManagerListView(LoginRequiredMixin, ListView):
     '''
     Show Inform list for manager to manager
     '''
-    template_name = 'inform/list_view.html'
+    template_name = 'inform/inform_list.html'
     model = Inform
 
     def get_queryset(self):
         return super().get_queryset().filter(
             inform_status=Inform.InformStatus.INFORM,
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'ยังไม่ได้ตรวจสอบ'
+        return context
 
 
 class InformManagerDetailView(LoginRequiredMixin, DetailView):
@@ -220,4 +276,23 @@ class InformManagerDetailView(LoginRequiredMixin, DetailView):
         Returns:
         """
         context = super().get_context_data(**kwargs)
+        return context
+
+
+class InformWaitApproveListView(LoginRequiredMixin, ListView):
+    """ 
+    List of Inform Status WAIT
+    wait for command approve
+    """
+    template_name = 'inform/inform_list.html'
+    model = Inform
+
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            inform_status=Inform.InformStatus.WAIT
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รอการอนุมัติ'
         return context

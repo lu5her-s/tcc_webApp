@@ -63,9 +63,9 @@
                                 <i class="bi bi-wrench text-danger"></i>
                             </div>
                             <div class="ps-3">
-                                <h6>{{ inform_department.count }} รายการที่ต้องดำเนินการ</h6>
+                                <h6>{{ inform_agent.count }} รายการที่ต้องดำเนินการ</h6>
                                 <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span>
-                                <span class="text-muted small pt-2 ps-1">{{ inform_department_done.count }} รายการ</span>
+                                <span class="text-muted small pt-2 ps-1">{{ inform_agent_done.count }} รายการ</span>
                             </div>
                         </div>
                     </div>
@@ -110,7 +110,7 @@
                     $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
                 }
             },
-            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+            "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
         });
     });
 </script>

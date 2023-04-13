@@ -106,6 +106,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'account.context_processors.assign_not_accepted',
                 'account.context_processors.announce_not_read',
+                'account.context_processors.document_not_accepted',
+                'account.context_processors.new_inform',
 
                 'account.context_processors.count_total',
             ],

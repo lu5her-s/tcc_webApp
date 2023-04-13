@@ -80,31 +80,34 @@
                       <hr class="dropdown-divider">
                     </li>
 
-                    {% if document_not_read.count %}
+                    {% if document_not_accepted %}
                     <li class="notification-item">
-                      <i class="bi bi-check-circle text-success"></i>
+                      <i class="bi bi-book text-success"></i>
                       <div>
-                        <h4>Sit rerum fuga</h4>
-                        <p>Quae dolorem earum veritatis oditseno</p>
-                        <p>2 hrs. ago</p>
+                        <h4>เอกสารที่ยังไม่ตอบรับ</h4>
+                        <p>{{ request.user.profile.sector.name }}</p>
+                        <p>จำนวน {{ document_not_accepted }} ฉบับ</p>
                       </div>
                     </li>
                     {% endif %}
 
+                    {% if new_inform.count %}
                     <li>
-                        <hr class="dropdown-divider">
-                        </li>
+                      <hr class="dropdown-divider">
+                    </li>
+
 
                     <li class="notification-item">
-                        <i class="bi bi-info-circle text-primary"></i>
-                        <div>
-                            <h4>Dicta reprehenderit</h4>
-                            <p>Quae dolorem earum veritatis oditseno</p>
-                            <p>4 hrs. ago</p>
-                            </div>
-                        </li>
+                      <i class="bi bi-info-circle text-primary"></i>
+                      <div>
+                        <h4>รายการแจ้งซ่อม</h4>
+                        <p>รอตรวจสอบ</p>
+                        <p>จำนวน {{ new_inform.count }} รายการ</p>
+                      </div>
+                    </li>
 
                     <li>
+                      {% endif %}
                         <hr class="dropdown-divider">
                         </li>
                     <li class="dropdown-footer">

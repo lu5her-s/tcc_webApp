@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
 from .models import Inform
@@ -8,8 +9,7 @@ from .models import Inform
 
 @admin.register(Inform)
 class InformAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'issue_safe', 'issue_category',
-                    'full_name', 'created_at')
+    # list_display = ('urgency', 'issue_safe', 'issue_category', 'full_name', 'created_at')
     list_display_links = ('issue_safe',)
     list_filter = ('created_at',)
     search_fields = ('issue',)
@@ -31,3 +31,19 @@ class InformAdmin(admin.ModelAdmin):
         """
         return mark_safe(obj.issue)
     issue_safe.short_description = 'Issue'
+
+    def colored_urgency(self, obj):
+        """colored_urgency.
+        return colored urgency based on value
+
+        :param obj:
+        """
+        if obj.urgency == 'HIG':
+            return format_html('<span style="color: #FF0000;">{}</span>', obj.get_urgency_display())
+        else:
+            return obj.urgency
+    colored_urgency.short_description = 'Urgency'
+
+    list_display = ('colored_urgency', 'issue_safe', 'issue_category',
+                    'full_name', 'created_at')
+
