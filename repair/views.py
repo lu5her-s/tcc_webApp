@@ -115,7 +115,7 @@ class RepairHome(LoginRequiredMixin, TemplateView):
         # )
         context['department_inform'] = Inform.objects.filter(
             customer__profile__department=self.request.user.profile.department,
-            approve_status=Inform.ApproveStatus.APPROVE
+            # approve_status=Inform.ApproveStatus.APPROVE
         )
         context['department_inform_done'] = Inform.objects.filter(
             customer__profile__department=self.request.user.profile.department,

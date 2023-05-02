@@ -9,6 +9,7 @@ import datetime
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.contenttypes.models import Q
+from django.http import JsonResponse
 from django.shortcuts import HttpResponseRedirect, get_object_or_404, redirect, render
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm,   UserCreationForm
@@ -198,3 +199,11 @@ def position_list(request, pk):
 
 class ContactView(LoginRequiredMixin, TemplateView):
     template_name = 'account/contact.html'
+
+
+def check_username(request):
+    username = request.GET.get('username')
+    data = {
+        'username_exists': User.objects.filter(username__iexact=username).exists()
+    }
+    return JsonResponse(data)

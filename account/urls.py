@@ -23,4 +23,7 @@ urlpatterns = [
     path('sectors/<int:pk>/', views.sector_list, name='sectors'),
     path('positions/<int:pk>/', views.position_list, name='positions'),
 
+    # check username 
+    path('check-username/', views.check_username, name='check-username'),
+
 ]
