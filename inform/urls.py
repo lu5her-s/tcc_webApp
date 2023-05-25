@@ -4,8 +4,13 @@ from . import views
 app_name = 'inform'
 
 urlpatterns = [
-    # user url
     path('', views.InformHomeView.as_view(), name="home"),
+    path('create/', views.InformCreateView.as_view(),
+         name="create"),
+    path('update/<int:pk>/', views.InformUpdateView.as_view(),
+         name="update"),
+
+    # user url
     path('user/list/', views.InformUserListView.as_view(),
          name="user_list"),
     path('department/list/', views.InformDepartmentListView.as_view(),
@@ -14,8 +19,6 @@ urlpatterns = [
          name="agent_list"),
     path('wait/list/', views.InformWaitListView.as_view(),
          name="wait_list"),
-    path('create/', views.InformCreateView.as_view(),
-         name="create"),
     path('<int:pk>/', views.InformDetailView.as_view(),
          name="detail"),
 

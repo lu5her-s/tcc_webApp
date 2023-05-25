@@ -64,13 +64,13 @@
                   <th>ความเร่งด่วน</th>
                   {% if object.urgency == 'HIG' %}
                   <td style="color:red">
-                  {% elif object.urgency == 'MED' %}
-                  <td style="color:orange">
-                  {% else %}
-                  <td>
-                  {% endif %}
-                  {{ object.get_urgency_display }}
-                  </td>
+                    {% elif object.urgency == 'MED' %}
+                    <td style="color:orange">
+                      {% else %}
+                      <td>
+                        {% endif %}
+                        {{ object.get_urgency_display }}
+                      </td>
                 </tr>
 
                 <tr>
@@ -208,9 +208,19 @@
 
       {% if perms.repair.change_inform %}
       <div class="container float-start text-center">
-        <a href="{% url 'repair:inform' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+        {% if request.user == object.customer %}
+        <a href="{% url 'inform:department_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
         <a href="#" class="btn btn-lg btn-danger">ลบ</a>
-        <a href="#" class="btn btn-lg btn-success">แก้ไข</a>
+        <a href="#" class="btn btn-lg btn-warning">ยกเลิก</a>
+        {% endif %}
+        {% if request.user|has_group:"StaffRepair" %}
+        <a href="{% url 'inform:manager_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+        {% comment %}
+        <a href="{% url 'inform:update' pk=object.pk %}" class="btn btn-lg btn-success">ตรวจสอบ</a>
+        {% endcomment %}
+        <!-- Create button open modal -->
+        <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#manager_check">ตรวจสอบ</button>
+        {% endif %}
       </div>
       {% else %}
       <div class="container float-start text-center">
@@ -221,6 +231,41 @@
       {% endif %}
 
     </div>
+
+    <div class="modal fade" id="manager_check">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">ตรวจสอบ</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form.media }}
+              <div class="row mb-3">
+                <label for="{{ manager_check.repair_category.name }}" class="col-md-4 col-lg-3 col-form-label">{{ manager_check.repair_category.label }}</label>
+                <div class="col-md-8 col-lg-9">
+                  {{ manager_check.repair_category }}
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="{{ manager_check.assigned_to.name }}" class="col-md-4 col-lg-3 col-form-label">{{ manager_check.assigned_to.label }}</label>
+                <div class="col-md-8 col-lg-9">
+                  {{ manager_check.assigned_to }}
+                </div>
+              </div>
+                {{ manager_check.inform_status }}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary">ยืนยัน</button>
+              </div>
+            </form>
+        </div>
+      </div>
+    </div>
+
 
   </div>
 </section>

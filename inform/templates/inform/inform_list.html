@@ -50,8 +50,8 @@
                   <th scope="col">สถานที่</th>
                   <th scope="col">ผู้แจ้ง</th>
                   <th scope="col">ความเร่งด่วน</th>
-                  {% if request.user|has_group:"command" %}
-                  <th scope="col">...</th>
+                  {% if request.user|has_group:"Command" or request.user|has_group:"StaffRepair" %}
+                    <th scope="col">...</th>
                   {% endif %}
                 </tr>
               </thead>
@@ -85,8 +85,8 @@
                     </sup>
                     {% endif %}
                   </td>
-                  {% if request.user|has_group:"command" %}
-                  <td>...</td>
+                  {% if request.user|has_group:"Command" or request.user|has_group:"StaffRepair" %}
+                  <td>{{ object.get_inform_status_display }}</td>
                   {% endif %}
                 </tr>
                 {% endfor %}

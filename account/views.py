@@ -42,6 +42,7 @@ from announce.models import (
     Comment,
 )
 from document.models import Department, Document
+from inform.models import Inform
 from journal.models import Journal
 from assign.models import Assign
 
@@ -88,6 +89,12 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 assigned_to__user=self.request.user)
             context['wait_assign'] = Assign.objects.filter(
                 assigned_to__user=self.request.user, accepted=False)
+
+        if not self.request.user.groups.filter(name="StaffRepair"):
+            context['inform_department'] = Inform.objects.filter(
+                customer__profile__department=self.request.user.profile.department
+            )
+        
 
         return context
 

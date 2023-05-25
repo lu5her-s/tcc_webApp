@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Repair{% endblock title %}
+
+{% block content %}
+<div class="pagetitle">
+  <h1>{{ title }}เลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'repair:home' %}">Inform Home</a></li>
+      <li class="breadcrumb-item active">แจ้งซ่อมเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</li>
+    </ol>
+  </nav>
+</div><!-- End Page Title -->
+
+
+<section class="section">
+  <div class="row">
+
+    <div class="col-xl-12">
+      <div class="card">
+        <div class="card-body pt-3">
+          <ul class="nav nav-tabs nav-tabs-bordered">
+            <li class="nav-item">
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
+                รายละเอียด
+              </button>
+            </li>
+
+            {% if notes %}
+            
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#notes">
+                บันทึกการทำงาน
+                {% comment %}{% if not object.accepted %}<sup><i class="bi bi-exclamation-circle" style="color: red;"></i></sup>{% endif %}{% endcomment %}
+              </button>
+            </li>
+          {% endif %}
+          </ul>
+
+          <div class="tab-content pt-2">
+
+            <div id="detail" class="tab-pane fade show active">
+              <h6 class="card-title"> รายละเอียด | <span>แจ้งซ่อมเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h6>
+              <table class="table">
+                <tr>
+                  <th>ประเภทการแจ้งซ่อม</th>
+                  <td>{{ object.get_issue_category_display  }}</td>
+                </tr>
+
+                <tr>
+                  <th>พัสดุที่แจ้งซ่อม</th>
+                  <td>
+                    {{ object.stockitem.item_name }}<br/>
+                    <a href="{% url 'asset:stockitem_detail' pk=object.stockitem.pk %}" target="_blank">
+                      [{{ object.stockitem.serial }}]
+                    </a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>ความเร่งด่วน</th>
+                  {% if object.urgency == 'HIG' %}
+                  <td style="color:red">
+                  {% elif object.urgency == 'MED' %}
+                  <td style="color:orange">
+                  {% else %}
+                  <td>
+                  {% endif %}
+                  {{ object.get_urgency_display }}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>สถานะ</th>
+                  {% if object.inform_status == 'INF' %}
+                  <td style="color:red;">
+                    {% else %}
+                    <td>
+                      {% endif %}
+                      {{ object.get_inform_status_display }}
+                      {% comment %}
+                      {% if request.user|has_group:'StaffRepair' or request.user|has_group:'Command' %}
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inform_status">Update</button>
+                      {% endif %}
+                      {% endcomment %}
+                    </td>
+                </tr>
+
+                <div class="modal" id="inform_status">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">แก้ไขสถานะ</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form method="post">
+                          {% csrf_token %}
+                          {{ form.status }}
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <tr>
+                  <th>ผู้แจ้ง</th>
+                  <td>
+                    {{ object.customer.profile }}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>วันที่แจ้ง</th>
+                  <td>{{ object.created_at|thaidate }} 
+                    เวลา {{ object.created_at|date:"H:i" }} น.
+                  </td>
+                </tr>
+              </table>
+
+              <table class="table table-borderless">
+                <tr>
+                  <th class="text-center">รายละเอียด/อาการ</th>
+                </tr>
+                <tr>
+                  <td style="padding-left: 3rem;">{{ object.issue|safe }}</td>
+                </tr>
+              </table>
+
+              <table class="table table-borderless">
+                <tr>
+                  <th class="text-center">การตรวจสอบ/มอบหมาย</th>
+                </tr>
+                <tr>
+                  <td style="padding-left: 3rem;">
+                    <label for="{{ manager_check.repair_category.name }}" class="col-md-4 col-lg-3 col-form-label">{{ manager_check.repair_category.label }}</label>
+                    {{ manager_check.repair_category }}
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-left: 3rem;">
+                    <label for="{{ manager_check.assigned_to.name }}" class="col-md-4 col-lg-3 col-form-label">{{ manager_check.assigned_to.label }}</label>
+                    {{ manager_check.assigned_to }}
+                  </td>
+                </tr>
+              </table>
+
+
+              {% if images %}
+              <br>
+
+              <hr />
+              {% comment %}<div class="card">{% endcomment %}
+                {% comment %}<div class="card-body">{% endcomment %}
+                  <h5 class="card-title">ภาพประกอบ | <span>ใบแจ้งซ่อมที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h5>
+
+                  <!-- Slides with indicators -->
+                  <div id="gallery">
+                    {% for item in images %}
+                    {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
+                      <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                    </a> {% endcomment %}
+                    <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
+                      <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                    </a>
+                    {% endfor %}
+                  </div>
+
+                  {% comment %}</div>{% endcomment %}
+                {% comment %}</div>{% endcomment %}
+              {% endif %}
+
+            </div><!-- end detail -->
+
+
+          </div><!-- end tab-content -->
+
+        </div><!--end card-->
+      </div><!-- end col -->
+
+
+      {% if perms.inform.change_inform %}
+      <div class="container float-start text-center">
+        <a href="{% url 'repair:inform' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+        <a href="#" class="btn btn-lg btn-danger">ลบ</a>
+        <a href="{% url 'inform:update' pk=object.pk %}" class="btn btn-lg btn-success">แก้ไข</a>
+      </div>
+      {% else %}
+      <div class="container float-start text-center">
+        <a href="{% url 'repair:inform' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+        <a href="{% url 'home' %}" class="btn btn-lg btn-info">หน้าหลัก</a>
+        {% comment %}<a href="#" class="btn btn-lg btn-success">ปิดงาน</a>{% endcomment %}
+      </div>
+      {% endif %}
+
+    </div>
+
+  </div>
+      <script>
+        $(document).ready(function () {
+            $("select").select2({
+                width: "100%",
+            });
+        });
+    </script>
+
+</section>
+{% include 'components/photoswipe.html' %}
+{% endblock content %}

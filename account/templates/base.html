@@ -163,7 +163,7 @@
               <div class="col-xxl-4 col-md-6">
                 <div class="card info-card bg-card">
 
-                  <a href="{% url 'inform:department_list' %}">
+                  <a href="{% url 'inform:home' %}">
                     <div class="card-body">
                       <h5 class="card-title">รายการแจ้งซ่อม <span>| ของฉัน</span></h5>
 
@@ -172,8 +172,8 @@
                           <i class="bi bi-wrench" style="color: orange"></i>
                         </div>
                         <div class="ps-3">
-                          <h6>{{ my_inform }} แจ้งซ่อม</h6>
-                          <span class="text-success small pt-1 fw-bold">{{ my_ }}</span> <span class="text-muted small pt-2 ps-1">การแจ้งซ่อม</span>
+                          <h6>{{ inform_department.count }} แจ้งซ่อม</h6>
+                          <span class="text-success small pt-1 fw-bold">{{ inform_department.count }}</span> <span class="text-muted small pt-2 ps-1">การแจ้งซ่อม</span>
 
                         </div>
                       </div>

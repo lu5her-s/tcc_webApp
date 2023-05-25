@@ -65,7 +65,7 @@
                       <hr class="dropdown-divider">
                     </li>
 
-                    {% if assign_not_accepted.count %}
+                    {% if assign_not_accepted %}
                     <li class="notification-item">
                       <i class="bi bi-briefcase text-danger"></i>
                       <div>
@@ -81,14 +81,16 @@
                     </li>
 
                     {% if document_not_accepted %}
-                    <li class="notification-item">
-                      <i class="bi bi-book text-success"></i>
-                      <div>
-                        <h4>เอกสารที่ยังไม่ตอบรับ</h4>
-                        <p>{{ request.user.profile.sector.name }}</p>
-                        <p>จำนวน {{ document_not_accepted }} ฉบับ</p>
-                      </div>
-                    </li>
+                    <a href="{% url 'document:home' %}">
+                      <li class="notification-item">
+                        <i class="bi bi-book text-success"></i>
+                        <div>
+                          <h4>เอกสารที่ยังไม่ตอบรับ</h4>
+                          <p>{{ request.user.profile.sector.name }}</p>
+                          <p>จำนวน {{ document_not_accepted }} ฉบับ</p>
+                        </div>
+                      </li>
+                    </a>
                     {% endif %}
 
                     {% if new_inform.count %}

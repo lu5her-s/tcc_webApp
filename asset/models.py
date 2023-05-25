@@ -128,7 +128,7 @@ class StockItem(models.Model):
 class StockItemImage(models.Model):
     """StockItemImage."""
 
-    stock_item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
+    stock_item = models.ForeignKey(StockItem, on_delete=models.CASCADE, related_name='images')
     images = models.ImageField(upload_to=stock_image)
 
     def __str__(self):

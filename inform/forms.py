@@ -8,6 +8,12 @@ from .models import Inform
 
 
 class InformForm(forms.ModelForm):
+    """
+    Form for inform
+
+    Attributes: 
+        queryset: StockItem.objects.all()
+    """
     images = forms.ImageField(
         widget=widgets.ClearableFileInput(
             attrs={
@@ -54,3 +60,29 @@ class InformForm(forms.ModelForm):
         self.fields['stockitem'].queryset = StockItem.objects.filter(
             location=request.user.profile.department
         )
+
+    
+class ManagerCheckForm(forms.ModelForm):
+    """ Form for manager check """
+    class Meta:
+        model = Inform
+        fields = (
+            'repair_category',
+            'inform_status',
+            'assigned_to',
+        )
+        labels = {
+            'repair_category': 'ประเภทการแจ้งซ่อม',
+            'inform_status': 'สถานะการแจ้งซ่อม',
+            'assigned_to': 'หัวหน้าชุดซ่อม',
+        }
+
+        widgets = {
+            'repair_category': widgets.Select(
+                attrs={'class': 'form-select'}
+            ),
+            'inform_status': widgets.HiddenInput(),
+            'assigned_to': widgets.Select(
+                attrs={'class': 'form-select'}
+            )
+        }

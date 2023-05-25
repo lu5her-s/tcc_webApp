@@ -1,14 +1,17 @@
 import datetime
 from django.shortcuts import HttpResponse, redirect, render, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.template import context
 from django.views.generic import (
     CreateView,
     DetailView,
     ListView,
     TemplateView,
+    UpdateView,
 )
+from asset.models import StockItemImage
 
-from inform.forms import InformForm
+from inform.forms import InformForm, ManagerCheckForm
 
 from .models import Inform, InformImage
 
@@ -138,6 +141,17 @@ class InformDetailView(LoginRequiredMixin, DetailView):
     model = Inform
     # queryset = Inform.objects.select_related()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['manager_check'] = ManagerCheckForm(instance=self.get_object())
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = ManagerCheckForm(request.POST, instance=self.get_object())
+        if form.is_valid():
+            print(form.cleaned_data)
+            return redirect('inform:detail', pk=self.get_object().pk)
+
 
 class InformUserListView(LoginRequiredMixin, ListView):
     """ User Inform """
@@ -240,6 +254,17 @@ class InformCreateView(LoginRequiredMixin, CreateView):
                     )
                     a_img.save()
         return redirect(reverse('inform:user_list'))
+
+
+class InformUpdateView(LoginRequiredMixin, DetailView):
+    """ for update inform_update """
+    template_name = "inform/inform_update.html"
+    model = Inform
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['manager_check'] = ManagerCheckForm(instance=self.object)
+        return context
 
 
 # Manager sector
