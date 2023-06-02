@@ -32,12 +32,15 @@
               </button>
             </li>
 
+            {% if approve %}
+            
             <li class="nav-item">
-              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#notes">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#approve">
                 บันทึกการทำงาน
                 {% comment %}{% if not object.accepted %}<sup><i class="bi bi-exclamation-circle" style="color: red;"></i></sup>{% endif %}{% endcomment %}
               </button>
             </li>
+            {% endif %}
           </ul>
 
           <div class="tab-content pt-2">
@@ -134,8 +137,8 @@
 
             </div><!-- end detail -->
 
-            <div id="notes" class="tab-pane fade pt-3">
-              {% if note %}
+            <div id="approve" class="tab-pane fade pt-3">
+              {% if approve %}
               <h5 class="card-title">บันทึกการทำงาน | <span>{{ object.title }}</span></h5>
               <table class="table table-borderless">
                 {% for n in note %}

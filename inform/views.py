@@ -150,6 +150,7 @@ class InformDetailView(LoginRequiredMixin, DetailView):
         form = ManagerCheckForm(request.POST, instance=self.get_object())
         if form.is_valid():
             print(form.cleaned_data)
+            print(self.get_object().pk)
             return redirect('inform:detail', pk=self.get_object().pk)
 
 
@@ -301,6 +302,8 @@ class InformManagerDetailView(LoginRequiredMixin, DetailView):
         Returns:
         """
         context = super().get_context_data(**kwargs)
+        # context 'approve' return true if self.object.approve_status is APPROVE
+        context['approve'] = self.object.inform_status
         return context
 
 
