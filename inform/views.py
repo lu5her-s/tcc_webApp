@@ -30,6 +30,7 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
     TEMPLATE_NAMES = {
         'StaffRepair': 'inform/manager.html',
         'Technical': 'repair/technical.html',
+        'Command': 'inform/manager.html',
     }
 
     def get_template_names(self):
@@ -149,9 +150,16 @@ class InformDetailView(LoginRequiredMixin, DetailView):
     def post(self, request, *args, **kwargs):
         form = ManagerCheckForm(request.POST, instance=self.get_object())
         if form.is_valid():
-            print(form.cleaned_data)
-            print(self.get_object().pk)
-            return redirect('inform:detail', pk=self.get_object().pk)
+            # print(form.cleaned_data)
+            # print(self.get_object().pk)
+            inform = Inform.objects.get(pk=self.get_object().pk)
+            inform.repair_category = form.cleaned_data['repair_category']
+            inform.inform_status = form.cleaned_data['inform_status']
+            inform.assigned_to = form.cleaned_data['assigned_to']
+            inform.inform_status = Inform.InformStatus.WAIT
+            inform.save()
+            # return redirect('inform:detail', pk=self.get_object().pk)
+            return redirect(lazy_reverse('inform:detail', kwargs={'pk': self.get_object().pk}))
 
 
 class InformUserListView(LoginRequiredMixin, ListView):
@@ -324,3 +332,10 @@ class InformWaitApproveListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'รอการอนุมัติ'
         return context
+
+
+def accept_inform(request, pk):
+    inform = get_object_or_404(Inform, pk=pk)
+    inform.accepted = True
+    inform.save()
+    return redirect(reverse('inform:detail', kwargs={'pk': pk}))

@@ -32,6 +32,15 @@
               </button>
             </li>
 
+            {% if request.user.profile == object.assigned_to %}
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#accept">
+                ตอบรับ
+              </button>
+            </li>
+            
+            {% endif %}
+
             {% if approve %}
             
             <li class="nav-item">
@@ -153,7 +162,7 @@
               {% if request.user == object.author %}
               <h5><i class="bi bi-x-circle" style="color: red;">ยังไม่ตอบรับการมอบหมายงาน</i></h5>
               <p>รอ 
-              <a href="{% url 'account:member' pk=object.assigned_to.user.pk %}">
+              <a href="#">
                 {{ object.assigned_to.rank }} {{ object.assigned_to.user.get_full_name }}
               </a> ตอบรับงาน 
               </p>
@@ -168,7 +177,7 @@
               <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
               <span>
                 กรุณาตอบรับการมอบหมายงานจาก
-                <a href="{% url 'account:member' pk=object.author.pk %}">
+                <a href="#">
                   {{ object.author.profile.rank }}{{ object.author.get_full_name }}
                 </a>
               </span>
@@ -201,6 +210,21 @@
               {% endif %}
 
             </div><!-- end notes -->
+
+            <div id="accept" class='tab-pane fade pt-3'>
+              {% if request.user.profile == object.assigned_to %}
+              <h5 class="card-title">การตอบรับการมอบหมาย | <span>{{ object.title }}</span></h5>
+              <p>
+              <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
+              <span>
+                กรุณาตอบรับการมอบหมายงาน
+              <center>
+                <a href="{% url 'assign:accept' pk=object.pk %}" class="btn btn-success">ตอบรับงาน</a>
+              </center>
+              </span>
+              </p>
+              {% endif %}
+            </div>
 
           </div><!-- end tab-content -->
 

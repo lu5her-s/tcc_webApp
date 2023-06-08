@@ -1,3 +1,4 @@
+from assign.views import accepted
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -100,6 +101,7 @@ class Inform(models.Model):
         null=True,
         blank=True
     )
+    accepted = models.BooleanField(default=False)
     repair_status = models.CharField(
         max_length=8,
         choices=RepairStatus.choices,

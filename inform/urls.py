@@ -28,4 +28,7 @@ urlpatterns = [
     path('manager/wait/', views.InformWaitApproveListView.as_view(),
          name='manager_wait'),
 
+    # technical url
+    path('accept/<int:pk>/', views.accept_inform,
+         name='accept'),
 ]
