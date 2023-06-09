@@ -1,5 +1,6 @@
 import datetime
-from django.shortcuts import HttpResponse, redirect, render, reverse
+from django.shortcuts import HttpResponse, redirect, render
+from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template import context
 from django.views.generic import (
@@ -29,7 +30,7 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
     # template_name = 'inform/home.html'
     TEMPLATE_NAMES = {
         'StaffRepair': 'inform/manager.html',
-        'Technical': 'repair/technical.html',
+        'Technical': 'inform/technical.html',
         'Command': 'inform/manager.html',
     }
 
@@ -159,7 +160,7 @@ class InformDetailView(LoginRequiredMixin, DetailView):
             inform.inform_status = Inform.InformStatus.WAIT
             inform.save()
             # return redirect('inform:detail', pk=self.get_object().pk)
-            return redirect(lazy_reverse('inform:detail', kwargs={'pk': self.get_object().pk}))
+            return redirect(reverse_lazy('inform:detail', kwargs={'pk': self.get_object().pk}))
 
 
 class InformUserListView(LoginRequiredMixin, ListView):
