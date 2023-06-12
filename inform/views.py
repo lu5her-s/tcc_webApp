@@ -1,4 +1,5 @@
 import datetime
+from assign.views import Q
 from django.shortcuts import HttpResponse, redirect, render
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -14,7 +15,7 @@ from asset.models import StockItemImage
 
 from inform.forms import InformForm, ManagerCheckForm
 
-from .models import Inform, InformImage
+from .models import Inform, InformImage, accepted
 
 # Create your views here.
 
@@ -114,11 +115,43 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             created_at__range=(today_min, today_max)
         )
         wait_approve = Inform.objects.filter(
-            inform_status=Inform.InformStatus.WAIT
+            Q(inform_status=Inform.InformStatus.WAIT) &
+            ~Q(approve_status=Inform.ApproveStatus.APPROVE)
         )
         wait_approve_today = Inform.objects.filter(
             inform_status=Inform.InformStatus.WAIT,
             created_at__range=(today_min, today_max)
+        )
+
+        # technical dashboard
+        wait_accept = Inform.objects.filter(
+            assigned_to=self.request.user.profile,
+            approve_status=Inform.ApproveStatus.APPROVE,
+            accepted=False
+        )
+        in_progress = Inform.objects.filter(
+            assigned_to=self.request.user.profile,
+            approve_status=Inform.ApproveStatus.APPROVE,
+            accepted=True,
+            repair_status=Inform.RepairStatus.REPAIR
+        )
+        wait_job = Inform.objects.filter(
+            assigned_to=self.request.user.profile,
+            approve_status=Inform.ApproveStatus.APPROVE,
+            accepted=True,
+            repair_category=Inform.RepairCategory.WAIT
+        )
+        close_job = Inform.objects.filter(
+            assigned_to=self.request.user.profile,
+            approve_status=Inform.ApproveStatus.APPROVE,
+            accepted=True,
+            repair_status=Inform.RepairStatus.CLOSE
+        )
+        wait_close = Inform.objects.filter(
+            assigned_to=self.request.user.profile,
+            approve_status=Inform.ApproveStatus.APPROVE,
+            accepted=True,
+            repair_status=Inform.RepairStatus.COMPLETE
         )
 
         context = {
@@ -134,6 +167,13 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             'wait_today': wait_today,
             'wait_approve': wait_approve,
             'wait_approve_today': wait_approve_today,
+
+            # Technical
+            'wait_accept': wait_accept,
+            'in_progress': in_progress,
+            'wait_job': wait_job,
+            'close_job': close_job,
+            'wait_close': wait_close
         }
         return super().get_context_data(**context)
 
@@ -333,6 +373,81 @@ class InformWaitApproveListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'รอการอนุมัติ'
         return context
+
+
+class InformUrgencyListView(LoginRequiredMixin, ListView):
+    """ 
+    List of Inform Status URGENCY
+    """
+    template_name = 'inform/inform_list.html'
+    model = Inform
+
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            inform_status=Inform.RepairCategory.URGENCY,
+            approve_status=Inform.ApproveStatus.APPROVE
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รายการซ่อมด่วน'
+        return context
+
+class InformWaitAgentListView(LoginRequiredMixin, ListView):
+    """
+    Wait Agent in place get operation
+    """
+    template_name = 'inform/inform_list.html'
+    model = Inform
+
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            inform_status=Inform.RepairCategory.AGENT,
+            approve_status=Inform.ApproveStatus.APPROVE
+        )
+
+    def get_context_data(self, **kwargs):
+        """
+            **kwargs: 
+
+        Returns:
+            
+        """
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รอดำเนินการโดย จนท.ประจำสถานี'
+        return context
+
+
+class InformWaitListView(LoginRequiredMixin, ListView):
+    """
+    Wait for job assigned schedule
+    """
+    template_name = 'inform/inform_list.html'
+    model = Inform
+
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            inform_status=Inform.RepairCategory.WAIT,
+            approve_status=Inform.ApproveStatus.APPROVE
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รอวงรอบการดำเนินการ'
+        return context
+
+
+class InformCancelListView(LoginRequiredMixin, ListView):
+    """
+    Inform recheck or cancel
+    """
+    template_name = 'inform/inform_list.html'
+    model = Inform
+
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            approve_status=Inform.ApproveStatus.REJECT
+        )
 
 
 def accept_inform(request, pk):

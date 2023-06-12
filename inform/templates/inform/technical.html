@@ -24,15 +24,15 @@
     <!-- new repair -->
     <div class="col-xxl-4 col-md-6">
       <div class="card info-card bg-card">
-        <a href="{% url 'inform:manager_list' %}">
+        <a href="#">
           <div class="card-body">
-            <h5 class="card-title">รายการแจ้งซ่อม <span>| ยังไม่ได้ตรวจสอบ</span></h5>
+            <h5 class="card-title">รอตอบรับ<span>| รายการแจ้งซ่อมใหม่</span></h5>
             <div class="d-flex align-items-center">
               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                 <i class="bi bi-exclamation-octagon text-danger"></i>
               </div>
               <div class="ps-3">
-                <h6>{{ wait_check.count }} รายการแจ้งซ่อม</h6>
+                <h6>{{ wait_accept.count }} รายการรอตอบรับ</h6>
                 <span class="text-success small pt-1 fw-bold">
                   วันนี้
                 </span>
@@ -46,20 +46,20 @@
         </a>
       </div>
     </div>
-    <!-- end new repair -->
+    <!-- end new inform -->
 
     <!-- wait approve -->
     <div class="col-xxl-4 col-md-6">
       <div class="card info-card bg-card">
-        <a href="{% url 'inform:manager_wait' %}">
+        <a href="#">
           <div class="card-body">
-            <h5 class="card-title">รายการรออนุมัติ <span>| รออนุมัติ</span></h5>
+            <h5 class="card-title">กำลังดำเนินการ <span>| </span></h5>
             <div class="d-flex align-items-center">
               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                 <i class="bi bi-bookmark-check text-warning"></i>
               </div>
               <div class="ps-3">
-                <h6>{{ wait_approve.count }} รายการรออนุมัติ</h6>
+                <h6>{{ in_progress.count }} รายการรออนุมัติ</h6>
                 <span class="text-success small pt-1 fw-bold">
                   วันนี้
                 </span>
@@ -79,7 +79,6 @@
   <hr />
   <br>
 
-  <h4>รายการสำหรับการจัดการ แจ้งซ่อม</h4>
   <div class="row">
     <!-- Management card -->
 
@@ -87,15 +86,15 @@
       <div class="card info-card bg-card">
         <a href="#">
           <div class="card-body">
-            <h5 class="card-title">รายการซ่อมด่วน <span>| รอดำเนินการ</span></h5>
+            <h5 class="card-title">รอวงรอบ <span>| </span></h5>
             <div class="d-flex align-items-center">
               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                 <i class="bi bi-wrench text-warning"></i>
               </div>
               <div class="ps-3">
-                <h6>{{ repair_urgency_wait.count }} รอดำเนินการ</h6>
+                <h6>{{ wait_job.count }} รอดำเนินการ</h6>
                 <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span
-                  class="text-muted small pt-2 ps-1">{{ repair_urgency_done.count }} รายการ</span>
+                  class="text-muted small pt-2 ps-1">{{ wait_job.count }} รายการ</span>
 
               </div>
             </div>
@@ -108,15 +107,15 @@
       <div class="card info-card bg-card">
         <a href="#">
           <div class="card-body">
-            <h5 class="card-title">ซ่อมโดย จนท. <span>| ประจำสถานี</span></h5>
+            <h5 class="card-title">ดำเนินการแล้ว <span>| ปิดงาน</span></h5>
             <div class="d-flex align-items-center">
               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                 <i class="bi bi-table text-success"></i>
               </div>
               <div class="ps-3">
-                <h6>{{ repair_agent_wait.count }} รอดำเนินการ</h6>
-                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span
-                  class="text-muted small pt-2 ps-1">{{ repair_agent_done.count }} รายการ</span>
+                <h6>{{ close_job.count }} รายการ</h6>
+                <span class="text-success small pt-1 fw-bold">รออนุมัติปิดงาน</span> <span
+                  class="text-muted small pt-2 ps-1">{{ wait_close.count }} รายการ</span>
 
               </div>
             </div>
@@ -126,47 +125,6 @@
     </div>
     <!-- End Management -->
 
-    <!-- second row -->
-    <div class="col-xxl-4 col-md-6">
-      <div class="card info-card bg-card">
-        <a href="#">
-          <div class="card-body">
-            <h5 class="card-title">รอดำเนินการ <span>| ตามวงรอบ</span></h5>
-            <div class="d-flex align-items-center">
-              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                <i class="bi bi-tags text-info"></i>
-              </div>
-              <div class="ps-3">
-                <h6>{{ repair_job_wait.count }} รอดำเนินการ</h6>
-                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span
-                  class="text-muted small pt-2 ps-1">{{ repair_job_done.count }} รายการ</span>
-
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-
-    <div class="col-xxl-4 col-md-6">
-      <div class="card info-card bg-card">
-        <a href="#">
-          <div class="card-body">
-            <h5 class="card-title">รายการตรวจสอบใหม่ <span>| การแจ้งซ่อม</span></h5>
-            <div class="d-flex align-items-center">
-              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                <i class="bi bi-x-octagon text-secondary"></i>
-              </div>
-              <div class="ps-3">
-                <h6>{{ repair_recheck.count }} รายการ</h6>
-                <span class="text-success small pt-1 fw-bold">ยกเลิก</span> <span class="text-muted small pt-2 ps-1">{{ repair_reject.count }} รายการ</span>
-
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
     <!-- End List all -->
 
 
