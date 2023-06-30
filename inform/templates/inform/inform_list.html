@@ -46,7 +46,6 @@
                 <tr>
                   <th scope="col">เลขที่แจ้งซ่อม</th>
                   <th scope="col">ชื่อพัสดุ</th>
-                  <th scope="col">อาการ</th>
                   <th scope="col">สถานที่</th>
                   <th scope="col">ผู้แจ้ง</th>
                   <th scope="col">ความเร่งด่วน</th>
@@ -69,7 +68,6 @@
                       {{ object.stockitem.item_name }}
                     </a>
                   </td>
-                  <td>{{ object.issue|safe }}</td>
                   <td>
                     <a href="#">
                       {{ object.stockitem.location.name }}

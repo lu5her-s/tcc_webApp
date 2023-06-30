@@ -127,3 +127,23 @@ class InformImage(models.Model):
 
     def __str__(self):
         return f"{self.inform.pk} - {self.inform.created_at}"
+
+
+class InformProgress(models.Model):
+    """Progress Inform"""
+    inform = models.ForeignKey(
+        Inform,
+        on_delete=models.CASCADE,
+        related_name="inform_progress"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    note = models.TextField(null=True, blank=True)
+    status = models.CharField(
+        max_length=8,
+        choices=Inform.RepairStatus.choices,
+        default=Inform.RepairStatus.REPAIR,
+        null=True, blank=True
+    )
+
+    def __str__(self):
+        return f"{self.inform.pk} - {self.inform.created_at}"

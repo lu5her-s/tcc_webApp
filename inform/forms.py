@@ -4,7 +4,7 @@ from ckeditor.fields import RichTextFormField
 from repair.forms import widgets
 
 from asset.models import StockItem
-from .models import Inform
+from .models import Inform, InformProgress
 
 
 class InformForm(forms.ModelForm):
@@ -85,4 +85,28 @@ class ManagerCheckForm(forms.ModelForm):
             'assigned_to': widgets.Select(
                 attrs={'class': 'form-select'}
             )
+        }
+
+
+class ProgressForm(forms.ModelForm):
+    """ Form for progress """
+    class Meta:
+        model = InformProgress
+        fields = (
+            'note',
+            'status',
+        )
+        labels = {
+            'note': 'บันทึก',
+            'status': 'สถานะ',
+        }
+        widgets = {
+            'note': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                }
+            ),
+            'status': widgets.Select(
+                attrs={'class': 'form-select'}
+            ),
         }

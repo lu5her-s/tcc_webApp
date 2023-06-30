@@ -4,7 +4,7 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Repair{% endblock title %}
+{% block title %}Inform{% endblock title %}
 
 {% block content %}
 <div class="pagetitle">
@@ -12,7 +12,7 @@
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'repair:home' %}">Inform Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'inform:home' %}">Inform Home</a></li>
       <li class="breadcrumb-item active">แจ้งซ่อมเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</li>
     </ol>
   </nav>
@@ -87,14 +87,35 @@
 
                 <tr>
                   <th>สถานะ</th>
-                  {% if object.inform_status == 'INF' %}
-                  <td style="color:red;">
-                    {% else %}
-                    <td>
+                  {% if not object.approve_status %}
+                      {% if object.inform_status == 'INF' %}
+                        <td style="color:red;">
+                          <i class="bi bi-exclamation-circle" style="color: red;"></i>
+                      {% else %}
+                        <td>
                       {% endif %}
-                      {{ object.get_inform_status_display }}
-                    </td>
+                          {{ object.get_inform_status_display }}
+                        </td>
+                  
+                  {% elif object.approve_status == 'APR' %}
+                      <td>
+                        {{ object.get_approve_status_display }}
+                      </td>
+                  {% endif %}
                 </tr>
+
+                {% if object.repair_status %}
+                <tr>
+                  <th>สถานะการซ่อม</th>
+                  <td>
+                    {{ object.get_repair_status_display }}
+                    {% if object.repair_status == 'CLO' %}
+                      <i class="bi bi-check-circle" style="color: green;"></i>
+                    
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endif %}
 
                 <tr>
                   <th>ผู้แจ้ง</th>
@@ -109,6 +130,15 @@
                     เวลา {{ object.created_at|date:"H:i" }} น.
                   </td>
                 </tr>
+
+                {% if object.assigned_to %}
+                <tr>
+                  <th>ช่างผู้รับผิดชอบ</th>
+                  <td>
+                    {{ object.assigned_to }}
+                  </td>
+                </tr>
+                {% endif %}
               </table>
 
               <table class="table table-borderless">
@@ -171,7 +201,7 @@
               {% endif %}
 
               {% if request.user.profile == object.assigned_to %}
-              <h5 class="card-title">การตอบรับการมอบหมาย | <span>{{ object.title }}</span></h5>
+              <h5 class="card-title">การตอบรับ | <span>{{ object.title }}</span></h5>
               {% if not object.accepted %}
               <p>
               <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
@@ -213,16 +243,41 @@
 
             <div id="accept" class='tab-pane fade pt-3'>
               {% if request.user.profile == object.assigned_to %}
-              <h5 class="card-title">การตอบรับการมอบหมาย | <span>{{ object.title }}</span></h5>
-              <p>
-              <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
-              <span>
-                กรุณาตอบรับการมอบหมายงาน
-              <center>
-                <a href="{% url 'assign:accept' pk=object.pk %}" class="btn btn-success">ตอบรับงาน</a>
-              </center>
-              </span>
-              </p>
+              <h5 class="card-title">การตอบรับ | <span>{{ object.title }}</span></h5>{{ object.repair_status }}
+                {% if not object.accepted %}
+                  <p>
+                  <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
+                  <span>
+                    กรุณาตอบรับการมอบหมายงาน
+                    <center>
+                      <a href="{% url 'inform:accept' pk=object.pk %}" class="btn btn-success">ตอบรับงาน</a>
+                    </center>
+                  </span>
+                  </p>
+                {% else %}
+
+                {% if not object.repair_status == 'CLO' %}
+                
+                  <form method="post" enctype="multipart/form-data" action="">
+                    {% csrf_token %}
+                    {{ form.media }}
+                    <div class="row mb-3">
+                      <label for="{{ form.status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.status.label }}</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form.status }}
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <label for="{{ form.note.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.note.label }}</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form.note }}
+                      </div>
+                    </div>
+                    <input type="hidden" name="inform_id" value="{{ object.pk }}">
+                    <button class="btn btn-lg" style="float: right; background-color: purple; color: white;" type="submit">อัพเดท</button>
+                {% endif %}
+
+                {% endif %}
               {% endif %}
             </div>
 
@@ -267,9 +322,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form method="post" enctype="multipart/form-data">
+            <form method="post">
               {% csrf_token %}
-              {{ form.media }}
               <div class="row mb-3">
                 <label for="{{ manager_check.repair_category.name }}" class="col-md-4 col-lg-3 col-form-label">{{ manager_check.repair_category.label }}</label>
                 <div class="col-md-8 col-lg-9">
@@ -295,6 +349,20 @@
 
 
   </div>
+
+  <script>
+    $(document).ready(function(){
+      // if repair_category select option == 'AGN' disabled assigned_to field
+      $('select[name="repair_category"]').on('change', function(){
+        if($(this).val() == 'AGN'){
+          $('select[name="assigned_to"]').prop('disabled', true);
+        }else{
+          $('select[name="assigned_to"]').prop('disabled', false);
+        }
+      });
+    });
+
+  </script>
 </section>
 {% include 'components/photoswipe.html' %}
 {% endblock content %}

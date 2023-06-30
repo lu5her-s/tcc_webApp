@@ -31,4 +31,8 @@ urlpatterns = [
     # technical url
     path('accept/<int:pk>/', views.accept_inform,
          name='accept'),
+    path('tech/list/', views.InformTechnicalListView.as_view(),
+         name='tech_list'),
+    path('tech/progress/', views.InformInProgressListView.as_view(),
+         name='tech_progress'),
 ]

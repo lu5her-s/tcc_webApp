@@ -1,6 +1,6 @@
 import datetime
 from assign.views import Q
-from django.shortcuts import HttpResponse, redirect, render
+from django.shortcuts import HttpResponse, redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template import context
@@ -13,9 +13,9 @@ from django.views.generic import (
 )
 from asset.models import StockItemImage
 
-from inform.forms import InformForm, ManagerCheckForm
+from inform.forms import InformForm, InformProgress, ProgressForm, ManagerCheckForm
 
-from .models import Inform, InformImage, accepted
+from .models import Inform, InformImage
 
 # Create your views here.
 
@@ -32,7 +32,7 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
     TEMPLATE_NAMES = {
         'StaffRepair': 'inform/manager.html',
         'Technical': 'inform/technical.html',
-        'Command': 'inform/manager.html',
+        'Command': 'inform/command.html',
     }
 
     def get_template_names(self):
@@ -186,18 +186,21 @@ class InformDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['manager_check'] = ManagerCheckForm(instance=self.get_object())
+        context['form'] = ProgressForm(instance=self.get_object())
+        context['note'] = InformProgress.objects.filter(inform=self.get_object())
         return context
 
     def post(self, request, *args, **kwargs):
         form = ManagerCheckForm(request.POST, instance=self.get_object())
+
         if form.is_valid():
-            # print(form.cleaned_data)
-            # print(self.get_object().pk)
             inform = Inform.objects.get(pk=self.get_object().pk)
-            inform.repair_category = form.cleaned_data['repair_category']
-            inform.inform_status = form.cleaned_data['inform_status']
-            inform.assigned_to = form.cleaned_data['assigned_to']
+            # change inform_status to WAIT
             inform.inform_status = Inform.InformStatus.WAIT
+            inform.repair_category = form.cleaned_data['repair_category']
+            inform.assigned_to = form.cleaned_data['assigned_to']
+            print(inform)
+            print(form.cleaned_data)
             inform.save()
             # return redirect('inform:detail', pk=self.get_object().pk)
             return redirect(reverse_lazy('inform:detail', kwargs={'pk': self.get_object().pk}))
@@ -418,7 +421,7 @@ class InformWaitAgentListView(LoginRequiredMixin, ListView):
         return context
 
 
-class InformWaitListView(LoginRequiredMixin, ListView):
+class InformWaitJobListView(LoginRequiredMixin, ListView):
     """
     Wait for job assigned schedule
     """
@@ -450,8 +453,45 @@ class InformCancelListView(LoginRequiredMixin, ListView):
         )
 
 
+# Technical sector
+class InformTechnicalListView(LoginRequiredMixin, ListView):
+    template_name = 'inform/inform_list.html'
+    model = Inform
+
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            approve_status=Inform.ApproveStatus.APPROVE,
+            assigned_to=self.request.user.profile,
+            accepted=False
+        )
+
+
+class InformInProgressListView(LoginRequiredMixin, ListView):
+    template_name = 'inform/inform_list.html'
+    model = Inform
+
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            repair_status=Inform.RepairStatus.REPAIR,
+            assigned_to=self.request.user.profile,
+            accepted=True
+        )
+
+
 def accept_inform(request, pk):
     inform = get_object_or_404(Inform, pk=pk)
     inform.accepted = True
+    inform.repair_status = Inform.RepairStatus.REPAIR
     inform.save()
-    return redirect(reverse('inform:detail', kwargs={'pk': pk}))
+    return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
+
+
+def repair_note(request, pk):
+    inform = get_object_or_404(Inform, pk=pk)
+    repair_note = InformProgress.objects.create(
+        inform=inform,
+        repair_status=request.POST.get('status'),
+        note=request.POST.get('note')
+    )
+    repair_note.save()
+    return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
