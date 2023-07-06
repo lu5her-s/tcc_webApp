@@ -84,7 +84,13 @@
                     {% endif %}
                   </td>
                   {% if request.user|has_group:"Command" or request.user|has_group:"StaffRepair" %}
-                  <td>{{ object.get_inform_status_display }}</td>
+                    {% if object.approve_status %}
+                    <td>{{ object.get_approve_status_display }}</td>
+                    {% elif object.repair_status %}
+                    <td>{{ object.get_repair_status_display }}</td>
+                    {% else %}
+                    <td>{{ object.get_status_display }}</td>
+                    {% endif %}
                   {% endif %}
                 </tr>
                 {% endfor %}

@@ -21,7 +21,6 @@ from .models import Inform, InformImage
 
 # User sector
 
-
 class InformHomeView(LoginRequiredMixin, TemplateView):
 
     """
@@ -494,4 +493,12 @@ def repair_note(request, pk):
         note=request.POST.get('note')
     )
     repair_note.save()
+    return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
+
+
+# Command sector
+def inform_approve(request, pk):
+    inform = get_object_or_404(Inform, pk=pk)
+    inform.approve_status = Inform.ApproveStatus.APPROVE
+    inform.save()
     return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))

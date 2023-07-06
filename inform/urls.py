@@ -35,4 +35,8 @@ urlpatterns = [
          name='tech_list'),
     path('tech/progress/', views.InformInProgressListView.as_view(),
          name='tech_progress'),
+
+    # command url
+    path('command/approve/<int:pk>/', views.inform_approve,
+         name='command_approve'),
 ]
