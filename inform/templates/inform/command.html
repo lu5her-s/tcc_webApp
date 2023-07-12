@@ -79,7 +79,7 @@
   <hr />
   <br>
 
-  <h4>รายการสำหรับการจัดการ แจ้งซ่อม</h4>
+  <h4 class="fw-bold">รายการสำหรับการจัดการ แจ้งซ่อมสำหรับผู้บังคับบัญชา</h4>
   <div class="row">
     <!-- Management card -->
 
@@ -87,15 +87,15 @@
       <div class="card info-card bg-card">
         <a href="#">
           <div class="card-body">
-            <h5 class="card-title">รายการซ่อมด่วน <span>| รอดำเนินการ</span></h5>
+            <h5 class="card-title">รายการแจ้งซ่อมทั้งหมด <span>| รายการ</span></h5>
             <div class="d-flex align-items-center">
               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                 <i class="bi bi-wrench text-warning"></i>
               </div>
               <div class="ps-3">
-                <h6>{{ repair_urgency_wait.count }} รอดำเนินการ</h6>
-                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span
-                  class="text-muted small pt-2 ps-1">{{ repair_urgency_done.count }} รายการ</span>
+                <h6>{{ all_inform.count }} รายการ</h6>
+                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> 
+                <span class="text-muted small pt-2 ps-1">{{ all_done.count }} รายการ</span>
 
               </div>
             </div>
@@ -108,15 +108,15 @@
       <div class="card info-card bg-card">
         <a href="#">
           <div class="card-body">
-            <h5 class="card-title">ซ่อมโดย จนท. <span>| ประจำสถานี</span></h5>
+            <h5 class="card-title">รายการที่ยังไม่ดำเนินการ <span>| รายการ</span></h5>
             <div class="d-flex align-items-center">
               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                 <i class="bi bi-table text-success"></i>
               </div>
               <div class="ps-3">
-                <h6>{{ repair_agent_wait.count }} รอดำเนินการ</h6>
-                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span
-                  class="text-muted small pt-2 ps-1">{{ repair_agent_done.count }} รายการ</span>
+                <h6>{{ not_done.count }} รายการ</h6>
+                <span class="text-success small pt-1 fw-bold">ยังไม่ตอบรับ</span>
+                <span class="text-muted small pt-2 ps-1">{{ not_accept.count }} รายการ</span>
 
               </div>
             </div>

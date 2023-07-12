@@ -153,6 +153,22 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             repair_status=Inform.RepairStatus.COMPLETE
         )
 
+        # command dashboard
+        all_inform = Inform.objects.filter(
+            approve_status=Inform.ApproveStatus.APPROVE
+        )
+        all_done = Inform.objects.filter(
+           repair_status=Inform.RepairStatus.CLOSE 
+        )
+        not_done = Inform.objects.filter(
+            Q(approve_status=Inform.ApproveStatus.APPROVE) &
+            ~Q(repair_status=Inform.RepairStatus.CLOSE)
+        )
+        not_accept = Inform.objects.filter(
+            approve_status=Inform.ApproveStatus.APPROVE,
+            accepted=False
+        )
+
         context = {
             'inform_department': inform_department,
             'inform_department_done': inform_department_done,
@@ -172,12 +188,19 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             'in_progress': in_progress,
             'wait_job': wait_job,
             'close_job': close_job,
-            'wait_close': wait_close
+            'wait_close': wait_close,
+
+            # Command
+            'all_inform': all_inform,
+            'all_done': all_done,
+            'not_done': not_done,
+            'not_accept': not_accept,
         }
         return super().get_context_data(**context)
 
 
 class InformDetailView(LoginRequiredMixin, DetailView):
+    """ For show detail inform separate by user """
     template_name = "inform/inform_detail.html"
     model = Inform
     # queryset = Inform.objects.select_related()
@@ -203,6 +226,7 @@ class InformDetailView(LoginRequiredMixin, DetailView):
             inform.save()
             # return redirect('inform:detail', pk=self.get_object().pk)
             return redirect(reverse_lazy('inform:detail', kwargs={'pk': self.get_object().pk}))
+        return super().post(request, *args, **kwargs)
 
 
 class InformUserListView(LoginRequiredMixin, ListView):
@@ -464,6 +488,11 @@ class InformTechnicalListView(LoginRequiredMixin, ListView):
             accepted=False
         )
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รายการแจ้งซ่อม'
+        return context
+
 
 class InformInProgressListView(LoginRequiredMixin, ListView):
     template_name = 'inform/inform_list.html'
@@ -481,18 +510,20 @@ def accept_inform(request, pk):
     inform = get_object_or_404(Inform, pk=pk)
     inform.accepted = True
     inform.repair_status = Inform.RepairStatus.REPAIR
-    inform.save()
+    inform.save(update_fields=['accepted', 'repair_status'])
     return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
 
 
 def repair_note(request, pk):
     inform = get_object_or_404(Inform, pk=pk)
+    repair_status = request.POST.get('status')
+    note = request.POST.get('note')
     repair_note = InformProgress.objects.create(
         inform=inform,
-        repair_status=request.POST.get('status'),
-        note=request.POST.get('note')
+        repair_status=repair_status,
+        note=note
     )
-    repair_note.save()
+    # repair_note.save()
     return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
 
 
@@ -500,5 +531,5 @@ def repair_note(request, pk):
 def inform_approve(request, pk):
     inform = get_object_or_404(Inform, pk=pk)
     inform.approve_status = Inform.ApproveStatus.APPROVE
-    inform.save()
+    inform.save(update_fields=['approve_status'])
     return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
