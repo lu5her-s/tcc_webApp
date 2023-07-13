@@ -39,4 +39,6 @@ urlpatterns = [
     # command url
     path('command/approve/<int:pk>/', views.inform_approve,
          name='command_approve'),
+    path('command/reject/<int:pk>/', views.inform_reject,
+         name='command_reject'),
 ]

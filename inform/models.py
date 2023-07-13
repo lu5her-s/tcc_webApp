@@ -147,3 +147,18 @@ class InformProgress(models.Model):
 
     def __str__(self):
         return f"{self.inform.pk} - {self.inform.created_at}"
+
+
+# class form reject inform reason
+class InformReject(models.Model):
+    """Reject Inform"""
+    inform = models.ForeignKey(
+        Inform,
+        on_delete=models.CASCADE,
+        related_name="inform_reject"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    reason = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.inform.pk} - {self.inform.created_at}"

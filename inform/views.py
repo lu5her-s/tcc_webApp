@@ -533,3 +533,9 @@ def inform_approve(request, pk):
     inform.approve_status = Inform.ApproveStatus.APPROVE
     inform.save(update_fields=['approve_status'])
     return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
+
+def inform_reject(request, pk):
+    inform = get_object_or_404(Inform, pk=pk)
+    inform.approve_status = Inform.ApproveStatus.REJECT
+    inform.save(update_fields=['approve_status'])
+    return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))

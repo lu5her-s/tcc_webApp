@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-from .models import Inform
+from .models import Inform, InformProgress
 
 # Register your models here.
 
@@ -10,7 +10,7 @@ from .models import Inform
 @admin.register(Inform)
 class InformAdmin(admin.ModelAdmin):
     # list_display = ('urgency', 'issue_safe', 'issue_category', 'full_name', 'created_at')
-    list_display_links = ('issue_safe',)
+    list_display_links = ('issue_safe', 'id_inform')
     list_filter = ('created_at',)
     search_fields = ('issue',)
 
@@ -44,6 +44,18 @@ class InformAdmin(admin.ModelAdmin):
             return obj.urgency
     colored_urgency.short_description = 'Urgency'
 
-    list_display = ('colored_urgency', 'issue_safe', 'issue_category',
-                    'full_name', 'created_at')
+    # change name pk to id_inform
+    def id_inform(self, obj):
+        created_at = obj.created_at.year + 543
+        inform = f'{obj.pk}/{created_at}'
+        return inform
 
+    list_display = ('id_inform', 'colored_urgency', 'issue_safe', 'issue_category',
+                    'full_name', 'created_at')
+    # change name field pk to id in list_display
+
+
+@admin.register(InformProgress)
+class InformProgressAdmin(admin.ModelAdmin):
+    list_display = ('inform', 'note', 'status')
+    raw_id_fields = ('inform',)

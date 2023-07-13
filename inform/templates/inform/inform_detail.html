@@ -309,7 +309,7 @@
         {% comment %}
         <a href="{% url 'inform:command_approve' pk=object.pk %}" class="btn btn-lg btn-success">อนุมัติ</a>
         {% endcomment %}
-        <a href="#" class="btn btn-lg btn-danger">ไม่อนุมัติ</a>
+        <button type="button" class="btn btn-lg btn-danger" data-bs-toggle="modal" data-bs-target="#confirm_reject">ไม่อนุมัติ</button
         {% else %}
         <a href="{% url 'inform:manager_wait' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
         {% endif %}
@@ -370,6 +370,30 @@
             <form method="post" action="{% url 'inform:command_approve' pk=object.pk %}">
               {% csrf_token %}
               <p>ใบแจ้งซ่อมเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</p>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                <button type="submit" class="btn btn-primary">ยืนยัน</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- modal for confirm_reject -->
+    <div class="modal fade" id="confirm_reject">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">ยืนยันการไม่อนุมัติ</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="{% url 'inform:command_reject' pk=object.pk %}">
+              {% csrf_token %}
+              <p>ใบแจ้งซ่อมเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</p>
+              <input type="hidden" name="inform_id" value="{{ object.pk }}">
+              <textarea type="text" name="reason" class="form-control" rows="3" placeholder="รายละเอียดการไม่อนุมัติ"></textarea>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
                 <button type="submit" class="btn btn-primary">ยืนยัน</button>
