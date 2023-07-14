@@ -15,7 +15,7 @@ from asset.models import StockItemImage
 
 from inform.forms import InformForm, InformProgress, ProgressForm, ManagerCheckForm
 
-from .models import Inform, InformImage
+from .models import Inform, InformImage, InformReject
 
 # Create your views here.
 
@@ -210,6 +210,7 @@ class InformDetailView(LoginRequiredMixin, DetailView):
         context['manager_check'] = ManagerCheckForm(instance=self.get_object())
         context['form'] = ProgressForm(instance=self.get_object())
         context['note'] = InformProgress.objects.filter(inform=self.get_object())
+        context['reason'] = InformReject.objects.get(inform=self.get_object())
         return context
 
     def post(self, request, *args, **kwargs):
@@ -538,4 +539,8 @@ def inform_reject(request, pk):
     inform = get_object_or_404(Inform, pk=pk)
     inform.approve_status = Inform.ApproveStatus.REJECT
     inform.save(update_fields=['approve_status'])
+    reject = InformReject.objects.create(
+        inform=inform,
+        reason=request.POST.get('reason')
+    )
     return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))

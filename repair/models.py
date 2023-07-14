@@ -133,11 +133,6 @@ class Repair(models.Model):
         on_delete=models.CASCADE,
         related_name='inform_repair'
     )
-    operator = models.ForeignKey(
-        Profile,
-        on_delete=models.CASCADE,
-        related_name='repair_operator'
-    )
     comment = RichTextField(null=True, blank=True)
     cost = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

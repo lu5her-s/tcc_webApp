@@ -40,6 +40,14 @@
             </li>
             
             {% endif %}
+          
+            {% if reason %}
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#approve">
+                ไม่อนุมัติ
+              </button>
+            </li>
+            {% endif %}
 
             {% if approve %}
             
@@ -101,6 +109,10 @@
                       <td>
                         {{ object.get_approve_status_display }}
                       </td>
+                  {% elif object.approve_status == 'RJT' %}
+                      <td>
+                        {{ object.get_approve_status_display }}{{ reason }}
+                      </td>
                   {% endif %}
                 </tr>
 
@@ -131,6 +143,24 @@
                   </td>
                 </tr>
 
+              </table>
+              <br>
+
+              <table class="table">
+                {% if object.repair_category %}
+                <!-- tr col span 2 for description -->
+                <tr>
+                  <th colspan="2" class="text-center">รายละเอียดการจัดการ</th>
+                </tr>
+
+                <tr>
+                  <th>ประเภทการซ่อม</th>
+                  <td>
+                    {{ object.get_repair_category_display }}
+                  </td>
+                </tr>
+
+                {% endif %}
                 {% if object.assigned_to %}
                 <tr>
                   <th>ช่างผู้รับผิดชอบ</th>
@@ -140,6 +170,7 @@
                 </tr>
                 {% endif %}
               </table>
+              <br>
 
               <table class="table table-borderless">
                 <tr>
@@ -188,7 +219,20 @@
                 </tr>
                 {% endfor %}
               </table>
+
+              {% elif reason %}
+              <h5 class='card-title'>ไม่อนุมัติการแจ้งซ่อม | <span>{{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h5>
+              <table class="table table-borderless">
+                <tr>
+                  <th>เหตุผล</th>
+                  <td>
+                    {{ reason.reason|safe|linebreaks }}
+                  </td>
+                </tr>
+              </table>
+
               {% else %}
+              
               {% if request.user == object.author %}
               <h5><i class="bi bi-x-circle" style="color: red;">ยังไม่ตอบรับการมอบหมายงาน</i></h5>
               <p>รอ 
@@ -295,22 +339,20 @@
         <a href="#" class="btn btn-lg btn-danger">ลบ</a>
         <a href="#" class="btn btn-lg btn-warning">ยกเลิก</a>
         {% endif %}
-        {% if request.user|has_group:"StaffRepair" %}
+        {% if request.user|has_group:"StaffRepair" and not object.approve_status %}
         <a href="{% url 'inform:manager_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-        {% comment %}
-        <a href="{% url 'inform:update' pk=object.pk %}" class="btn btn-lg btn-success">ตรวจสอบ</a>
-        {% endcomment %}
+
         <!-- Create button open modal -->
         <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#manager_check">ตรวจสอบ</button>
-        {% elif request.user|has_group:"Command" and not object.approve_status == "APR" %}
+       
+        {% elif request.user|has_group:"Command" and not object.approve_status %}
+       
         <!-- make button approve and reject -->
         <!-- button approve when click show confirm box -->
         <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_approve">อนุมัติ</button>
-        {% comment %}
-        <a href="{% url 'inform:command_approve' pk=object.pk %}" class="btn btn-lg btn-success">อนุมัติ</a>
-        {% endcomment %}
-        <button type="button" class="btn btn-lg btn-danger" data-bs-toggle="modal" data-bs-target="#confirm_reject">ไม่อนุมัติ</button
+        <button type="button" class="btn btn-lg btn-danger" data-bs-toggle="modal" data-bs-target="#confirm_reject">ไม่อนุมัติ</button>
         {% else %}
+        
         <a href="{% url 'inform:manager_wait' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
         {% endif %}
       </div>
@@ -318,7 +360,6 @@
       <div class="container float-start text-center">
         <a href="{% url 'repair:inform' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
         <a href="{% url 'home' %}" class="btn btn-lg btn-info">หน้าหลัก</a>
-        {% comment %}<a href="#" class="btn btn-lg btn-success">ปิดงาน</a>{% endcomment %}
       </div>
       {% endif %}
 

@@ -8,50 +8,15 @@ from asset.models import StockItem
 from inform.models import Inform, InformImage
 
 
-class InformForm(forms.ModelForm):
-    images = forms.ImageField(
-        widget=widgets.ClearableFileInput(
-            attrs={
-                'class': 'form-control',
-                'multiple': True
-            }
-        ),
-        label='ภาพประกอบ',
-        required=False
-    )
-
+# repair form for save data to model
+class RepairForm(forms.ModelForm):
     class Meta:
-        model = Inform
+        model = Repair
         fields = (
-            'urgency',
-            'stockitem',
-            'issue_category',
-            'issue',
-            'customer',
+            'comment',
+            'cost',
         )
-        widgets = {
-            'stockitem': widgets.Select(
-                attrs={'class': 'form-select'}
-            ),
-            'issue_category': widgets.Select(
-                attrs={'class': 'form-select'}
-            ),
-            'issue': RichTextFormField(),
-            'urgency': widgets.Select(
-                attrs={'class': 'form-select'}
-            ),
-        }
         labels = {
-            'urgency': 'ความเร่งด่วน',
-            'stockitem': 'พัสดุที่แจ้งซ่อม',
-            'issue_category': 'ประเภทการแจ้งซ่อม',
-            'issue': 'อาการ/สาเหตุ',
-            'customer': 'ผู้แจ้ง',
+            'comment': 'รายละเอียด',
+            'cost': 'ค่าใช้จ่าย',
         }
-
-    def __init__(self, request, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # field stockitem query only in user.profile.department
-        self.fields['stockitem'].queryset = StockItem.objects.filter(
-            location=request.user.profile.department
-        )

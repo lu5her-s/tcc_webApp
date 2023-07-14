@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-from .models import Inform, InformProgress
+from .models import Inform, InformProgress, InformReject
 
 # Register your models here.
 
@@ -59,3 +59,10 @@ class InformAdmin(admin.ModelAdmin):
 class InformProgressAdmin(admin.ModelAdmin):
     list_display = ('inform', 'note', 'status')
     raw_id_fields = ('inform',)
+
+
+@admin.register(InformReject)
+class InformRejectAdmin(admin.ModelAdmin):
+    list_display = ('inform', 'reason',)
+    raw_id_fields = ('inform',)
+
