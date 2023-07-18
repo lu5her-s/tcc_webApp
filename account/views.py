@@ -94,7 +94,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
             context['inform_department'] = Inform.objects.filter(
                 customer__profile__department=self.request.user.profile.department
             )
-        
+        context['informs'] = Inform.objects.all()
 
         return context
 

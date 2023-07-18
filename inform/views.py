@@ -71,6 +71,7 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
         # user section
         inform_department = Inform.objects.filter(
             customer__profile__department=department,
+            deleted=False
         )
 
         today_min = datetime.datetime.combine(
@@ -108,6 +109,7 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
         # manager section
         wait_check = Inform.objects.filter(
             inform_status=Inform.InformStatus.INFORM,
+            deleted=False
         )
         wait_today = Inform.objects.filter(
             inform_status=Inform.InformStatus.INFORM,
@@ -115,7 +117,7 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
         )
         wait_approve = Inform.objects.filter(
             Q(inform_status=Inform.InformStatus.WAIT) &
-            ~Q(approve_status=Inform.ApproveStatus.APPROVE)
+            Q(deleted=False)
         )
         wait_approve_today = Inform.objects.filter(
             inform_status=Inform.InformStatus.WAIT,
@@ -210,7 +212,8 @@ class InformDetailView(LoginRequiredMixin, DetailView):
         context['manager_check'] = ManagerCheckForm(instance=self.get_object())
         context['form'] = ProgressForm(instance=self.get_object())
         context['note'] = InformProgress.objects.filter(inform=self.get_object())
-        context['reason'] = InformReject.objects.get(inform=self.get_object())
+        if InformReject.objects.filter(inform=self.get_object()):
+            context['reason'] = InformReject.objects.get(inform=self.get_object())
         return context
 
     def post(self, request, *args, **kwargs):
@@ -330,7 +333,7 @@ class InformCreateView(LoginRequiredMixin, CreateView):
                         images=img
                     )
                     a_img.save()
-        return redirect(reverse('inform:user_list'))
+        return redirect(reverse_lazy('inform:user_list'))
 
 
 class InformUpdateView(LoginRequiredMixin, DetailView):
@@ -532,6 +535,7 @@ def repair_note(request, pk):
 def inform_approve(request, pk):
     inform = get_object_or_404(Inform, pk=pk)
     inform.approve_status = Inform.ApproveStatus.APPROVE
+    inform.inform_status = None
     inform.save(update_fields=['approve_status'])
     return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
 

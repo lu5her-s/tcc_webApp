@@ -82,7 +82,8 @@ class Inform(models.Model):
     inform_status = models.CharField(
         max_length=8,
         choices=InformStatus.choices,
-        default=InformStatus.INFORM
+        default=InformStatus.INFORM,
+        null=True, blank=True
     )
     approve_status = models.CharField(
         max_length=8,
@@ -108,6 +109,7 @@ class Inform(models.Model):
         null=True, blank=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.stockitem.item_name}-{self.created_at}"

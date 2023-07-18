@@ -221,49 +221,53 @@
                     <table class="table table-borderless" id="repairTable">
                       <thead>
                         <tr>
-                          <th scope="col">Dummy</th>
-                          <th scope="col">Dummy</th>
-                          <th scope="col">Dummy</th>
-                          <th scope="col">Dummy</th>
-                          <th scope="col">Dummy</th>
+                          <th scope="col">#</th>
+                          <th scope="col">ผู้แจ้ง</th>
+                          <th scope="col">พัสดุ</th>
+                          <th scope="col">ความเร่งด่วน</th>
+                          <th scope="col">สถานะ</th>
                         </tr>
                       </thead>
                       <tbody>
+                        {% for inform in informs %}
                         <tr>
-                          <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
-                          <td><a href="#" class="text-primary fw-bold">Ut inventore ipsa voluptas nulla</a></td>
-                          <td>$64</td>
-                          <td class="fw-bold">124</td>
-                          <td>$5,828</td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
-                          <td><a href="#" class="text-primary fw-bold">Exercitationem similique doloremque</a></td>
-                          <td>$46</td>
-                          <td class="fw-bold">98</td>
-                          <td>$4,508</td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
-                          <td><a href="#" class="text-primary fw-bold">Doloribus nisi exercitationem</a></td>
-                          <td>$59</td>
-                          <td class="fw-bold">74</td>
-                          <td>$4,366</td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
-                          <td><a href="#" class="text-primary fw-bold">Officiis quaerat sint rerum error</a></td>
-                          <td>$32</td>
-                          <td class="fw-bold">63</td>
-                          <td>$2,016</td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#"><img src="{% static 'assets/img/profile.png' %}" alt=""></a></th>
-                          <td><a href="#" class="text-primary fw-bold">Sit unde debitis delectus repellendus</a></td>
-                          <td>$79</td>
-                          <td class="fw-bold">41</td>
-                          <td>$3,239</td>
-                        </tr>
+                          <th scope="row"><a href="{% url 'inform:detail' pk=inform.pk %}">{{ inform.pk }}/{{ inform.created_at.year|thaiyear }}</a></th>
+                          {% if inform.customer.profile %}
+                          <td>{{ inform.customer.profile }}</td>
+                          {% else %}
+                          <td>{{ inform.customer }}</td>
+                          {% endif %}
+                          <td>{{ inform.stockitem.item_name }}</td>
+                          <td class="fw-bold">{{ inform.get_urgency_display }}</td>
+                          {% if not inform.approve_status %}
+                          {% if inform.inform_status == 'INF' %}
+                          <td style="color:red;">
+                            <i class="bi bi-exclamation-circle" style="color: red;"></i>
+                            {% else %}
+                            <td>
+                              {% endif %}
+                              <span class="badge bg-info">
+                                {{ inform.get_inform_status_display }}
+                              </span>
+                            </td>
+
+
+                            {% elif inform.approve_status == 'APR' %}
+                            <td>
+                              <span class="badge bg-success">
+                              {{ inform.get_approve_status_display }}
+                              </span>
+                            </td>
+                            {% elif inform.approve_status == 'RJT' %}
+                            <td>
+                              <span class="badge bg-danger">
+                              {{ inform.get_approve_status_display }}
+                              </span>
+                            </td>
+                            {% endif %}
+                          </td>
+                        
+                        {% endfor %}
                       </tbody>
                     </table>
 

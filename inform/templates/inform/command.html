@@ -21,32 +21,6 @@
 
 <section class="section dashboard">
   <div class="row justify-content-center">
-    <!-- new repair -->
-    <div class="col-xxl-4 col-md-6">
-      <div class="card info-card bg-card">
-        <a href="{% url 'inform:manager_list' %}">
-          <div class="card-body">
-            <h5 class="card-title">รายการแจ้งซ่อม <span>| ยังไม่ได้ตรวจสอบ</span></h5>
-            <div class="d-flex align-items-center">
-              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                <i class="bi bi-exclamation-octagon text-danger"></i>
-              </div>
-              <div class="ps-3">
-                <h6>{{ wait_check.count }} รายการแจ้งซ่อม</h6>
-                <span class="text-success small pt-1 fw-bold">
-                  วันนี้
-                </span>
-                <span class="text-muted small pt-2 ps-1">
-                  {{ wait_today.count }} รายการ
-                </span>
-
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-    <!-- end new repair -->
 
     <!-- wait approve -->
     <div class="col-xxl-4 col-md-6">

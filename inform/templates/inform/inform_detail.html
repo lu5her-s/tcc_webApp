@@ -111,10 +111,17 @@
                       </td>
                   {% elif object.approve_status == 'RJT' %}
                       <td>
-                        {{ object.get_approve_status_display }}{{ reason }}
+                        {{ object.get_approve_status_display }}
                       </td>
                   {% endif %}
                 </tr>
+
+                {% if object.approve_status == 'RJT' %}
+                <tr>
+                  <th>เหตุผล</th>
+                  <td>{{ reason.reason }}</td>
+                </tr>
+                {% endif %}
 
                 {% if object.repair_status %}
                 <tr>
@@ -336,7 +343,6 @@
       <div class="container float-start text-center">
         {% if request.user == object.customer %}
         <a href="{% url 'inform:department_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-        <a href="#" class="btn btn-lg btn-danger">ลบ</a>
         <a href="#" class="btn btn-lg btn-warning">ยกเลิก</a>
         {% endif %}
         {% if request.user|has_group:"StaffRepair" and not object.approve_status %}
@@ -351,14 +357,11 @@
         <!-- button approve when click show confirm box -->
         <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_approve">อนุมัติ</button>
         <button type="button" class="btn btn-lg btn-danger" data-bs-toggle="modal" data-bs-target="#confirm_reject">ไม่อนุมัติ</button>
-        {% else %}
         
-        <a href="{% url 'inform:manager_wait' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
         {% endif %}
       </div>
       {% else %}
       <div class="container float-start text-center">
-        <a href="{% url 'repair:inform' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
         <a href="{% url 'home' %}" class="btn btn-lg btn-info">หน้าหลัก</a>
       </div>
       {% endif %}
