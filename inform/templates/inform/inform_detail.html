@@ -153,8 +153,8 @@
               </table>
               <br>
 
+              {% if object.repair_category %}
               <table class="table">
-                {% if object.repair_category %}
                 <!-- tr col span 2 for description -->
                 <tr>
                   <th colspan="2" class="text-center">รายละเอียดการจัดการ</th>
@@ -164,20 +164,21 @@
                   <th>ประเภทการซ่อม</th>
                   <td>
                     {{ object.get_repair_category_display }}
+                    {{ images }}
                   </td>
                 </tr>
 
-                {% endif %}
-                {% if object.assigned_to %}
+              {% endif %}
+              {% if object.assigned_to %}
                 <tr>
                   <th>ช่างผู้รับผิดชอบ</th>
                   <td>
                     {{ object.assigned_to }}
                   </td>
                 </tr>
-                {% endif %}
               </table>
               <br>
+              {% endif %}
 
               <table class="table table-borderless">
                 <tr>
@@ -349,7 +350,7 @@
         <a href="{% url 'inform:manager_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
 
         <!-- Create button open modal -->
-        <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#manager_check">ตรวจสอบ</button>
+        <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#manager_check">จัดการ</button>
        
         {% elif request.user|has_group:"Command" and not object.approve_status %}
        

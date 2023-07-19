@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from inform.views import InformImage
 
 from .models import Inform, InformProgress, InformReject
 
@@ -66,3 +67,4 @@ class InformRejectAdmin(admin.ModelAdmin):
     list_display = ('inform', 'reason',)
     raw_id_fields = ('inform',)
 
+admin.site.register(InformImage)

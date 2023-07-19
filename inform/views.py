@@ -117,12 +117,41 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
         )
         wait_approve = Inform.objects.filter(
             Q(inform_status=Inform.InformStatus.WAIT) &
+            ~Q(approve_status=Inform.ApproveStatus.APPROVE) &
             Q(deleted=False)
         )
         wait_approve_today = Inform.objects.filter(
             inform_status=Inform.InformStatus.WAIT,
             created_at__range=(today_min, today_max)
         )
+        urgency_wait = Inform.objects.filter(
+            inform_status=Inform.InformStatus.WAIT,
+            repair_category=Inform.RepairCategory.URGENCY
+        )
+        urgency_done = Inform.objects.filter(
+            repair_status=Inform.RepairStatus.CLOSE,
+            repair_category=Inform.RepairCategory.URGENCY
+        )
+        agent_wait = Inform.objects.filter(
+            inform_status=Inform.InformStatus.WAIT,
+            repair_category=Inform.RepairCategory.AGENT
+        )
+        agent_done = Inform.objects.filter(
+            repair_status=Inform.RepairStatus.CLOSE,
+            repair_category=Inform.RepairCategory.AGENT
+        )
+        job_wait = Inform.objects.filter(
+            inform_status=Inform.InformStatus.WAIT,
+            repair_category=Inform.RepairCategory.WAIT
+        )
+        job_done = Inform.objects.filter(
+            repair_status=Inform.RepairStatus.CLOSE,
+            repair_category=Inform.RepairCategory.WAIT
+        )
+        recheck = Inform.objects.filter(
+            approve_status=Inform.ApproveStatus.REJECT
+        )
+        
 
         # technical dashboard
         wait_accept = Inform.objects.filter(
@@ -170,6 +199,9 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             approve_status=Inform.ApproveStatus.APPROVE,
             accepted=False
         )
+        reject = Inform.objects.filter(
+            approve_status=Inform.ApproveStatus.REJECT
+        )
 
         context = {
             'inform_department': inform_department,
@@ -184,6 +216,13 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             'wait_today': wait_today,
             'wait_approve': wait_approve,
             'wait_approve_today': wait_approve_today,
+            'urgency_wait': urgency_wait,
+            'urgency_done': urgency_done,
+            'agent_wait': agent_wait,
+            'agent_done': agent_done,
+            'job_wait': job_wait,
+            'job_done': job_done,
+            'recheck': recheck,
 
             # Technical
             'wait_accept': wait_accept,
@@ -197,6 +236,7 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             'all_done': all_done,
             'not_done': not_done,
             'not_accept': not_accept,
+            'reject': reject,
         }
         return super().get_context_data(**context)
 
@@ -212,6 +252,7 @@ class InformDetailView(LoginRequiredMixin, DetailView):
         context['manager_check'] = ManagerCheckForm(instance=self.get_object())
         context['form'] = ProgressForm(instance=self.get_object())
         context['note'] = InformProgress.objects.filter(inform=self.get_object())
+        context['images'] = InformImage.objects.filter(inform=self.get_object())
         if InformReject.objects.filter(inform=self.get_object()):
             context['reason'] = InformReject.objects.get(inform=self.get_object())
         return context

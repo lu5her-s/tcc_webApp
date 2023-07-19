@@ -30,7 +30,7 @@
             <h5 class="card-title">รายการรออนุมัติ <span>| รออนุมัติ</span></h5>
             <div class="d-flex align-items-center">
               <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                <i class="bi bi-bookmark-check text-warning"></i>
+                <i class="bi bi-shield-exclamation text-warning"></i>
               </div>
               <div class="ps-3">
                 <h6>{{ wait_approve.count }} รายการรออนุมัติ</h6>
@@ -101,26 +101,6 @@
     <!-- End Management -->
 
     <!-- second row -->
-    <div class="col-xxl-4 col-md-6">
-      <div class="card info-card bg-card">
-        <a href="#">
-          <div class="card-body">
-            <h5 class="card-title">รอดำเนินการ <span>| ตามวงรอบ</span></h5>
-            <div class="d-flex align-items-center">
-              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                <i class="bi bi-tags text-info"></i>
-              </div>
-              <div class="ps-3">
-                <h6>{{ repair_job_wait.count }} รอดำเนินการ</h6>
-                <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span
-                  class="text-muted small pt-2 ps-1">{{ repair_job_done.count }} รายการ</span>
-
-              </div>
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
 
     <div class="col-xxl-4 col-md-6">
       <div class="card info-card bg-card">
@@ -132,7 +112,7 @@
                 <i class="bi bi-x-octagon text-secondary"></i>
               </div>
               <div class="ps-3">
-                <h6>{{ repair_recheck.count }} รายการ</h6>
+                <h6>{{ reject.count }} รายการ</h6>
                 <span class="text-success small pt-1 fw-bold">ยกเลิก</span> <span class="text-muted small pt-2 ps-1">{{ repair_reject.count }} รายการ</span>
 
               </div>
@@ -141,6 +121,26 @@
         </a>
       </div>
     </div>
+
+    <div class="col-xxl-4 col-md-6">
+      <div class="card info-card bg-card">
+        <a href="#">
+          <div class="card-body">
+            <h5 class="card-title">รายงานการดำเนินการ<span>|</span></h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-tags text-info"></i>
+              </div>
+              <div class="ps-3">
+                <h6>สรุปการดำเนินการ</h6>
+
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
     <!-- End List all -->
 
 
