@@ -4,11 +4,12 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Car Management{% endblock title %}
+{% block title %}{{ object.item_name }}{% endblock title %}
 
 {% block content %}
 <div class="pagetitle">
-  <h1>{{ object.item_name }} หมายเลข {{ object.serial }}</h1>
+  <h1>พัสดุ {{ object.item_name }}</h1>
+  <p> หมายเลข {{ object.serial }}</p>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>

@@ -133,7 +133,6 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
         if form.is_valid():
             images = request.FILES.getlist('images')
             # save images to StockItemImage
-            permissions = Permission.objects.filter(user=self.request.user)
             stockitem = form.save(commit=False)
             stockitem.save()
 

@@ -39,7 +39,7 @@ def document_not_accepted(request):
 
 def new_inform(request):
     try:
-        if request.user.groups.filter(name__in=['StaffRepair', 'Technical']).exists():
+        if request.user.groups.filter(name__in=['Manager', 'Technical', 'Command']).exists():
             new_inform = Inform.objects.filter(
                 inform_status=Inform.InformStatus.INFORM
                 )
@@ -67,7 +67,7 @@ def count_total(request):
             reciever__profile__sector=request.user.profile.sector)
         document_not_accepted_count = abs(len(all_inbox) - len(all_department))
         new_inform_count = 0
-        if request.user.groups.filter(name__in=['StaffRepair', 'Technical']).exists():
+        if request.user.groups.filter(name__in=['Manager', 'Technical', 'Command']).exists():
             new_inform_count = Inform.objects.filter(
                 inform_status=Inform.InformStatus.INFORM
                 ).count()
