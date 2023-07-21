@@ -196,3 +196,6 @@ JAZZMIN_SETTINGS = {
     "site_logo": "assets/img/logo.png",
     "copyright": "Telecommunication and Network",
 }
+
+# for use out by ngrok-free
+CSRF_TRUSTED_ORIGINS = ["https://*.ngrok-free.app"]

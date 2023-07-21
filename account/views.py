@@ -94,7 +94,9 @@ class HomeView(LoginRequiredMixin, TemplateView):
             context['inform_department'] = Inform.objects.filter(
                 customer__profile__department=self.request.user.profile.department
             )
-        context['informs'] = Inform.objects.all()
+        context['informs'] = Inform.objects.filter(
+            created_at__range=(today_min, today_max)
+        )
 
         return context
 
