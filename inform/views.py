@@ -1,4 +1,6 @@
 import datetime
+import re
+from account.models import LineToken
 from assign.views import Q
 from django.shortcuts import HttpResponse, redirect, render, get_object_or_404
 from django.urls import reverse_lazy
@@ -11,6 +13,7 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
+from config.sendline import Sendline
 from asset.models import StockItemImage
 
 from inform.forms import InformForm, InformProgress, ProgressForm, ManagerCheckForm
@@ -354,7 +357,8 @@ class InformCreateView(LoginRequiredMixin, CreateView):
     form_class = InformForm
 
     def get_success_url(self):
-        return reverse('inform:user_list')
+        pk = self.get_object().pk
+        return reverse_lazy('inform:detail', kwargs={'pk': pk})
 
     def get(self, request, *args, **kwargs):
         context = {
@@ -362,19 +366,40 @@ class InformCreateView(LoginRequiredMixin, CreateView):
         }
         return render(request, self.template_name, context)
 
+    def remove_html(self, text):
+        return re.sub('<[^<]+?>', '', text)
+
     def post(self, request, *args, **kwargs):
         form = self.form_class(request, request.POST, request.FILES)
         if form.is_valid():
             inform = form.save()
-            if request.FILES:
-                images = request.FILES.getlist('images')
+            token = LineToken.objects.get(name='Manager').token
+            images = request.FILES.getlist('images') if 'images' in request.FILES else None
+            if images:
                 for img in images:
                     a_img = InformImage.objects.create(
                         inform=inform,
                         images=img
                     )
                     a_img.save()
-        return redirect(reverse_lazy('inform:user_list'))
+            host = request.get_host()
+            path = reverse_lazy('inform:detail', kwargs={'pk': inform.pk})
+            url  = 'http://' + host + path
+            issue_clear = self.remove_html(form.cleaned_data['issue'])
+            body = ''
+            head = '\nมีแจ้งซ่อมใหม่: '
+            body += f'\nหมายเลขใบแจ้งซ่อม : {inform.pk}/{inform.created_at.year+543}'
+            body += f'\nวันที่แจ้งซ่อม : {inform.created_at.strftime("%d/%m/%Y")}'
+            body += f'\nความเร่งด่วน : {inform.get_urgency_display()}'
+            body += f'\nสถานที่ : {inform.customer.profile.department}'
+            body += f'\nผู้แจ้งซ่อม : {inform.customer.profile if inform.customer.profile else inform.customer}'
+            body += f'\nอุปกรณ์ที่แจ้งซ่อม : {inform.stockitem.item_name}'
+            body += f'\nอาการ : \n{issue_clear}'
+            body += f'\n\nurl : {url}'
+
+            line  = Sendline(token)
+            line.sendtext(head + body)
+        return redirect(reverse_lazy('inform:home'))
 
 
 class InformUpdateView(LoginRequiredMixin, DetailView):

@@ -42,7 +42,7 @@ class InformAdmin(admin.ModelAdmin):
         if obj.urgency == 'HIG':
             return format_html('<span style="color: #FF0000;">{}</span>', obj.get_urgency_display())
         else:
-            return obj.urgency
+            return obj.get_urgency_display()
     colored_urgency.short_description = 'Urgency'
 
     # change name pk to id_inform
