@@ -66,6 +66,11 @@
               <h6 class="card-title"> รายละเอียด | <span>แจ้งซ่อมเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h6>
               <table class="table">
                 <tr>
+                  <th>หมายเลขการแจ้งซ่อม</th>
+                  <td>{{ object.pk }}/{{ object.created_at.year|thaiyear }}</td>
+                </tr>
+
+                <tr>
                   <th>ประเภทการแจ้งซ่อม</th>
                   <td>{{ object.get_issue_category_display  }}</td>
                 </tr>
@@ -164,7 +169,6 @@
                   <th>ประเภทการซ่อม</th>
                   <td>
                     {{ object.get_repair_category_display }}
-                    {{ images }}
                   </td>
                 </tr>
 
@@ -344,13 +348,21 @@
       <div class="container float-start text-center">
         {% if request.user == object.customer %}
         <a href="{% url 'inform:department_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-        <a href="#" class="btn btn-lg btn-warning">ยกเลิก</a>
+
+          {% if object.approve_status %}
+          <a href="#" class="btn btn-lg btn-success">ปิดงาน</a>
+
+          {% else %}
+          <a href="#" class="btn btn-lg btn-warning">ยกเลิก</a>
+          {% endif %}
         {% endif %}
         {% if request.user|has_group:"StaffRepair" and not object.approve_status %}
         <a href="{% url 'inform:manager_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
 
+        {% if not object.repair_category %}
         <!-- Create button open modal -->
         <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#manager_check">จัดการ</button>
+        {% endif %}
        
         {% elif request.user|has_group:"Command" and not object.approve_status %}
        

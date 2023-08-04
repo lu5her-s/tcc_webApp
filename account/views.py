@@ -9,7 +9,7 @@ import datetime
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.contenttypes.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.shortcuts import HttpResponseRedirect, get_object_or_404, redirect, render
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm,   UserCreationForm
@@ -173,9 +173,14 @@ class ChangePassword(LoginRequiredMixin, PasswordChangeView):
 
 
 class MembersListView(LoginRequiredMixin, ListView):
-    model = User
+    model = Profile
     template_name = 'account/members.html'
-    queryset = User.objects.all().exclude(is_superuser=True)
+    
+    def get_queryset(self):
+        # all profile exclude is_superuser
+        return Profile.objects.exclude(
+            user__is_superuser=True
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -189,10 +194,18 @@ class MembersDetailView(LoginRequiredMixin, DetailView):
 
 
 def sector_list(request, pk):
-    qs = Profile.objects.filter(sector__pk=pk).exclude(user__is_superuser=True)
+    """
+    Return list of profile belonging to a sector
+    """
+    profiles = Profile.objects.filter(sector__pk=pk).exclude(
+        user__is_superuser=True
+    )
+    sector = get_object_or_404(Sector, pk=pk)
+    # sector_name = profiles.first().sector.name
+    sector_name = sector.name
     context = {
-        'object_list': qs,
-        'bc_title': Sector.objects.get(pk=pk).name
+        'object_list': profiles,
+        'bc_title': sector_name
     }
     return render(request, 'account/other_list.html', context)
 

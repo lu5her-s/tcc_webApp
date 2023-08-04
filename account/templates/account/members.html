@@ -42,11 +42,11 @@
                             <tbody>
                                 {% for member in object_list %}
                                 <tr>
-                                    <th scope="row"><a href="{% url 'account:sectors' pk=member.profile.sector.pk %}">{{ member.profile.sector.name }}</a></th>
-                                    <td><a href="{% url 'account:member' pk=member.pk %}">{{ member.profile.rank.name }} {{ member.get_full_name }}</a></td>
-                                    <td><a href="{% url 'account:positions' pk=member.profile.position.pk %}" class="text-primary">{{ member.profile.position.name }}</a></td>
-                                    <td>{{ member.profile.department.name }}</td>
-                                    <td>{{ member.profile.phone }}</td>
+                                  <th scope="row"><a href="{% url 'account:sectors' pk=member.sector.pk %}">{{ member.sector.name }}</a></th>
+                                    <td><a href="{% url 'account:member' pk=member.user.pk %}">{{ member.rank.name }} {{ member.user.get_full_name }}</a></td>
+                                    <td><a href="{% url 'account:positions' pk=member.position.pk %}" class="text-primary">{{ member.position.name }}</a></td>
+                                    <td>{{ member.department.name }}</td>
+                                    <td>{{ member.phone }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -72,7 +72,7 @@
                     $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
                 }
             },
-            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+            "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
         });
     });
 </script>

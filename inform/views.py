@@ -269,8 +269,8 @@ class InformDetailView(LoginRequiredMixin, DetailView):
             inform.inform_status = Inform.InformStatus.WAIT
             inform.repair_category = form.cleaned_data['repair_category']
             inform.assigned_to = form.cleaned_data['assigned_to']
-            print(inform)
-            print(form.cleaned_data)
+            # print(inform)
+            # print(form.cleaned_data)
             inform.save()
             # return redirect('inform:detail', pk=self.get_object().pk)
             return redirect(reverse_lazy('inform:detail', kwargs={'pk': self.get_object().pk}))
@@ -376,18 +376,18 @@ class InformCreateView(LoginRequiredMixin, CreateView):
             token = LineToken.objects.get(name='Manager').token
             images = request.FILES.getlist('images') if 'images' in request.FILES else None
             if images:
-                for img in images:
-                    a_img = InformImage.objects.create(
-                        inform=inform,
-                        images=img
-                    )
-                    a_img.save()
-            host = request.get_host()
-            path = reverse_lazy('inform:detail', kwargs={'pk': inform.pk})
-            url  = 'http://' + host + path
+                InformImage.objects.bulk_create(
+                    [
+                        InformImage(inform=inform, images=image) for image in images
+                    ]
+                )
+            # host = request.get_host()
+            # path = reverse_lazy('inform:detail', kwargs={'pk': inform.pk})
+            # url  = 'http://' + host + path
+            url = request.build_absolute_uri(reverse_lazy('inform:detail', kwargs={'pk': inform.pk}))
             issue_clear = self.remove_html(form.cleaned_data['issue'])
-            body = ''
-            head = '\nมีแจ้งซ่อมใหม่: '
+            # body = ''
+            body = '\nมีแจ้งซ่อมใหม่: '
             body += f'\nหมายเลขใบแจ้งซ่อม : {inform.pk}/{inform.created_at.year+543}'
             body += f'\nวันที่แจ้งซ่อม : {inform.created_at.strftime("%d/%m/%Y")}'
             body += f'\nความเร่งด่วน : {inform.get_urgency_display()}'
@@ -398,7 +398,10 @@ class InformCreateView(LoginRequiredMixin, CreateView):
             body += f'\n\nurl : {url}'
 
             line  = Sendline(token)
-            line.sendtext(head + body)
+            try:
+                line.sendtext(body)
+            except Exception as e:
+                print(e)
         return redirect(reverse_lazy('inform:home'))
 
 
