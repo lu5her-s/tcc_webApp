@@ -3,6 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.utils.html import strip_tags
 from django.views import View
 from django.views.generic import (
     ListView,
@@ -27,14 +28,13 @@ from config.sendline import Sendline
 
 # Create your views here.
 
-def AnnounceRead(request, pk):
+def announce_read(request, pk):
     announce = get_object_or_404(Announce, pk=request.POST.get('announce_id'))
-    if announce.reads.filter(id=request.user.id).exists():
+    if request.user in announce.reads.all():
         announce.reads.remove(request.user)
     else:
         announce.reads.add(request.user)
-    # return HttpResponseRedirect(reverse_lazy('announce:detail', args=(announce.pk)))
-    return HttpResponseRedirect(reverse_lazy('announce:detail', args=[str(pk)]))
+    return redirect('announce:detail', pk=pk)
 
 class AnnounceListView(LoginRequiredMixin, ListView):
     login_url = reverse_lazy('login')
@@ -118,6 +118,7 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
         form = self.form_class(request.POST, request.FILES)
 
         if form.is_valid():
+            # img_url = []
             images    = request.FILES.getlist('images')
             files     = request.FILES.getlist('files')
             tokens    = request.POST.getlist('tokens')
@@ -128,6 +129,7 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
                 for image in images:
                     a_image = AnnounceImage(announce=form_id, images=image)
                     a_image.save()
+                    # img_url.append(a_image.images.url)
             else:
                 form_save.save()
 
@@ -139,16 +141,22 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
                 form_save.save()
 
             if tokens:
-                host = request.get_host()
-                path = reverse_lazy('announce:detail', args=[str(form_id.pk)])
-                url  = 'http://' + host + path
-                head = '\nมี : ' + form_save.is_type.name + 'ใหม่'
-                body = '\nเรื่อง : ' + form_save.title + '\n' + 'รายละเอียดเพิ่มเติม :' + url
+                # host = request.get_host()
+                # path = reverse_lazy('announce:detail', args=[str(form_id.pk)])
+                url = request.build_absolute_uri(reverse_lazy('announce:detail', args=[str(form_id.pk)]))
+                imgs = AnnounceImage.objects.filter(announce=form_id)
+                # url  = 'http://' + host + path
+                head = f"มี{form_save.is_type.name}ใหม่\n"
+                body = f"เรื่อง: {form_save.title}\nรายละเอียด:\n{strip_tags(form_save.detail)}\n"
+                body += f"url: {url}\n"
 
                 for token_id in tokens:
                     token = LineToken.objects.get(id=token_id).token
                     line  = Sendline(token)
                     line.sendtext(head + body)
+                    if imgs:
+                        for image in imgs:
+                            line.sendimage(image.images.url)
                     # print(token)
 
             return redirect(self.success_url)
