@@ -97,6 +97,10 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context['informs'] = Inform.objects.filter(
             created_at__range=(today_min, today_max)
         )
+        context['wait_approve'] = Inform.objects.filter(
+            Q(inform_status = Inform.InformStatus.WAIT) &
+            Q(approve_status = None)
+        )
 
         return context
 

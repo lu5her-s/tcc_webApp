@@ -120,7 +120,7 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
         )
         wait_approve = Inform.objects.filter(
             Q(inform_status=Inform.InformStatus.WAIT) &
-            ~Q(approve_status=Inform.ApproveStatus.APPROVE) &
+            Q(approve_status=None) &
             Q(deleted=False)
         )
         wait_approve_today = Inform.objects.filter(
@@ -188,15 +188,22 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
         )
 
         # command dashboard
-        all_inform = Inform.objects.filter(
-            approve_status=Inform.ApproveStatus.APPROVE
+        all_inform = Inform.objects.all()
+        approve = Inform.objects.filter(
+            approve_status=Inform.ApproveStatus.APPROVE,
+            deleted=False
+        )
+        wait_approve = Inform.objects.filter(
+            inform_status=Inform.InformStatus.WAIT,
+            approve_status=None
         )
         all_done = Inform.objects.filter(
            repair_status=Inform.RepairStatus.CLOSE 
         )
         not_done = Inform.objects.filter(
             Q(approve_status=Inform.ApproveStatus.APPROVE) &
-            ~Q(repair_status=Inform.RepairStatus.CLOSE)
+            ~Q(repair_status=Inform.RepairStatus.CLOSE) &
+            Q(accepted=True)
         )
         not_accept = Inform.objects.filter(
             approve_status=Inform.ApproveStatus.APPROVE,
@@ -236,6 +243,7 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
 
             # Command
             'all_inform': all_inform,
+            'approve': approve,
             'all_done': all_done,
             'not_done': not_done,
             'not_accept': not_accept,

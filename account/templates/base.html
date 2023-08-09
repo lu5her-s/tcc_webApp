@@ -165,6 +165,20 @@
 
                   <a href="{% url 'inform:home' %}">
                     <div class="card-body">
+                      {% if request.user|has_group:"Command" %}
+                      <h5 class="card-title">รายการรออนุมัติ <span>| All</span></h5>
+
+                      <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                          <i class="bi bi-question-circle" style="color: orange"></i>
+                        </div>
+                        <div class="ps-3">
+                          <h6>{{ wait_approve.count }} รายการ</h5>
+
+                        </div>
+                      </div>
+
+                      {% else %}
                       <h5 class="card-title">รายการแจ้งซ่อม <span>| ของฉัน</span></h5>
 
                       <div class="d-flex align-items-center">
@@ -177,6 +191,8 @@
 
                         </div>
                       </div>
+                    
+                      {% endif %}
                     </div>
                   </a>
 

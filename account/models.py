@@ -109,4 +109,4 @@ class LineToken(models.Model):
     note  = models.TextField(blank=True, null=True)
 
     def __str__(self) -> str:
-        return f"{self.name} - {self.token}"
+        return f"{self.name}"
