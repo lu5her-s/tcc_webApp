@@ -13,7 +13,7 @@ def stock_image(instance, filename):
     :param instance:get instance from StockItem
     :param filename:get filename to set folder
     """
-    return f"Asset/{instance.stock_item.item_name}/{filename}"
+    return f"StockItem/{instance.stock_item.item_name}/{filename}"
 
 
 # class categories for stock
@@ -25,7 +25,7 @@ class Category(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(
-        upload_to="Asset/Categories/", null=True, blank=True)
+        upload_to="StockItem/Categories/", null=True, blank=True)
 
     def __str__(self):
         return f"{self.name}"

@@ -4,7 +4,7 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Asset Stock{% endblock title %}
+{% block title %}StockItem Stock{% endblock title %}
 
 {% block content %}
 
@@ -13,8 +13,8 @@
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">Asset Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_list' %}">Asset stock list</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">StockItem Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_list' %}">StockItem stock list</a></li>
             <li class="breadcrumb-item active">{{ h_title }} list</li>
         </ol>
     </nav>

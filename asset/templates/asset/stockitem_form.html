@@ -2,7 +2,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}Asset Stock Management{% endblock title %}
+{% block title %}StockItem Stock Management{% endblock title %}
 
 {% block content %}
 <div class="pagetitle">
@@ -10,8 +10,8 @@
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">Asset Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_list' %}">Asset List</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">StockItem Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_list' %}">StockItem List</a></li>
             <li class="breadcrumb-item active">เพิ่มพัสดุ</li>
         </ol>
     </nav>

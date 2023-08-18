@@ -82,9 +82,9 @@ class StockDepartmentListView(LoginRequiredMixin, ListView):
         context['title'] = self.request.user.profile.department.name
         return context
 
-class AssetHomeView(LoginRequiredMixin, TemplateView):
+class StockItemHomeView(LoginRequiredMixin, TemplateView):
     """
-    AssetHomeView.
+    StockItemHomeView.
     render home page for home asset stock
     """
 
@@ -154,9 +154,9 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
         # return super().post(request, *args, **kwargs)
 
 
-class StockAssetListView(LoginRequiredMixin, ListView):
+class StockStockItemListView(LoginRequiredMixin, ListView):
     """
-    StockAssetListView.
+    StockStockItemListView.
     show list asset stock
     """
 
@@ -266,7 +266,7 @@ class StockItemUpdateView(LoginRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'แก้ไขรายการพัสดุ'
         # instance images to field
-        context['images'] = self.object.stockitemimage_set.all()
+        context['images'] = self.object.images.all()
         return context
 
     def post(self, request, **kwargs):

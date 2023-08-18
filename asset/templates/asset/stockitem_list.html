@@ -4,7 +4,7 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Asset Stock{% endblock title %}
+{% block title %}StockItem Stock{% endblock title %}
 
 {% block content %}
 
@@ -13,7 +13,7 @@
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">Asset Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">StockItem Home</a></li>
             <li class="breadcrumb-item active">asset stock list</li>
         </ol>
     </nav>
@@ -74,7 +74,11 @@
                                         </a>
                                     </td>
                                     <td>{{ object.serial }}</td>
+                                    {% if object.get_status_display == 'พร้อมใช้งาน' %}
+                                    <td><span><i class="bi bi-check-circle-fill"></i></span>{{ object.get_status_display }}</td>
+                                    {% else %}
                                     <td>{{ object.get_status_display }}</td>
+                                    {% endif %}
                                     <td>{{ object.location.name }}</td>
                                     <td>
                                         <a href="{% url 'asset:network_list' pk=object.network.pk %}">
