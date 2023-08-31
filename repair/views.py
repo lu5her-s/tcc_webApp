@@ -1,20 +1,13 @@
-from django.shortcuts import (
-    redirect,
-    reverse,
-)
+from django.shortcuts import get_object_or_404, redirect, reverse
+from .models import Inform, Repair
 
-from repair.models import Repair
-
-# Create your views here.
-
-# create repair data call from user accepted inform
 def repair_create(request, inform_pk):
     if request.method == 'POST':
         form = request.POST
-        repair = Repair(
-            inform=Inform.objects.get(pk=inform_pk),
-            comment=form['comment'],
-            cost=form['cost'],
+        inform = get_object_or_404(Inform, pk=inform_pk)
+        repair = Repair.objects.create(
+            inform=inform,
+            comment=form.get('comment'),
+            cost=form.get('cost'),
         )
-        repair.save()
-        return redirect(reverse('repair:detail', args=[inform_pk]))
+        return redirect(reverse('repair:detail', args=[inform.pk]))

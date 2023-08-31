@@ -6,4 +6,11 @@ from django.views.generic import TemplateView
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
-    template_name = 'stock/home.html'
+    def get_template_names(self):
+        user = self.request.user
+        template_name = {
+            'admin': 'stock/home_admin.html',
+            'default': 'stock/home.html',
+        }.get(user.groups.first().name, 'default')
+        return [template_name]
+

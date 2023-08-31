@@ -36,6 +36,7 @@ class Inform(models.Model):
         # INFORM = 'INF', 'แจ้งซ่อม'
         # CHECKED = 'CHECKED', 'ตรวจสอบ'
         # WAIT = 'WAT', 'รออนุมัติ'
+        ACCEPT = 'ACC', 'ตอบรับ'
         REPAIR = 'RPR', 'ซ่อม'
         COMPLETE = 'CMP', 'ดำเนินการแล้ว'
         REJECT = 'REJ', 'ยกเลิก'
@@ -110,6 +111,7 @@ class Inform(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     deleted = models.BooleanField(default=False)
+    closed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.stockitem.item_name}-{self.created_at}"
@@ -164,3 +166,84 @@ class InformReject(models.Model):
 
     def __str__(self):
         return f"{self.inform.pk} - {self.inform.created_at}"
+
+
+class CustomerReview(models.Model):
+    """
+    Model to represent a Repair Review.
+
+    Attributes:
+        date_created (DateTimeField): The date and time the review was created.
+        rating (IntegerField): The rating given to the repair service on a scale of 1 to 5.
+        description (TextField): A detailed description of the repair experience.
+        customer (ForeignKey): The customer who wrote the review.
+        inform (ForeignKey): The repair service being reviewed.
+
+    """
+
+    date_created = models.DateTimeField(auto_now_add=True)
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    description = models.TextField()
+    reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
+    inform = models.ForeignKey(Inform, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Customer Review'
+        verbose_name_plural = 'Customer Reviews'
+
+    def __str__(self):
+        return f'Repair Review: {self.reviewer} - {self.inform.pk}'
+
+
+class ManagerReview(models.Model):
+    """
+    Model to represent a Manager Review.
+
+    Attributes:
+        date_created (DateTimeField): The date and time the review was created.
+        rating (IntegerField): The rating given to the repair service on a scale of 1 to 5.
+        description (TextField): A detailed description of the repair experience.
+        manager (ForeignKey): The manager who wrote the review.
+        inform (ForeignKey): The repair service being reviewed.
+
+    """
+
+    date_created = models.DateTimeField(auto_now_add=True)
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    description = models.TextField()
+    reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
+    inform = models.ForeignKey(Inform, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Manager Review'
+        verbose_name_plural = 'Manager Reviews'
+
+    def __str__(self):
+        return f'Manager Review: {self.reviewer} - {self.inform.pk}'
+
+
+class CommandReview(models.Model):
+    """
+    Model to represent a Command Review.
+
+    Attributes:
+        date_created (DateTimeField): The date and time the review was created.
+        rating (IntegerField): The rating given to the repair service on a scale of 1 to 5.
+        description (TextField): A detailed description of the repair experience.
+        command (ForeignKey): The command who wrote the review.
+        inform (ForeignKey): The repair service being reviewed.
+
+    """
+
+    date_created = models.DateTimeField(auto_now_add=True)
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    description = models.TextField()
+    reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
+    inform = models.ForeignKey(Inform, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Command Review'
+        verbose_name_plural = 'Command Reviews'
+
+    def __str__(self):
+        return f'Command Review: {self.reviewer} - {self.inform.pk}'

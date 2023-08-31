@@ -3,7 +3,14 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from inform.views import InformImage
 
-from .models import Inform, InformProgress, InformReject
+from .models import (
+    Inform,
+    InformProgress,
+    InformReject,
+    CustomerReview,
+    ManagerReview,
+    CommandReview,
+)
 
 # Register your models here.
 
@@ -68,3 +75,6 @@ class InformRejectAdmin(admin.ModelAdmin):
     raw_id_fields = ('inform',)
 
 admin.site.register(InformImage)
+admin.site.register(CustomerReview)
+admin.site.register(ManagerReview)
+admin.site.register(CommandReview)

@@ -1,5 +1,7 @@
 import datetime
 import re
+
+from requests.sessions import Request
 from account.models import LineToken
 from assign.views import Q
 from django.shortcuts import HttpResponse, redirect, render, get_object_or_404
@@ -16,11 +18,13 @@ from django.views.generic import (
 from config.sendline import Sendline
 from asset.models import StockItemImage
 
-from inform.forms import InformForm, InformProgress, ProgressForm, ManagerCheckForm
+from inform.forms import InformForm, InformProgress, ProgressForm, ManagerCheckForm, ReviewForm
+from repair.forms import Repair
 
-from .models import Inform, InformImage, InformReject
+from .models import CommandReview, CustomerReview, Inform, InformImage, InformReject, ManagerReview
 
 # Create your views here.
+
 
 # User sector
 
@@ -154,6 +158,11 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
         recheck = Inform.objects.filter(
             approve_status=Inform.ApproveStatus.REJECT
         )
+        wait_close = Inform.objects.filter(
+            approve_status=Inform.ApproveStatus.APPROVE,
+            accepted=True,
+            repair_status=Inform.RepairStatus.CLOSE
+        )
         
 
         # technical dashboard
@@ -179,12 +188,6 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             approve_status=Inform.ApproveStatus.APPROVE,
             accepted=True,
             repair_status=Inform.RepairStatus.CLOSE
-        )
-        wait_close = Inform.objects.filter(
-            assigned_to=self.request.user.profile,
-            approve_status=Inform.ApproveStatus.APPROVE,
-            accepted=True,
-            repair_status=Inform.RepairStatus.COMPLETE
         )
 
         # command dashboard
@@ -264,6 +267,9 @@ class InformDetailView(LoginRequiredMixin, DetailView):
         context['form'] = ProgressForm(instance=self.get_object())
         context['note'] = InformProgress.objects.filter(inform=self.get_object())
         context['images'] = InformImage.objects.filter(inform=self.get_object())
+        context['approve'] = self.get_object().approve_status
+        context['repairs'] = Repair.objects.filter(inform=self.get_object())
+        context['review_form'] = ReviewForm()
         if InformReject.objects.filter(inform=self.get_object()):
             context['reason'] = InformReject.objects.get(inform=self.get_object())
         return context
@@ -277,10 +283,17 @@ class InformDetailView(LoginRequiredMixin, DetailView):
             inform.inform_status = Inform.InformStatus.WAIT
             inform.repair_category = form.cleaned_data['repair_category']
             inform.assigned_to = form.cleaned_data['assigned_to']
-            # print(inform)
-            # print(form.cleaned_data)
+            if inform.repair_category == Inform.RepairCategory.AGENT:
+                inform.assigned_to = inform.customer.profile
             inform.save()
-            # return redirect('inform:detail', pk=self.get_object().pk)
+            token = LineToken.objects.get(name="Manager").token
+            line = Sendline(token)
+            body = 'มีการแจ้งซ่อมรออนุมัติ'
+            body += f'\nหมายเลขการแจ้งซ่อม: {inform.pk}'
+            body += f'\nประเภทงาน: {inform.get_repair_category_display()}'
+            url = request.build_absolute_uri(reverse_lazy('inform:detail', kwargs={'pk': inform.pk}))
+            body += f'\nurl : {url}'
+            line.sendtext(body)
             return redirect(reverse_lazy('inform:detail', kwargs={'pk': self.get_object().pk}))
         return super().post(request, *args, **kwargs)
 
@@ -587,24 +600,38 @@ class InformInProgressListView(LoginRequiredMixin, ListView):
         )
 
 
+def staff_wait_close(request):
+    inform = Inform.objects.filter(
+        repair_status=Inform.RepairStatus.CLOSE
+    )
+    return render(request, 'inform/inform_list.html', {'object_list': inform})
+
+
 def accept_inform(request, pk):
     inform = get_object_or_404(Inform, pk=pk)
     inform.accepted = True
     inform.repair_status = Inform.RepairStatus.REPAIR
     inform.save(update_fields=['accepted', 'repair_status'])
+    InformProgress.objects.create(
+        inform=inform,
+        status=Inform.RepairStatus.ACCEPT,
+        note="ตอบรับการดำเนินการแล้ว"
+    )
     return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
 
 
 def repair_note(request, pk):
     inform = get_object_or_404(Inform, pk=pk)
+    # get status repair and assign to Inform.RepairStatus
     repair_status = request.POST.get('status')
     note = request.POST.get('note')
+
+    # if not repair_status == 'CLO':
     repair_note = InformProgress.objects.create(
         inform=inform,
-        repair_status=repair_status,
+        status=repair_status,
         note=note
     )
-    # repair_note.save()
     return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
 
 
@@ -614,6 +641,10 @@ def inform_approve(request, pk):
     inform.approve_status = Inform.ApproveStatus.APPROVE
     inform.inform_status = None
     inform.save(update_fields=['approve_status'])
+    token = LineToken.objects.get(name="Manager").token
+    line = Sendline(token)
+    body = f'อนุมัติแจ้งซ่อม : {inform.pk}/{inform.created_at.year+543}'
+    line.sendtext(body)
     return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
 
 def inform_reject(request, pk):
@@ -624,4 +655,61 @@ def inform_reject(request, pk):
         inform=inform,
         reason=request.POST.get('reason')
     )
+    return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
+
+
+# def review_save(request, pk):
+#     inform = get_object_or_404(Inform, pk=pk)
+#     if request.method == 'POST':
+#         if request.user.group.name == 'Manager':
+#             ManagerReview.objects.create(
+#                 inform=inform,
+#                 description=request.POST.get('description'),
+#                 rating=request.POST.get('rating'),
+#                 reviewer=request.user
+#             )
+#         elif request.user.group.name == 'Command':
+#             CommandReview.objects.create(
+#                 inform=inform,
+#                 description=request.POST.get('description'),
+#                 rating=request.POST.get('rating'),
+#                 reviewer=request.user
+#             )
+#         else:
+#             CustomerReview.objects.create(
+#                 inform=inform,
+#                 description=request.POST.get('description'),
+#                 rating=request.POST.get('rating'),
+#                 reviewer=request.user
+#             )
+#         return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
+#     else:
+#         return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
+
+
+def review_save(request, pk):
+    inform = get_object_or_404(Inform, pk=pk)
+
+    if request.method == 'POST':
+        description = request.POST.get('description')
+        rating = request.POST.get('rating')
+        reviewer = request.user
+        user_group_name = reviewer.group.name
+
+        if user_group_name == 'StaffRepair':
+            review_model = ManagerReview
+        elif user_group_name == 'Command':
+            review_model = CommandReview
+        else:
+            review_model = CustomerReview
+
+        review_data = {
+            'inform': inform,
+            'description': description,
+            'rating': rating,
+            'reviewer': reviewer,
+        }
+        
+        review_model.objects.create(**review_data)
+
     return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))

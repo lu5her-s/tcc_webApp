@@ -10,6 +10,8 @@ urlpatterns = [
     path('update/<int:pk>/', views.InformUpdateView.as_view(),
          name="update"),
 
+    path('review/<int:pk>/', views.review_save, name="review"),
+
     # user url
     path('user/list/', views.InformUserListView.as_view(),
          name="user_list"),
@@ -27,6 +29,7 @@ urlpatterns = [
          name='manager_list'),
     path('manager/wait/', views.InformWaitApproveListView.as_view(),
          name='manager_wait'),
+    path('manager/close/', views.staff_wait_close, name='manager_close'),
 
     # technical url
     path('accept/<int:pk>/', views.accept_inform,
@@ -35,6 +38,7 @@ urlpatterns = [
          name='tech_list'),
     path('tech/progress/', views.InformInProgressListView.as_view(),
          name='tech_progress'),
+    path('tech/note/<int:pk>/', views.repair_note, name='tech_note'),
 
     # command url
     path('command/approve/<int:pk>/', views.inform_approve,

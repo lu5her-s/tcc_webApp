@@ -38,9 +38,9 @@
                 ตอบรับ
               </button>
             </li>
-            
+
             {% endif %}
-          
+
             {% if reason %}
             <li class="nav-item">
               <button class="nav-link" data-bs-toggle="tab" data-bs-target="#approve">
@@ -49,8 +49,9 @@
             </li>
             {% endif %}
 
-            {% if approve %}
-            
+            <!-- TODO: make condition agent and assigned_to -->
+            {% if approve and note %}
+
             <li class="nav-item">
               <button class="nav-link" data-bs-toggle="tab" data-bs-target="#approve">
                 บันทึกการทำงาน
@@ -101,24 +102,24 @@
                 <tr>
                   <th>สถานะ</th>
                   {% if not object.approve_status %}
-                      {% if object.inform_status == 'INF' %}
-                        <td style="color:red;">
-                          <i class="bi bi-exclamation-circle" style="color: red;"></i>
-                      {% else %}
-                        <td>
+                  {% if object.inform_status == 'INF' %}
+                  <td style="color:red;">
+                    <i class="bi bi-exclamation-circle" style="color: red;"></i>
+                    {% else %}
+                    <td>
                       {% endif %}
-                          {{ object.get_inform_status_display }}
-                        </td>
-                  
-                  {% elif object.approve_status == 'APR' %}
-                      <td>
-                        {{ object.get_approve_status_display }}
-                      </td>
-                  {% elif object.approve_status == 'RJT' %}
-                      <td>
-                        {{ object.get_approve_status_display }}
-                      </td>
-                  {% endif %}
+                      {{ object.get_inform_status_display }}
+                    </td>
+
+                    {% elif object.approve_status == 'APR' %}
+                    <td>
+                      {{ object.get_approve_status_display }}
+                    </td>
+                    {% elif object.approve_status == 'RJT' %}
+                    <td>
+                      {{ object.get_approve_status_display }}
+                    </td>
+                    {% endif %}
                 </tr>
 
                 {% if object.approve_status == 'RJT' %}
@@ -134,8 +135,8 @@
                   <td>
                     {{ object.get_repair_status_display }}
                     {% if object.repair_status == 'CLO' %}
-                      <i class="bi bi-check-circle" style="color: green;"></i>
-                    
+                    <i class="bi bi-check-circle" style="color: green;"></i>
+
                     {% endif %}
                   </td>
                 </tr>
@@ -172,8 +173,8 @@
                   </td>
                 </tr>
 
-              {% endif %}
-              {% if object.assigned_to %}
+                {% endif %}
+                {% if object.assigned_to %}
                 <tr>
                   <th>ช่างผู้รับผิดชอบ</th>
                   <td>
@@ -220,12 +221,12 @@
             </div><!-- end detail -->
 
             <div id="approve" class="tab-pane fade pt-3">
-              {% if approve %}
+              {% if approve and note %}
               <h5 class="card-title">บันทึกการทำงาน | <span>{{ object.title }}</span></h5>
               <table class="table table-borderless">
                 {% for n in note %}
                 <tr style="border-bottom: 2px dashed grey;">
-                  {% if n.status is not None %}<td>({{ n.status }}) : </td>{% endif %}
+                  {% if n.status is not None %}<td>{{ n.get_status_display }} : </td>{% endif %}
                   <td>{{ n.note|linebreaks }}</td>
                   <td>{{ n.created_at|thaidate }} เวลา {{ n.created_at|date:"H:m" }}</td>
                 </tr>
@@ -244,7 +245,7 @@
               </table>
 
               {% else %}
-              
+
               {% if request.user == object.author %}
               <h5><i class="bi bi-x-circle" style="color: red;">ยังไม่ตอบรับการมอบหมายงาน</i></h5>
               <p>รอ 
@@ -257,7 +258,6 @@
               {% endif %}
 
               {% if request.user.profile == object.assigned_to %}
-              <h5 class="card-title">การตอบรับ | <span>{{ object.title }}</span></h5>
               {% if not object.accepted %}
               <p>
               <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
@@ -271,27 +271,6 @@
               <center>
                 <a href="{% url 'assign:accept' pk=object.pk %}" class="btn btn-success">ตอบรับงาน</a>
               </center>
-              {% else %}
-              <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.media }}
-                <div class="row mb-3">
-                  <label for="{{ form.status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.status.label }}</label>
-                  <div class="col-md-8 col-lg-9">
-                    {{ form.status }}
-                  </div>
-                </div>
-
-                <div class="row mb-3">
-                  <label for="{{ Noteform.note.name }}" class="col-md-4 col-lg-3 col-form-label">{{ note_form.note.label }}</label>
-                  <div class="col-md-8 col-lg-9">
-                    {{ note_form.note }}
-                  </div>
-                </div>
-
-                <input type="hidden" name="assign_id" value="{{ object.pk }}">
-                <button class="btn btn-lg" style="float: right; background-color: purple; color: white;" type="submit">อัพเดท</button>
-              </form>
               {% endif %}
               {% endif %}
 
@@ -299,42 +278,46 @@
 
             <div id="accept" class='tab-pane fade pt-3'>
               {% if request.user.profile == object.assigned_to %}
-              <h5 class="card-title">การตอบรับ | <span>{{ object.title }}</span></h5>{{ object.repair_status }}
-                {% if not object.accepted %}
-                  <p>
-                  <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
-                  <span>
-                    กรุณาตอบรับการมอบหมายงาน
-                    <center>
-                      <a href="{% url 'inform:accept' pk=object.pk %}" class="btn btn-success">ตอบรับงาน</a>
-                    </center>
-                  </span>
-                  </p>
-                {% else %}
+              <h5 class="card-title">การตอบรับ | <span>{{ object.title }}</span></h5>
+              {% if not object.accepted %}
+              <p>
+              <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
+              <span>
+                กรุณาตอบรับการมอบหมายงาน
+                <center>
+                  <a href="{% url 'inform:accept' pk=object.pk %}" class="btn btn-success">ตอบรับงาน</a>
+                </center>
+              </span>
+              </p>
+              {% else %}
 
                 {% if not object.repair_status == 'CLO' %}
-                
-                  <form method="post" enctype="multipart/form-data" action="">
-                    {% csrf_token %}
-                    {{ form.media }}
-                    <div class="row mb-3">
-                      <label for="{{ form.status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.status.label }}</label>
-                      <div class="col-md-8 col-lg-9">
-                        {{ form.status }}
-                      </div>
+
+                <form method="post" enctype="multipart/form-data" action="{% url 'inform:tech_note' pk=object.pk %}">
+                  {% csrf_token %}
+                  {{ form.media }}
+                  <div class="row mb-3">
+                    <label for="{{ form.status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.status.label }}</label>
+                    <div class="col-md-8 col-lg-9">
+                      {{ form.status }}
                     </div>
-                    <div class="row mb-3">
-                      <label for="{{ form.note.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.note.label }}</label>
-                      <div class="col-md-8 col-lg-9">
-                        {{ form.note }}
-                      </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label for="{{ form.note.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.note.label }}</label>
+                    <div class="col-md-8 col-lg-9">
+                      {{ form.note }}
                     </div>
-                    <input type="hidden" name="inform_id" value="{{ object.pk }}">
-                    <button class="btn btn-lg" style="float: right; background-color: purple; color: white;" type="submit">อัพเดท</button>
+                  </div>
+                  <input type="hidden" name="inform_id" value="{{ object.pk }}">
+                  <button class="btn btn-lg" style="float: right; background-color: purple; color: white;" type="submit">อัพเดท</button>
+                </form>
+                {% else %}
+                ปิดงาน
+
                 {% endif %}
 
                 {% endif %}
-              {% endif %}
+                {% endif %}
             </div>
 
           </div><!-- end tab-content -->
@@ -349,13 +332,16 @@
         {% if request.user == object.customer %}
         <a href="{% url 'inform:department_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
 
-          {% if object.approve_status %}
-          <a href="#" class="btn btn-lg btn-success">ปิดงาน</a>
+        {% if object.approve_status and object.accepted and object.repair_status == 'CLO' and not object.closed %}
+        <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#reviewModal">Review</button>
 
-          {% else %}
-          <a href="#" class="btn btn-lg btn-warning">ยกเลิก</a>
-          {% endif %}
+        {% else %}
+        {% if not object.approve_status %}
+        <a href="#" class="btn btn-lg btn-warning">ยกเลิก</a>
         {% endif %}
+        {% endif %}
+        {% endif %}
+
         {% if request.user|has_group:"StaffRepair" and not object.approve_status %}
         <a href="{% url 'inform:manager_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
 
@@ -363,14 +349,14 @@
         <!-- Create button open modal -->
         <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#manager_check">จัดการ</button>
         {% endif %}
-       
+
         {% elif request.user|has_group:"Command" and not object.approve_status %}
-       
+
         <!-- make button approve and reject -->
         <!-- button approve when click show confirm box -->
         <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_approve">อนุมัติ</button>
         <button type="button" class="btn btn-lg btn-danger" data-bs-toggle="modal" data-bs-target="#confirm_reject">ไม่อนุมัติ</button>
-        
+
         {% endif %}
       </div>
       {% else %}
@@ -403,16 +389,58 @@
                   {{ manager_check.assigned_to }}
                 </div>
               </div>
-                {{ manager_check.inform_status }}
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                <button type="submit" class="btn btn-primary">ยืนยัน</button>
-              </div>
+              <!-- <div class="row mb-3"> -->
+                <!-- <label for="{{ manager_check.inform_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ manager_check.inform_status.label }}</label> -->
+                <!-- <div class="col-md-8 col-lg-9"> -->
+                  {{ manager_check.inform_status }}
+                <!-- </div> -->
+              <!-- </div> -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+            <button type="submit" class="btn btn-primary">ยืนยัน</button>
+          </div>
             </form>
         </div>
       </div>
     </div>
+
+
+    <!-- modal for review -->
+    <div class="modal fade" id="reviewModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Review</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="{% url 'inform:review' pk=object.pk %}">
+              {% csrf_token %}
+              <div class="row mb-3">
+                <label for="{{ review_form.rating.name }}" class="col-md-4 col-lg-3 col-form-label">{{ review_form.rating.label }}</label>
+                <div class="col-md-8 col-lg-9">
+                  {{ review_form.rating }}
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="{{ review_form.description.name }}" class="col-md-4 col-lg-3 col-form-label">{{ review_form.description.label }}</label>
+                <div class="col-md-8 col-lg-9">
+                  {{ review_form.description }}
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+            <button type="submit" class="btn btn-primary">ยืนยัน</button>
+          </div>
+            </form>
+        </div>
+      </div>
+    </div>
+
+
+
 
 
     <!-- modal for confirm approve -->

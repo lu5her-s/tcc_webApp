@@ -110,3 +110,13 @@ class ProgressForm(forms.ModelForm):
                 attrs={'class': 'form-select'}
             ),
         }
+
+
+class ReviewForm(forms.Form):
+    """ Form for review """
+    rating = forms.IntegerField(
+        widget=forms.Select(choices=[(i, i) for i in range(1, 6)], attrs={'class': 'form-control'})
+    )
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5})
+    )
