@@ -21,7 +21,14 @@ from asset.models import StockItemImage
 from inform.forms import InformForm, InformProgress, ProgressForm, ManagerCheckForm, ReviewForm
 from repair.forms import Repair
 
-from .models import CommandReview, CustomerReview, Inform, InformImage, InformReject, ManagerReview
+from .models import (
+    CommandReview,
+    CustomerReview,
+    Inform,
+    InformImage,
+    InformReject,
+    ManagerReview
+)
 
 # Create your views here.
 
@@ -148,8 +155,8 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             repair_category=Inform.RepairCategory.AGENT
         )
         job_wait = Inform.objects.filter(
-            inform_status=Inform.InformStatus.WAIT,
-            repair_category=Inform.RepairCategory.WAIT
+            repair_category=Inform.RepairCategory.WAIT,
+            approve_status=Inform.ApproveStatus.APPROVE
         )
         job_done = Inform.objects.filter(
             repair_status=Inform.RepairStatus.CLOSE,
@@ -270,8 +277,19 @@ class InformDetailView(LoginRequiredMixin, DetailView):
         context['approve'] = self.get_object().approve_status
         context['repairs'] = Repair.objects.filter(inform=self.get_object())
         context['review_form'] = ReviewForm()
+        
+        try:
+            context['customer_review'] = CustomerReview.objects.get(inform=self.get_object())
+            context['command_review'] = CommandReview.objects.get(inform=self.get_object())
+            context['manager_review'] = ManagerReview.objects.get(inform=self.get_object())
+        except:
+            context['customer_review'] = None
+            context['command_review'] = None
+            context['manager_review'] = None
+
         if InformReject.objects.filter(inform=self.get_object()):
             context['reason'] = InformReject.objects.get(inform=self.get_object())
+
         return context
 
     def post(self, request, *args, **kwargs):
@@ -622,17 +640,20 @@ def accept_inform(request, pk):
 
 def repair_note(request, pk):
     inform = get_object_or_404(Inform, pk=pk)
-    # get status repair and assign to Inform.RepairStatus
-    repair_status = request.POST.get('status')
-    note = request.POST.get('note')
 
-    # if not repair_status == 'CLO':
-    repair_note = InformProgress.objects.create(
-        inform=inform,
-        status=repair_status,
-        note=note
-    )
-    return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
+    if request.method == 'POST':
+        repair_status = request.POST.get('status')
+        note = request.POST.get('note')
+
+        repair_note = InformProgress.objects.create(
+            inform=inform,
+            status=repair_status,
+            note=note
+        )
+        inform.repair_status = repair_status
+        inform.save(update_fields=['repair_status'])
+
+        return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
 
 
 # Command sector
@@ -694,7 +715,7 @@ def review_save(request, pk):
         description = request.POST.get('description')
         rating = request.POST.get('rating')
         reviewer = request.user
-        user_group_name = reviewer.group.name
+        user_group_name = reviewer.groups.name
 
         if user_group_name == 'StaffRepair':
             review_model = ManagerReview
