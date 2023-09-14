@@ -59,6 +59,15 @@
               </button>
             </li>
             {% endif %}
+
+            {% if customer_review or manager_review or command_review %}
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#review">
+                การประเมิน
+                {% comment %}{% if not object.accepted %}<sup><i class="bi bi-exclamation-circle" style="color: red;"></i></sup>{% endif %}{% endcomment %}
+              </button>
+            </li>
+            {% endif %}
           </ul>
 
           <div class="tab-content pt-2">
@@ -140,6 +149,7 @@
                     <i class="bi bi-check-circle" style="color: green;"></i>
                     {% elif object.repair_status == 'CLO' %}
                     <i class="bi bi-x-circle" style="color: orange;"></i>
+                    รอการอนุมัติ
 
                     {% endif %}
                   </td>
@@ -324,6 +334,53 @@
                 {% endif %}
             </div>
 
+
+            <div id="review" class="tab-pane fade pt-3">
+              <h5 class="card-title">รายละเอียดการประเมิน | <span>{{ object.title }}</span></h5>
+              <table class="table table-striped">
+                <!-- customer review -->
+                {% if customer_review %}
+                  <tr>
+                    <th scope="row" class="col-md-3"></th>
+                    <th class="col-md-2 text-center">คะแนนการประเมิน</th>
+                    <th class="col-md-7 ">รายละเอียด</th>
+                  </tr>
+
+                  <tr>
+                    <td scope="row">การประเมินของผู้แจ้ง</th>
+                    <td class="text-center">
+                      {{ customer_review.rating }}
+                    </td>
+                    <td>
+                      {{ customer_review.description|linebreaks }}
+                    </td>
+                    <tr>
+                {% endif %}
+                {% if manager_review %}
+                <tr>
+                    <th scope="row">การประเมินของหัวหน้าซ่อมบำรุง</th>
+                    <td class="text-center">
+                      {{ manager_review.rating }}
+                    </td>
+                    <td>
+                      {{ manager_review.description|linebreaks }}
+                    </td>
+                  </tr>
+                {% endif %}
+                {% if command_review %}
+                <tr>
+                    <th scope="row">การประเมินของผู้บริหาร</th>
+                    <td class="text-center">
+                      {{ command_review.rating }}
+                    </td>
+                    <td>
+                      {{ command_review.description|linebreaks }}
+                    </td>
+                  </tr>
+                {% endif %}
+              </table>
+            </div>
+
           </div><!-- end tab-content -->
 
         </div><!--end card-->
@@ -332,41 +389,14 @@
       <!-- Assign Job -->
 
         <div class="container float-start text-center">
+          <!-- include template related to user group -->
           {% if request.user == object.customer %}
-          <a href="{% url 'inform:department_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-
-          {% if object.approve_status and object.accepted and object.repair_status == 'CLO' and not object.closed %}
-          {% if not customer_review %}
-            <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#reviewModal">Review</button>
-          {% endif %}
-
+            {% include "./buttons/customer.html" %}
+          {% elif request.user|has_group:"StaffRepair" %}
+            {% include "./buttons/manager.html" %}
           {% else %}
-          {% if not object.approve_status %}
-          <a href="#" class="btn btn-lg btn-warning">ยกเลิก</a>
-          {% endif %}
-          {% endif %}
-          {% endif %}
-
-          {% if request.user|has_group:"StaffRepair" and not object.approve_status %}
-          <a href="{% url 'inform:manager_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-
-          {% if customer_review %}
-          <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#reviewModal">Review</button>
-
-          {% if not object.repair_category %}
-          <!-- Create button open modal -->
-          <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#manager_check">จัดการ</button>
-          {% endif %}
+            {% include "./buttons/command.html" %}
           
-          {% endif %}
-
-          {% elif request.user|has_group:"Command" and not object.approve_status %}
-
-          <!-- make button approve and reject -->
-          <!-- button approve when click show confirm box -->
-          <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_approve">อนุมัติ</button>
-          <button type="button" class="btn btn-lg btn-danger" data-bs-toggle="modal" data-bs-target="#confirm_reject">ไม่อนุมัติ</button>
-
           {% endif %}
         </div>
 

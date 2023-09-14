@@ -25,7 +25,7 @@
     <!-- wait approve -->
     <div class="col-xxl-4 col-md-6">
       <div class="card info-card bg-card">
-        <a href="{% url 'inform:manager_wait' %}">
+        <a href="{% url 'inform:command_wait_approve' %}">
           <div class="card-body">
             <h5 class="card-title">รายการรออนุมัติ <span>| รออนุมัติ</span></h5>
             <div class="d-flex align-items-center">
@@ -48,8 +48,29 @@
       </div>
     </div>
 
+    <!-- wait close -->
+    <div class="col-xxl-4 col-md-6">
+      <div class="card info-card bg-card">
+        <a href="{% url 'inform:wait_close_approve' %}">
+          <div class="card-body">
+            <h5 class="card-title">รายการขอปิดงาน <span>| รออนุมัติ</span></h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-check-square text-success"></i>
+              </div>
+              <div class="ps-3">
+                <h6>{{ wait_close_approve.count }} รายการขอปิดงาน</h6>
+
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
   </div>
   <!-- end wait approve -->
+
+
   <hr />
   <br>
 
@@ -59,7 +80,7 @@
 
     <div class="col-xxl-4 col-md-6">
       <div class="card info-card bg-card">
-        <a href="#">
+        <a href="{% url 'inform:all_inform' %}">
           <div class="card-body">
             <h5 class="card-title">รายการแจ้งซ่อมทั้งหมด <span>| รายการ</span></h5>
             <div class="d-flex align-items-center">
@@ -80,7 +101,7 @@
 
     <div class="col-xxl-4 col-md-6">
       <div class="card info-card bg-card">
-        <a href="#">
+        <a href="{% url 'inform:command_progress' %}">
           <div class="card-body">
             <h5 class="card-title">รายการที่กำลังดำเนินการ <span>| รายการ</span></h5>
             <div class="d-flex align-items-center">

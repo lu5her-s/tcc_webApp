@@ -9,6 +9,7 @@ urlpatterns = [
          name="create"),
     path('update/<int:pk>/', views.InformUpdateView.as_view(),
          name="update"),
+    path('all_infrom/', views.all_inform, name="all_inform"),
 
     path('review/<int:pk>/', views.review_save, name="review"),
 
@@ -23,6 +24,7 @@ urlpatterns = [
          name="wait_list"),
     path('<int:pk>/', views.InformDetailView.as_view(),
          name="detail"),
+    path('customer/wait_to_review/', views.customer_wait_to_review, name='customer_wait_to_review'),
 
     # manager url
     path('manager/list/', views.InformManagerListView.as_view(),
@@ -45,4 +47,7 @@ urlpatterns = [
          name='command_approve'),
     path('command/reject/<int:pk>/', views.inform_reject,
          name='command_reject'),
+    path('wait_close_approve/', views.wait_close_approve, name='wait_close_approve'),
+    path('command/wait_approve/', views.command_wait_approve, name='command_wait_approve'),
+    path('command/progress/', views.all_progress, name='command_progress'),
 ]

@@ -1,22 +1,24 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# File              : views.py
+# Author            : lu5her <lu5her@mail>
+# Date              : Thu Sep, 14 2023, 15:33 257
+# Last Modified Date: Thu Sep, 14 2023, 16:13 257
+# Last Modified By  : lu5her <lu5her@mail>
 import datetime
 import re
-
-from requests.sessions import Request
-from account.models import LineToken
-from assign.views import Q
+from django.db.models import Q
 from django.shortcuts import HttpResponse, redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.template import context
+from account.models import LineToken
 from django.views.generic import (
     CreateView,
     DetailView,
     ListView,
     TemplateView,
-    UpdateView,
 )
 from config.sendline import Sendline
-from asset.models import StockItemImage
 
 from inform.forms import InformForm, InformProgress, ProgressForm, ManagerCheckForm, ReviewForm
 from repair.forms import Repair
@@ -118,6 +120,16 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             approve_status=Inform.ApproveStatus.APPROVE,
             repair_status=Inform.RepairStatus.CLOSE
         )
+        customer_review = CustomerReview.objects.filter(
+            reviewer=self.request.user
+        )
+        inform_wait_review = Inform.objects.filter(
+            approve_status=Inform.ApproveStatus.APPROVE,
+            repair_status=Inform.RepairStatus.CLOSE,
+        )
+        inform_wait_to_review = inform_wait_review.exclude(
+            customer_review__in=customer_review
+        )
         # end user section
 
         # manager section
@@ -216,11 +228,17 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             Q(accepted=True)
         )
         not_accept = Inform.objects.filter(
-            approve_status=Inform.ApproveStatus.APPROVE,
-            accepted=False
+            Q(approve_status=Inform.ApproveStatus.APPROVE) &
+            ~Q(repair_status=Inform.RepairStatus.CLOSE) &
+            Q(accepted=False)
         )
         reject = Inform.objects.filter(
             approve_status=Inform.ApproveStatus.REJECT
+        )
+        wait_close_approve = Inform.objects.filter(
+            approve_status=Inform.ApproveStatus.APPROVE,
+            repair_status=Inform.RepairStatus.CLOSE,
+            closed=False
         )
 
         context = {
@@ -230,6 +248,7 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             'inform_agent_done': inform_agent_done,
             'inform_wait': inform_wait,
             'inform_wait_done': inform_wait_done,
+            'inform_wait_to_review': inform_wait_to_review,
 
             # Manager
             'wait_check' : wait_check,
@@ -258,6 +277,7 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             'not_done': not_done,
             'not_accept': not_accept,
             'reject': reject,
+            'wait_close_approve': wait_close_approve
         }
         return super().get_context_data(**context)
 
@@ -280,12 +300,10 @@ class InformDetailView(LoginRequiredMixin, DetailView):
         
         try:
             context['customer_review'] = CustomerReview.objects.get(inform=self.get_object())
-            context['command_review'] = CommandReview.objects.get(inform=self.get_object())
             context['manager_review'] = ManagerReview.objects.get(inform=self.get_object())
+            context['command_review'] = CommandReview.objects.get(inform=self.get_object())
         except:
-            context['customer_review'] = None
-            context['command_review'] = None
-            context['manager_review'] = None
+            pass
 
         if InformReject.objects.filter(inform=self.get_object()):
             context['reason'] = InformReject.objects.get(inform=self.get_object())
@@ -708,21 +726,16 @@ def inform_reject(request, pk):
 #         return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
 
 
-def review_save(request, pk):
+def review_save(request: HttpResponse, pk: int):
     inform = get_object_or_404(Inform, pk=pk)
 
     if request.method == 'POST':
         description = request.POST.get('description')
         rating = request.POST.get('rating')
         reviewer = request.user
-        user_group_name = reviewer.groups.name
+        user_group_name = reviewer.groups.values_list('name', flat=True)
+        print(user_group_name)
 
-        if user_group_name == 'StaffRepair':
-            review_model = ManagerReview
-        elif user_group_name == 'Command':
-            review_model = CommandReview
-        else:
-            review_model = CustomerReview
 
         review_data = {
             'inform': inform,
@@ -730,7 +743,53 @@ def review_save(request, pk):
             'rating': rating,
             'reviewer': reviewer,
         }
+        if "StaffRepair" in user_group_name:
+            ManagerReview.objects.create(**review_data)
+        elif 'Command' in user_group_name:
+            CommandReview.objects.create(**review_data)
+            inform.closed = True
+            inform.save(update_fields=['closed'])
+        else:
+            CustomerReview.objects.create(**review_data)
         
-        review_model.objects.create(**review_data)
+        # review_model.objects.create(**review_data)
 
     return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
+
+
+def customer_wait_to_review(request: HttpResponse):
+    inform = Inform.objects.filter(
+        approve_status=Inform.ApproveStatus.APPROVE,
+        repair_status=Inform.RepairStatus.CLOSE,
+    )
+    customer_review = CustomerReview.objects.filter(reviewer=request.user)
+    inform_wait_to_review = inform.exclude(customer_review__in=customer_review)
+
+    return render(request, 'inform/inform_list.html', {'object_list': inform_wait_to_review})
+
+
+def wait_close_approve(request: HttpResponse):
+    object_list = Inform.objects.filter(
+        Q(repair_status=Inform.RepairStatus.CLOSE) &
+        Q(approve_status=Inform.ApproveStatus.APPROVE) &
+        Q(closed=False)
+    )
+    return render(request, 'inform/inform_list.html', {'object_list': object_list})
+
+
+def command_wait_approve(request: HttpResponse):
+    object_list = Inform.objects.filter(
+        inform_status=Inform.InformStatus.WAIT,
+        approve_status=None
+    )
+    return render(request, 'inform/inform_list.html', {'object_list': object_list, 'title': 'รายการรอการอนุมัติ'})
+
+
+def all_inform(request: HttpResponse):
+    object_list = Inform.objects.all()
+    return render(request, 'inform/inform_list.html', {'object_list': object_list, 'title': 'รายการทั้งหมด'})
+
+
+def all_progress(request: HttpResponse):
+    object_list = Inform.objects.filter(repair_status=Inform.RepairStatus.REPAIR)
+    return render(request, 'inform/inform_list.html', {'object_list': object_list, 'title': 'รายการกำลังดําเนินการ'})

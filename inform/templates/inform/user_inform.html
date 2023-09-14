@@ -97,7 +97,32 @@
             </div>
         </div>
     </div>
-    
+
+    {% if inform_wait_to_review %}
+    <div class="row justify-content-center">
+        <div class="col-xxl-8 col-md-8">
+            <div class="card info-card bg-card">
+                <a href="{% url 'inform:customer_wait_to_review' %}">
+                    <div class="card-body">
+                        <h5 class="card-title">รายการแจ้งซ่อมที่ดำเนินการแล้วรอประเมิน 
+                            <span>| {{ request.user.profile.department }}</span>
+                        </h5>
+                        <div class="d-flex">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-clipboard-check text-success"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>{{ inform_wait_to_review.count }} รายการ</h6>
+                                <span class="text-muted small pt-2 ps-1">รอการประเมิน</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
 </section>
 
 <script>

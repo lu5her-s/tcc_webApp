@@ -1,0 +1,15 @@
+{% load tags %}
+
+<a href="{% url 'inform:home' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+{% if not object.approve_status %}
+
+<button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal"
+  data-bs-target="#confirm_approve">อนุมัติ</button>
+<button type="button" class="btn btn-lg btn-danger" data-bs-toggle="modal"
+  data-bs-target="#confirm_reject">ไม่อนุมัติ</button>
+{% endif %}
+
+{% if manager_review and object.repair_status == 'CLO' and command_review is None %}
+<button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal"
+  data-bs-target="#reviewModal">Review</button>
+{% endif %}

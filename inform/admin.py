@@ -19,7 +19,7 @@ from .models import (
 class InformAdmin(admin.ModelAdmin):
     # list_display = ('urgency', 'issue_safe', 'issue_category', 'full_name', 'created_at')
     list_display_links = ('issue_safe', 'id_inform')
-    list_filter = ('created_at',)
+    list_filter = ('created_at', 'approve_status', 'urgency', 'issue_category', 'accepted')
     search_fields = ('issue',)
 
     def full_name(self, obj):

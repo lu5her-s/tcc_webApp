@@ -1,0 +1,38 @@
+<a href="{ url 'inform:department_list' }" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+
+{% if customer_review is None and object.repair_status == 'CLO' %}
+<button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal"
+  data-bs-target="#reviewModal">Review</button>
+{% endif %}
+
+{% if not object.approve_status %}
+<a href="#" class="btn btn-lg btn-warning">ยกเลิก</a>
+{% endif %}
+
+<!--
+{% comment %}
+{% if request.user|has_group:"StaffRepair" and not object.approve_status %}
+<a href="{% url 'inform:manager_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+
+{% if customer_review %}
+<button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal"
+  data-bs-target="#reviewModal">Review</button>
+
+{% if not object.repair_category %}
+<button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal"
+  data-bs-target="#manager_check">จัดการ</button>
+{% endif %}
+
+{% endif %}
+
+{% elif request.user|has_group:"Command" and not object.approve_status %}
+
+<button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal"
+  data-bs-target="#confirm_approve">อนุมัติ</button>
+<button type="button" class="btn btn-lg btn-danger" data-bs-toggle="modal"
+  data-bs-target="#confirm_reject">ไม่อนุมัติ</button>
+
+{% endif %}
+{% endcomment %}
+
+-->

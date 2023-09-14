@@ -184,8 +184,8 @@ class CustomerReview(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
     description = models.TextField()
-    reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
-    inform = models.ForeignKey(Inform, on_delete=models.CASCADE)
+    reviewer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviewer")
+    inform = models.ForeignKey(Inform, on_delete=models.CASCADE, related_name="customer_review")
 
     class Meta:
         verbose_name = 'Customer Review'
