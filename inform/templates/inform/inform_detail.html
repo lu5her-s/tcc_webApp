@@ -208,6 +208,18 @@
                 </tr>
               </table>
 
+              <!-- if user is assigned to make button to create stockitem -->
+              {% if request.user.profile == object.assigned_to %}
+              <div>
+                <a href="#" class="btn" style="float: right; background-color: purple; color: white;">เบิกคลัง</a>
+                {% if object.repair_category == 'WAT' or object.repair_category == 'URG' %}
+                <a href="#" class="btn" style="float: right; background-color: green; color: white; margin-right: 0.5rem;">ยานพาหนะ</a>
+                <a href="#" class="btn" style="float: right; background-color: green; color: white; margin-right: 0.5rem;">ใบงาน</a>
+                {% endif %}
+              </div>
+        
+        {% endif %}
+
               {% if images %}
               <br>
 
@@ -384,6 +396,8 @@
           </div><!-- end tab-content -->
 
         </div><!--end card-->
+
+
       </div><!-- end col -->
 
       <!-- Assign Job -->
@@ -394,9 +408,10 @@
             {% include "./buttons/customer.html" %}
           {% elif request.user|has_group:"StaffRepair" %}
             {% include "./buttons/manager.html" %}
-          {% else %}
+          {% elif request.user|has_group:"Command" %}
             {% include "./buttons/command.html" %}
-          
+          {% else %}
+            {% include "./buttons/user.html" %}
           {% endif %}
         </div>
 

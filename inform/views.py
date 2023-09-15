@@ -124,8 +124,9 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             reviewer=self.request.user
         )
         inform_wait_review = Inform.objects.filter(
-            approve_status=Inform.ApproveStatus.APPROVE,
-            repair_status=Inform.RepairStatus.CLOSE,
+            Q(approve_status=Inform.ApproveStatus.APPROVE) &
+            Q(repair_status=Inform.RepairStatus.CLOSE) &
+            ~Q(closed=True)
         )
         inform_wait_to_review = inform_wait_review.exclude(
             customer_review__in=customer_review
@@ -774,7 +775,7 @@ def wait_close_approve(request: HttpResponse):
         Q(approve_status=Inform.ApproveStatus.APPROVE) &
         Q(closed=False)
     )
-    return render(request, 'inform/inform_list.html', {'object_list': object_list})
+    return render(request, 'inform/inform_list.html', {'object_list': object_list, 'title': 'ขออนุมัติปิดงาน'})
 
 
 def command_wait_approve(request: HttpResponse):
@@ -793,3 +794,16 @@ def all_inform(request: HttpResponse):
 def all_progress(request: HttpResponse):
     object_list = Inform.objects.filter(repair_status=Inform.RepairStatus.REPAIR)
     return render(request, 'inform/inform_list.html', {'object_list': object_list, 'title': 'รายการกำลังดําเนินการ'})
+
+
+def all_recheck(request: HttpResponse):
+    object_list = Inform.objects.filter(approve_status=Inform.ApproveStatus.REJECT)
+    return render(request, 'inform/inform_list.html', {'object_list': object_list, 'title': 'รายการตรวจสอบอีกครั้ง'})
+
+
+def close_approve(request: HttpResponse, pk: int):
+    if request.method == 'POST':
+        inform = get_object_or_404(Inform, pk=pk)
+        inform.closed = True
+        inform.save(update_fields=['closed'])
+        return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))

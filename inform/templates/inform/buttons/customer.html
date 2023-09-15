@@ -1,4 +1,4 @@
-<a href="{ url 'inform:department_list' }" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+<a href="{% url 'inform:department_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
 
 {% if customer_review is None and object.repair_status == 'CLO' %}
 <button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal"

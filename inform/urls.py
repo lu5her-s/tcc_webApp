@@ -50,4 +50,6 @@ urlpatterns = [
     path('wait_close_approve/', views.wait_close_approve, name='wait_close_approve'),
     path('command/wait_approve/', views.command_wait_approve, name='command_wait_approve'),
     path('command/progress/', views.all_progress, name='command_progress'),
+    path('command/recheck/', views.all_recheck, name='command_recheck'),
+    path('command/close_approve/<int:pk>/', views.close_approve, name='close_approve'),
 ]
