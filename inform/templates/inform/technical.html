@@ -24,7 +24,7 @@
     <!-- new repair -->
     <div class="col-xxl-4 col-md-6">
       <div class="card info-card bg-card">
-        <a href="{% url 'inform:tech_list' %}">
+        <a href="#">
           <div class="card-body">
             <h5 class="card-title">รอตอบรับ<span>| รายการแจ้งซ่อมใหม่</span></h5>
             <div class="d-flex align-items-center">
@@ -84,7 +84,7 @@
 
     <div class="col-xxl-4 col-md-6">
       <div class="card info-card bg-card">
-        <a href="#">
+        <a href="{% url 'inform:tech_all_assign' %}">
           <div class="card-body">
             <h5 class="card-title">รายการงานทั้งหมด <span>| </span></h5>
             <div class="d-flex align-items-center">
@@ -92,10 +92,9 @@
                 <i class="bi bi-wrench text-warning"></i>
               </div>
               <div class="ps-3">
-                <h6>{{ wait_job.count }} รายการ</h6>
+                <h6>{{ all_assign.count }} รายการ</h6>
                 <span class="text-success small pt-1 fw-bold">ดำเนินการแล้ว</span> <span
-                  class="text-muted small pt-2 ps-1">{{ wait_job.count }} รายการ</span>
-
+                  class="text-muted small pt-2 ps-1">{{ assign_done.count }} รายการ</span>
               </div>
             </div>
           </div>

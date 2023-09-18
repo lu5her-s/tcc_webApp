@@ -1,3 +1,5 @@
+{% load tags %}
+
 <a href="{% url 'inform:department_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
 
 {% if customer_review is None and object.repair_status == 'CLO' %}

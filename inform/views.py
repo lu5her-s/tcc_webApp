@@ -28,8 +28,9 @@ from .models import (
     CustomerReview,
     Inform,
     InformImage,
+    InformOption,
     InformReject,
-    ManagerReview
+    ManagerReview,
 )
 
 # Create your views here.
@@ -209,6 +210,13 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             accepted=True,
             repair_status=Inform.RepairStatus.CLOSE
         )
+        all_assign = Inform.objects.filter(
+            assigned_to=self.request.user.profile
+        )
+        assign_done = Inform.objects.filter(
+            assigned_to=self.request.user.profile,
+            repair_status=Inform.RepairStatus.CLOSE
+        )
 
         # command dashboard
         all_inform = Inform.objects.all()
@@ -270,6 +278,8 @@ class InformHomeView(LoginRequiredMixin, TemplateView):
             'wait_job': wait_job,
             'close_job': close_job,
             'wait_close': wait_close,
+            'all_assign': all_assign,
+            'assign_done': assign_done,
 
             # Command
             'all_inform': all_inform,
@@ -303,6 +313,7 @@ class InformDetailView(LoginRequiredMixin, DetailView):
             context['customer_review'] = CustomerReview.objects.get(inform=self.get_object())
             context['manager_review'] = ManagerReview.objects.get(inform=self.get_object())
             context['command_review'] = CommandReview.objects.get(inform=self.get_object())
+            context['inform_options'] = InformOption.objects.get(inform=self.get_object())
         except:
             pass
 
@@ -615,8 +626,8 @@ class InformTechnicalListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return super().get_queryset().filter(
             approve_status=Inform.ApproveStatus.APPROVE,
+            accepted=True,
             assigned_to=self.request.user.profile,
-            accepted=False
         )
 
     def get_context_data(self, **kwargs):
@@ -807,3 +818,8 @@ def close_approve(request: HttpResponse, pk: int):
         inform.closed = True
         inform.save(update_fields=['closed'])
         return redirect(reverse_lazy('inform:detail', kwargs={'pk': pk}))
+
+
+def all_assigned(request: HttpResponse):
+    object_list = Inform.objects.filter(assigned_to=request.user.profile)
+    return render(request, 'inform/inform_list.html', {'object_list': object_list, 'title': 'งานทั้งหมด'})

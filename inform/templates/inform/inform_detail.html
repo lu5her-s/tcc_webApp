@@ -32,7 +32,7 @@
               </button>
             </li>
 
-            {% if request.user.profile == object.assigned_to %}
+            {% if request.user.profile == object.assigned_to and not object.accepted %}
             <li class="nav-item">
               <button class="nav-link" data-bs-toggle="tab" data-bs-target="#accept">
                 ตอบรับ
@@ -211,10 +211,52 @@
               <!-- if user is assigned to make button to create stockitem -->
               {% if request.user.profile == object.assigned_to %}
               <div>
-                <a href="#" class="btn" style="float: right; background-color: purple; color: white;">เบิกคลัง</a>
+                <!-- TODO: make condition for dynamic link -->
+                {% if inform_options.stock is None %}
+                <a href="#" 
+                   target="_blank"
+                   class="btn" 
+                   style="float: right; background-color: purple; color: white;">
+                  เบิกคลัง
+                </a>
+                {% else %}
+                <a href="#"
+                   class="btn"
+                   style="float: right; background-color: purple; color: white;">
+                  เบิกคลัง
+                </a>
+                {% endif %}
+
                 {% if object.repair_category == 'WAT' or object.repair_category == 'URG' %}
-                <a href="#" class="btn" style="float: right; background-color: green; color: white; margin-right: 0.5rem;">ยานพาหนะ</a>
-                <a href="#" class="btn" style="float: right; background-color: green; color: white; margin-right: 0.5rem;">ใบงาน</a>
+
+                  {% if inform_options.car is None %}
+                  <a href="{% url 'car:list' %}" 
+                     target="_blank"
+                     class="btn" 
+                     style="float: right; background-color: green; color: white; margin-right: 0.5rem;">
+                    ยานพาหนะ
+                  </a>
+                  {% else %}
+                  <a href="{% url 'car:booking-detail' pk=inform_options.car %}"
+                     class="btn"
+                     style="float: right; background-color: green; color: white; margin-right: 0.5rem;">
+                    ยานพาหนะ</a>
+                  {% endif %}
+
+                  {% if inform_options.job is None %}
+                  <a href="#"
+                    class="btn"
+                    style="float: right; background-color: green; color: white; margin-right: 0.5rem;">
+                    ใบงาน
+                  </a>
+                  {% else %}
+                  <a href="#"
+                    class="btn"
+                    style="float: right; background-color: green; color: white; margin-right: 0.5rem;">
+                    ใบงาน
+                  </a>
+                  {% endif %}
+
                 {% endif %}
               </div>
         
@@ -410,6 +452,8 @@
             {% include "./buttons/manager.html" %}
           {% elif request.user|has_group:"Command" %}
             {% include "./buttons/command.html" %}
+          {% elif request.user|has_group:"Technical" %}
+            {% include "./buttons/technical.html" %}         
           {% else %}
             {% include "./buttons/user.html" %}
           {% endif %}

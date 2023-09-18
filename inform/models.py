@@ -6,6 +6,7 @@ from ckeditor.fields import RichTextField
 
 from asset.models import StockItem
 from account.models import Profile
+from car.models import CarBooking
 
 # Create your models here.
 
@@ -247,3 +248,11 @@ class CommandReview(models.Model):
 
     def __str__(self):
         return f'Command Review: {self.reviewer} - {self.inform.pk}'
+
+
+# mkae models for manage option for inform : car, job, stockitem
+class InformOption(models.Model):
+    inform = models.ForeignKey(Inform, on_delete=models.CASCADE)
+    car = models.ForeignKey(CarBooking, on_delete=models.CASCADE, null=True, blank=True)
+    # job = models.ForeignKey(Job, on_delete=models.CASCADE, null=True, blank=True)
+    # stock = models.ForeignKey(Stock, on_delete=models.CASCADE, null=True, blank=True)
