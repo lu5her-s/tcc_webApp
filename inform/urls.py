@@ -10,8 +10,8 @@ urlpatterns = [
     path('update/<int:pk>/', views.InformUpdateView.as_view(),
          name="update"),
     path('all_infrom/', views.all_inform, name="all_inform"),
-
     path('review/<int:pk>/', views.review_save, name="review"),
+    path('pdf/<int:pk>/', views.inform_to_pdf, name="pdf"),
 
     # user url
     path('user/list/', views.InformUserListView.as_view(),

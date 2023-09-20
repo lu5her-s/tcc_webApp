@@ -3,12 +3,15 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 14 2023, 15:33 257
-# Last Modified Date: Thu Sep, 14 2023, 16:13 257
+# Last Modified Date: Wed Sep, 20 2023, 10:33 263
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 import re
+import os
 from django.db.models import Q
+from django.http import response
 from django.shortcuts import HttpResponse, redirect, render, get_object_or_404
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from account.models import LineToken
@@ -19,6 +22,7 @@ from django.views.generic import (
     TemplateView,
 )
 from config.sendline import Sendline
+from config.utils import generate_pdf
 
 from inform.forms import InformForm, InformProgress, ProgressForm, ManagerCheckForm, ReviewForm
 from repair.forms import Repair
@@ -823,3 +827,17 @@ def close_approve(request: HttpResponse, pk: int):
 def all_assigned(request: HttpResponse):
     object_list = Inform.objects.filter(assigned_to=request.user.profile)
     return render(request, 'inform/inform_list.html', {'object_list': object_list, 'title': 'งานทั้งหมด'})
+
+
+def inform_to_pdf(request: HttpResponse, pk: int):
+    inform = get_object_or_404(Inform, pk=pk)
+    temp_html = 'inform/temp.html'
+    with open(temp_html, 'w') as f:
+        f.write(render_to_string('inform/inform_pdf.html', {'inform': inform}))
+    pdf = generate_pdf(data={'inform': inform}, template_path='inform/inform_pdf.html')
+    os.remove(temp_html)
+
+    response = HttpResponse(pdf, content_type='application/pdf')
+    # response['Content-Disposition'] = f'inline; filename=inform_{inform.pk}.pdf'
+
+    return response

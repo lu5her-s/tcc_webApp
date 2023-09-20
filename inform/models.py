@@ -57,7 +57,7 @@ class Inform(models.Model):
         LOW = 'LOW', 'ทั่วไป'
 
     class RepairCategory(models.TextChoices):
-        WAIT = 'WAT', 'รอวงรอบ'
+        WAIT = 'WAT', 'วงรอบ'
         URGENCY = 'URG', 'ซ่อมด่วน'
         AGENT = 'AGN', 'ซ่อมโดย จนท.ประจำสถานี'
 

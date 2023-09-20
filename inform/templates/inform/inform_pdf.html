@@ -1,0 +1,159 @@
+{% load tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Inline CSS Invoice Template</title>
+  <style>
+    @font-face {
+      font-family: "TH Sarabun";
+      font-style: normal;
+      font-weight: normal;
+      src: "/home/lu5her/source/python/django/tcc_webApp/static/assets/fonts/TH-Sarabun-New-Bold.ttf",
+    }
+
+    body {
+      font-size: 16px;
+    }
+
+    .thai-font {
+      font-family: "TH Sarabun";
+      font-size: 20px;
+    }
+
+    .table-bg {
+      background: #343a40;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="padding: 10px;">
+    <table style="width: 100%;">
+      <tr style="width: 100%;">
+        <td style="width: 50%;">
+          <label style="font-size: 30px; font-weight: bold;">INF : {{ inform.pk }}/{{ inform.created_at.year|thaiyear }}</label><br />
+          <label class="thai-font" style="font-size: 18px;">ความเร่งด่วน - {{ inform.get_urgency_display }}</label>
+        </td>
+        <td style="text-align: right;">
+          <img style="width: 50px" src="/home/lu5her/source/python/django/tcc_webApp/static/assets/img/favicon.ico" />
+        </td>
+      </tr>
+    </table>
+    <table style="width: 100%; margin: 10px 0px;">
+      <tr style="width: 100%;">
+        <td class="thai-font" style="width: 33%; line-height: 25px;">
+          <label class="thai-font">ผู้แจ้ง</label><br />
+          <label class="thai-font" style="font-weight: bold; font-size: 20px;">{{ inform.customer.profile }}</label>
+          <br />
+          สังกัด {{ inform.customer.profile.sector }}
+        </td>
+        {% if inform.accepted %}
+        <td class="thai-font" style="width: 33%; line-height: 25px;">
+          <label class="thai-font" style="font-weight: bold; font-size: 20px;">ช่างรับผิดชอบ</label><br />
+          <label class="thai-font" style="font-weight: bold; font-size: 20px;">{{ inform.assigned_to }}</label>
+          <br />
+          {{ inform.get_repair_category_display }}
+        </td>
+          {% if inform.accepted and not inform.repair_status == 'CLO' %}
+          <td style="width: 33%; margin: auto;">
+            <span style="
+                  font-size: 30px;
+                  font-weight: bold;
+                  padding: 10px;
+                  color: green;
+                ">
+              Accepted</span>
+          </td>
+          {% elif inform.repair_status == 'CLO' %}
+          <td style="width: 33%; margin: auto;">
+            <span style="
+                  background-color: black;
+                  font-size: 30px;
+                  font-weight: bold;
+                  padding: 10px;
+                  color: red;
+                ">
+              CLOSED</span>
+          </td>
+          {% endif %}
+        
+        {% endif %}
+      </tr>
+
+    </table>
+
+    <table style="width: 100%; border: 1px solid black;">
+      <tr>
+        <th class="table-bg thai-font" style="padding: 10px;" width="20%">
+          ประเภทการแจ้งซ่อม
+        </th>
+        <td class="thai-font">
+          {{ inform.get_issue_category_display }}
+        </th>
+      </td>
+
+      <tr>
+        <th class="table-bg thai-font" style="padding: 10px;">
+          พัสดุ/อุปกรณ์
+        </th>
+        <td>
+          {{ inform.stockitem.item_name }}
+          <br />
+          [{{ inform.stockitem.serial }}]
+        </td>
+      </tr>
+
+      <tr>
+        <th class="table-bg thai-font" style="padding: 10px;">
+          สถานที่
+        </th>
+        <td class="thai-font">
+          {{ inform.customer.profile.department }}
+        </td>
+      </tr>
+
+      <tr>
+        <th class="table-bg thai-font" style="padding: 10px;">
+          วันที่แจ้ง
+        </th>
+        <td class="thai-font">
+          {{ inform.created_at|thaidate }}
+        </td>
+      </tr>
+    </table>
+    <br />
+
+    <table style="width: 100%; position: fixed; bottom: 0;">
+      <tr style="width: 100%;">
+        <td style="width: 50%;">
+          <div>
+            Notes:
+          </div>
+          <div>
+            More Information
+          </div>
+        </td>
+        <td style="
+              width: 50%;
+              background-color: whitesmoke;
+              text-align: center;
+              padding: 10px;
+            ">
+          <label style="
+                font-size: 30px;
+                color: #e1e1e1;
+                text-transform: uppercase;
+                margin: auto;
+              ">Signature</label>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+
+</html>
