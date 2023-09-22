@@ -1,78 +1,87 @@
 from django.db import models
-from django.contrib.auth.models import User
 from asset.models import StockItem
+from inform.models import Inform
 
 # Create your models here.
 
-from django.db import models
-
 class RelayStockBill(models.Model):
     """
-    Represents a stock bill for relay devices.
-    Each instance of this class corresponds to a bill for purchasing or selling relay devices.
+    Represents a relay stock bill entry in the database.
+
+    A RelayStockBill records the movement of a stock item within the system, including details such as the item itself,
+    quantity, creation timestamp, and whether an information request has been made.
+
+    Parameters:
+        item (StockItem): The stock item associated with this bill.
+        qty (int, optional): The quantity of the stock item being moved. Defaults to 1.
+        created_at (datetime): The timestamp when this bill was created.
+        inform_request (bool, optional): A flag indicating whether an information request has been made. Defaults to False.
+        inform (Inform, optional): An optional link to an Inform object for additional information.
 
     Attributes:
-        bill_number (CharField): The unique identifier for the stock bill.
-        date_created (DateTimeField): The date and time when the bill was created.
-        items (ManyToManyField): The relay devices associated with this bill.
-        is_purchase (BooleanField): Indicates whether the bill is for a purchase (True) or a sale (False).
-        total_amount (DecimalField): The total amount of the bill in currency.
+        id (int): The unique identifier for this RelayStockBill.
+
+    Note:
+        - When creating a new RelayStockBill, the 'item' and 'created_at' parameters are required.
+        - If 'qty' is not provided, it defaults to 1.
+        - 'inform_request' is a boolean flag that can be set to True if additional information is requested.
+        - 'inform' can be linked to an Inform object for more detailed information.
+
+    Examples:
+        Creating a new RelayStockBill:
+        ```
+        bill = RelayStockBill(item=my_stock_item, created_at=timezone.now())
+        bill.save()
+        ```
+
     """
-
-    bill_number = models.CharField(max_length=20, unique=True, help_text="Unique identifier for the stock bill.")
-    date_created = models.DateTimeField(auto_now_add=True, help_text="Date and time when the bill was created.")
-    items = models.ManyToManyField('RelayDevice', through='BillItem', help_text="Relay devices associated with the bill.")
-    is_purchase = models.BooleanField(default=True, help_text="True if the bill is for a purchase, False if for a sale.")
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, help_text="Total amount of the bill.")
-
-    class Meta:
-        verbose_name = "Relay Stock Bill"
-        verbose_name_plural = "Relay Stock Bills"
+    item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
+    qty = models.IntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    inform_request = models.BooleanField(default=False)
+    inform = models.ForeignKey(Inform, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.bill_number} - {'Purchase' if self.is_purchase else 'Sale'} Bill"
+        return f'{pk} - {self.item.item_name} - {self.qty}'
 
 
-class RelayDevice(models.Model):
+class DataStockBill(models.Model):
     """
-    Represents a relay device that can be included in stock bills.
-
-    Attributes:
-        serial_number (CharField): The unique serial number of the relay device.
-        name (CharField): The name or description of the relay device.
-        price (DecimalField): The price of the relay device.
+    Represents a data stock bill entry in the database.
     """
-
-    serial_number = models.CharField(max_length=30, unique=True, help_text="Unique serial number of the relay device.")
-    name = models.CharField(max_length=100, help_text="Name or description of the relay device.")
-    price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Price of the relay device.")
-
-    class Meta:
-        verbose_name = "Relay Device"
-        verbose_name_plural = "Relay Devices"
+    item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
+    qty = models.IntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    inform_request = models.BooleanField(default=False)
+    inform = models.ForeignKey(Inform, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f'{pk} - {self.item.item_name} - {self.qty}'
 
 
-class BillItem(models.Model):
+class SatteliteStockBill(models.Model):
     """
-    Represents an individual item on a stock bill.
-
-    Attributes:
-        bill (ForeignKey): The stock bill this item belongs to.
-        relay_device (ForeignKey): The relay device associated with this item.
-        quantity (PositiveIntegerField): The quantity of relay devices in this item.
+    Represents a sattelite stock bill entry in the database.
     """
-
-    bill = models.ForeignKey(RelayStockBill, on_delete=models.CASCADE, help_text="Stock bill this item belongs to.")
-    relay_device = models.ForeignKey(RelayDevice, on_delete=models.CASCADE, help_text="Relay device for this item.")
-    quantity = models.PositiveIntegerField(help_text="Quantity of relay devices in this item.")
-
-    class Meta:
-        verbose_name = "Bill Item"
-        verbose_name_plural = "Bill Items"
+    item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
+    qty = models.IntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    inform_request = models.BooleanField(default=False)
+    inform = models.ForeignKey(Inform, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.quantity} x {self.relay_device.name} ({self.bill.bill_number})"
+        return f'{pk} - {self.item.item_name} - {self.qty}'
 
+
+class AirStockBill(models.Model):
+    """
+    Represents an air stock bill entry in the database.
+    """
+    item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
+    qty = models.IntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    inform_request = models.BooleanField(default=False)
+    inform = models.ForeignKey(Inform, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return f'{pk} - {self.item.item_name} - {self.qty}'

@@ -36,8 +36,8 @@
     <table style="width: 100%;">
       <tr style="width: 100%;">
         <td style="width: 50%;">
-          <label style="font-size: 30px; font-weight: bold;">INF : {{ inform.pk }}/{{ inform.created_at.year|thaiyear }}</label><br />
-          <label class="thai-font" style="font-size: 18px;">ความเร่งด่วน - {{ inform.get_urgency_display }}</label>
+          <label class="thai-font" style="font-size: 30px; font-weight: bold;">INF : {{ context.inform.pk }}/{{ context.inform.created_at.year|thaiyear }}</label><br />
+          <label class="thai-font" style="font-size: 18px;">ความเร่งด่วน - {{ context.inform.get_repair_category_display }}</label>
         </td>
         <td style="text-align: right;">
           <img style="width: 50px" src="/home/lu5her/source/python/django/tcc_webApp/static/assets/img/favicon.ico" />
@@ -48,38 +48,38 @@
       <tr style="width: 100%;">
         <td class="thai-font" style="width: 33%; line-height: 25px;">
           <label class="thai-font">ผู้แจ้ง</label><br />
-          <label class="thai-font" style="font-weight: bold; font-size: 20px;">{{ inform.customer.profile }}</label>
+          <label class="thai-font" style="font-weight: bold; font-size: 20px;">{{ context.inform.customer.profile }}</label>
           <br />
-          สังกัด {{ inform.customer.profile.sector }}
+          สังกัด {{ context.inform.customer.profile.sector }}
         </td>
-        {% if inform.accepted %}
-        <td class="thai-font" style="width: 33%; line-height: 25px;">
-          <label class="thai-font" style="font-weight: bold; font-size: 20px;">ช่างรับผิดชอบ</label><br />
-          <label class="thai-font" style="font-weight: bold; font-size: 20px;">{{ inform.assigned_to }}</label>
-          <br />
-          {{ inform.get_repair_category_display }}
-        </td>
-          {% if inform.accepted and not inform.repair_status == 'CLO' %}
-          <td style="width: 33%; margin: auto;">
-            <span style="
-                  font-size: 30px;
-                  font-weight: bold;
-                  padding: 10px;
-                  color: green;
-                ">
-              Accepted</span>
+        {% if context.inform.accepted %}
+          <td class="thai-font" style="width: 33%; line-height: 25px;">
+            <label class="thai-font" style="font-weight: bold; font-size: 20px;">ช่างรับผิดชอบ</label><br />
+            <label class="thai-font" style="font-weight: bold; font-size: 20px;">{{ context.inform.assigned_to }}</label>
+            <br />
+            {{ context.inform.get_repair_category_display }}
           </td>
-          {% elif inform.repair_status == 'CLO' %}
-          <td style="width: 33%; margin: auto;">
-            <span style="
-                  background-color: black;
-                  font-size: 30px;
-                  font-weight: bold;
-                  padding: 10px;
-                  color: red;
-                ">
-              CLOSED</span>
-          </td>
+          {% if context.inform.accepted and not context.inform.repair_status == 'CLO' %}
+            <td class="thai-font" style="width: 33%; margin: auto;">
+              <span style="
+                    font-size: 30px;
+                    font-weight: bold;
+                    padding: 10px;
+                    color: green;
+                  ">
+                Accepted</span>
+            </td>
+          {% elif context.inform.repair_status == 'CLO' %}
+            <td class="thai-font" style="width: 33%; margin: auto;">
+              <span style="
+                    background-color: black;
+                    font-size: 30px;
+                    font-weight: bold;
+                    padding: 10px;
+                    color: red;
+                  ">
+                CLOSED</span>
+            </td>
           {% endif %}
         
         {% endif %}
@@ -93,7 +93,7 @@
           ประเภทการแจ้งซ่อม
         </th>
         <td class="thai-font">
-          {{ inform.get_issue_category_display }}
+          {{ context.inform.get_issue_category_display }}
         </th>
       </td>
 
@@ -102,9 +102,9 @@
           พัสดุ/อุปกรณ์
         </th>
         <td>
-          {{ inform.stockitem.item_name }}
+          {{ context.inform.stockitem.item_name }}
           <br />
-          [{{ inform.stockitem.serial }}]
+          [{{ context.inform.stockitem.serial }}]
         </td>
       </tr>
 
@@ -113,7 +113,7 @@
           สถานที่
         </th>
         <td class="thai-font">
-          {{ inform.customer.profile.department }}
+          {{ context.inform.customer.profile.department }}
         </td>
       </tr>
 
@@ -122,20 +122,45 @@
           วันที่แจ้ง
         </th>
         <td class="thai-font">
-          {{ inform.created_at|thaidate }}
+          {{ context.inform.created_at|thaidate }}
         </td>
       </tr>
+
+      {% if context.customer_review or context.manager_review or context.command_review %}
+
+        <tr>
+          <th class="table-bg thai-font" style="padding: 10px;">
+            การประเมิน
+          </th>
+          <td class="thai-font">
+            {% if context.customer_review %}
+              <label>ผู้แจ้ง : {{ context.customer_review.rating }}/5 คะแนน</label> <br />
+            {% endif %}
+
+            {% if context.manager_review %}
+              <label>หน.ซบร.ฯ : {{ context.manager_review.rating }}/5 คะแนน</label> <br />
+            {% endif %}
+            
+            {% if context.command_review %}
+              <label>ผบช.ฯ : {{ context.command_review.rating }}/5 คะแนน</label>
+            {% endif %}
+          </td>
+        </tr>
+
+      {% endif %}
+
     </table>
+
     <br />
 
-    <table style="width: 100%; position: fixed; bottom: 0;">
+    <table class="thai-font" style="width: 100%; position: fixed; bottom: 0;">
       <tr style="width: 100%;">
         <td style="width: 50%;">
           <div>
-            Notes:
+            หมายเหตุ:
           </div>
           <div>
-            More Information
+            บันทึกเพิ่มเติม
           </div>
         </td>
         <td style="

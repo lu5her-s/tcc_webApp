@@ -47,9 +47,9 @@
                             <thead>
                                 <tr>
                                     <th scope="col">ประเภทพัสดุ</th>
+                                    <th scope="col">serial</th>
                                     <th scope="col">ชื่อพัสดุ</th>
                                     <th scope="col">ยี่ห้อ</th>
-                                    <th scope="col">serial</th>
                                     <th scope="col">สถานะ</th>
                                     <th scope="col">การติดตั้ง</th>
                                     <th scope="col">Network</th>
@@ -64,16 +64,18 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="{% url 'asset:stockitem_detail' pk=object.pk %}">
+                                      <a href="{% url 'asset:stockitem_detail' pk=object.pk %}">
+                                        {{ object.serial }}
+                                      </a>
+                                    </td>
+                                    <td>
                                             {{ object.item_name }}
-                                        </a>
                                     </td>
                                     <td>
                                         <a href="{% url 'asset:manufacturer_list' pk=object.manufacturer.pk %}">
                                             {{ object.manufacturer.name }}
                                         </a>
                                     </td>
-                                    <td>{{ object.serial }}</td>
                                     {% if object.get_status_display == 'พร้อมใช้งาน' %}
                                     <td><span><i class="bi bi-check-circle-fill"></i></span>{{ object.get_status_display }}</td>
                                     {% else %}

@@ -3,7 +3,7 @@
 # File              : urls.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 22 2022, 15:06 265
-# Last Modified Date: Wed Feb, 01 2023, 21:28 032
+# Last Modified Date: Fri Sep, 22 2023, 15:17 265
 # Last Modified By  : lu5her <lu5her@mail>
 """config URL Configuration
 
@@ -47,6 +47,7 @@ urlpatterns = [
     path('asset/', include('asset.urls')),
     path('inform/', include('inform.urls')),
     path('repair/', include('repair.urls')),
+    path('stock/', include('stock.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -38,9 +38,23 @@ class StockItemListView(LoginRequiredMixin, ListView):
     template_name = 'asset/stockitem_list.html'
 
     def get_queryset(self):
+        """
+        Returns a QuerySet containing all StockItem objects.
+
+        :return: QuerySet of StockItem objects
+        :rtype: QuerySet
+        """
         return StockItem.objects.all()
 
-    def get_context_data(self, **kwargs):
+
+    def get_context_data(self, **kwargs) -> dict:
+        """
+        Returns the context data for the StockItemListView.
+
+        :return: context data
+        :rtype: dict
+            
+        """
         context = super().get_context_data(**kwargs)
         context['title'] = 'แสดงรายการพัสดุ'
         return context

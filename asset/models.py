@@ -7,7 +7,7 @@ from account.models import Department
 
 
 # function for save image param instance and and filename
-def stock_image(instance, filename):
+def stock_image(instance, filename: str) -> str:
     """upload_image_path.
 
     :param instance:get instance from StockItem
@@ -89,9 +89,11 @@ class StockItem(models.Model):
         IN_USE = 'IN_USE', 'กำลังใช้งาน'
         UNDER_MAINTENANCE = 'UNDER_MAINTENANCE', 'ซ่อมบำรุง'
         DISPOSED = 'DISPOSED', 'จำหน่าย'
+        CHECK = 'CHECK', 'ตรวจสอบ'
+        ON_HAND = 'ON_HAND', 'เคลื่อนไหว'
 
     item_name = models.CharField(max_length=50)
-    serial = models.CharField(max_length=50, unique=True)
+    serial = models.CharField(max_length=50, unique=True, null=True, blank=True)
     description = models.TextField()
     supplier = models.ForeignKey(
         Supplier, on_delete=models.CASCADE, null=True, blank=True)

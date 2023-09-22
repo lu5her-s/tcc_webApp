@@ -831,10 +831,19 @@ def all_assigned(request: HttpResponse):
 
 def inform_to_pdf(request: HttpResponse, pk: int):
     inform = get_object_or_404(Inform, pk=pk)
+    customer_review = CustomerReview.objects.get(inform=inform)
+    manager_review = ManagerReview.objects.get(inform=inform)
+    command_review = CommandReview.objects.get(inform=inform)
+    context = {
+        'inform': inform,
+        'customer_review': customer_review,
+        'manager_review': manager_review,
+        'command_review': command_review
+    }
     temp_html = 'inform/temp.html'
     with open(temp_html, 'w') as f:
-        f.write(render_to_string('inform/inform_pdf.html', {'inform': inform}))
-    pdf = generate_pdf(data={'inform': inform}, template_path='inform/inform_pdf.html')
+        f.write(render_to_string('inform/inform_pdf.html', {'context': context}))
+    pdf = generate_pdf(data={'context': context}, template_path='inform/inform_pdf.html')
     os.remove(temp_html)
 
     response = HttpResponse(pdf, content_type='application/pdf')
