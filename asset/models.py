@@ -116,6 +116,7 @@ class StockItem(models.Model):
     is_deleted = models.BooleanField(default=False)
     status = models.CharField(
         max_length=20, choices=Status.choices, default=Status.AVAILABLE)
+    count_text = models.CharField(max_length=50, null=True, blank=True)
 
     objects = models.Manager()  # default Manager
     available = StockItemManager()  # Custom manager filter available stock_item
@@ -135,3 +136,10 @@ class StockItemImage(models.Model):
 
     def __str__(self):
         return f"{self.stock_item.item_name} - { self.images.name }"
+
+
+class ItemLocation(models.Model):
+    """ItemLocation."""
+
+    item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
+    location = models.ForeignKey(Department, on_delete=models.CASCADE)

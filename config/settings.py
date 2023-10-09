@@ -69,8 +69,7 @@ INSTALLED_APPS = [
     'asset',
     'inform',
     'repair',
-    'stock',
-
+    'parcel',
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

@@ -47,7 +47,7 @@ urlpatterns = [
     path('asset/', include('asset.urls')),
     path('inform/', include('inform.urls')),
     path('repair/', include('repair.urls')),
-    path('stock/', include('stock.urls')),
+    # path('bill/', include('bill.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
