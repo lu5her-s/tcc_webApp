@@ -66,7 +66,7 @@ class RequestBillDetail(models.Model):
 
     # Define model fields
     quantity_approve = models.PositiveIntegerField(default=1)
-    approve_date = models.DateField(auto_now_add=True)
+    approve_date = models.DateField(null=True, blank=True)
     approved = models.BooleanField(default=False)
     is_paid = models.BooleanField(default=False)
 
@@ -77,13 +77,14 @@ class RequestBillDetail(models.Model):
         verbose_name_plural = "Request Bill Details"
 
     def __str__(self):
-        return self.bill_number
+        return f'{self.bill.pk}/{self.bill.created_at.year+543}'
 
     def mark_as_approved(self):
         """
         Mark the request bill as paid.
         """
         self.approved = True
+        self.approve_date = datetime.date.today()
         self.save()
 
     def get_payment_status(self):
