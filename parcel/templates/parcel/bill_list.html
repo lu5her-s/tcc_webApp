@@ -31,7 +31,7 @@
           <div class="card-body">
             <h5 class="card-title">{{ title }}
               <span>| {{ request.user.profile }}</span>
-              <a href="#" class="btn btn-success" style="float: right;">
+              <a href="{% url 'parcel:select_stock' %}" class="btn btn-success" style="float: right;">
                 <i class="bi bi-plus"></i>
                 เบิก
               </a>

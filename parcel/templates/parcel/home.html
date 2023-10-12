@@ -33,8 +33,8 @@
                                 <i class="bi bi-bank text-danger"></i>
                             </div>
                             <div class="ps-3">
-                              <h6>{{ all_bill }} ใบเบิก</h6>
-                                <span class="text-success small pt-1 fw-bold">รออนุมัติ  </span> <span class="text-muted small pt-2 ps-1">{{ wait_approve }} รายการ</span>
+                              <h6>{{ all_bill.count }} ใบเบิก</h6>
+                                <span class="text-success small pt-1 fw-bold">รออนุมัติ  </span> <span class="text-muted small pt-2 ps-1">{{ wait_approve.count }} รายการ</span>
 
                             </div>
                         </div>
@@ -53,8 +53,8 @@
                                 <i class="bi bi-bank text-danger"></i>
                             </div>
                             <div class="ps-3">
-                              <h6>{{ parcel_list }} รายการ</h6>
-                                <span class="text-success small pt-1 fw-bold">ยังไม่ดำเนินการ</span> <span class="text-muted small pt-2 ps-1">{{ on_hand }} รายการ</span>
+                              <h6>{{ parcel_list.count }} รายการ</h6>
+                                <span class="text-success small pt-1 fw-bold">ยังไม่ดำเนินการ</span> <span class="text-muted small pt-2 ps-1">{{ on_hand.count }} รายการ</span>
 
                             </div>
                         </div>

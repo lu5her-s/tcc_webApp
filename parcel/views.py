@@ -1,20 +1,48 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic import (
+    DetailView,
+    ListView,
+    TemplateView,
+    View
+)
 
-from .models import RequestBill
+from asset.models import (
+    StockItem,
+    Category
+)
+from account.models import (
+    Department
+)
+
+from .models import (
+    RequestBill,
+    RequestBillDetail,
+    RequestItem
+)
+from .forms import SelectStockForm, BillCreateForm
 
 # Create your views here.
 
 class ParcelHomeView(LoginRequiredMixin, TemplateView):
+    """A class-based view for the home page of the parcel application."""
+
     template_name = 'parcel/home.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['all_bill'] = 'Test all_bill'
-        context['wait_approve'] = 'Test wait_approve'
-        context['parcel_list'] = 'Test parcel_list'
-        context['on_hand'] = 'Test on_hand'
+        all_bill = RequestBill.objects.filter(user=self.request.user)
+        context['all_bill'] = all_bill
+        context['wait_approve'] = all_bill.filter(billdetail__approved=False)
+        context['parcel_list'] = RequestItem.objects.filter(bill__in=all_bill)
+        # context['on_hand'] = Q(all_bill.billitems.filter(item.status==StockItem.Status.AVAILABLE)) & Q(all_bill.bill_detail.filter(is_paid=True))
+        # context['on_hand'] = (Q(RequestItem.objects.filter(item__status=StockItem.Status.AVAILABLE, bill__in=all_bill)) & Q(
+        #     all_bill.filter(billdetail__is_paid=True)
+        # )).count()
+        context['on_hand'] = RequestItem.objects.filter(
+            item__status=StockItem.Status.AVAILABLE,
+            bill__in=all_bill,
+        ).filter(bill__billdetail__is_paid=True)
         return context
 
 
@@ -40,3 +68,38 @@ class BillDetailView(LoginRequiredMixin, DetailView):
         context['bill_detail'] = RequestBillDetail.objects.filter(bill=self.get_object())
         context['bill_items'] = RequestItem.objects.filter(bill=self.get_object())
         return context
+
+
+class SelectStockView(LoginRequiredMixin, View):
+    template_name = 'parcel/select_stock.html'
+    form_class = SelectStockForm
+
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            stock_id = form.cleaned_data['department'].id
+            stock = get_object_or_404(Department, pk=stock_id)
+            return redirect('parcel:create_bill', pk=stock.pk)
+        return render(request, self.template_name, {'form': form})
+
+
+class BillCreateView(LoginRequiredMixin, View):
+    template_name = 'parcel/create_bill.html'
+
+    def get(self, request, pk):
+        stock = get_object_or_404(Department, pk=pk)
+        items = StockItem.objects.filter(
+            location=stock,
+            status=StockItem.Status.AVAILABLE
+        )
+        categories = Category.objects.filter(stockitem__in=items).distinct()
+        context = {
+            'stock': stock,
+            'items': items,
+            'categories': categories
+        }
+        return render(request, self.template_name, context)

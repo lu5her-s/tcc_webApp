@@ -7,7 +7,7 @@
 # Last Modified By  : lu5her <lu5her@mail>
 from django.db import models
 from django.contrib.auth.models import User
-from account.models import Department
+from account.models import Department, Profile
 from asset.models import (
     StockItem
 )
@@ -27,8 +27,8 @@ class RequestBill(models.Model):
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    receiver = models.ForeignKey(User, related_name='bill_receiver', on_delete=models.CASCADE, null=True, blank=True)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='bill_department')
+    receiver = models.ForeignKey(Profile, related_name='bill_receiver', on_delete=models.CASCADE, null=True, blank=True)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='billdepartment')
 
     class Meta:
         verbose_name_plural = "Request Bills"
@@ -46,7 +46,7 @@ class RequestItem(models.Model):
         quantity (models.PositiveIntegerField): The quantity requested.
         serial_no (models.CharField): The serial number of the item.
     """
-    bill = models.ForeignKey(RequestBill, on_delete=models.CASCADE)
+    bill = models.ForeignKey(RequestBill, on_delete=models.CASCADE, related_name='billitems')
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
     qauntity = models.PositiveIntegerField(default=1)
     # quantity_approve = models.PositiveIntegerField(default=1)
@@ -71,7 +71,7 @@ class RequestBillDetail(models.Model):
     is_paid = models.BooleanField(default=False)
 
     # Define model relationships
-    bill = models.ForeignKey(RequestBill, on_delete=models.CASCADE)
+    bill = models.ForeignKey(RequestBill, on_delete=models.CASCADE, related_name='billdetail')
 
     class Meta:
         verbose_name_plural = "Request Bill Details"
