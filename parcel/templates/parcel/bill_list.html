@@ -33,7 +33,7 @@
               <span>| {{ request.user.profile }}</span>
               <a href="{% url 'parcel:select_stock' %}" class="btn btn-success" style="float: right;">
                 <i class="bi bi-plus"></i>
-                เบิก
+                เบิกพัสดุ
               </a>
             </h5>
 
@@ -51,6 +51,15 @@
               </thead>
               <!-- object list -->
               <tbody>
+                {% for object in object_list %}
+                <tr>
+                  <td>{{ object.pk }}</td>
+                  <td>{{ object.date }}</td>
+                  <td>{{ object.stockitem_set.all }}</td>
+                  <td>{{ object.status }}</td>
+                  <td>{{ object.payment }}</td>
+                </tr>
+                {% endfor %}
               </tbody>
             </table>
 

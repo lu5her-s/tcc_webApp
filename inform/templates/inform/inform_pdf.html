@@ -102,9 +102,11 @@
           พัสดุ/อุปกรณ์
         </th>
         <td>
-          {{ context.inform.stockitem.item_name }}
+          Category : {{ context.inform.stockitem.category.name }}
+          <br>
+          Item : {{ context.inform.stockitem.item_name }}
           <br />
-          [{{ context.inform.stockitem.serial }}]
+          Serial : [{{ context.inform.stockitem.serial }}]
         </td>
       </tr>
 

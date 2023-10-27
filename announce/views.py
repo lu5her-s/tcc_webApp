@@ -5,7 +5,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.html import strip_tags
-from config import settings
+from django.conf import settings
+from pathlib import Path
 from django.views.generic import (
     ListView,
     CreateView,
@@ -26,6 +27,7 @@ from announce.models import (
 )
 
 from config.sendline import Sendline
+
 
 # Create your views here.
 
@@ -153,13 +155,13 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
                 for token_id in tokens:
                     token = LineToken.objects.get(id=token_id).token
                     line  = Sendline(token)
-                    line.sendtext(head + body)
-                    image_file = AnnounceImage.objects.filter(announce=form_id)
+                    line.send_message(head + body)
+                    # image_file = AnnounceImage.objects.filter(announce=form_id)
                     # for image in image_file:
-                    #     line.sendimage(image.images.url)
-                    #     print(image.images.url)
+                    #     image_path = str(Path.joinpath(settings.BASE_DIR, settings.MEDIA_ROOT, image.images.name))
+                    #     line.send_image(image_path)
+                    #     print(image_path)
 
-                    # print(token)
 
             return redirect(self.success_url)
 
@@ -280,7 +282,7 @@ class AnnounceDeleteView(LoginRequiredMixin, DeleteView):
             self.object.save()
             return HttpResponseRedirect(self.get_success_url())
         else:
-            return super().post(s*args, **kwargs)
+            return super().post(*args, **kwargs)
 
 
 

@@ -10,9 +10,8 @@
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="#">####</a></li>
-            <li class="breadcrumb-item"><a href="#">####</a></li>
-            <li class="breadcrumb-item active">Select Department</li>
+            <li class="breadcrumb-item"><a href="{% url 'parcel:home' %}">Parcel Home</a></li>
+            <li class="breadcrumb-item active">Select Stock</li>
         </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -57,7 +56,7 @@
                             <br>
 
                             <div class="text-center">
-                                <a href="#" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                              <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
                                 <button type="submit" class="btn btn-lg btn-success">ตกลง</button>
                             </div>
 

@@ -70,6 +70,8 @@ INSTALLED_APPS = [
     'inform',
     'repair',
     'parcel',
+
+    'cart.apps.CartConfig',
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -199,3 +201,6 @@ JAZZMIN_SETTINGS = {
 
 # for use out by ngrok-free
 CSRF_TRUSTED_ORIGINS = ["https://*.ngrok-free.app"]
+
+# for cart sessions
+CART_SESSION_ID = 'cart'

@@ -9,6 +9,7 @@ import datetime
 import re
 import os
 from django.db.models import Q
+from tempfile import NamedTemporaryFile
 from django.http import response
 from django.shortcuts import HttpResponse, redirect, render, get_object_or_404
 from django.template.loader import render_to_string
@@ -831,22 +832,33 @@ def all_assigned(request: HttpResponse):
 
 def inform_to_pdf(request: HttpResponse, pk: int):
     inform = get_object_or_404(Inform, pk=pk)
-    customer_review = CustomerReview.objects.get(inform=inform)
-    manager_review = ManagerReview.objects.get(inform=inform)
-    command_review = CommandReview.objects.get(inform=inform)
+    try:
+        customer_review = CustomerReview.objects.get(inform=inform)
+        manager_review = ManagerReview.objects.get(inform=inform)
+        command_review = CommandReview.objects.get(inform=inform)
+    except:
+        customer_review = None
+        manager_review = None
+        command_review = None
+
+    
     context = {
-        'inform': inform,
+        'inform': inform if inform else None,
         'customer_review': customer_review,
         'manager_review': manager_review,
-        'command_review': command_review
+        'command_review': command_review,
     }
     temp_html = 'inform/temp.html'
     with open(temp_html, 'w') as f:
+    # with NamedTemporaryFile(mode='w', delete=False) as f:
         f.write(render_to_string('inform/inform_pdf.html', {'context': context}))
+        # f.write(render_to_string(f.name, {'context': context}))
     pdf = generate_pdf(data={'context': context}, template_path='inform/inform_pdf.html')
+    # pdf = generate_pdf(data={'context': context}, template_path=f.name)
     os.remove(temp_html)
+    # os.remove(f.name)
 
     response = HttpResponse(pdf, content_type='application/pdf')
-    # response['Content-Disposition'] = f'inline; filename=inform_{inform.pk}.pdf'
+    # response['Content-Disposition'] = f'attachment; filename="inform-{pk}.pdf"'
 
     return response

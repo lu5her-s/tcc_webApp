@@ -20,4 +20,5 @@ urlpatterns = [
     path('network/<int:pk>/', views.network_list, name='network_list'),
 
     path('department/list/', views.StockDepartmentListView.as_view(), name='department_list'),
+    path('delete/<int:pk>/', views.StockItemDeleteView.as_view(), name='stockitem_delete'),
 ]

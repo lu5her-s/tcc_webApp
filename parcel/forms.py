@@ -47,3 +47,7 @@ class RequestItemForm(forms.ModelForm):
             'item': forms.Select(attrs={'class': 'form-select'}),
             'qauntity': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+
+class CartAddForm(forms.Form):
+    quantity = forms.TypedChoiceField()

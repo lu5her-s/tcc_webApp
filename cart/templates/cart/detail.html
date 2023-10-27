@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cart{% endblock %}
+
+{% block content %}
+  <h1>Cart</h1>
+  <table class="table" id="dataTable">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Categorie</th>
+        <th>Quantity</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for item in cart %}
+        <tr>
+          <td><img src="{{ item.category.image.url }}" width="100" height="100"></td>
+          <td>{{ item.category.name }}</td>
+          <td>
+            <form action="{% url 'cart:cart_add' item.category.id %}" method="post">
+              {% csrf_token %}
+              <input id="quantity-{{ item.category.id }}" type="number" name="quantity" min="1" value="{{ item.quantity }}">
+              <input type="hidden" name="override" value="True">
+              <button class="btn btn-sm btn-primary" type="submit">Update</button>
+            </form>
+          </td>
+          <td>
+            <form action="#" method="post">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-danger">Remove</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p>
+  {% with total_items=cart|length %}
+  {% if total_items > 0 %}
+  You have {{ total_items }} items in your cart.
+  
+  {% endif %}
+  {% endwith %}
+  </p>
+  
+
+  <p style="text-align: right">
+    <a href="#" id="checkout" class="btn btn-success">Checkout</a>
+    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-primary">Continue Shopping</a>
+  </p>
+
+  <script>
+    $(document).ready(() => {
+      $("#dataTable").DataTable({
+        "fnDrawCallback" : function(oSettings) {
+          if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+            $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+          } else {
+            $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+          }
+        },
+        "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+      });
+    });
+
+    $("#checkout").click(function() {
+      $.post(
+        "{% url 'parcel:test_create_bill' %}",
+        {
+          csrfmiddlewaretoken: "{{ csrf_token }}"
+        }
+      )
+    })
+
+    {% for ct in categories %}
+    // var sumTag = document.getElementById("sum-{{ ct.pk }}")
+    var max_quantity = document.getElementById("quantity-{{ ct.pk }}" )
+    var sum = 0
+    {% for item in ct.stockitem_set.all %}
+    sum += {{ item.quantity }}
+    {% endfor %}
+    max_quantity.max = sum
+    // sum = 0
+    {% endfor %}
+
+
+  </script>
+{% endblock %}

@@ -10,6 +10,7 @@ from django.shortcuts import (
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
     CreateView,
+    DeleteView,
     ListView,
     DetailView,
     TemplateView,
@@ -306,3 +307,21 @@ class StockItemUpdateView(LoginRequiredMixin, UpdateView):
         else:
             form = self.form_class(instance=self.object)
         return render(request, self.template_name, {'form': form})
+
+
+class StockItemDeleteView(LoginRequiredMixin, DeleteView):
+    template_name = 'asset/stockitem_confirm_delete.html'
+    model = StockItem
+    success_url = reverse_lazy('asset:stockitem_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'ลบรายการพัสดุ'
+        context['item'] = self.get_object()
+        return context
+
+    def post(self, request, **kwargs):
+        self.object = self.get_object()
+        self.object.is_delete = True
+        self.object.save()
+        return redirect(reverse_lazy('asset:stockitem_list'))

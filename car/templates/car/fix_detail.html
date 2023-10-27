@@ -161,9 +161,9 @@
                         <a href="{% url 'car:fix' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
                         {% if request.user.profile == object.responsible_man %}
                         <a href="{% url 'car:after-fix' pk=object.pk %}" class="btn btn-lg btn-warning">ซ่อมบำรุง</a>
-                        {% elif request.user.profile == object.approver %}
+                        {% elif request.user.profile == object.approver and not object.finished_at %}
                             <a href="{% url 'car:fix-update' pk=object.pk %}" class="btn btn-lg btn-info">มอบหมายช่าง</a>
-                        {% elif request.user == object.fix_requester %}
+                        {% elif request.user == object.fix_requester and not object.finished_at %}
                             <a href="{% url 'car:fix-update' pk=object.pk %}" class="btn btn-lg btn-warning">อัพเดท</a>
                         {% else %}
 

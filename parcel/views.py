@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
     DetailView,
@@ -21,6 +21,7 @@ from .models import (
     RequestItem
 )
 from .forms import SelectStockForm, BillCreateForm
+from cart.cart import Cart
 
 # Create your views here.
 
@@ -83,12 +84,14 @@ class SelectStockView(LoginRequiredMixin, View):
         if form.is_valid():
             stock_id = form.cleaned_data['department'].id
             stock = get_object_or_404(Department, pk=stock_id)
-            return redirect('parcel:create_bill', pk=stock.pk)
+            return redirect('parcel:select_item', pk=stock.pk)
         return render(request, self.template_name, {'form': form})
 
 
-class BillCreateView(LoginRequiredMixin, View):
-    template_name = 'parcel/create_bill.html'
+# TODO: review/edit this to create bill for store item category.
+# prepare to manager set serail number of item in detail bill page
+class SelecItemView(LoginRequiredMixin, View):
+    template_name = 'parcel/select_item.html'
 
     def get(self, request, pk):
         stock = get_object_or_404(Department, pk=pk)
@@ -100,6 +103,46 @@ class BillCreateView(LoginRequiredMixin, View):
         context = {
             'stock': stock,
             'items': items,
-            'categories': categories
+            'categories': categories,
         }
         return render(request, self.template_name, context)
+
+
+def test_create_bill(request):
+    if request.method == 'POST':
+        cart = Cart(request)
+        bill_id = "test/001"
+        user = request.user
+        created_at = "Today test"
+        department = request.user.profile.department.name
+        items = []
+        for item in cart:
+            items.append({
+                'category': item['category'].name,
+                'quantity': item['quantity']
+            })
+        print(f"""
+            bill_id: {bill_id}
+            user: {user}
+            created_at: {created_at}
+            department: {department}
+        """)
+        count = 1
+        for item in items:
+            if int(item['quantity']) > 1:
+                for _ in range(int(item['quantity'])):
+                    print(f"""
+                        Count: {count}
+                        Category: {item['category']}
+                        Quantity: {item['quantity']}
+                      """)
+                    count += 1
+            else:
+                print(f"""
+                      Count: {count}
+                      Category: {item['category']}
+                      Quantity: {item['quantity']}
+                  """)
+                count += 1
+
+        return HttpResponse(bill_id)

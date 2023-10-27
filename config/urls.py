@@ -48,6 +48,7 @@ urlpatterns = [
     path('inform/', include('inform.urls')),
     path('repair/', include('repair.urls')),
     path('parcel/', include('parcel.urls')),
+    path('cart/', include('cart.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

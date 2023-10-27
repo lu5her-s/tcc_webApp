@@ -1,0 +1,38 @@
+from django.shortcuts import get_object_or_404, render, redirect
+from django.views.decorators.http import require_POST
+from asset.models import Category
+
+from .cart import Cart
+
+# Create your views here.
+
+@require_POST
+def cart_add(request, category_id):
+    cart = Cart(request)
+    # category = get_object_or_404(Category, pk=category_id)
+    if request.method == 'POST':
+        data = request.POST
+        cart.add(
+            category_id=category_id,
+            quantity=data['quantity'],
+            override_quantity=data['override']
+        )
+    return redirect('cart:cart_detail')
+
+
+@require_POST
+def cart_remove(request, category_id):
+    cart = Cart(request)
+    product = get_object_or_404(Category, pk=category_id)
+    cart.remove(product)
+    return redirect('cart:cart_detail')
+
+
+def cart_detail(request):
+    cart = Cart(request)
+    categories = Category.objects.all()
+    context = {
+        'cart': cart,
+        'categories': categories
+    }
+    return render(request, 'cart/detail.html', context)

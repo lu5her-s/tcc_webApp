@@ -30,7 +30,7 @@ class Sendline:
         header = {'content-type':'application/x-www-form-urlencoded','Authorization':'Bearer '+token}
         return requests.post(url, headers=header, data = command)
 
-    def sendtext(self,message):
+    def send_message(self,message):
         # send plain text to line
         command = {'message':message}
         return self.Lineconfig(command)
@@ -41,14 +41,14 @@ class Sendline:
         return self.Lineconfig(command)
 
 
-    def sendimage(self,url):
+    def send_image(self,url):
         command = {'message': "", 'imageFile':url}
         return self.Lineconfig(command)
 
 
 if __name__ == '__main__':
 
-    # token = 'N8V9EwCTTqmSjnWAXxdadfadffadsfasdfasdfasfWK8KxKJ'
+    token = 'xdkakfdjksjdfayfdyaodf'
     messenger = Sendline(token)
 
     #send message

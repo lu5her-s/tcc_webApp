@@ -31,14 +31,14 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ title }} 
                             <span>| List</span>
-                            {% comment %}
+                            {% if perms.asset.add_stockitem %}
                             <a href="{% url 'asset:stockitem_create' %}" 
                                class="btn btn-success"
                                style="float: right;">
                                 <i class="bi bi-plus"></i>
-                                เพิ่ม
+                                เพิ่มพัสดุ {{ request.user.profile.department.name }}
                             </a>
-                            {% endcomment %}
+                            {% endif %}
                         </h5>
 
                         <br>
@@ -72,20 +72,24 @@
                                             {{ object.item_name }}
                                     </td>
                                     <td>
+                                      {% if object.manufacturer %}
                                         <a href="{% url 'asset:manufacturer_list' pk=object.manufacturer.pk %}">
                                             {{ object.manufacturer.name }}
                                         </a>
+                                      {% endif %}
                                     </td>
                                     {% if object.get_status_display == 'พร้อมใช้งาน' %}
-                                    <td><span><i class="bi bi-check-circle-fill"></i></span>{{ object.get_status_display }}</td>
+                                    <td><span><i class="bi bi-check-circle-fill" style="color: green"></i></span> {{ object.get_status_display }}</td>
                                     {% else %}
                                     <td>{{ object.get_status_display }}</td>
                                     {% endif %}
                                     <td>{{ object.location.name }}</td>
                                     <td>
+                                      {% if object.network %}
                                         <a href="{% url 'asset:network_list' pk=object.network.pk %}">
                                             {{ object.network.ip_addr }}
                                         </a>
+                                      {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}
