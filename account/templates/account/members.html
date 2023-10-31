@@ -43,10 +43,10 @@
                                 {% for member in object_list %}
                                 <tr>
                                   <th scope="row"><a href="{% url 'account:sectors' pk=member.sector.pk %}">{{ member.sector.name }}</a></th>
-                                    <td><a href="{% url 'account:member' pk=member.user.pk %}">{{ member.rank.name }} {{ member.user.get_full_name }}</a></td>
-                                    <td><a href="{% url 'account:positions' pk=member.position.pk %}" class="text-primary">{{ member.position.name }}</a></td>
-                                    <td>{{ member.department.name }}</td>
-                                    <td>{{ member.phone }}</td>
+                                  <td><a href="{% url 'account:member' pk=member.user.pk %}">{{ member.rank.name }} {{ member.user.get_full_name }}</a></td>
+                                  <td><a href="{% url 'account:positions' pk=member.position.pk %}" class="text-primary">{{ member.position.name }}</a></td>
+                                  <td>{{ member.department.name }}</td>
+                                  <td>{{ member.phone }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

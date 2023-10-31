@@ -140,7 +140,9 @@
           var max_quantity = document.getElementById("quantity-{{ ct.pk }}" )
           var sum = 0
           {% for item in ct.stockitem_set.all %}
+          {% if item.status == "AVAILABLE" %}
             sum += {{ item.quantity }}
+          {% endif %}
           {% endfor %}
           sumTag.innerHTML = "จำนวน คงคลัง - " + sum
           max_quantity.max = sum

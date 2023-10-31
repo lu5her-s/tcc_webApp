@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
@@ -43,7 +44,7 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
         context['on_hand'] = RequestItem.objects.filter(
             item__status=StockItem.Status.AVAILABLE,
             bill__in=all_bill,
-        ).filter(bill__billdetail__is_paid=True)
+        ).filter(bill__billdetail__is_done=True)
         return context
 
 
@@ -108,12 +109,50 @@ class SelecItemView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 
 
+class BillCreateView(LoginRequiredMixin, View):
+    def post(self, request):
+        # data = request.POST
+        cart = Cart(request)
+        # item = []
+        bill = RequestBill.objects.create(user=request.user)
+        for item in cart:
+            RequestItem.objects.create(
+                bill=bill,
+                category=item['item'],
+                quantity=item['quantity']
+            )
+        cart.clear()
+        return redirect('parcel:bill_detail', pk=bill.pk)
+
+    def get(self, request):
+        form = BillCreateForm()
+        return render(request, 'parcel/bill_create.html', {'form': form})
+
+
+class BillDetailView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        bill = get_object_or_404(RequestBill, pk=pk)
+        items = RequestItem.objects.filter(bill=bill)
+        bill_detail = RequestBillDetail.objects.filter(bill=bill) if bill.billdetail else RequestBillDetail.objects.create(
+            bill=bill
+        )
+        context = {
+            'bill': bill,
+            'items': items,
+            'bill_detail': bill_detail
+        }
+        return render(request, 'parcel/bill_detail.html', context)
+
+    def post(self, request, pk):
+        pass
+
+
 def test_create_bill(request):
     if request.method == 'POST':
         cart = Cart(request)
         bill_id = "test/001"
         user = request.user
-        created_at = "Today test"
+        created_at = datetime.now()
         department = request.user.profile.department.name
         items = []
         for item in cart:
@@ -122,26 +161,40 @@ def test_create_bill(request):
                 'quantity': item['quantity']
             })
         print(f"""
-            bill_id: {bill_id}
-            user: {user}
-            created_at: {created_at}
-            department: {department}
+                        bill_id: {bill_id}
+                        user: {user}
+                        created_at: {created_at}
+                        department: {department}
         """)
         count = 1
         for item in items:
             if int(item['quantity']) > 1:
                 for _ in range(int(item['quantity'])):
                     print(f"""
+                        --------------------
                         Count: {count}
                         Category: {item['category']}
+                        Items Can Add : {StockItem.objects.filter(
+                            category__name=item['category'],
+                            status=StockItem.Status.AVAILABLE,
+                            location__name__startswith="คลัง"
+                            )}
                         Quantity: {item['quantity']}
+                        --------------------
                       """)
                     count += 1
             else:
                 print(f"""
+                      --------------------
                       Count: {count}
                       Category: {item['category']}
+                        Items Can Add : {StockItem.objects.filter(
+                            category__name=item['category'],
+                            status=StockItem.Status.AVAILABLE,
+                            location__name__startswith="คลัง"
+                            )}
                       Quantity: {item['quantity']}
+                      --------------------
                   """)
                 count += 1
 

@@ -90,6 +90,7 @@ class StockItem(models.Model):
         UNDER_MAINTENANCE = 'UNDER_MAINTENANCE', 'ซ่อมบำรุง'
         DISPOSED = 'DISPOSED', 'จำหน่าย'
         CHECK = 'CHECK', 'ตรวจสอบ'
+        HOLD = 'HOLD', 'จอง'
         ON_HAND = 'ON_HAND', 'เคลื่อนไหว'
 
     item_name = models.CharField(max_length=50)
@@ -122,7 +123,7 @@ class StockItem(models.Model):
     available = StockItemManager()  # Custom manager filter available stock_item
 
     def __str__(self):
-        return f"{self.item_name} - {self.serial}"
+        return f"{self.item_name} Serial: {self.serial} Status: {self.status} Location: {self.location}"
 
     def get_absolute_url(self):
         return reverse('asset:stockitem_detail', kwargs={'pk': self.pk})
