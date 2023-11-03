@@ -42,22 +42,26 @@
             <table class="table table-hover" id="dataTable">
               <thead>
                 <tr>
-                  <th scope="col">เลขที่ใบเบิก</th>
-                  <th scope="col">วันที่ขอเบิก</th>
-                  <th scope="col">คลังที่ขอเบิก</th>
-                  <th scope="col">การอนุมัติ</th>
-                  <th scope="col">การจ่าย</th>
+                  <th scope="col" style="width: 15%">เลขที่ใบเบิก</th>
+                  <th scope="col" style="width: 25%">วันที่ขอเบิก</th>
+                  <th scope="col" style="width: 15%">การอนุมัติ</th>
+                  <th scope="col" style="width: 15%">การจ่าย</th>
+                  <th scope="col" style="width: 8%">จัดการ</th>
                 </tr>
               </thead>
               <!-- object list -->
               <tbody>
                 {% for object in object_list %}
                 <tr>
-                  <td>{{ object.pk }}</td>
-                  <td>{{ object.date }}</td>
-                  <td>{{ object.stockitem_set.all }}</td>
-                  <td>{{ object.status }}</td>
+                  <td>{{ object.pk }}/{{ object.created_at.year|thaiyear }}</td>
+                  <td>{{ object.created_at|thaidate }}</td>
+                  <td>{{ object.billdetail.approved }}{{ object.all }}</td>
                   <td>{{ object.payment }}</td>
+                  <td>
+                    <a href="#" class="btn btn-sm btn-primary" style="width: 100%;">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>

@@ -1,6 +1,7 @@
+from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_POST
-from asset.models import Category
+from asset.models import Category, StockItem
 
 from .cart import Cart
 
@@ -24,7 +25,9 @@ def cart_add(request, category_id):
 def cart_remove(request, category_id):
     cart = Cart(request)
     product = get_object_or_404(Category, pk=category_id)
-    cart.remove(product)
+    cart.remove(
+        category_id=category_id
+    )
     return redirect('cart:cart_detail')
 
 
@@ -36,3 +39,8 @@ def cart_detail(request):
         'categories': categories
     }
     return render(request, 'cart/detail.html', context)
+
+
+def remain_in_stock(request, category_id):
+    count = StockItem.objects.filter(category_id=category_id).count()
+    return JsonResponse({'count': count})

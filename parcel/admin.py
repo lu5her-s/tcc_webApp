@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import RequestBill
+from .models import RequestBill, RequestItem, RequestBillDetail
 
 # Register your models here.
 
@@ -19,3 +19,7 @@ class RequestBillAdmin(admin.ModelAdmin):
             return obj.user.profile.department if obj.user.profile.department else None
 
     list_display = ('bill_no', 'user', 'created_at', 'receiver')
+
+
+admin.site.register(RequestItem)
+admin.site.register(RequestBillDetail)

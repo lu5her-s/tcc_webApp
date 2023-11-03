@@ -8,10 +8,10 @@
   <table class="table" id="dataTable">
     <thead>
       <tr>
-        <th>Image</th>
+        <th style="width: 18%">Image</th>
         <th>Categorie</th>
-        <th>Quantity</th>
-        <th>Remove</th>
+        <th style="width: 15%">Quantity</th>
+        <th style="width: 10%;">Remove</th>
       </tr>
     </thead>
 
@@ -21,15 +21,18 @@
           <td><img src="{{ item.category.image.url }}" width="100" height="100"></td>
           <td>{{ item.category.name }}</td>
           <td>
+            <p>{{ item.quantity }}</p>
+            {% comment %}
             <form action="{% url 'cart:cart_add' item.category.id %}" method="post">
               {% csrf_token %}
-              <input id="quantity-{{ item.category.id }}" type="number" name="quantity" min="1" value="{{ item.quantity }}">
+              <input id="quantity-{{ item.category.id }}" bs-data="{{ item.category.id }}" type="number" name="quantity" min="1" value="{{ item.quantity }}">
               <input type="hidden" name="override" value="True">
               <button class="btn btn-sm btn-primary" type="submit">Update</button>
             </form>
+            {% endcomment %}
           </td>
           <td>
-            <form action="#" method="post">
+            <form action="{% url 'cart:cart_remove' item.category.id %}" method="post">
               {% csrf_token %}
               <button class="btn btn-sm btn-danger">Remove</button>
             </form>
@@ -46,11 +49,12 @@
   {% endif %}
   {% endwith %}
   </p>
-  
+
 
   <p style="text-align: right">
-    <a href="#" id="checkout" class="btn btn-success">Checkout</a>
+    <button id="checkout" class="btn btn-success">Checkout</button>
     <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-primary">Continue Shopping</a>
+    <!-- <button class="btn btn-primary" id="continueShopping">Continue Shopping</button> -->
   </p>
 
   <script>
@@ -67,28 +71,29 @@
       });
     });
 
+    /*
+    {% for item in cart %}
+    var quantity = $("#quantity-{{ item.category.id }}");
+    var remaing_in_stock = $.ajax({
+      url: "{% url 'cart:remain_in_stock' item.category.id %}",
+      success: function(data) {
+        quantity.attr("max", data['count']);
+        console.log(data);
+      }
+    })
+    {% endfor %}
+    */
+
+
     $("#checkout").click(function() {
       $.post(
-        "{% url 'parcel:test_create_bill' %}",
+        "{% url 'parcel:bill_create' %}",
         {
           csrfmiddlewaretoken: "{{ csrf_token }}"
         }
       )
     })
 
-    {% for ct in categories %}
-    // var sumTag = document.getElementById("sum-{{ ct.pk }}")
-    var max_quantity = document.getElementById("quantity-{{ ct.pk }}" )
-    var sum = 0
-    {% for item in ct.stockitem_set.all %}
-    {% if item.status == "AVAILABLE" %}
-    sum += {{ item.quantity }}
-    {% endif %}
-    {% endfor %}
-    max_quantity.max = sum
-    // sum = 0
-    {% endfor %}
-
-
+    
   </script>
 {% endblock %}

@@ -10,4 +10,5 @@ urlpatterns = [
     path('select_stock/', views.SelectStockView.as_view(), name='select_stock'),
     path('select_item/<int:pk>/', views.SelecItemView.as_view(), name='select_item'),
     path('test_create_bill/', views.test_create_bill, name='test_create_bill'),
+    path('bill_create/', views.BillCreateView.as_view(), name='bill_create'),
 ]

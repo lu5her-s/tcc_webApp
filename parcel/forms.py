@@ -41,11 +41,11 @@ class RequestItemForm(forms.ModelForm):
         model = RequestItem
         fields = (
             'item',
-            'qauntity',
+            'quantity',
         )
         widgets = {
             'item': forms.Select(attrs={'class': 'form-select'}),
-            'qauntity': forms.TextInput(attrs={'class': 'form-control'}),
+            'quantity': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 

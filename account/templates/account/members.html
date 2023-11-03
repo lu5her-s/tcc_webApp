@@ -33,6 +33,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">สังกัด</th>
+                                    <th scope="col">...</th>
                                     <th scope="col">ชื่อ สกุล</th>
                                     <th scope="col">ตำแหน่ง</th>
                                     <th scope="col">ที่ทำงาน</th>
@@ -43,6 +44,11 @@
                                 {% for member in object_list %}
                                 <tr>
                                   <th scope="row"><a href="{% url 'account:sectors' pk=member.sector.pk %}">{{ member.sector.name }}</a></th>
+                                  {% if member.image %}
+                                  <td><img src="{{ member.image.url }}" style="width: 100px; height: 100px;" alt=""></td>
+                                  {% else %}
+                                  <td><img src="{% static 'assets/img/profile.png' %}" style="width: 100px; height: 100px;" alt=""></td>
+                                  {% endif %}
                                   <td><a href="{% url 'account:member' pk=member.user.pk %}">{{ member.rank.name }} {{ member.user.get_full_name }}</a></td>
                                   <td><a href="{% url 'account:positions' pk=member.position.pk %}" class="text-primary">{{ member.position.name }}</a></td>
                                   <td>{{ member.department.name }}</td>

@@ -111,14 +111,12 @@ class SelecItemView(LoginRequiredMixin, View):
 
 class BillCreateView(LoginRequiredMixin, View):
     def post(self, request):
-        # data = request.POST
         cart = Cart(request)
-        # item = []
         bill = RequestBill.objects.create(user=request.user)
         for item in cart:
             RequestItem.objects.create(
                 bill=bill,
-                category=item['item'],
+                category=item['category'],
                 quantity=item['quantity']
             )
         cart.clear()

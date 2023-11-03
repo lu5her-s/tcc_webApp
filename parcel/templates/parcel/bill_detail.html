@@ -1,9 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load crispy %}
 
 {% block title %}Bill Detail{% endblock %}
 
 {% block content %}
 <h1>Bill Detail</h1>
+{{ bill }}
+<br>
+{% for item in items %}
+{{ item }}
+<br>
+{% endfor %}
+{{ bill_detail }}
+
 {% endblock %}

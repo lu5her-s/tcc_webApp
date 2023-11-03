@@ -51,7 +51,7 @@ class RequestItem(models.Model):
     bill = models.ForeignKey(RequestBill, on_delete=models.CASCADE, related_name='billitems')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE, null=True, blank=True)
-    qauntity = models.PositiveIntegerField(default=1)
+    quantity = models.PositiveIntegerField(default=1)
     quantity_approve = models.PositiveIntegerField(default=1)
     # quantity_approve = models.PositiveIntegerField(default=1)
     serial_no = models.CharField(max_length=50, null=True, blank=True)
@@ -67,7 +67,7 @@ class RequestItem(models.Model):
         self.save()
 
     def __str__(self):
-        return f'{self.bill.pk} - {self.item.category.name} - {self.qauntity}'
+        return f'{self.bill.pk}'
 
 
 class RequestBillDetail(models.Model):
