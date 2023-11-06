@@ -1,5 +1,5 @@
 from django.conf import settings
-from asset.models import Category
+from asset.models import Category, StockItem
 
 
 class Cart:
@@ -15,14 +15,14 @@ class Cart:
         if category_id not in self.cart:
             self.cart[category_id] = {'quantity': 0}
         if override_quantity:
-            self.cart[category_id]['quantity'] = quantity
+            self.cart[category_id]['quantity'] = int(quantity)
         else:
-            self.cart[category_id]['quantity'] += quantity
+            self.cart[category_id]['quantity'] += int(quantity)
         self.save()
 
-    # def update(self, category_id, quantity):
-    #     self.cart[str(category_id)] = quantity
-    #     self.save()
+    def update(self, category_id, quantity):
+        self.cart[str(category_id)] = quantity
+        self.save()
 
     def remove(self, category_id):
         if str(category_id) in self.cart:
@@ -42,7 +42,11 @@ class Cart:
         categories = Category.objects.filter(pk__in=category_ids)
         cart = self.cart.copy()
         for category in categories:
+            available_quantity = 0
+            for item in category.stockitem_set.filter(status=StockItem.Status.AVAILABLE):
+                available_quantity += item.quantity
             cart[str(category.id)]['category'] = category
+            cart[str(category.id)]['available_quantity'] = available_quantity
             yield cart[str(category.id)]
 
 

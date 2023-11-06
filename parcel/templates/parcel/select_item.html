@@ -72,7 +72,7 @@
                                                 {% csrf_token %}
                                                 <!-- <a href="#" class="btn btn-primary" onclick="addTest"><span class="bi bi-plus-circle"></span> Add to cart</a> -->
                                                 <!-- input quantity increase and decreasee button -->
-                                                <input type="number" name="quantity" id="quantity-{{ ct.pk }}" min="1" value="1" class="form-control mb-2">
+                                                <input type="number" name="quantity" id="quantity-{{ ct.pk }}" min="0" value="1" class="form-control mb-2">
                                                 <input type="hidden" name="override" id="override-{{ ct.pk }}" value="False">
                                                 <!-- <a href="#" class="btn btn-primary"><span class="bi bi-plus-circle"></span> Add to cart</a> -->
                                                 <button type="submit" class="btn btn-primary">Add to cart</button>

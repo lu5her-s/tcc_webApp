@@ -124,25 +124,21 @@
 
                 </li><!-- End Notification Nav -->
 
+                {% if request.session.cart %}
+                
                 <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                    <i class="bi bi-basket"></i>
-                    <span class="badge bg-success badge-number" id="basket-count">{{ request.session.cart|length }}</span>
-                    </a><!-- End Messages Icon -->
+                  <i class="bi bi-basket"></i>
+                  <span class="badge bg-success badge-number" id="basket-count">{{ request.session.cart|length }}</span>
+                </a><!-- End Messages Icon -->
 
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
-                      <li class="dropdown-header">
-                        You have {{ request.session.cart|length }} item in your cart
-                        <a href="{% url 'cart:cart_detail' %}"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-                      </li>
-                      <!-- <li> -->
-                      <!--   <hr class="dropdown-divider"> -->
-                      <!-- </li> -->
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
+                  <li class="dropdown-header">
+                    You have {{ request.session.cart|length }} item in your cart
+                    <a href="{% url 'cart:cart_detail' %}"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+                  </li>
 
-                      <!-- <li class="dropdown-footer"> -->
-                      <!--   <a href="#">Show all messages</a> -->
-                      <!-- </li> -->
-
-                    </ul><!-- End Messages Dropdown Items -->
+                </ul><!-- End Messages Dropdown Items -->
+                {% endif %}
 
                 </li><!-- End Messages Nav -->
 

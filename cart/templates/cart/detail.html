@@ -32,7 +32,7 @@
             {% endcomment %}
           </td>
           <td>
-            <form action="{% url 'cart:cart_remove' item.category.id %}" method="post">
+            <form action="#" method="post">
               {% csrf_token %}
               <button class="btn btn-sm btn-danger">Remove</button>
             </form>
@@ -50,12 +50,19 @@
   {% endwith %}
   </p>
 
+  {% for item in cart %}
+  <p>{{ item }}--{{ item.quantity_available }}</p>
+  {% endfor %}
 
+
+  {% if cart %}
+  
   <p style="text-align: right">
     <button id="checkout" class="btn btn-success">Checkout</button>
     <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-primary">Continue Shopping</a>
     <!-- <button class="btn btn-primary" id="continueShopping">Continue Shopping</button> -->
   </p>
+  {% endif %}
 
   <script>
     $(document).ready(() => {
@@ -70,19 +77,6 @@
         "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
       });
     });
-
-    /*
-    {% for item in cart %}
-    var quantity = $("#quantity-{{ item.category.id }}");
-    var remaing_in_stock = $.ajax({
-      url: "{% url 'cart:remain_in_stock' item.category.id %}",
-      success: function(data) {
-        quantity.attr("max", data['count']);
-        console.log(data);
-      }
-    })
-    {% endfor %}
-    */
 
 
     $("#checkout").click(function() {
