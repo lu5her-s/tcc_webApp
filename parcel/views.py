@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
 from django.views.generic import (
     DetailView,
     ListView,
@@ -119,8 +120,11 @@ class BillCreateView(LoginRequiredMixin, View):
                 category=item['category'],
                 quantity=item['quantity']
             )
+        RequestBillDetail.objects.create(
+            bill=bill,
+        )
         cart.clear()
-        return redirect('parcel:bill_detail', pk=bill.pk)
+        return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
 
     def get(self, request):
         form = BillCreateForm()

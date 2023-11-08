@@ -10,15 +10,40 @@ from .cart import Cart
 @require_POST
 def cart_add(request, category_id):
     cart = Cart(request)
-    # category = get_object_or_404(Category, pk=category_id)
-    if request.method == 'POST':
-        data = request.POST
-        cart.add(
-            category_id=category_id,
-            quantity=data['quantity'],
-            override_quantity=data['override']
-        )
+    category = get_object_or_404(Category, pk=category_id)
+    quantity = request.POST.get('quantity', 1)
+    overide = request.POST.get('override', False)
+    cart.add(
+        category_id=category_id,
+        quantity=quantity,
+        override_quantity=overide
+    )
     return redirect('cart:cart_detail')
+
+@require_POST
+def update_cart(request, category_id):
+    cart = Cart(request)
+    category = get_object_or_404(Category, pk=category_id)
+    quantity = request.POST.get('quantity', 1)
+    cart.update(
+        category_id=category_id,
+        quantity=quantity
+    )
+    return redirect('cart:cart_detail')
+
+
+# @require_POST
+# def cart_add(request, category_id):
+#     cart = Cart(request)
+#     # category = get_object_or_404(Category, pk=category_id)
+#     if request.method == 'POST':
+#         data = request.POST
+#         cart.add(
+#             category_id=category_id,
+#             quantity=data['quantity'],
+#             override_quantity=data['override']
+#         )
+#     return redirect('cart:cart_detail')
 
 
 @require_POST

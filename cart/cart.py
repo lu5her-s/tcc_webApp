@@ -21,7 +21,7 @@ class Cart:
         self.save()
 
     def update(self, category_id, quantity):
-        self.cart[str(category_id)] = quantity
+        self.cart[str(category_id)] = int(quantity)
         self.save()
 
     def remove(self, category_id):
@@ -30,7 +30,7 @@ class Cart:
             self.save()
 
     def clear(self):
-        del self.session[settings.CART_SESSION_ID]
+        self.session.pop(settings.CART_SESSION_ID, None)
         self.save()
 
     def save(self):

@@ -21,18 +21,25 @@
           <td><img src="{{ item.category.image.url }}" width="100" height="100"></td>
           <td>{{ item.category.name }}</td>
           <td>
-            <p>{{ item.quantity }}</p>
-            {% comment %}
+            <!-- <p>{{ item.quantity }}</p> -->
             <form action="{% url 'cart:cart_add' item.category.id %}" method="post">
               {% csrf_token %}
-              <input id="quantity-{{ item.category.id }}" bs-data="{{ item.category.id }}" type="number" name="quantity" min="1" value="{{ item.quantity }}">
+              <input 
+                                                                      id="quantity-{{ item.category.id }}"
+                                                                      bs-data="{{ item.category.id }}"
+                                                                      type="number"
+                                                                      name="quantity"
+                                                                      min="1"
+                                                                      max="{{ item.available_quantity }}"
+                                                                      value="{{ item.quantity }}"
+                                                                      style="width: 50px"
+                                                                      >
               <input type="hidden" name="override" value="True">
               <button class="btn btn-sm btn-primary" type="submit">Update</button>
             </form>
-            {% endcomment %}
           </td>
           <td>
-            <form action="#" method="post">
+            <form action="{% url 'cart:cart_remove' item.category.id %}" method="post">
               {% csrf_token %}
               <button class="btn btn-sm btn-danger">Remove</button>
             </form>
@@ -50,16 +57,16 @@
   {% endwith %}
   </p>
 
-  {% for item in cart %}
-  <p>{{ item }}--{{ item.quantity_available }}</p>
-  {% endfor %}
-
 
   {% if cart %}
   
   <p style="text-align: right">
-    <button id="checkout" class="btn btn-success">Checkout</button>
-    <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-primary">Continue Shopping</a>
+    <!-- <button id="checkout" class="btn btn-success">Checkout</button> -->
+    <form action="{% url 'parcel:bill_create' %}" method="post">
+      {% csrf_token %}
+      <button class="btn btn-success" style="float: right">Checkout</button>
+      <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-primary">Continue Shopping</a>
+    </form>
     <!-- <button class="btn btn-primary" id="continueShopping">Continue Shopping</button> -->
   </p>
   {% endif %}
@@ -74,7 +81,7 @@
             $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
           }
         },
-        "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+        "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
       });
     });
 
