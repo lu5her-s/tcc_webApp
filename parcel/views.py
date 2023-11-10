@@ -62,17 +62,6 @@ class BillListView(LoginRequiredMixin, ListView):
         return context
 
 
-class BillDetailView(LoginRequiredMixin, DetailView):
-    template_name = 'parcel/bill_detail.html'
-    model = RequestBill
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['bill_detail'] = RequestBillDetail.objects.filter(bill=self.get_object())
-        context['bill_items'] = RequestItem.objects.filter(bill=self.get_object())
-        return context
-
-
 class SelectStockView(LoginRequiredMixin, View):
     template_name = 'parcel/select_stock.html'
     form_class = SelectStockForm
@@ -113,7 +102,10 @@ class SelecItemView(LoginRequiredMixin, View):
 class BillCreateView(LoginRequiredMixin, View):
     def post(self, request):
         cart = Cart(request)
-        bill = RequestBill.objects.create(user=request.user)
+        bill = RequestBill.objects.create(
+            user=request.user,
+            stock=request.POST.get('stock')
+        )
         for item in cart:
             RequestItem.objects.create(
                 bill=bill,

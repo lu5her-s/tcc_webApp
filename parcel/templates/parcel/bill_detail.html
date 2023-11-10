@@ -1,16 +1,111 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load tags %}
 
 {% block title %}Bill Detail{% endblock %}
 
 {% block content %}
 <h1>Bill Detail</h1>
-{{ bill }}
 <br>
-{% for item in items %}
-{{ item }}
-<br>
-{% endfor %}
-{{ bill_detail }}
+<div class="container">
+  <form>
+    <table class="table table-bordered" style="text-align: center; width: 100%; vertical-align: middle">
+      <tr>
+        <td colspan="6" style="width: 75%;">Request Bill</td>
+        <td colspan="4">page  of  page</td>
+      </tr>
+      <tr>
+        <td rowspan="2">From</td>
+        <td rowspan="2" colspan="2">Stock {{ bill.stock }}</td>
+        <td colspan="3" style="width: 20%;">bill no. {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</td>
+        <td colspan="4">Control Signal</td>
+      </tr>
+      <tr>
+        <td colspan="3">Case Request</td>
+        <td colspan="4">Type of Item 2/4</td>
+      </tr>
+      <tr>
+        <td rowspan="2">To</td>
+        <td style="text-align: left">Request Sector</td>
+        <td>{{ bill.user.profile.department }}</td>
+        <td >Basic</td>
+        <td >Replace</td>
+        <td >Borrow</td>
+        <td colspan="4" style="text-align: left"><label for="money">Money Type </label>
+          <input type="text" id="money" style="float: right; width: 100px">
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align: left">
+          For
+        </td>
+        <td>
+          <select name="for_recv" id="for_recv" style="width: 100%">
+            <option value="{{ user.profile.department }}">{{ user.profile.department }}</option>
+            <option value="{{ request.user.profile.department }}">{{ request.user.profile.department }}</option>
+          </select>
+        </td>
+        <td><input type="radio" name="request_case" value="1"></td>
+        <td><input type="radio" name="request_case" value="2"></td>
+        <td><input type="radio" name="request_case" value="3"></td>
+        <td colspan="4" style="text-align: left"><label for="job_no">Job No </label>
+          <input type="text" id="job_no" style="float: right; width: 100px">
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 10%;">ลำดับ</td>
+        <td style="width: 20%;">Serial Number</td>
+        <td>List Items</td>
+        <td>Apprv</td>
+        <td>Remain</td>
+        <td>CountText</td>
+        <td>C.Req</td>
+        <td>Price/unit</td>
+        <td>Total</td>
+        <td>Paid</td>
+      </tr>
+      <tr>
+        <td>Data 1</td>
+        <td>
+          <select name="serail_no" id="" style="width: 100%">
+            <option value="1">1</option>
+          </select>
+        </td>
+        <td>{{ items.0.category }}</td>
+        <td>Data 4</td>
+        <td>Data 5</td>
+        <td>Data 6</td>
+        <td>{{ items.0.quantity }}</td>
+        <td>Data 8</td>
+        <td>Data 9</td>
+        <td>Data 10</td>
+      </tr>
+    </table>
+
+    <div class="container" style="text-align: center;">
+      <button onclick="showData()" type="button" class="btn btn-primary">Save</button>
+      <button class="btn btn-secondary">Clear</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  function showData() {
+    request_case = document.getElementsByName('request_case')
+    for (i = 0; i < request_case.length; i++) {
+      if (request_case[i].checked) {
+        request_case = request_case[i].value
+        break
+      }
+    }
+    data = {
+      'money': document.getElementById('money').value,
+      'for_recv': document.getElementById('for_recv').value,
+      'job_no': document.getElementById('job_no').value,
+      'request_case': request_case
+    }
+    alert(JSON.stringify(data))
+  }
+</script>
 
 {% endblock %}

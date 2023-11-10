@@ -30,6 +30,7 @@ class RequestBill(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     receiver = models.ForeignKey(Profile, related_name='bill_receiver', on_delete=models.CASCADE, null=True, blank=True)
+    stock = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
     # department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='billdepartment')
 
     class Meta:
