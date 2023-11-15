@@ -29,7 +29,6 @@ class RequestBill(models.Model):
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    receiver = models.ForeignKey(Profile, related_name='bill_receiver', on_delete=models.CASCADE, null=True, blank=True)
     stock = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
     # department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='billdepartment')
 
@@ -53,7 +52,7 @@ class RequestItem(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
-    quantity_approve = models.PositiveIntegerField(default=1)
+    quantity_approve = models.PositiveIntegerField(null=True, blank=True)
     # quantity_approve = models.PositiveIntegerField(default=1)
     serial_no = models.CharField(max_length=50, null=True, blank=True)
     paid = models.BooleanField(default=False)
@@ -80,6 +79,11 @@ class RequestBillDetail(models.Model):
     approve_date = models.DateField(null=True, blank=True)
     approved = models.BooleanField(default=False)
     is_done = models.BooleanField(default=False)
+    approver = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    receiver = models.ForeignKey(Profile, related_name='bill_receiver', on_delete=models.CASCADE, null=True, blank=True)
+    received_at = models.DateTimeField(null=True, blank=True)
+    paider = models.ForeignKey(User, related_name='bill_paider', on_delete=models.CASCADE, null=True, blank=True)
+    paid_at = models.DateTimeField(null=True, blank=True)
 
     # Define model relationships
     bill = models.ForeignKey(RequestBill, on_delete=models.CASCADE, related_name='billdetail')
@@ -98,8 +102,33 @@ class RequestBillDetail(models.Model):
         self.approve_date = datetime.date.today()
         self.save()
 
+    def mark_as_received(self):
+        """
+        Mark the request bill as received.
+        """
+        self.received_at = datetime.date.today()
+        self.save()
+
+    def mark_as_paid(self):
+        """
+        Mark the request bill as paid.
+        """
+        self.paid_at = datetime.date.today()
+        self.save()
+
     def set_bill_done(self):
         self.is_done = True
         self.save()
 
-# Create your models here.
+
+class BillNote(models.Model):
+    bill = models.ForeignKey(RequestBill, on_delete=models.CASCADE)
+    note = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = "Bill Notes"
+
+    def __str__(self):
+        return f'{self.bill.pk}/{self.created_at.year+543} - {self.user}'

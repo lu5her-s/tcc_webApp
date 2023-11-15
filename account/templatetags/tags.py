@@ -1,5 +1,6 @@
 from django import template
 from textwrap import wrap
+from asset.models import StockItem
 
 register = template.Library()
 
@@ -125,3 +126,15 @@ def text_wrap(text, width=25):
 def get_fuel(fuel_now, fuel_max):
     current = (fuel_now / fuel_max) * 100
     return current
+
+
+@register.filter(name='available')
+def available(obj):
+    qs = obj.filter(status=StockItem.Status.AVAILABLE)
+    return qs
+
+
+@register.filter(name='count')
+def count(obj):
+    count = obj.count()
+    return count

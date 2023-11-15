@@ -6,8 +6,8 @@ from .models import RequestBill, RequestItem, RequestBillDetail
 # admin.site.register(RequestBill)
 @admin.register(RequestBill)
 class RequestBillAdmin(admin.ModelAdmin):
-    list_filter = ('user', 'created_at', 'receiver')
-    search_fields = ('pk', 'user', 'created_at', 'receiver')
+    list_filter = ('user', 'created_at',)
+    search_fields = ('pk', 'user', 'created_at',)
 
     def bill_no(self, obj):
         return f'{obj.pk}/{obj.created_at.year+543}'
@@ -18,7 +18,7 @@ class RequestBillAdmin(admin.ModelAdmin):
         else:
             return obj.user.profile.department if obj.user.profile.department else None
 
-    list_display = ('bill_no', 'user', 'created_at', 'receiver')
+    list_display = ('bill_no', 'user', 'created_at',)
 
 
 admin.site.register(RequestItem)

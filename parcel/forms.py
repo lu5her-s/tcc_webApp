@@ -25,15 +25,15 @@ class SelectStockForm(forms.Form):
         self.fields['department'].queryset = Department.objects.filter(name__startswith='คลัง')
 
 
-class BillCreateForm(forms.ModelForm):
-    class Meta:
-        model = RequestBill
-        fields = (
-            'receiver',
-        )
-        widgets = {
-            'receiver': forms.Select(attrs={'class': 'form-select'}),
-        }
+# class BillCreateForm(forms.ModelForm):
+#     class Meta:
+#         model = RequestBill
+#         fields = (
+#             'receiver',
+#         )
+#         widgets = {
+#             'receiver': forms.Select(attrs={'class': 'form-select'}),
+#         }
 
 
 class RequestItemForm(forms.ModelForm):

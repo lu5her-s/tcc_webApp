@@ -8,39 +8,41 @@
 <h1>Bill Detail</h1>
 <br>
 <div class="container">
-  <form>
-    <table class="table table-bordered" style="text-align: center; width: 100%; vertical-align: middle">
+  <form id="printArea">
+    <table class="table table-bordered" style="text-align: center; width: 100%; vertical-align: middle; border: 1px solid">
       <tr>
-        <td colspan="6" style="width: 75%;">Request Bill</td>
+        <td colspan="6" style="width: 75%;"><b>ใบเบิก</b></td>
         <td colspan="4">page  of  page</td>
       </tr>
       <tr>
-        <td rowspan="2">From</td>
-        <td rowspan="2" colspan="2">Stock {{ bill.stock }}</td>
-        <td colspan="3" style="width: 20%;">bill no. {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</td>
-        <td colspan="4">Control Signal</td>
+        <td rowspan="2">จาก</td>
+        <td rowspan="2" colspan="2">{{ bill.stock }}</td>
+        <td colspan="3" style="width: 20%;">ที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</td>
+        <td colspan="3" style="text-align: left">สายงานที่ควบคุม</td>
+        <td style="width: 10%;">ส.</td>
       </tr>
       <tr>
-        <td colspan="3">Case Request</td>
-        <td colspan="4">Type of Item 2/4</td>
+        <td colspan="3">เบิกในกรณี</td>
+        <td colspan="3" style="text-align: left">ประเภทสิ่งอุปกรณ์</td>
+        <td style="width: 10%;">2 และ 4</td>
       </tr>
       <tr>
         <td rowspan="2">To</td>
-        <td style="text-align: left">Request Sector</td>
+        <td style="text-align: left">หน่วยเบิก</td>
         <td>{{ bill.user.profile.department }}</td>
-        <td >Basic</td>
-        <td >Replace</td>
-        <td >Borrow</td>
-        <td colspan="4" style="text-align: left"><label for="money">Money Type </label>
-          <input type="text" id="money" style="float: right; width: 100px">
+        <td >ขั้นต้น</td>
+        <td >ทดแทน</td>
+        <td >ยืม</td>
+        <td colspan="4" style="text-align: left"><label for="money">ประเภทเงิน</label>
+          <input class="form-control" type="text" id="money" style="float: right; width: 100px">
         </td>
       </tr>
       <tr>
         <td style="text-align: left">
-          For
+          เบิกให้
         </td>
         <td>
-          <select name="for_recv" id="for_recv" style="width: 100%">
+          <select class="form-select" name="for_recv" id="for_recv" style="width: 100%">
             <option value="{{ user.profile.department }}">{{ user.profile.department }}</option>
             <option value="{{ request.user.profile.department }}">{{ request.user.profile.department }}</option>
           </select>
@@ -48,45 +50,165 @@
         <td><input type="radio" name="request_case" value="1"></td>
         <td><input type="radio" name="request_case" value="2"></td>
         <td><input type="radio" name="request_case" value="3"></td>
-        <td colspan="4" style="text-align: left"><label for="job_no">Job No </label>
-          <input type="text" id="job_no" style="float: right; width: 100px">
+        <td colspan="4" style="text-align: left"><label for="job_no">เลขงาน </label>
+          <input class="form-control" type="text" id="job_no" style="float: right; width: 100px">
         </td>
       </tr>
       <tr>
         <td style="width: 10%;">ลำดับ</td>
-        <td style="width: 20%;">Serial Number</td>
-        <td>List Items</td>
-        <td>Apprv</td>
-        <td>Remain</td>
-        <td>CountText</td>
-        <td>C.Req</td>
-        <td>Price/unit</td>
-        <td>Total</td>
-        <td>Paid</td>
+        <td style="width: 23%;">หมายเลขสิ่งอุปกรณ์</td>
+        <td>รายการ</td>
+        <td>อนุมัติ</td>
+        <td>คงคลัง</td>
+        <td>หน่วยนับ</td>
+        <td>เบิก</td>
+        <td>ราคา/หน่วย</td>
+        <td>รวม</td>
+        <td>จ่ายจริง</td>
       </tr>
+      {% for item in items %}
       <tr>
-        <td>Data 1</td>
+        <td>{{ forloop.counter }}</td>
         <td>
-          <select name="serail_no" id="" style="width: 100%">
-            <option value="1">1</option>
+          <select class="form-select" name="serail_no" id="serail_no" style="width: 100%">
+            {% for i in item.category.stockitem_set.all|available %}
+            <option value="{{ i.serial }}">{{ i.serial }}</option>
+            {% endfor %}
           </select>
         </td>
-        <td>{{ items.0.category }}</td>
-        <td>Data 4</td>
-        <td>Data 5</td>
-        <td>Data 6</td>
-        <td>{{ items.0.quantity }}</td>
+        <td>{{ item.category }}</td>
+        {% if item.quantity_approve %}
+        <td>{{ item.quantity_approve }}</td>
+        {% else %}
+        <td>-</td>
+        {% endif %}
+        <td>{{ item.category.stockitem_set.all|available|count }}</td>
+        {% if item.stockitem.count_text %}
+        <td>{{ item.stockitem.count_text }}</td>
+        {% else %}
+        <td>-</td>
+        {% endif %}
+        <td>{{ item.quantity }}</td>
         <td>Data 8</td>
         <td>Data 9</td>
         <td>Data 10</td>
       </tr>
+      {% endfor %}
     </table>
 
+    <div class="container">
+      <table class="table" style="width: 100%; vertical-align: middle;">
+        <tr>
+          <td>หลักฐานที่ใช้ในการเบิก</td>
+          <td><input type="text" class="form-control" style="width: 100%" name="request_ref" id="request_ref"></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="container">
+      <table class="table" style="width: 100%;">
+        <tr>
+          <td style="width: 50%;">ตรวจสอบแล้วเห็นว่า <br>
+            <textarea class="form-control" name="note" id="note" cols="30" rows="3"></textarea>
+          </td>
+
+          <td style="width: 50%;">ขอเบิกทรัพย์สินตามที่ระบุไว้ในช่อง "จำนวน" และมอบให้ <br>
+            <!-- <div class="form-check form-switch"> -->
+            <!--   <input class="form-check-input" type="checkbox" id="setReciever"> -->
+            <!--   <label class="form-check-label" for="setReciver">เลือกผู้รับแทน</label> -->
+            <!-- </div> -->
+            <!-- <input type="text" class="form-control" style="width: 100%; margin-top: 5px" disabled> -->
+            <select class="form-select" aria-label="setReciever" id="selectReciever" style="width: 100%; margin-top: 5px; margin-bottom: 5px">
+              <option selected>เลือกผู้รับพัสดุ</option>
+              {% for reciever in recievers %}
+              <option value="{{ reciever }}">{{ reciever }}</option>
+              {% endfor %}
+            </select>
+            <br>
+                      เป็นผู้รับแทน
+          </td>
+        </tr>
+
+        <tr>
+          <td style="width: 50%;">
+            ผู้ตรวจสอบ {{ note }}
+            <br>
+            วันที่ 
+          </td>
+          <td>
+            ผู้เบิก
+            <br>
+            วันที่
+          </td>
+        </tr>
+
+
+        <!-- TODO: make button to set state if have permission -->
+        <tr>
+          <td style="width: 50%;">
+            อนุมัติให้จ่ายได้เฉพาะในรายการและจำนวนที่ผู้ตรวจสอบเสนอ
+            <br>
+            ผู้สั่งจ่าย
+            <br>
+            วันที่
+          </td>
+          <td style="width: 50%;">
+            ได้รับทรัพย์สินตามรายการและจำนวนที่แจ้งในช่อง "จ่ายจริง" แล้ว
+            <br>
+            ผู้รับ
+            <br>
+            วันที่
+          </td>
+        </tr>
+
+        <tr>
+          <td style="width: 50%;">
+            ได้จ่ายตามรายการและจำนวนที่แจ้งในช่อง "จ่ายจริง" แล้ว
+            <br>
+            ผู้จ่าย
+            <br>
+            วันที่
+          </td>
+        </tr>
+
+      </table>
+
+      
+    </div>
+
     <div class="container" style="text-align: center;">
-      <button onclick="showData()" type="button" class="btn btn-primary">Save</button>
-      <button class="btn btn-secondary">Clear</button>
+      <button onclick="showData()" type="button" class="btn btn-lg btn-primary">Save</button>
+      <button class="btn btn-lg btn-secondary" type="reset">Clear</button>
     </div>
   </form>
+  <div class="container" style="text-align: center; margin-top: 5px">
+    <button class="btn btn-lg btn-success" type="button" onclick="print_page()">Print</button>
+  </div>
+</div>
+
+<!-- modal -->
+<div class="modal" tabindex="-1" id="exampleModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="">
+        <select class="form-control" name="for_recv" id="for_recv" style="width: 100%; z-index: 1">
+          {% for i in recievers %}
+          <option value="{{ i }}">{{ i }}</option>
+          {% endfor %}
+        </select>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button onclick="setReciver()" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -102,9 +224,43 @@
       'money': document.getElementById('money').value,
       'for_recv': document.getElementById('for_recv').value,
       'job_no': document.getElementById('job_no').value,
-      'request_case': request_case
+      'request_case': request_case,
+      'serail_no': document.getElementById('serail_no').value,
+      'note': document.getElementById('note').value,
+      'reciver': document.getElementById('selectReciever').value,
+      'request_ref': document.getElementById('request_ref').value
     }
     alert(JSON.stringify(data))
+  }
+</script>
+<script>
+  $(document).ready(function () {
+    //change selectboxes to selectize mode to be searchable
+    $("select").select2({
+      width: '100%',
+    });
+  });
+  </script>
+
+<script>
+  function print_page() {
+    // print only in id printArea
+    var printContents = document.getElementById('printArea').innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
+
+    return false;
+  }
+
+  function setReciver() {
+    // set reciver
+    reciver = document.getElementsByName('reciver')
+    document.getElementById('for_recv').value = reciver
   }
 </script>
 

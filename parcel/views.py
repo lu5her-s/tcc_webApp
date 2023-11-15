@@ -14,7 +14,8 @@ from asset.models import (
     Category
 )
 from account.models import (
-    Department
+    Department,
+    Profile
 )
 
 from .models import (
@@ -22,7 +23,7 @@ from .models import (
     RequestBillDetail,
     RequestItem
 )
-from .forms import SelectStockForm, BillCreateForm
+from .forms import SelectStockForm
 from cart.cart import Cart
 
 # Create your views here.
@@ -118,14 +119,15 @@ class BillCreateView(LoginRequiredMixin, View):
         cart.clear()
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
 
-    def get(self, request):
-        form = BillCreateForm()
-        return render(request, 'parcel/bill_create.html', {'form': form})
+    # def get(self, request):
+    #     form = BillCreateForm()
+    #     return render(request, 'parcel/bill_create.html', {'form': form})
 
 
 class BillDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
         bill = get_object_or_404(RequestBill, pk=pk)
+        recievers = Profile.objects.all().exclude(user=bill.user)
         items = RequestItem.objects.filter(bill=bill)
         bill_detail = RequestBillDetail.objects.filter(bill=bill) if bill.billdetail else RequestBillDetail.objects.create(
             bill=bill
@@ -133,7 +135,8 @@ class BillDetailView(LoginRequiredMixin, View):
         context = {
             'bill': bill,
             'items': items,
-            'bill_detail': bill_detail
+            'bill_detail': bill_detail,
+            'recievers': recievers
         }
         return render(request, 'parcel/bill_detail.html', context)
 

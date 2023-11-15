@@ -58,7 +58,7 @@
                   <td>{{ object.billdetail.approved }}{{ object.all }}</td>
                   <td>{{ object.payment }}</td>
                   <td>
-                    <a href="#" class="btn btn-sm btn-primary" style="width: 100%;">
+                    <a href="{% url 'parcel:bill_detail' object.pk %}" class="btn btn-sm btn-primary" style="width: 100%;">
                       <i class="bi bi-eye"></i>
                     </a>
                   </td>
