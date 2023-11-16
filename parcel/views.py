@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.db.models import ObjectDoesNotExist
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -140,8 +141,20 @@ class BillDetailView(LoginRequiredMixin, View):
         }
         return render(request, 'parcel/bill_detail.html', context)
 
+    # TODO: get item from serail or pk and set item status to HOLD
     def post(self, request, pk):
-        pass
+        bill = get_object_or_404(RequestBill, pk=pk)
+        data = request.POST
+        print(data)
+        serials = data.getlist('serial_no')
+        for serial in serials:
+            try:
+                item = StockItem.objects.get(serial=serial)
+                print(item)
+            except ObjectDoesNotExist:
+                print("item not found")
+                continue
+        return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
 
 
 def test_create_bill(request):
@@ -196,3 +209,34 @@ def test_create_bill(request):
                 count += 1
 
         return HttpResponse(bill_id)
+
+
+def approve_request(request, pk):
+    bill = get_object_or_404(RequestBill, pk=pk)
+    bill.billdetail.approved = True
+    bill.billdetail.save()
+    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+
+
+def paid_item(request, pk):
+    bill = get_object_or_404(RequestBill, pk=pk)
+    bill.billdetail.paid = True
+    bill.billdetail.save()
+    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+
+
+def recieve_items(request, pk):
+    bill = get_object_or_404(RequestBill, pk=pk)
+    items = RequestItem.objects.filter(bill=bill)
+
+    print(items)
+    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+    # for item in items:
+    #     item.mark_as_received()
+    #     item.status = StockItem.Status.ON_HAND
+    #     item.save()
+    # bill.mark_as_recieved()
+    # bill.save()
+    # bill.billdetail.received_at = datetime.date.today()
+    # bill.billdetail.save()
+    # return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))

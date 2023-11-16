@@ -8,7 +8,8 @@
 <h1>Bill Detail</h1>
 <br>
 <div class="container">
-  <form id="printArea">
+  <form id="printArea" method="post">
+    {% csrf_token %}
     <table class="table table-bordered" style="text-align: center; width: 100%; vertical-align: middle; border: 1px solid">
       <tr>
         <td colspan="6" style="width: 75%;"><b>ใบเบิก</b></td>
@@ -30,9 +31,21 @@
         <td rowspan="2">To</td>
         <td style="text-align: left">หน่วยเบิก</td>
         <td>{{ bill.user.profile.department }}</td>
-        <td >ขั้นต้น</td>
-        <td >ทดแทน</td>
-        <td >ยืม</td>
+        <td rowspan="2">
+          ขั้นต้น
+          <br>
+          <input type="radio" name="request_case" value="basic">
+        </td>
+        <td rowspan="2">
+          ทดแทน
+          <br>
+          <input type="radio" name="request_case" value="replace">
+        </td>
+        <td rowspan="2">
+          ยืม
+          <br>
+          <input type="radio" name="request_case" value="borrow">
+        </td>
         <td colspan="4" style="text-align: left"><label for="money">ประเภทเงิน</label>
           <input class="form-control" type="text" id="money" style="float: right; width: 100px">
         </td>
@@ -47,9 +60,9 @@
             <option value="{{ request.user.profile.department }}">{{ request.user.profile.department }}</option>
           </select>
         </td>
-        <td><input type="radio" name="request_case" value="1"></td>
-        <td><input type="radio" name="request_case" value="2"></td>
-        <td><input type="radio" name="request_case" value="3"></td>
+        <!-- <td><input type="radio" name="request_case" value="1"></td> -->
+        <!-- <td><input type="radio" name="request_case" value="2"></td> -->
+        <!-- <td><input type="radio" name="request_case" value="3"></td> -->
         <td colspan="4" style="text-align: left"><label for="job_no">เลขงาน </label>
           <input class="form-control" type="text" id="job_no" style="float: right; width: 100px">
         </td>
@@ -70,7 +83,8 @@
       <tr>
         <td>{{ forloop.counter }}</td>
         <td>
-          <select class="form-select" name="serail_no" id="serail_no" style="width: 100%">
+          <select class="form-select" name="serial_no" id="serail_no" style="width: 100%">
+            <option value="">Select item</option>
             {% for i in item.category.stockitem_set.all|available %}
             <option value="{{ i.serial }}">{{ i.serial }}</option>
             {% endfor %}
@@ -105,12 +119,28 @@
       </table>
     </div>
 
+
     <div class="container">
       <table class="table" style="width: 100%;">
         <tr>
+          {% if true %}
           <td style="width: 50%;">ตรวจสอบแล้วเห็นว่า <br>
             <textarea class="form-control" name="note" id="note" cols="30" rows="3"></textarea>
+            <br>
+            ผู้ตรวจสอบ {{ note }}
+            <br>
+            วันที่ 
           </td>
+          {% else %}
+          <td style="width: 50%;">ตรวจสอบแล้วเห็นว่า <br>
+            <textarea class="form-control" name="note" id="note" cols="30" rows="2" style="" disabled>test</textarea>
+            <br>
+            ผู้ตรวจสอบ {{ note }}
+            <br>
+            วันที่ 
+          </td>
+          {% endif %}
+
 
           <td style="width: 50%;">ขอเบิกทรัพย์สินตามที่ระบุไว้ในช่อง "จำนวน" และมอบให้ <br>
             <!-- <div class="form-check form-switch"> -->
@@ -118,71 +148,99 @@
             <!--   <label class="form-check-label" for="setReciver">เลือกผู้รับแทน</label> -->
             <!-- </div> -->
             <!-- <input type="text" class="form-control" style="width: 100%; margin-top: 5px" disabled> -->
-            <select class="form-select" aria-label="setReciever" id="selectReciever" style="width: 100%; margin-top: 5px; margin-bottom: 5px">
+            <select class="form-select" aria-label="setReciever" id="selectReciever" style="width: 100%; margin-top: 5px;">
               <option selected>เลือกผู้รับพัสดุ</option>
               {% for reciever in recievers %}
               <option value="{{ reciever }}">{{ reciever }}</option>
               {% endfor %}
             </select>
             <br>
-                      เป็นผู้รับแทน
+            เป็นผู้รับแทน
+            <br>
+            <!-- <a href="#" class="btn btn-sm btn-primary" onclick="setReciver()">save</a> -->
+            <br>
+            ผู้เบิก {{ bill.user.profile }}
+            <br>
+            วันที่ {{ bill.created_at|thaidate }}
           </td>
         </tr>
-
-        <tr>
-          <td style="width: 50%;">
-            ผู้ตรวจสอบ {{ note }}
-            <br>
-            วันที่ 
-          </td>
-          <td>
-            ผู้เบิก
-            <br>
-            วันที่
-          </td>
-        </tr>
-
-
-        <!-- TODO: make button to set state if have permission -->
-        <tr>
-          <td style="width: 50%;">
-            อนุมัติให้จ่ายได้เฉพาะในรายการและจำนวนที่ผู้ตรวจสอบเสนอ
-            <br>
-            ผู้สั่งจ่าย
-            <br>
-            วันที่
-          </td>
-          <td style="width: 50%;">
-            ได้รับทรัพย์สินตามรายการและจำนวนที่แจ้งในช่อง "จ่ายจริง" แล้ว
-            <br>
-            ผู้รับ
-            <br>
-            วันที่
-          </td>
-        </tr>
-
-        <tr>
-          <td style="width: 50%;">
-            ได้จ่ายตามรายการและจำนวนที่แจ้งในช่อง "จ่ายจริง" แล้ว
-            <br>
-            ผู้จ่าย
-            <br>
-            วันที่
-          </td>
-        </tr>
-
       </table>
-
-      
     </div>
 
     <div class="container" style="text-align: center;">
-      <button onclick="showData()" type="button" class="btn btn-lg btn-primary">Save</button>
+      <!-- <button onclick="showData()" type="button" class="btn btn-lg btn-success">Save</button> -->
+      <button class="btn btn-lg btn-success" type="submit">Save</button>
       <button class="btn btn-lg btn-secondary" type="reset">Clear</button>
     </div>
+
   </form>
+
+  <br><br>
+
+
+  <!-- TODO: make button to set state if have permission -->
+  <table>
+    <tr>
+      {% if true %}
+      <td style="width: 50%;">
+        อนุมัติให้จ่ายได้เฉพาะในรายการและจำนวนที่ผู้ตรวจสอบเสนอ
+        <br>
+        ผู้สั่งจ่าย Sign
+        <br>
+        วันที่
+      </td>
+      {% else %}
+      <td style="width: 50%;">
+        อนุมัติให้จ่ายได้เฉพาะในรายการและจำนวนที่ผู้ตรวจสอบเสนอ
+        <br>
+        <a href="#" class="btn btn-success">Approve</a>
+        <!-- <a href="#" class="btn btn-danger">Reject</a> -->
+      </td>
+      {% endif %}
+
+      {% if true %}
+      <td style="width: 50%; height: 100px">
+        ได้รับทรัพย์สินตามรายการและจำนวนที่แจ้งในช่อง "จ่ายจริง" แล้ว
+        <br>
+        ผู้รับ
+        <br>
+        วันที่
+      </td>
+      {% else %}
+      <td style="width: 50%; height: 100px">
+        ได้รับทรัพย์สินตามรายการและจำนวนที่แจ้งในช่อง "จ่ายจริง" แล้ว
+        <br>
+        <a href="{% url 'parcel:recieve_item' pk=bill.pk %}" class="btn btn-success">Get</a>
+      </td>
+      {% endif %}
+    </tr>
+
+    <tr>
+      {% if true %}
+      <td style="width: 50%; height: 100px">
+        ได้จ่ายตามรายการและจำนวนที่แจ้งในช่อง "จ่ายจริง" แล้ว
+        <br>
+        ผู้จ่าย
+        <br>
+        วันที่
+      </td>
+      {% else %}
+      <td style="width: 50%; height: 100px">
+        ได้จ่ายตามรายการและจำนวนที่แจ้งในช่อง "จ่ายจริง" แล้ว
+        <br>
+        <a href="#" class="btn btn-success">Pay</a>
+      </td>
+      {% endif %}
+    </tr>
+  </table>
+
+      
+
+
+  <!-- TODO: make print -->
   <div class="container" style="text-align: center; margin-top: 5px">
-    <button class="btn btn-lg btn-success" type="button" onclick="print_page()">Print</button>
+    <button class="btn btn-lg btn-info" type="button" onclick="print_page()">Print</button>
+    <a href="#" class="btn btn-lg btn-secondary">Back</a>
   </div>
 </div>
 
@@ -236,7 +294,7 @@
 <script>
   $(document).ready(function () {
     //change selectboxes to selectize mode to be searchable
-    $("select").select2({
+    $("form-select").select2({
       width: '100%',
     });
   });

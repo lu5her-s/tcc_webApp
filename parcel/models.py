@@ -30,10 +30,19 @@ class RequestBill(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     stock = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
-    # department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='billdepartment')
+    is_done = models.BooleanField(default=False)
+    date_done = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Request Bills"
+
+    def get_absolute_url(self):
+        return reverse_lazy('bill_detail', kwargs={'pk': self.pk})
+
+    def mark_as_done(self):
+        self.is_done = True
+        self.date_done = datetime.now()
+        self.save()
 
     def __str__(self):
         return f'Bill no : {self.pk}'
@@ -57,9 +66,16 @@ class RequestItem(models.Model):
     serial_no = models.CharField(max_length=50, null=True, blank=True)
     paid = models.BooleanField(default=False)
     paid_date = models.DateField(null=True, blank=True)
+    recieved = models.BooleanField(default=False)
+    recieved_date = models.DateField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Request Items"
+
+    def mark_as_recieved(self):
+        self.recieved = True
+        self.recieved_date = datetime.date.today()
+        self.save()
 
     def paid_item(self):
         self.paid = True
@@ -78,7 +94,6 @@ class RequestBillDetail(models.Model):
     # Define model fields
     approve_date = models.DateField(null=True, blank=True)
     approved = models.BooleanField(default=False)
-    is_done = models.BooleanField(default=False)
     approver = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     receiver = models.ForeignKey(Profile, related_name='bill_receiver', on_delete=models.CASCADE, null=True, blank=True)
     received_at = models.DateTimeField(null=True, blank=True)
@@ -100,24 +115,6 @@ class RequestBillDetail(models.Model):
         """
         self.approved = True
         self.approve_date = datetime.date.today()
-        self.save()
-
-    def mark_as_received(self):
-        """
-        Mark the request bill as received.
-        """
-        self.received_at = datetime.date.today()
-        self.save()
-
-    def mark_as_paid(self):
-        """
-        Mark the request bill as paid.
-        """
-        self.paid_at = datetime.date.today()
-        self.save()
-
-    def set_bill_done(self):
-        self.is_done = True
         self.save()
 
 
