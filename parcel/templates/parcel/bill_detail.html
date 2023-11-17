@@ -154,7 +154,6 @@
               <option value="{{ reciever }}">{{ reciever }}</option>
               {% endfor %}
             </select>
-            <br>
             เป็นผู้รับแทน
             <br>
             <!-- <a href="#" class="btn btn-sm btn-primary" onclick="setReciver()">save</a> -->
@@ -181,20 +180,20 @@
   <!-- TODO: make button to set state if have permission -->
   <table>
     <tr>
-      {% if true %}
+      {% if not bill__billnote and not bill.approve %}
+      <td style="width: 50%;">
+        อนุมัติให้จ่ายได้เฉพาะในรายการและจำนวนที่ผู้ตรวจสอบเสนอ
+        <br>
+        <a href="#" class="btn btn-success">Approve</a>
+        <!-- <a href="#" class="btn btn-danger">Reject</a> -->
+      </td>
+      {% else %}
       <td style="width: 50%;">
         อนุมัติให้จ่ายได้เฉพาะในรายการและจำนวนที่ผู้ตรวจสอบเสนอ
         <br>
         ผู้สั่งจ่าย Sign
         <br>
         วันที่
-      </td>
-      {% else %}
-      <td style="width: 50%;">
-        อนุมัติให้จ่ายได้เฉพาะในรายการและจำนวนที่ผู้ตรวจสอบเสนอ
-        <br>
-        <a href="#" class="btn btn-success">Approve</a>
-        <!-- <a href="#" class="btn btn-danger">Reject</a> -->
       </td>
       {% endif %}
 

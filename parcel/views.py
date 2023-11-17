@@ -47,7 +47,7 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
         context['on_hand'] = RequestItem.objects.filter(
             item__status=StockItem.Status.AVAILABLE,
             bill__in=all_bill,
-        ).filter(bill__billdetail__is_done=True)
+        ).filter(bill__is_done=True)
         return context
 
 

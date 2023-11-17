@@ -119,7 +119,7 @@ class RequestBillDetail(models.Model):
 
 
 class BillNote(models.Model):
-    bill = models.ForeignKey(RequestBill, on_delete=models.CASCADE)
+    bill = models.OneToOneField(RequestBill, on_delete=models.CASCADE)
     note = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
