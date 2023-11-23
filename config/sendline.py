@@ -28,7 +28,8 @@ class Sendline:
         url = 'https://notify-api.line.me/api/notify'
         token = self.tok ## EDIT
         header = {'content-type':'application/x-www-form-urlencoded','Authorization':'Bearer '+token}
-        return requests.post(url, headers=header, data = command)
+        session = requests.Session()
+        return session.post(url, headers=header, data = command)
 
     def send_message(self,message):
         # send plain text to line
@@ -42,7 +43,7 @@ class Sendline:
 
 
     def send_image(self,url):
-        command = {'message': "", 'imageFile':url}
+        command = {'message': "", 'imageFile':open(url,'rb')}
         return self.Lineconfig(command)
 
 

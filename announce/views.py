@@ -156,11 +156,11 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
                     token = LineToken.objects.get(id=token_id).token
                     line  = Sendline(token)
                     line.send_message(head + body)
-                    # image_file = AnnounceImage.objects.filter(announce=form_id)
-                    # for image in image_file:
-                    #     image_path = str(Path.joinpath(settings.BASE_DIR, settings.MEDIA_ROOT, image.images.name))
-                    #     line.send_image(image_path)
-                    #     print(image_path)
+                    image_file = AnnounceImage.objects.filter(announce=form_id)
+                    for image in image_file:
+                        image_path = str(Path.joinpath(settings.BASE_DIR, settings.MEDIA_ROOT, image.images.name))
+                        line.send_image(image_path)
+                        print(image_path)
 
 
             return redirect(self.success_url)

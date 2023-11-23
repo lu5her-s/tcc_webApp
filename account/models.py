@@ -67,6 +67,9 @@ class Profile(models.Model):
     line_id    = models.CharField(max_length=200, default='line_id')
     line_token = models.CharField(max_length=200, default='line_token')
 
+    class Meta:
+        verbose_name_plural = "Profiles"
+
     # REVIEW : make return refer
     def __str__(self) -> str:
         if self.rank:

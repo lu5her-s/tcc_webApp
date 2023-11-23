@@ -316,8 +316,17 @@ class InformDetailView(LoginRequiredMixin, DetailView):
         
         try:
             context['customer_review'] = CustomerReview.objects.get(inform=self.get_object())
+        except:
+            pass
+        try:
             context['manager_review'] = ManagerReview.objects.get(inform=self.get_object())
+        except:
+            pass
+        try:
             context['command_review'] = CommandReview.objects.get(inform=self.get_object())
+        except:
+            pass
+        try:
             context['inform_options'] = InformOption.objects.get(inform=self.get_object())
         except:
             pass
@@ -473,7 +482,7 @@ class InformCreateView(LoginRequiredMixin, CreateView):
 
             line  = Sendline(token)
             try:
-                line.sendtext(body)
+                line.send_message(body)
             except Exception as e:
                 print(e)
         return redirect(reverse_lazy('inform:home'))
@@ -834,13 +843,16 @@ def inform_to_pdf(request: HttpResponse, pk: int):
     inform = get_object_or_404(Inform, pk=pk)
     try:
         customer_review = CustomerReview.objects.get(inform=inform)
-        manager_review = ManagerReview.objects.get(inform=inform)
-        command_review = CommandReview.objects.get(inform=inform)
     except:
         customer_review = None
+    try:
+        manager_review = ManagerReview.objects.get(inform=inform)
+    except:
         manager_review = None
+    try:
+        command_review = CommandReview.objects.get(inform=inform)
+    except:
         command_review = None
-
     
     context = {
         'inform': inform if inform else None,

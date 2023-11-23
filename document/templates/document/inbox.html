@@ -47,7 +47,7 @@
                                     <th scope="col">เอกสารเลขที่</th>
                                     <th scope="col">ความเร่งด่วน</th>
                                     <th scope="col">จาก</th>
-                                    <th scope="col">เรื่อง</th>
+                                    <th scope="col" style="width: 50%">เรื่อง</th>
                                     <th scope="col">...</th>
                                 </tr>
                             </thead>
@@ -174,7 +174,8 @@
                     $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
                 }
             },
-            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+            "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+          order: [[4, "desc"]],
         });
     });
 

@@ -1,0 +1,210 @@
+{% load static %}
+{% load tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Inline CSS Invoice Template</title>
+    <style>
+    @font-face {
+      font-family: "TH Sarabun";
+      font-style: normal;
+      font-weight: normal;
+      src: "/home/lu5her/source/python/django/tcc_webApp/static/assets/fonts/TH-Sarabun-New-Bold.ttf",
+    }
+
+    body {
+      font-size: 16px;
+    }
+
+    .thai-font {
+      font-family: "TH Sarabun";
+      font-size: 20px;
+    }
+
+    .table-bg {
+      background: #343a40;
+      color: white;
+    }
+    </style>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>TCC - {% block title %}TCC Home Portal{% endblock %} </title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet"> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Krub:wght@300&display=swap" rel="stylesheet"> -->
+    <!-- add fontawsome icon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+
+  </head>
+
+  <body>
+    <main id="main" class="thai-font">
+      {% block content %}
+      {{ context.bill }}
+      
+    <table class="table table-bordered" style="text-align: center; width: 100%; vertical-align: middle; border: 1px solid black">
+      <tr>
+        <td colspan="6" style="width: 75%;"><b>ใบเบิก</b></td>
+        <td colspan="4">page  of  page</td>
+      </tr>
+      <tr>
+        <td rowspan="2">จาก</td>
+        <td rowspan="2" colspan="2">{{ context.bill.stock }}</td>
+        <td colspan="3" style="width: 20%;">ที่ {{ context.bill.pk }}/{{ context.bill.created_at.year|thaiyear }}</td>
+        <td colspan="3" style="text-align: left">สายงานที่ควบคุม</td>
+        <td style="width: 10%;">ส.</td>
+      </tr>
+      <tr>
+        <td colspan="3">เบิกในกรณี</td>
+        <td colspan="3" style="text-align: left">ประเภทสิ่งอุปกรณ์</td>
+        <td style="width: 10%;">2 และ 4</td>
+      </tr>
+      <tr>
+        <td rowspan="2">To</td>
+        <td style="text-align: left">หน่วยเบิก</td>
+        <td>{{ context.bill.user.profile.department }}</td>
+        <td rowspan="2">
+          ขั้นต้น
+          <br>
+          <!-- add icon check from fontawesome 5 -->
+          <i class="fas fa-check"></i>
+        </td>
+        <td rowspan="2">
+          ทดแทน
+          <br>
+        </td>
+        <td rowspan="2">
+          ยืม
+          <br>
+        </td>
+        <td colspan="4" style="text-align: left"><label for="money">ประเภทเงิน</label>
+          <input class="form-control" type="text" id="money" style="float: right; width: 100px">
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align: left">
+          เบิกให้
+        </td>
+        <td>
+          <select class="form-select" name="for_recv" id="for_recv" style="width: 100%">
+            <option value="{{ user.profile.department }}">{{ user.profile.department }}</option>
+            <option value="{{ request.user.profile.department }}">{{ request.user.profile.department }}</option>
+          </select>
+        </td>
+        <!-- <td><input type="radio" name="request_case" value="1"></td> -->
+        <!-- <td><input type="radio" name="request_case" value="2"></td> -->
+        <!-- <td><input type="radio" name="request_case" value="3"></td> -->
+        <td colspan="4" style="text-align: left"><label for="job_no">เลขงาน </label>
+          <input class="form-control" type="text" id="job_no" style="float: right; width: 100px">
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 10%;">ลำดับ</td>
+        <td style="width: 23%;">หมายเลขสิ่งอุปกรณ์</td>
+        <td>รายการ</td>
+        <td>อนุมัติ</td>
+        <td>คงคลัง</td>
+        <td>หน่วยนับ</td>
+        <td>เบิก</td>
+        <td>ราคา/<br>หน่วย</td>
+        <td>รวม</td>
+        <td>จ่ายจริง</td>
+      </tr>
+      {% for item in items %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>
+          <select class="form-select" name="serial_no" id="serail_no" style="width: 100%">
+            <option value="">Select item</option>
+            {% for i in item.category.stockitem_set.all|available %}
+            <option value="{{ i.serial }}">{{ i.serial }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        <td>{{ item.category }}</td>
+        {% if item.quantity_approve %}
+        <td>{{ item.quantity_approve }}</td>
+        {% else %}
+        <td>-</td>
+        {% endif %}
+        <td>{{ item.category.stockitem_set.all|available|count }}</td>
+        {% if item.stockitem.count_text %}
+        <td>{{ item.stockitem.count_text }}</td>
+        {% else %}
+        <td>-</td>
+        {% endif %}
+        <td>{{ item.quantity }}</td>
+        <td>Data 8</td>
+        <td>Data 9</td>
+        <td>Data 10</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <div class="container">
+      <table class="table" style="width: 100%; vertical-align: middle;">
+        <tr>
+          <td>หลักฐานที่ใช้ในการเบิก</td>
+          <td>Test</td>
+        </tr>
+      </table>
+    </div>
+
+      {% endblock %}
+
+    </main><!-- End #main -->
+
+  </body>
+
+  <script>
+    $(document).ready(function(){
+      $(window).scroll(function () {
+        if ($(this).scrollTop() > 20) {
+          $('#back-to-top').fadeIn();
+        } else {
+          $('#back-to-top').fadeOut();
+        }
+      });
+      // scroll body to 0px on click
+      $('#back-to-top').click(function () {
+        $('body,html').animate({
+          scrollTop: 0
+        }, 400);
+        return false;
+      });
+    });
+
+
+    var myBtn = document.getElementById("myBtn");
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {
+      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        myBtn.style.display = "block";
+      } else {
+        myBtn.style.display = "none";
+      }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+      document.body.scrollTop = 0; // For Safari
+      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+  </script>
+
+</html>

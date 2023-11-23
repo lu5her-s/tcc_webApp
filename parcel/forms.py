@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import formset_factory
-from account.models import Department
+from account.models import Department, Profile
 from .models import (
     RequestBill,
     RequestBillDetail,
@@ -36,18 +36,27 @@ class SelectStockForm(forms.Form):
 #         }
 
 
-class RequestItemForm(forms.ModelForm):
+class RequestBillDetailForm(forms.ModelForm):
     class Meta:
-        model = RequestItem
+        model = RequestBillDetail
         fields = (
-            'item',
-            'quantity',
+            'request_case',
+            'item_type',
+            'item_control',
+            'money_type',
+            'job_no',
+            'receiver'
         )
         widgets = {
-            'item': forms.Select(attrs={'class': 'form-select'}),
-            'quantity': forms.TextInput(attrs={'class': 'form-control'}),
+            'request_case': forms.Select(attrs={'class': 'form-select'}),
+            'item_type': forms.Select(attrs={'class': 'form-select'}),
+            'item_control': forms.Select(attrs={'class': 'form-select'}),
+            'money_type': forms.Select(attrs={'class': 'form-select'}),
+            'job_no': forms.TextInput(attrs={'class': 'form-control'}),
+            'receiver': forms.Select(attrs={'class': 'form-select'}),
         }
 
-
-class CartAddForm(forms.Form):
-    quantity = forms.TypedChoiceField()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['request_case'].queryset = RequestBillDetail.RequestCase
+        self.fields['receiver'].queryset = Profile.objects.all()

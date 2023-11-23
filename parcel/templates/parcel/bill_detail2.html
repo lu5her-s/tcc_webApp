@@ -4,16 +4,16 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Inform{% endblock title %}
+{% block title %}Parcel{% endblock title %}
 
 {% block content %}
 <div class="pagetitle">
-  <h1>{{ title }}เลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</h1>
+  <h1>{{ title }}เลขที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'inform:home' %}">Inform Home</a></li>
-      <li class="breadcrumb-item active">แจ้งซ่อมเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</li>
+      <li class="breadcrumb-item"><a href="{% url 'parcel:home' %}">Parcel Home</a></li>
+      <li class="breadcrumb-item active">ใบเบิกเลขที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</li>
     </ol>
   </nav>
 </div><!-- End Page Title -->
@@ -32,10 +32,10 @@
               </button>
             </li>
 
-            {% if request.user.profile == object.assigned_to and not object.accepted %}
+            {% if request.user.profile.department == bill.stock %}
             <li class="nav-item">
               <button class="nav-link" data-bs-toggle="tab" data-bs-target="#accept">
-                ตอบรับ
+                พัสดุ
               </button>
             </li>
 
@@ -72,63 +72,35 @@
           <div class="tab-content pt-2">
 
             <div id="detail" class="tab-pane fade show active">
-              <h6 class="card-title"> รายละเอียด | <span>แจ้งซ่อมเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h6>
+              <h6 class="card-title"> รายละเอียด | <span>แจ้งซ่อมเลขที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</span></h6>
               <table class="table">
                 <tr>
-                  <th>หมายเลขการแจ้งซ่อม</th>
-                  <td>{{ object.pk }}/{{ object.created_at.year|thaiyear }}</td>
+                  <th>ใบเบิกที่</th>
+                  <td>{{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</td>
                 </tr>
 
                 <tr>
-                  <th>ประเภทการแจ้งซ่อม</th>
-                  <td>{{ object.get_issue_category_display  }}</td>
+                  <th>คลังเจ้าของพัสดุ</th>
+                  <td>{{ bill.stock }}</td>
                 </tr>
 
                 <tr>
-                  <th>พัสดุที่แจ้งซ่อม</th>
+                  <th>พัสุที่ขอเบิก</th>
                   <td>
-                    {{ object.stockitem.item_name }}<br/>
-                    <a href="{% url 'asset:stockitem_detail' pk=object.stockitem.pk %}">
-                      [{{ object.stockitem.serial }}]
-                    </a>
+                    {% for item in items %}
+                    {{ forloop.counter }}.{{ item.category }} {{ item.serial }}<br>
+                    {% endfor %}
                   </td>
                 </tr>
 
                 <tr>
-                  <th>ความเร่งด่วน</th>
-                  {% if object.urgency == 'HIG' %}
-                  <td style="color:red">
-                    {% elif object.urgency == 'MED' %}
-                    <td style="color:orange">
-                      {% else %}
-                      <td>
-                        {% endif %}
-                        {{ object.get_urgency_display }}
-                      </td>
+                  <th>หน่วยเบิก</th>
+                  <td>{{ bill.user.profile.department }}</td>
                 </tr>
 
                 <tr>
-                  <th>สถานะ</th>
-                  {% if not object.approve_status %}
-                  {% if object.inform_status == 'INF' %}
-                  <td style="color:red;">
-                    <i class="bi bi-exclamation-circle" style="color: red;"></i>
-                    {% else %}
-                    <td>
-                      {% endif %}
-                      {{ object.get_inform_status_display }}
-                    </td>
-
-                    {% elif object.approve_status == 'APR' %}
-                    <td>
-                      {{ object.get_approve_status_display }}
-                    </td>
-                    {% elif object.approve_status == 'RJT' %}
-                    <td>
-                      <i class="bi bi-slash-circle" style="color: red;"></i>
-                      {{ object.get_approve_status_display }}
-                    </td>
-                    {% endif %}
+                  <th>ผู้ขอเบิก</th>
+                  <td>{{ bill.user.profile }}</td>
                 </tr>
 
                 {% if object.approve_status == 'RJT' %}
@@ -138,129 +110,52 @@
                 </tr>
                 {% endif %}
 
-                {% if object.repair_status %}
                 <tr>
-                  <th>สถานะการซ่อม</th>
-                  <td>
-                    {{ object.get_repair_status_display }}
-                    <!-- green if command approve to close -->
-                    {% if object.repair_status == 'CLO' and object.closed %}
-                    <i class="bi bi-check-circle" style="color: green;"></i>
-                    {% elif object.repair_status == 'CLO' %}
-                    <i class="bi bi-x-circle" style="color: orange;"></i>
-                    รอการอนุมัติ
-
-                    {% endif %}
-                  </td>
-                </tr>
-                {% endif %}
-
-                <tr>
-                  <th>ผู้แจ้ง</th>
-                  <td>
-                    {{ object.customer.profile }}
-                  </td>
-                </tr>
-
-                <tr>
-                  <th>วันที่แจ้ง</th>
-                  <td>{{ object.created_at|thaidate }} 
-                    เวลา {{ object.created_at|date:"H:i" }} น.
+                  <th>วันที่ทำรายการ</th>
+                  <td>{{ bill.created_at|thaidate }} 
+                    เวลา {{ bill.created_at|date:"H:i" }} น.
                   </td>
                 </tr>
 
               </table>
               <br>
-
-              {% if object.repair_category %}
-              <table class="table">
-                <!-- tr col span 2 for description -->
-                <tr>
-                  <th colspan="2" class="text-center">รายละเอียดการจัดการ</th>
-                </tr>
-
-                <tr>
-                  <th>ประเภทการซ่อม</th>
-                  <td>
-                    {{ object.get_repair_category_display }}
-                  </td>
-                </tr>
-
-                {% endif %}
-                {% if object.assigned_to %}
-                <tr>
-                  <th>ช่างผู้รับผิดชอบ</th>
-                  <td>
-                    {{ object.assigned_to }}
-                  </td>
-                </tr>
-              </table>
-              <br>
-              {% endif %}
 
               <table class="table table-borderless">
                 <tr>
-                  <th class="text-center">รายละเอียด/อาการ</th>
+                  <th class="card-title"><h5>รายละเอียดเพิ่มเติม</h5></th>
                 </tr>
+
                 <tr>
-                  <td style="padding-left: 3rem;">{{ object.issue|safe }}</td>
+                  <th>หลักฐานที่ใช้ในการเบิก</th>
+                  <td><input type="text" class="form-control" value="{{ bill.pk }}"></td> 
                 </tr>
+
+                <tr>
+                  <th>หลักฐานที่ใช้ในการเบิก</th>
+                  <td><input type="text" class="form-control" value="{{ bill.document }}"></td> 
+                </tr>
+
+                <tr>
+                  <td>{{ bill_detail_form.as_table }}</td>
+                </tr>
+
+                      {% for item in items %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>
+                    <select class="form-select" name="serial_no" style="width: 100%">
+                      <option value="">Select item</option>
+                      {% for i in item.category.stockitem_set.all|available %}
+                      <option value="{{ i.serial }}">{{ i.serial }}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
+                </tr>
+                {% endfor %}
+
               </table>
 
-              <!-- if user is assigned to make button to create stockitem -->
-              {% if request.user.profile == object.assigned_to %}
-              <div>
-                <!-- TODO: make condition for dynamic link -->
-                {% if inform_options.stock is None %}
-                <a href="{% url 'parcel:select_stock' %}" 
-                   target="_blank"
-                   class="btn" 
-                   style="float: right; background-color: purple; color: white;">
-                  เบิกคลัง
-                </a>
-                {% else %}
-                <a href="{% url 'parcel:bill_detail' pk=inform_options.stock %}"
-                   class="btn"
-                   style="float: right; background-color: purple; color: white;">
-                  เบิกคลัง
-                </a>
-                {% endif %}
-
-                {% if object.repair_category == 'WAT' or object.repair_category == 'URG' %}
-
-                  {% if inform_options.car is None %}
-                  <a href="{% url 'car:list' %}" 
-                     target="_blank"
-                     class="btn" 
-                     style="float: right; background-color: green; color: white; margin-right: 0.5rem;">
-                    ยานพาหนะ
-                  </a>
-                  {% else %}
-                  <a href="{% url 'car:booking-detail' pk=inform_options.car %}"
-                     class="btn"
-                     style="float: right; background-color: green; color: white; margin-right: 0.5rem;">
-                    ยานพาหนะ</a>
-                  {% endif %}
-
-                  {% if inform_options.job is None %}
-                  <a href="#"
-                    class="btn"
-                    style="float: right; background-color: green; color: white; margin-right: 0.5rem;">
-                    ใบงาน
-                  </a>
-                  {% else %}
-                  <a href="#"
-                    class="btn"
-                    style="float: right; background-color: green; color: white; margin-right: 0.5rem;">
-                    ใบงาน
-                  </a>
-                  {% endif %}
-
-                {% endif %}
-              </div>
         
-        {% endif %}
-
               {% if images %}
               <br>
 
@@ -443,59 +338,13 @@
 
       <!-- Assign Job -->
 
-        <div class="container float-start text-center">
-          <!-- include template related to user group -->
-          {% if request.user == object.customer %}
-            {% include "./buttons/customer.html" %}
-          {% elif request.user|has_group:"StaffRepair" %}
-            {% include "./buttons/manager.html" %}
-          {% elif request.user|has_group:"Command" %}
-            {% include "./buttons/command.html" %}
-          {% elif request.user|has_group:"Technical" %}
-            {% include "./buttons/technical.html" %}         
-          {% else %}
-            {% include "./buttons/user.html" %}
-          {% endif %}
+        <div class="container float-center text-center">
+          <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
+          <a href="#" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check">บันทึก</a>
+          <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_approve">ขอเบิก</a>
+          <a href="#" class="btn btn-lg btn-danger" data-bs-toggle="modal" data-bs-target="#confirm_reject">ยกเลิก</a>
         </div>
 
-    </div>
-
-    <div class="modal fade" id="manager_check">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">ตรวจสอบ</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form method="post">
-              {% csrf_token %}
-              <div class="row mb-3">
-                <label for="{{ manager_check.repair_category.name }}" class="col-md-4 col-lg-3 col-form-label">{{ manager_check.repair_category.label }}</label>
-                <div class="col-md-8 col-lg-9">
-                  {{ manager_check.repair_category }}
-                </div>
-              </div>
-              <div class="row mb-3">
-                <label for="{{ manager_check.assigned_to.name }}" class="col-md-4 col-lg-3 col-form-label">{{ manager_check.assigned_to.label }}</label>
-                <div class="col-md-8 col-lg-9">
-                  {{ manager_check.assigned_to }}
-                </div>
-              </div>
-              <!-- <div class="row mb-3"> -->
-                <!-- <label for="{{ manager_check.inform_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ manager_check.inform_status.label }}</label> -->
-                <!-- <div class="col-md-8 col-lg-9"> -->
-                  {{ manager_check.inform_status }}
-                <!-- </div> -->
-              <!-- </div> -->
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-            <button type="submit" class="btn btn-primary">ยืนยัน</button>
-          </div>
-            </form>
-        </div>
-      </div>
     </div>
 
 
@@ -508,7 +357,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form method="post" action="{% url 'inform:review' pk=object.pk %}">
+            <form method="post" action="{% url 'inform:review' pk=bill.pk %}">
               {% csrf_token %}
               <div class="row mb-3">
                 <label for="{{ review_form.rating.name }}" class="col-md-4 col-lg-3 col-form-label">{{ review_form.rating.label }}</label>
@@ -532,10 +381,6 @@
       </div>
     </div>
 
-
-
-
-
     <!-- modal for confirm approve -->
     <div class="modal fade" id="confirm_approve">
       <div class="modal-dialog">
@@ -545,9 +390,9 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form method="post" action="{% url 'inform:command_approve' pk=object.pk %}">
+            <form method="post" action="{% url 'inform:command_approve' pk=bill.pk %}">
               {% csrf_token %}
-              <p>ใบแจ้งซ่อมเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</p>
+              <p>ใบแจ้งซ่อมเลขที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</p>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
                 <button type="submit" class="btn btn-primary">ยืนยัน</button>
@@ -567,9 +412,9 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form method="post" action="{% url 'inform:command_reject' pk=object.pk %}">
+            <form method="post" action="#">
               {% csrf_token %}
-              <p>ใบแจ้งซ่อมเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</p>
+              <p>ใบแจ้งซ่อมเลขที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</p>
               <input type="hidden" name="inform_id" value="{{ object.pk }}">
               <textarea type="text" name="reason" class="form-control" rows="3" placeholder="รายละเอียดการไม่อนุมัติ"></textarea>
               <div class="modal-footer">
@@ -588,14 +433,18 @@
   <script>
     $(document).ready(function(){
       // if repair_category select option == 'AGN' disabled assigned_to field
-      $('select[name="repair_category"]').on('change', function(){
-        if($(this).val() == 'AGN'){
-          $('select[name="assigned_to"]').prop('disabled', true);
-        }else{
-          $('select[name="assigned_to"]').prop('disabled', false);
-        }
+      $('select[name="receiver"]').select2({
+        width: "100%",
+        allowClear: true,
+        placeholder: "เลือกผู้รับแทน",
+      });
+      $('select[name="serial_no"]').select2({
+        width: "100%",
+        allowClear: true,
+        placeholder: "เลือกอุปกรณ์",
       });
     });
+
 
   </script>
 </section>

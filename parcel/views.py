@@ -1,3 +1,7 @@
+import os
+from tempfile import NamedTemporaryFile
+from django.http import FileResponse
+from django.template.loader import get_template, render_to_string
 from datetime import datetime
 from django.db.models import ObjectDoesNotExist
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
@@ -24,8 +28,9 @@ from .models import (
     RequestBillDetail,
     RequestItem
 )
-from .forms import SelectStockForm
+from .forms import RequestBillDetailForm, SelectStockForm
 from cart.cart import Cart
+from config.utils import BytesIO, generate_pdf, pisa
 
 # Create your views here.
 
@@ -39,7 +44,10 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
         all_bill = RequestBill.objects.filter(user=self.request.user)
         context['all_bill'] = all_bill
         context['wait_approve'] = all_bill.filter(billdetail__approved=False)
-        context['parcel_list'] = RequestItem.objects.filter(bill__in=all_bill)
+        context['parcel_list'] = RequestItem.objects.filter(
+            bill__in=all_bill,
+            item__status=StockItem.Status.ON_HAND
+        )
         # context['on_hand'] = Q(all_bill.billitems.filter(item.status==StockItem.Status.AVAILABLE)) & Q(all_bill.bill_detail.filter(is_paid=True))
         # context['on_hand'] = (Q(RequestItem.objects.filter(item__status=StockItem.Status.AVAILABLE, bill__in=all_bill)) & Q(
         #     all_bill.filter(billdetail__is_paid=True)
@@ -130,30 +138,41 @@ class BillDetailView(LoginRequiredMixin, View):
         bill = get_object_or_404(RequestBill, pk=pk)
         recievers = Profile.objects.all().exclude(user=bill.user)
         items = RequestItem.objects.filter(bill=bill)
-        bill_detail = RequestBillDetail.objects.filter(bill=bill) if bill.billdetail else RequestBillDetail.objects.create(
+        bill_detail = RequestBillDetail.objects.get(bill=bill) if bill.billdetail else RequestBillDetail.objects.create(
             bill=bill
         )
         context = {
             'bill': bill,
             'items': items,
             'bill_detail': bill_detail,
-            'recievers': recievers
+            'recievers': recievers,
+            'bill_detail_form': RequestBillDetailForm(instance=bill_detail),
         }
-        return render(request, 'parcel/bill_detail.html', context)
+        return render(request, 'parcel/bill_detail2.html', context)
 
-    # TODO: get item from serail or pk and set item status to HOLD
-    def post(self, request, pk):
-        bill = get_object_or_404(RequestBill, pk=pk)
-        data = request.POST
-        print(data)
-        serials = data.getlist('serial_no')
-        for serial in serials:
-            try:
-                item = StockItem.objects.get(serial=serial)
-                print(item)
-            except ObjectDoesNotExist:
-                print("item not found")
-                continue
+    # # TODO: get item from serail or pk and set item status to HOLD
+    # def post(self, request, pk):
+    #     bill = get_object_or_404(RequestBill, pk=pk)
+    #     data = request.POST
+    #     print(data)
+    #     serials = data.getlist('serial_no')
+    #     for serial in serials:
+    #         try:
+    #             item = StockItem.objects.get(serial=serial)
+    #             print(item)
+    #         except ObjectDoesNotExist:
+    #             print("item not found")
+    #             continue
+    #     return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
+
+
+def set_serail_item(request, pk):
+    bill = get_object_or_404(RequestBill, pk=pk)
+    items = RequestItem.objects.filter(bill=bill)
+    if request.method == 'POST':
+        for item in items:
+            item.serial_no = request.POST.get('serail_no')
+            item.save()
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
 
 
@@ -240,3 +259,38 @@ def recieve_items(request, pk):
     # bill.billdetail.received_at = datetime.date.today()
     # bill.billdetail.save()
     # return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+
+
+def parcel_list(request):
+    items = RequestItem.objects.filter(
+        bill__user=request.user,
+    ).select_related('bill__user')
+    context = {
+        'object_list': items,
+        'title': 'Parcel List'
+    }
+    return render(request, 'parcel/parcel_list.html', context)
+
+
+def bill_to_pdf(request, pk):
+    bill = get_object_or_404(RequestBill, pk=pk)
+    items = RequestItem.objects.filter(bill=bill)
+    context = {
+        'bill': bill,
+        'items': items
+    }
+    temp_html = 'parcel/temp.html'
+    with open(temp_html, 'w') as f:
+    # with NamedTemporaryFile(mode='w', delete=False) as f:
+        f.write(render_to_string('parcel/bill_pdf.html', {'context': context}))
+        # f.write(render_to_string(f.name, {'context': context}))
+    pdf = generate_pdf(data={'context': context}, template_path='parcel/bill_pdf.html')
+    # pdf = generate_pdf(data={'context': context}, template_path=f.name)
+    os.remove(temp_html)
+    # os.remove(f.name)
+
+    response = HttpResponse(pdf, content_type='application/pdf')
+    # response['Content-Disposition'] = f'attachment; filename="inform-{pk}.pdf"'
+
+    return response
+

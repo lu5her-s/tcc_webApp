@@ -27,9 +27,20 @@ class RequestBill(models.Model):
         receiver (models.ForeignKey): The user who will receive the bill, if specified.
         category_request (models.ForeignKey): The category of the item requested.
     """
+
+    class BillStatus(models.TextChoices):
+        DRAFT = 'DRAFT', 'ร่าง'
+        IN_PROGRESS = 'IN_PROGRESS', 'กำลังดำเนินการ'
+        DONE = 'DONE', 'เสร็จสิ้น'
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     stock = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
+    status = models.CharField(
+        max_length=50,
+        choices=BillStatus.choices,
+        default=BillStatus.DRAFT
+    )
     is_done = models.BooleanField(default=False)
     date_done = models.DateTimeField(null=True, blank=True)
 
@@ -91,14 +102,40 @@ class RequestBillDetail(models.Model):
     Model representing the details of a request bill.
     """
 
+    class ApproveStatus(models.TextChoices):
+        APPROVED = 'APPROVED', 'อนุมัติ'
+        WAIT = 'WAIT', 'รออนุมัติ'
+        UNAPPROVED = 'UNAPPROVED', 'ยังไม่อนุมัติ'
+
+    class RequestCase(models.TextChoices):
+        BASIC = 'BASIC', 'ขั้นต้น'
+        REPLACE = 'REPLACE', 'ทดแทน'
+        BORROW = 'BORROW', 'ยืม'
+
     # Define model fields
     approve_date = models.DateField(null=True, blank=True)
     approved = models.BooleanField(default=False)
+    approve_status = models.CharField(
+        max_length=50,
+        choices=ApproveStatus.choices,
+        default=ApproveStatus.WAIT
+    )
     approver = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     receiver = models.ForeignKey(Profile, related_name='bill_receiver', on_delete=models.CASCADE, null=True, blank=True)
     received_at = models.DateTimeField(null=True, blank=True)
     paider = models.ForeignKey(User, related_name='bill_paider', on_delete=models.CASCADE, null=True, blank=True)
     paid_at = models.DateTimeField(null=True, blank=True)
+    request_case = models.CharField(
+        max_length=50,
+        choices=RequestCase.choices,
+        default=RequestCase.BASIC
+    )
+    item_type = models.CharField(max_length=50, null=True, blank=True)
+    item_control = models.CharField(max_length=50, null=True, blank=True)
+    money_type = models.CharField(max_length=50, null=True, blank=True)
+    job_no = models.CharField(max_length=50, null=True, blank=True)
+    request_reference = models.CharField(max_length=50, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     # Define model relationships
     bill = models.ForeignKey(RequestBill, on_delete=models.CASCADE, related_name='billdetail')
@@ -123,6 +160,7 @@ class BillNote(models.Model):
     note = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    quantity_check = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "Bill Notes"
