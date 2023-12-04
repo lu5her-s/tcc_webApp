@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'ckeditor',
     'debug_toolbar',
+    'django_extensions',
 
     # internal app
     'account',

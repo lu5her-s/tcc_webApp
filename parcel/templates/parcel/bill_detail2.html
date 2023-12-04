@@ -34,8 +34,8 @@
 
             {% if request.user.profile.department == bill.stock %}
             <li class="nav-item">
-              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#accept">
-                พัสดุ
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#stock_item">
+                จัดการพัสดุ
               </button>
             </li>
 
@@ -139,7 +139,10 @@
                   <td>{{ bill_detail_form.as_table }}</td>
                 </tr>
 
-                      {% for item in items %}
+                <!-- NOTE: for loop to set serial to item -->
+                {% comment %}
+                  
+                {% for item in items %}
                 <tr>
                   <td>{{ forloop.counter }}</td>
                   <td>
@@ -152,6 +155,7 @@
                   </td>
                 </tr>
                 {% endfor %}
+                {% endcomment %}
 
               </table>
 
@@ -238,48 +242,31 @@
 
             </div><!-- end notes -->
 
-            <div id="accept" class='tab-pane fade pt-3'>
-              {% if request.user.profile == object.assigned_to %}
-              <h5 class="card-title">การตอบรับ | <span>{{ object.title }}</span></h5>
-              {% if not object.accepted %}
-              <p>
-              <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
-              <span>
-                กรุณาตอบรับการมอบหมายงาน
-                <center>
-                  <a href="{% url 'inform:accept' pk=object.pk %}" class="btn btn-success">ตอบรับงาน</a>
-                </center>
-              </span>
-              </p>
-              {% else %}
-
-                {% if not object.repair_status == 'CLO' %}
-
-                <form method="post" enctype="multipart/form-data" action="{% url 'inform:tech_note' pk=object.pk %}">
-                  {% csrf_token %}
-                  {{ form.media }}
-                  <div class="row mb-3">
-                    <label for="{{ form.status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.status.label }}</label>
-                    <div class="col-md-8 col-lg-9">
-                      {{ form.status }}
-                    </div>
-                  </div>
-                  <div class="row mb-3">
-                    <label for="{{ form.note.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.note.label }}</label>
-                    <div class="col-md-8 col-lg-9">
-                      {{ form.note }}
-                    </div>
-                  </div>
-                  <input type="hidden" name="inform_id" value="{{ object.pk }}">
-                  <button class="btn btn-lg" style="float: right; background-color: purple; color: white;" type="submit">อัพเดท</button>
-                </form>
-                {% else %}
-                ปิดงาน
-
-                {% endif %}
-
-                {% endif %}
-                {% endif %}
+            <div id="stock_item" class='tab-pane fade pt-3'>
+              <table class="table table-striped">
+                <!-- NOTE: for loop to set serial to item -->
+                {% for item in items %}
+                <tr>
+                  <td style="width: 5%;">{{ forloop.counter }}</td>
+                  <td style="width: 20%;">{{ item.category }}</td>
+                  <form action="#">
+                    <td>
+                      {% csrf_token %}
+                      <select class="form-select" name="serial_no" style="width: 100%">
+                        <option value="">Select item</option>
+                        {% for i in item.category.stockitem_set.all|available %}
+                        <option value="{{ i.serial }}">{{ i.serial }}</option>
+                        {% endfor %}
+                      </select>
+                    </td>
+                    <td style="width: 10%;"><a href="#" 
+                                               data-bs-toggle="modal" 
+                                               data-bs-target="#set_serial" 
+                                               class="btn btn-sm btn-primary">Set</a></td>
+                  </form>
+                </tr>
+                {% endfor %}
+              </table>
             </div>
 
 
@@ -349,7 +336,7 @@
 
 
     <!-- modal for review -->
-    <div class="modal fade" id="reviewModal">
+    <div class="modal fade" id="set_serial">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -357,26 +344,12 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form method="post" action="{% url 'inform:review' pk=bill.pk %}">
-              {% csrf_token %}
-              <div class="row mb-3">
-                <label for="{{ review_form.rating.name }}" class="col-md-4 col-lg-3 col-form-label">{{ review_form.rating.label }}</label>
-                <div class="col-md-8 col-lg-9">
-                  {{ review_form.rating }}
-                </div>
-              </div>
-              <div class="row mb-3">
-                <label for="{{ review_form.description.name }}" class="col-md-4 col-lg-3 col-form-label">{{ review_form.description.label }}</label>
-                <div class="col-md-8 col-lg-9">
-                  {{ review_form.description }}
-                </div>
-              </div>
+            
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-            <button type="submit" class="btn btn-primary">ยืนยัน</button>
+            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirm_approve">บันทึก</a></a>
           </div>
-            </form>
         </div>
       </div>
     </div>

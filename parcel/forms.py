@@ -49,11 +49,19 @@ class RequestBillDetailForm(forms.ModelForm):
         )
         widgets = {
             'request_case': forms.Select(attrs={'class': 'form-select'}),
-            'item_type': forms.Select(attrs={'class': 'form-select'}),
-            'item_control': forms.Select(attrs={'class': 'form-select'}),
-            'money_type': forms.Select(attrs={'class': 'form-select'}),
+            'item_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'item_control': forms.TextInput(attrs={'class': 'form-control'}),
+            'money_type': forms.TextInput(attrs={'class': 'form-control'}),
             'job_no': forms.TextInput(attrs={'class': 'form-control'}),
             'receiver': forms.Select(attrs={'class': 'form-select'}),
+        }
+        labels = {
+            'request_case': 'เบิกในกรณี',
+            'item_type': 'ประเภท สป.',
+            'item_control': 'สายงานควบคุม',
+            'money_type': 'ประเภทเงิน',
+            'job_no': 'เลขที่งาน',
+            'receiver': 'ผู้รับแทน',
         }
 
     def __init__(self, *args, **kwargs):

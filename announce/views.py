@@ -26,7 +26,8 @@ from announce.models import (
     Comment
 )
 
-from config.sendline import Sendline
+# from config.sendline import Sendline
+from config.LineNotify import LineNotify
 
 
 # Create your views here.
@@ -154,11 +155,13 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
 
                 for token_id in tokens:
                     token = LineToken.objects.get(id=token_id).token
-                    line  = Sendline(token)
+                    # line  = Sendline(token)
+                    line = LineNotify(token)
                     line.send_message(head + body)
                     image_file = AnnounceImage.objects.filter(announce=form_id)
                     for image in image_file:
-                        image_path = str(Path.joinpath(settings.BASE_DIR, settings.MEDIA_ROOT, image.images.name))
+                        # image_path = str(Path.joinpath(settings.BASE_DIR, settings.MEDIA_ROOT, image.images.name))
+                        image_path = image.images.path
                         line.send_image(image_path)
                         print(image_path)
 

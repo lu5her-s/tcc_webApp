@@ -130,8 +130,8 @@ class RequestBillDetail(models.Model):
         choices=RequestCase.choices,
         default=RequestCase.BASIC
     )
-    item_type = models.CharField(max_length=50, null=True, blank=True)
-    item_control = models.CharField(max_length=50, null=True, blank=True)
+    item_type = models.CharField(max_length=50, null=True, blank=True, default='2 และ 4')
+    item_control = models.CharField(max_length=50, null=True, blank=True, default='ส.')
     money_type = models.CharField(max_length=50, null=True, blank=True)
     job_no = models.CharField(max_length=50, null=True, blank=True)
     request_reference = models.CharField(max_length=50, null=True, blank=True)

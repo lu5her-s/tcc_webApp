@@ -19,8 +19,17 @@ class AnnounceAdmin(admin.ModelAdmin):
     list_filter = ('is_type', 'status', 'author', 'title', 'detail', 'created_at', 'updated_at', 'is_delete',)
     search_fields = ('is_type', 'status', 'author', 'title', 'detail', 'created_at', 'updated_at', 'is_delete',)
 
+
+@admin.register(AnnounceImage)
+class AnnounceImageAdmin(admin.ModelAdmin):
+    list_display = ('announce', 'images',)
+    list_filter = ('announce', 'images',)
+    search_fields = ('announce', 'images',)
+
+
+
 admin.site.register(AnnounceType)
 admin.site.register(AnnounceStatus)
 admin.site.register(AnnounceFile)
-admin.site.register(AnnounceImage)
+# admin.site.register(AnnounceImage)
 admin.site.register(Comment)
