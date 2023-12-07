@@ -17,5 +17,7 @@ urlpatterns = [
     path('paid_item/<int:pk>/', views.paid_item, name='paid_item'),
     path('approve_request/<int:pk>/', views.approve_request, name='approve_request'),
 
+    path('set_serial_item/', views.set_serial_item, name='set_serial_item'),
+
     path('bill_to_pdf/<int:pk>/', views.bill_to_pdf, name='bill_to_pdf'),
 ]

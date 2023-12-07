@@ -30,7 +30,7 @@ from .models import (
 )
 from .forms import RequestBillDetailForm, SelectStockForm
 from cart.cart import Cart
-from config.utils import BytesIO, generate_pdf, pisa
+from config.utils import generate_pdf
 
 # Create your views here.
 
@@ -166,14 +166,14 @@ class BillDetailView(LoginRequiredMixin, View):
     #     return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
 
 
-def set_serail_item(request, pk):
-    bill = get_object_or_404(RequestBill, pk=pk)
-    items = RequestItem.objects.filter(bill=bill)
-    if request.method == 'POST':
-        for item in items:
-            item.serial_no = request.POST.get('serail_no')
-            item.save()
-        return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
+# def set_serail_item(request, pk):
+#     bill = get_object_or_404(RequestBill, pk=pk)
+#     items = RequestItem.objects.filter(bill=bill)
+#     if request.method == 'POST':
+#         for item in items:
+#             item.serial_no = request.POST.get('serail_no')
+#             item.save()
+#         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
 
 
 def test_create_bill(request):
@@ -272,25 +272,32 @@ def parcel_list(request):
     return render(request, 'parcel/parcel_list.html', context)
 
 
-def bill_to_pdf(request, pk):
-    bill = get_object_or_404(RequestBill, pk=pk)
+def set_serial_item(request):
+    if request.method == 'POST':
+        serial_no = request.POST.get('serial_no')
+        item = get_object_or_404(StockItem, serial=serial_no)
+        print(f"item: {item}")
+        print(f"serial_no: {serial_no}")
+        print(f"item: {item}")
+        return redirect(reverse_lazy('parcel:recieve_item', kwargs={'pk': item.pk}))
+
+
+
+def bill_to_pdf(request: HttpResponse, pk: int):
+    bill = RequestBill.objects.get(pk=pk)
     items = RequestItem.objects.filter(bill=bill)
+    bill_detail = RequestBillDetail.objects.get(bill=bill)
     context = {
         'bill': bill,
-        'items': items
+        'items': items,
+        'bill_detail': bill_detail
     }
     temp_html = 'parcel/temp.html'
     with open(temp_html, 'w') as f:
-    # with NamedTemporaryFile(mode='w', delete=False) as f:
         f.write(render_to_string('parcel/bill_pdf.html', {'context': context}))
-        # f.write(render_to_string(f.name, {'context': context}))
     pdf = generate_pdf(data={'context': context}, template_path='parcel/bill_pdf.html')
-    # pdf = generate_pdf(data={'context': context}, template_path=f.name)
     os.remove(temp_html)
-    # os.remove(f.name)
 
     response = HttpResponse(pdf, content_type='application/pdf')
-    # response['Content-Disposition'] = f'attachment; filename="inform-{pk}.pdf"'
 
     return response
-
