@@ -133,7 +133,7 @@
                       <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
                       <a href="#" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check">บันทึก</a>
                       <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_approve">ขอเบิก</a>
-                      <a href="#" class="btn btn-lg btn-danger" data-bs-toggle="modal" data-bs-target="#confirm_reject">ยกเลิก</a>
+                      <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-danger" data-bs-toggle="modal" data-bs-target="#confirm_reject">ยกเลิก</a>
                       <a href="#" class="btn btn-lg btn-secondary" data-bs-toggle="modal" data-bs-target="#confirm_reject">PDF</a>
                     </div>
                   </td>
@@ -176,29 +176,62 @@
                   <td colspan="2">
                     <div class="container float-center text-center">
                       <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
-                      <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_reject">Request App</a>
-                      <a href="#" class="btn btn-lg btn-secondary" data-bs-toggle="modal" data-bs-target="#confirm_reject">PDF</a>
+                      {% if bill.billdetail.approved %}
+                      <a href="#" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check">จ่ายพัสดุ</a>
+                      {% else %}
+                      <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_reject">ขออนุมัติ</a>
+                      {% endif %}
+                      <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">PDF</a>
                     </div>
                   </td>
                 </tr>
 
                 {% else %}
+
                 <tr>
-                  <th style="width: 35%;">เบิกในกรณี</th>
+                  <th>เบิกในกรณี</th>
                   <td>
                     {{ bill_detail.get_request_case_display }}
                   </td>
                 </tr>
+
+                <tr>
+                  <th>ประเภท สป.</th>
+                  <td>{{ bill_detail.item_type|default:'-' }}</td>
+                </tr>
+
+                <tr>
+                  <th>สายงานควบคุม</th>
+                  <td>{{ bill_detail.item_control|default:'-' }}</td>
+                </tr>
+
+                <tr>
+                  <th>ประเภทเงิน</th>
+                  <td>{{ bill_detail.money_type|default:'-' }}</td>
+                </tr>
+
+                <tr>
+                  <th>เลขที่งาน</th>
+                  <td>{{ bill_detail.job_no|default:'-' }}</td>
+                </tr>
+
+                <tr>
+                  <th>ผู้รับแทน</th>
+                  <td>{{ bill_detail.receiver|default:'-' }}</td>
+                </tr>
+
                 <tr>
                   <td colspan="2">
                     <div class="container float-center text-center">
                       <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
-                      <a href="#" class="btn btn-lg btn-danger" data-bs-toggle="modal" data-bs-target="#confirm_reject">ยกเลิก</a>
-                      <a href="#" class="btn btn-lg btn-secondary" data-bs-toggle="modal" data-bs-target="#confirm_reject">PDF</a>
+                      <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-success">ย้อนกลับ</a>
+                      <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">PDF</a>
                     </div>
                   </td>
                 </tr>
+
                 {% endif %}
+
               </table>
 
                 <!-- NOTE: for loop to set serial to item -->

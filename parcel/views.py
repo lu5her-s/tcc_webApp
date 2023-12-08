@@ -272,6 +272,7 @@ def parcel_list(request):
     return render(request, 'parcel/parcel_list.html', context)
 
 
+# TODO: refactor and make set item to form submit all in form save all[template]
 def set_serial_item(request):
     if request.method == 'POST':
         serial_no = request.POST.get('serial_no')
@@ -282,11 +283,29 @@ def set_serial_item(request):
         return redirect(reverse_lazy('parcel:recieve_item', kwargs={'pk': item.pk}))
 
 
+def request_approve(request, pk):
+    bill = get_object_or_404(RequestBill, pk=pk)
+    bill.status = RequestBill.BillStatus.IN_PROGRESS
+    bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.WAIT
+    bill.save()
+    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+
+
+def approve_bill(request, pk):
+    bill = get_object_or_404(RequestBill, pk=pk)
+    bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.APPROVED
+    bill.save()
+    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+
+
+# TODO: make view for paid and recieved item
+
 
 def bill_to_pdf(request: HttpResponse, pk: int):
     bill = RequestBill.objects.get(pk=pk)
     items = RequestItem.objects.filter(bill=bill)
     bill_detail = RequestBillDetail.objects.get(bill=bill)
+    # bill_detail = bill.billdetail
     context = {
         'bill': bill,
         'items': items,

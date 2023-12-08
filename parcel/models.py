@@ -114,7 +114,6 @@ class RequestBillDetail(models.Model):
 
     # Define model fields
     approve_date = models.DateField(null=True, blank=True)
-    approved = models.BooleanField(default=False)
     approve_status = models.CharField(
         max_length=50,
         choices=ApproveStatus.choices,
@@ -148,11 +147,11 @@ class RequestBillDetail(models.Model):
 
     def mark_as_approved(self):
         """
-        Mark the request bill as paid.
+        Mark the approved date if approve_status update to APPROVE.
         """
-        self.approved = True
-        self.approve_date = datetime.date.today()
-        self.save()
+        if self.approve_status == RequestBillDetail.ApproveStatus.APPROVE:
+            self.approve_date = datetime.date.today()
+            self.save()
 
 
 class BillNote(models.Model):
