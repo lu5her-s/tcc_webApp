@@ -55,8 +55,8 @@
                 <tr>
                   <td>{{ object.pk }}/{{ object.created_at.year|thaiyear }}</td>
                   <td>{{ object.created_at|thaidate }}</td>
-                  <td>{{ object.billdetail.approved }}{{ object.all }}</td>
-                  <td>{{ object.payment }}</td>
+                  <td>{{ object.billdetail.get_approve_status_display }}</td>
+                  <td>{{ object.billdetail.paid_at|default:"ยังไม่จ่าย" }}</td>
                   <td>
                     <a href="{% url 'parcel:bill_detail' object.pk %}" class="btn btn-sm btn-primary" style="width: 100%;">
                       <i class="bi bi-eye"></i>

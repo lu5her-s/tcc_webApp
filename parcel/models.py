@@ -30,6 +30,7 @@ class RequestBill(models.Model):
 
     class BillStatus(models.TextChoices):
         DRAFT = 'DRAFT', 'ร่าง'
+        REQUEST = 'REQUEST', 'ขอเบิก'
         IN_PROGRESS = 'IN_PROGRESS', 'กำลังดำเนินการ'
         DONE = 'DONE', 'เสร็จสิ้น'
 
@@ -73,6 +74,7 @@ class RequestItem(models.Model):
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
     quantity_approve = models.PositiveIntegerField(null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     # quantity_approve = models.PositiveIntegerField(default=1)
     serial_no = models.CharField(max_length=50, null=True, blank=True)
     paid = models.BooleanField(default=False)
@@ -82,6 +84,12 @@ class RequestItem(models.Model):
 
     class Meta:
         verbose_name_plural = "Request Items"
+
+    def total_price(self):
+        if self.price and self.quantity:
+            return self.price * self.quantity
+        else:
+            return None
 
     def mark_as_recieved(self):
         self.recieved = True
@@ -137,7 +145,7 @@ class RequestBillDetail(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     # Define model relationships
-    bill = models.ForeignKey(RequestBill, on_delete=models.CASCADE, related_name='billdetail')
+    bill = models.OneToOneField(RequestBill, on_delete=models.CASCADE, related_name='billdetail')
 
     class Meta:
         verbose_name_plural = "Request Bill Details"

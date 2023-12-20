@@ -129,21 +129,14 @@
             {{ item.serial_no|default:"-" }}
           </td>
           <td>{{ item.category }}</td>
-          {% if item.quantity_approve %}
-          <td>{{ item.quantity_approve }}</td>
-          {% else %}
-          <td>-</td>
-          {% endif %}
+          <td>{{ item.quantity_approve|default:"-" }}</td>
           <td>{{ item.category.stockitem_set.all|available|count }}</td>
-          {% if item.stockitem.count_text %}
-          <td>{{ item.stockitem.count_text }}</td>
-          {% else %}
-          <td>-</td>
-          {% endif %}
+          <td>{{ item.stockitem.count_text|default:"-" }}</td>
           <td>{{ item.quantity }}</td>
-          <td>Data 8</td>
-          <td>Data 9</td>
-          <td>Data 10</td>
+          <td>{{ item.price|default:"-" }}</td>
+          <td>{{ item.total_price|default:"-" }}</td>
+          <!-- WARN: change to paid item -->
+          <td>{{ item.quantity_approve|default:"-" }}</td>
         </tr>
         {% endfor %}
       </table>

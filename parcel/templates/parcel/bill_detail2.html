@@ -172,6 +172,8 @@
                   <td>{{ bill_detail.receiver|default:'-' }}</td>
                 </tr>
 
+                {% comment %}
+                  
                 <tr>
                   <td colspan="2">
                     <div class="container float-center text-center">
@@ -185,6 +187,7 @@
                     </div>
                   </td>
                 </tr>
+                {% endcomment %}
 
                 {% else %}
 
@@ -220,15 +223,6 @@
                   <td>{{ bill_detail.receiver|default:'-' }}</td>
                 </tr>
 
-                <tr>
-                  <td colspan="2">
-                    <div class="container float-center text-center">
-                      <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
-                      <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-success">ย้อนกลับ</a>
-                      <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">PDF</a>
-                    </div>
-                  </td>
-                </tr>
 
                 {% endif %}
 
@@ -362,6 +356,19 @@
                 </tr>
                 {% endfor %}
               </table>
+              <table class="table table-borderless">
+                <tr>
+                  <td colspan="2">
+                    <div class="container float-center text-center">
+                      <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
+                      <a href="#" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check">บันทึก</a>
+                      <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_approve">ขอเบิก</a>
+                      <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-danger" data-bs-toggle="modal" data-bs-target="#confirm_reject">ยกเลิก</a>
+                      <a href="#" class="btn btn-lg btn-secondary" data-bs-toggle="modal" data-bs-target="#confirm_reject">PDF</a>
+                    </div>
+                  </td>
+                </tr>
+              </table>
             </div>
 
 
@@ -415,6 +422,51 @@
 
         </div><!--end card-->
 
+        {% if request.user.profile.department == bill.stock %}
+        
+        <table class="table table-borderless">
+          <tr>
+            <td colspan="2">
+              <div class="container float-center text-center">
+                <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#set_serial" id="save_bill">บันทึก</button>
+                {% if bill.billdetail.approved %}
+                <a href="#" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check">จ่ายพัสดุ</a>
+                {% else %}
+                <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_reject">ขออนุมัติ</a>
+                {% endif %}
+                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">PDF</a>
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        {% elif request.user|has_group:"Command" %}
+        <table class="table table-borderless">
+          <tr>
+            <td colspan="2">
+              <div class="container float-center text-center">
+                {% if bill.billdetail.approved %}
+                <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_reject">อนุมัติ</a>
+                {% endif %}
+                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">PDF</a>
+              </div>
+            </td>
+          </tr>
+        </table>
+        {% else %}
+        <table class="table table-borderless">
+          <tr>
+            <td colspan="2">
+              <div class="container float-center text-center">
+                <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
+                <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-success">ย้อนกลับ</a>
+                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">PDF</a>
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        {% endif %}
 
       </div><!-- end col -->
 

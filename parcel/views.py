@@ -3,7 +3,7 @@ from tempfile import NamedTemporaryFile
 from django.http import FileResponse
 from django.template.loader import get_template, render_to_string
 from datetime import datetime
-from django.db.models import ObjectDoesNotExist
+from django.db.models import Q, ObjectDoesNotExist
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -41,13 +41,34 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        all_bill = RequestBill.objects.filter(user=self.request.user)
-        context['all_bill'] = all_bill
-        context['wait_approve'] = all_bill.filter(billdetail__approved=False)
+        all_bill = RequestBill.objects.all()
+        context['all_bill'] = all_bill.filter(user=self.request.user)
+        context['wait_approve'] = all_bill.filter(billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT)
         context['parcel_list'] = RequestItem.objects.filter(
             bill__in=all_bill,
             item__status=StockItem.Status.ON_HAND
         )
+
+        # for manager views
+        context['stock_bills'] = all_bill.filter(
+            stock=self.request.user.profile.department,
+            status=RequestBill.BillStatus.REQUEST
+        )
+        context['stock_bills_wait'] = all_bill.filter(
+            stock=self.request.user.profile.department,
+            status=RequestBill.BillStatus.IN_PROGRESS,
+            billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT
+        )
+        context['wait_paid'] = all_bill.filter(
+            stock=self.request.user.profile.department,
+            status=RequestBill.BillStatus.IN_PROGRESS,
+            billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED,
+            is_done=False
+        )
+        context['all_stock_bills'] = all_bill.filter(
+            Q(stock=self.request.user.profile.department) & ~Q(status=RequestBill.BillStatus.DRAFT),
+        )
+
         # context['on_hand'] = Q(all_bill.billitems.filter(item.status==StockItem.Status.AVAILABLE)) & Q(all_bill.bill_detail.filter(is_paid=True))
         # context['on_hand'] = (Q(RequestItem.objects.filter(item__status=StockItem.Status.AVAILABLE, bill__in=all_bill)) & Q(
         #     all_bill.filter(billdetail__is_paid=True)
