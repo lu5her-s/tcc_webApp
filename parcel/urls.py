@@ -13,6 +13,12 @@ urlpatterns = [
     path('bill_create/', views.BillCreateView.as_view(), name='bill_create'),
     path('parcel_list/', views.parcel_list, name='parcel_list'),
 
+    # manager ulrs
+    path('manager/list/', views.BillManagerListView.as_view(), name='manager_list'),
+    path('manager/wait_approve/', views.BillWaitApproveListView.as_view(), name='manager_wait_approve'),
+    path('manager/wait_paid/', views.BillWaitPaidListView.as_view(), name='manager_wait_paid'),
+    path('manager/all_bills/', views.ManagerAllBillListView.as_view(), name='manager_all_bills'),
+
     path('recieve_item/<int:pk>/', views.recieve_items, name='recieve_item'),
     path('paid_item/<int:pk>/', views.paid_item, name='paid_item'),
     path('approve_request/<int:pk>/', views.approve_request, name='approve_request'),

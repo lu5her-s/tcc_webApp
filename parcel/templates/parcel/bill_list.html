@@ -31,10 +31,12 @@
           <div class="card-body">
             <h5 class="card-title">{{ title }}
               <span>| {{ request.user.profile }}</span>
+              {% if not request.user|has_group:"StockManager" and not request.user|has_group:"Command" %}
               <a href="{% url 'parcel:select_stock' %}" class="btn btn-success" style="float: right;">
                 <i class="bi bi-plus"></i>
                 เบิกพัสดุ
               </a>
+              {% endif %}
             </h5>
 
             <br>
@@ -42,10 +44,11 @@
             <table class="table table-hover" id="dataTable">
               <thead>
                 <tr>
-                  <th scope="col" style="width: 15%">เลขที่ใบเบิก</th>
-                  <th scope="col" style="width: 25%">วันที่ขอเบิก</th>
-                  <th scope="col" style="width: 15%">การอนุมัติ</th>
-                  <th scope="col" style="width: 15%">การจ่าย</th>
+                  <th scope="col" style="width: 10%">เลขที่ใบเบิก</th>
+                  <th scope="col" style="width: 15%">วันที่ขอเบิก</th>
+                  <th scope="col" style="width: 25%">ผู้เบิก</th>
+                  <th scope="col" style="width: 10%">การอนุมัติ</th>
+                  <th scope="col" style="width: 10%">การจ่าย</th>
                   <th scope="col" style="width: 8%">จัดการ</th>
                 </tr>
               </thead>
@@ -55,8 +58,9 @@
                 <tr>
                   <td>{{ object.pk }}/{{ object.created_at.year|thaiyear }}</td>
                   <td>{{ object.created_at|thaidate }}</td>
+                  <td>{{ object.user.profile }}</td>
                   <td>{{ object.billdetail.get_approve_status_display }}</td>
-                  <td>{{ object.billdetail.paid_at|default:"ยังไม่จ่าย" }}</td>
+                  <td>{{ object.billdetail.paid_at|default:"-" }}</td>
                   <td>
                     <a href="{% url 'parcel:bill_detail' object.pk %}" class="btn btn-sm btn-primary" style="width: 100%;">
                       <i class="bi bi-eye"></i>

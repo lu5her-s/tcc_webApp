@@ -93,6 +93,72 @@ class BillListView(LoginRequiredMixin, ListView):
         return context
 
 
+class BillManagerListView(LoginRequiredMixin, ListView):
+    template_name = 'parcel/bill_list.html'
+    model = RequestBill
+
+    def queryset(self):
+        return self.model.objects.filter(
+            stock=self.request.user.profile.department,
+            status=RequestBill.BillStatus.REQUEST
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รายการใบเบิกรอตรวจสอบ'
+        return context
+
+
+class BillWaitApproveListView(LoginRequiredMixin, ListView):
+    template_name = 'parcel/bill_list.html'
+    model = RequestBill
+
+    def get_queryset(self):
+        return self.model.objects.filter(
+            stock=self.request.user.profile.department,
+            status=RequestBill.BillStatus.IN_PROGRESS,
+            billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รายการใบเบิกรออนุมัติ'
+        return context
+
+
+class BillWaitPaidListView(LoginRequiredMixin, ListView):
+    template_name = 'parcel/bill_list.html'
+    model = RequestBill
+
+    def get_queryset(self):
+        return self.model.objects.filter(
+            stock=self.request.user.profile.department,
+            status=RequestBill.BillStatus.IN_PROGRESS,
+            billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED,
+            is_done=False
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รายการใบเบิกรอจ่าย'
+        return context
+
+
+class ManagerAllBillListView(LoginRequiredMixin, ListView):
+    template_name = 'parcel/bill_list.html'
+    model = RequestBill
+
+    def get_queryset(self):
+        return self.model.objects.filter(
+            Q(stock=self.request.user.profile.department) & ~Q(status=RequestBill.BillStatus.DRAFT),
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'รายการใบเบิกทั้งหมด'
+        return context
+
+
 class SelectStockView(LoginRequiredMixin, View):
     template_name = 'parcel/select_stock.html'
     form_class = SelectStockForm
