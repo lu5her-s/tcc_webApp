@@ -6,7 +6,9 @@
 
 {% block title %}Parcel{% endblock title %}
 
+
 {% block content %}
+
 <div class="pagetitle">
   <h1>{{ title }}เลขที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</h1>
   <nav>
@@ -48,25 +50,6 @@
               </button>
             </li>
             {% endif %}
-
-            <!-- TODO: make condition agent and assigned_to -->
-            {% if approve and note %}
-            <li class="nav-item">
-              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#approve">
-                บันทึกการทำงาน
-                {% comment %}{% if not object.accepted %}<sup><i class="bi bi-exclamation-circle" style="color: red;"></i></sup>{% endif %}{% endcomment %}
-              </button>
-            </li>
-            {% endif %}
-
-            {% if customer_review or manager_review or command_review %}
-            <li class="nav-item">
-              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#review">
-                การประเมิน
-                {% comment %}{% if not object.accepted %}<sup><i class="bi bi-exclamation-circle" style="color: red;"></i></sup>{% endif %}{% endcomment %}
-              </button>
-            </li>
-            {% endif %}
           </ul>
 
           <div class="tab-content pt-2">
@@ -88,7 +71,12 @@
                   <th>พัสุที่ขอเบิก</th>
                   <td>
                     {% for item in items %}
-                    {{ forloop.counter }}.{{ item.category }} {{ item.serial }}<br>
+                    {{ forloop.counter }}.{{ item.category }} 
+                    <br> &nbsp;&nbsp;&nbsp; - หมายเลข {{ item.item.serial }}
+                    <br> &nbsp;&nbsp;&nbsp; - จำนวน {{ item.quantity }} {{ item.count_text|default:"หน่วย" }}
+                    <br>{% if not forloop.last %}
+                    <hr>
+                    {% endif %}
                     {% endfor %}
                   </td>
                 </tr>
@@ -100,10 +88,10 @@
 
                 <tr>
                   <th>ผู้ขอเบิก</th>
-                  <td>{{ bill.user.profile }}</td>
+                  <td><a href="{% url 'account:member' pk=bill.user.profile.pk %}" target="_blank">{{ bill.user.profile }}</a></td>
                 </tr>
 
-                {% if object.approve_status == 'RJT' %}
+                {% if object.approve_status == 'rjt' %}
                 <tr>
                   <th>เหตุผล</th>
                   <td>{{ reason.reason }}</td>
@@ -113,7 +101,7 @@
                 <tr>
                   <th>วันที่ทำรายการ</th>
                   <td>{{ bill.created_at|thaidate }} 
-                    เวลา {{ bill.created_at|date:"H:i" }} น.
+                    เวลา {{ bill.created_at|date:"h:i" }} น.
                   </td>
                 </tr>
 
@@ -121,299 +109,156 @@
               <br>
 
               <h6 class="card-title">รายละเอียดเพิ่มเติม</h6>
-              <table class="table" style="text-align: left;">
-                
-                {% if request.user == bill.user %}
-                <tr>
-                  <td>{{ bill_detail_form.as_table }}</td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <div class="container float-center text-center">
-                      <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
-                      <a href="#" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check">บันทึก</a>
-                      <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_approve">ขอเบิก</a>
-                    </div>
-                  </td>
-                </tr>
+
+              {% if request.user == bill.user %}
+              <table class="table table-borderless" style="text-align: left;">
+                <form id="bill_detail_form" action="{% url 'parcel:save_draft' pk=bill.pk %}" method="post">
+                  {% csrf_token %}
+                  <tr>
+                    <td>{{ bill_detail_form.as_table }}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <div class="container float-center text-center">
+                        <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
+                        <!-- <a type="submit" class="btn btn-lg btn-primary">บันทึก</a> -->
+                        <button type="submit" class="btn btn-lg btn-primary" id="manager_check">บันทึก</button>
+                        <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_approve">ขอเบิก</a>
+                        <a href="{{ request.meta.http_referer }}" class="btn btn-lg btn-danger">ยกเลิก</a>
+                      </div>
+                    </td>
+                  </tr>
+                </form>
 
                 {% elif request.user.profile.department == bill.stock %}
-                <tr>
-                  <th>เบิกในกรณี</th>
-                  <td>
-                    {{ bill_detail.get_request_case_display }}
-                  </td>
-                </tr>
-
-                <tr>
-                  <th>ประเภท สป.</th>
-                  <td>{{ bill_detail.item_type|default:'-' }}</td>
-                </tr>
-
-                <tr>
-                  <th>สายงานควบคุม</th>
-                  <td>{{ bill_detail.item_control|default:'-' }}</td>
-                </tr>
-
-                <tr>
-                  <th>ประเภทเงิน</th>
-                  <td>{{ bill_detail.money_type|default:'-' }}</td>
-                </tr>
-
-                <tr>
-                  <th>เลขที่งาน</th>
-                  <td>{{ bill_detail.job_no|default:'-' }}</td>
-                </tr>
-
-                <tr>
-                  <th>ผู้รับแทน</th>
-                  <td>{{ bill_detail.receiver|default:'-' }}</td>
-                </tr>
-
-                {% comment %}
-                  
-                <tr>
-                  <td colspan="2">
-                    <div class="container float-center text-center">
-                      <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
-                      {% if bill.billdetail.approved %}
-                      <a href="#" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check">จ่ายพัสดุ</a>
-                      {% else %}
-                      <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_reject">ขออนุมัติ</a>
-                      {% endif %}
-                      <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">PDF</a>
-                    </div>
-                  </td>
-                </tr>
-                {% endcomment %}
-
-                {% else %}
-
-                <tr>
-                  <th>เบิกในกรณี</th>
-                  <td>
-                    {{ bill_detail.get_request_case_display }}
-                  </td>
-                </tr>
-
-                <tr>
-                  <th>ประเภท สป.</th>
-                  <td>{{ bill_detail.item_type|default:'-' }}</td>
-                </tr>
-
-                <tr>
-                  <th>สายงานควบคุม</th>
-                  <td>{{ bill_detail.item_control|default:'-' }}</td>
-                </tr>
-
-                <tr>
-                  <th>ประเภทเงิน</th>
-                  <td>{{ bill_detail.money_type|default:'-' }}</td>
-                </tr>
-
-                <tr>
-                  <th>เลขที่งาน</th>
-                  <td>{{ bill_detail.job_no|default:'-' }}</td>
-                </tr>
-
-                <tr>
-                  <th>ผู้รับแทน</th>
-                  <td>{{ bill_detail.receiver|default:'-' }}</td>
-                </tr>
-
-
-                {% endif %}
-
-              </table>
-
-                <!-- NOTE: for loop to set serial to item -->
-                {% comment %}
-                  
-                {% for item in items %}
-                <tr>
-                  <td>{{ forloop.counter }}</td>
-                  <td>
-                    <select class="form-select" name="serial_no" style="width: 100%">
-                      <option value="">Select item</option>
-                      {% for i in item.category.stockitem_set.all|available %}
-                      <option value="{{ i.serial }}">{{ i.serial }}</option>
-                      {% endfor %}
-                    </select>
-                  </td>
-                </tr>
-                {% endfor %}
-                {% endcomment %}
-
-
-        
-              {% if images %}
-              <br>
-
-              <hr />
-              {% comment %}<div class="card">{% endcomment %}
-                {% comment %}<div class="card-body">{% endcomment %}
-                  <h5 class="card-title">ภาพประกอบ | <span>ใบแจ้งซ่อมที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h5>
-
-                  <!-- Slides with indicators -->
-                  <div id="gallery">
-                    {% for item in images %}
-                    {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
-                      <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                    </a> {% endcomment %}
-                    <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
-                      <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                    </a>
-                    {% endfor %}
-                  </div>
-
-                  {% comment %}</div>{% endcomment %}
-                {% comment %}</div>{% endcomment %}
-              {% endif %}
-
-            </div><!-- end detail -->
-
-            <div id="approve" class="tab-pane fade pt-3">
-              {% if approve and note %}
-              <h5 class="card-title">บันทึกการทำงาน | <span>{{ object.title }}</span></h5>
-              <table class="table table-borderless">
-                {% for n in note %}
-                <tr style="border-bottom: 2px dashed grey;">
-                  {% if n.status is not None %}<td>{{ n.get_status_display }} : </td>{% endif %}
-                  <td>{{ n.note|linebreaks }}</td>
-                  <td>{{ n.created_at|thaidate }} เวลา {{ n.created_at|date:"H:m" }}</td>
-                </tr>
-                {% endfor %}
-              </table>
-
-              {% elif reason %}
-              <h5 class='card-title'>ไม่อนุมัติการแจ้งซ่อม | <span>{{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h5>
-              <table class="table table-borderless">
-                <tr>
-                  <th>เหตุผล</th>
-                  <td>
-                    {{ reason.reason|safe|linebreaks }}
-                  </td>
-                </tr>
-              </table>
-
-              {% else %}
-
-              {% if request.user == object.author %}
-              <h5><i class="bi bi-x-circle" style="color: red;">ยังไม่ตอบรับการมอบหมายงาน</i></h5>
-              <p>รอ 
-              <a href="#">
-                {{ object.assigned_to.rank }} {{ object.assigned_to.user.get_full_name }}
-              </a> ตอบรับงาน 
-              </p>
-              {% comment %}<p><a href="{% url 'account:member' pk=object.assigned_to.user.pk %}">รายละเอียด</a></p>{% endcomment %}
-              {% endif %}
-              {% endif %}
-
-              {% if request.user.profile == object.assigned_to %}
-              {% if not object.accepted %}
-              <p>
-              <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
-              <span>
-                กรุณาตอบรับการมอบหมายงานจาก
-                <a href="#">
-                  {{ object.author.profile.rank }}{{ object.author.get_full_name }}
-                </a>
-              </span>
-              </p>
-              <center>
-                <a href="{% url 'assign:accept' pk=object.pk %}" class="btn btn-success">ตอบรับงาน</a>
-              </center>
-              {% endif %}
-              {% endif %}
-
-            </div><!-- end notes -->
-
-            <div id="stock_item" class='tab-pane fade pt-3'>
-              <table class="table table-striped">
-                <!-- NOTE: for loop to set serial to item -->
-                {% for item in items %}
-                <tr>
-                  <td style="width: 5%;">{{ forloop.counter }}</td>
-                  <td style="width: 20%;">{{ item.category }}</td>
-                  <form method="post">
+                <table class="table" style="text-align: left;">
+                  <tr>
+                    <th>เบิกในกรณี</th>
                     <td>
-                      {% csrf_token %}
+                      {{ bill_detail.get_request_case_display }}
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <th>ประเภท สป.</th>
+                    <td>{{ bill_detail.item_type|default:'-' }}</td>
+                  </tr>
+
+                  <tr>
+                    <th>สายงานควบคุม</th>
+                    <td>{{ bill_detail.item_control|default:'-' }}</td>
+                  </tr>
+
+                  <tr>
+                    <th>ประเภทเงิน</th>
+                    <td>{{ bill_detail.money_type|default:'-' }}</td>
+                  </tr>
+
+                  <tr>
+                    <th>เลขที่งาน</th>
+                    <td>{{ bill_detail.job_no|default:'-' }}</td>
+                  </tr>
+
+                  <tr>
+                    <th>ผู้รับแทน</th>
+                    <td><a href="{% url 'account:member' pk=bill_detail.receiver.pk %}" target="_blank">{{ bill_detail.receiver|default:'-' }}</a></td>
+                  </tr>
+
+                  {% else %}
+
+                  <table class="table" style="text-align: left;">
+                    <tr>
+                      <th>เบิกในกรณี</th>
+                      <td>
+                        {{ bill_detail.get_request_case_display }}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th>ประเภท สป.</th>
+                      <td>{{ bill_detail.item_type|default:'-' }}</td>
+                    </tr>
+
+                    <tr>
+                      <th>สายงานควบคุม</th>
+                      <td>{{ bill_detail.item_control|default:'-' }}</td>
+                    </tr>
+
+                    <tr>
+                      <th>ประเภทเงิน</th>
+                      <td>{{ bill_detail.money_type|default:'-' }}</td>
+                    </tr>
+
+                    <tr>
+                      <th>เลขที่งาน</th>
+                      <td>{{ bill_detail.job_no|default:'-' }}</td>
+                    </tr>
+
+                    <tr>
+                      <th>ผู้รับแทน</th>
+                      <td><a href="">{{ bill_detail.receiver|default:'-' }}</a></td>
+                    </tr>
+
+
+                    {% endif %}
+
+                  </table>
+
+                  <!-- note: for loop to set serial to item -->
+                  {% comment %}
+
+                  {% for item in items %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
                       <select class="form-select" name="serial_no" style="width: 100%">
-                        <option value="">Select item</option>
+                        <option value="">select item</option>
                         {% for i in item.category.stockitem_set.all|available %}
                         <option value="{{ i.serial }}">{{ i.serial }}</option>
                         {% endfor %}
                       </select>
                     </td>
-                    <td style="width: 10%;">
-                      <!-- <a href="{% url 'parcel:set_serial_item' %}" class="btn btn-sm btn-success">Set</a> -->
-                      <!-- <input type="submit" class="btn btn-sm btn-success" value="Set"> -->
-                      <a href="javascript:set_serial_item()" class="btn btn-sm btn-success">Set</a>
-                    </td>
-                  </form>
-                </tr>
-                {% endfor %}
-              </table>
-              <table class="table table-borderless">
-                <tr>
-                  <td colspan="2">
-                    <div class="container float-center text-center">
-                      <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
-                      <a href="#" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check">บันทึก</a>
-                      <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_approve">ขอเบิก</a>
-                      <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-danger" data-bs-toggle="modal" data-bs-target="#confirm_reject">ยกเลิก</a>
-                      <a href="#" class="btn btn-lg btn-secondary" data-bs-toggle="modal" data-bs-target="#confirm_reject">PDF</a>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
+                  </tr>
+                  {% endfor %}
+                  {% endcomment %}
 
+            </div><!-- end detail -->
 
-            <div id="review" class="tab-pane fade pt-3">
-              <h5 class="card-title">รายละเอียดการประเมิน | <span>{{ object.title }}</span></h5>
-              <table class="table table-striped">
-                <!-- customer review -->
-                {% if customer_review %}
+            <div id="approve" class="tab-pane fade pt-3">
+            </div><!-- end notes -->
+
+            <div id="stock_item" class='tab-pane fade pt-3'>
+              <form method="post" id="set_serial_form" action="{% url 'parcel:set_serial_item' pk=bill.pk %}">
+                {% csrf_token %}
+                <table class="table table-striped">
+                  <!-- note: for loop to set serial to item -->
                   <tr>
-                    <th scope="row" class="col-md-3"></th>
-                    <th class="col-md-2 text-center">คะแนนการประเมิน</th>
-                    <th class="col-md-7 ">รายละเอียด</th>
+                    <th style="width: 5%;">ลําดับ</th>
+                    <th style="width: 20%;">ประเภท</th>
+                    <th style="width: 60%;">หมายเลข</th>
                   </tr>
-
+                  {% for item in items %}
                   <tr>
-                    <td scope="row">การประเมินของผู้แจ้ง</th>
-                    <td class="text-center">
-                      {{ customer_review.rating }}
-                    </td>
-                    <td>
-                      {{ customer_review.description|linebreaks }}
-                    </td>
-                    <tr>
-                {% endif %}
-                {% if manager_review %}
-                <tr>
-                    <td scope="row">การประเมินของหัวหน้าซ่อมบำรุง</td>
-                    <td class="text-center">
-                      {{ manager_review.rating }}
-                    </td>
-                    <td>
-                      {{ manager_review.description|linebreaks }}
+                    <td style="width: 5%;">{{ forloop.counter }}</td>
+                    <td style="width: 20%;">{{ item.category }}</td>
+                    <td style="width: 60%;">เดิม : {{ item.item.item_name }} - {{ item.item.serial }}
+                      <select class="form-select" name="serial_no">
+                        <option value="">select item</option>
+                        {% for i in item.category.stockitem_set.all|available %}
+                        <option value="{{ i.serial }}">{{ i.serial }}</option>
+                        {% endfor %}
+                      </select>
                     </td>
                   </tr>
-                {% endif %}
-                {% if command_review %}
-                <tr>
-                    <td scope="row">การประเมินของผู้บริหาร</td>
-                    <td class="text-center">
-                      {{ command_review.rating }}
-                    </td>
-                    <td>
-                      {{ command_review.description|linebreaks }}
-                    </td>
+                  {% endfor %}
+                </table>
+                <table class="table table-borderless">
+                  <tr>
+                    <td><button type="submit" class="btn btn-lg btn-primary" style="float: right;">บันทึกพัสดุ</button></td>
                   </tr>
-                {% endif %}
-              </table>
+                </table>
+              </form>
+
             </div>
 
           </div><!-- end tab-content -->
@@ -421,7 +266,7 @@
         </div><!--end card-->
 
         {% if request.user.profile.department == bill.stock %}
-        
+
         <table class="table table-borderless">
           <tr>
             <td colspan="2">
@@ -432,37 +277,26 @@
                 {% else %}
                 <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_reject">ขออนุมัติ</a>
                 {% endif %}
-                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">PDF</a>
+                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">pdf</a>
               </div>
             </td>
           </tr>
         </table>
 
-        {% elif request.user|has_group:"Command" %}
+        {% elif request.user|has_group:"command" %}
         <table class="table table-borderless">
           <tr>
             <td colspan="2">
               <div class="container float-center text-center">
-                {% if bill.billdetail.approved %}
-                <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_reject">อนุมัติ</a>
+                {% if not bill.billdetail.approve_status == 'approved' %}
+                <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#approve_bill">อนุมัติ</a>
                 {% endif %}
-                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">PDF</a>
+                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">pdf</a>
               </div>
             </td>
           </tr>
         </table>
         {% else %}
-        <table class="table table-borderless">
-          <tr>
-            <td colspan="2">
-              <div class="container float-center text-center">
-                <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
-                <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-success">ย้อนกลับ</a>
-                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">PDF</a>
-              </div>
-            </td>
-          </tr>
-        </table>
 
         {% endif %}
 
@@ -476,11 +310,11 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Review</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title">review</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
           </div>
           <div class="modal-body">
-            
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
@@ -513,25 +347,42 @@
     </div>
 
     <!-- modal for confirm_reject -->
-    <div class="modal fade" id="confirm_reject">
+    <div class="modal fade" id="save_test">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">ยืนยันการไม่อนุมัติ</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body">
-            <form method="post" action="#">
-              {% csrf_token %}
-              <p>ใบแจ้งซ่อมเลขที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</p>
-              <input type="hidden" name="inform_id" value="{{ object.pk }}">
-              <textarea type="text" name="reason" class="form-control" rows="3" placeholder="รายละเอียดการไม่อนุมัติ"></textarea>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                <button type="submit" class="btn btn-primary">ยืนยัน</button>
-              </div>
-            </form>
+          <div class="modal-body" id="data_form">
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- modal for enter pin to approve bill -->
+    <div class="modal fade" id="approve_bill">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">ยืนยันการอนุมัติ</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="post"
+                action="{% url 'parcel:validate_pin' pk=bill.pk %}"
+                id="approve_form"
+                class="pin-code">
+            <div class="modal-body">
+              <!-- form to enter pin number to confirm approve -->
+              {% csrf_token %}
+              <!-- enter password to confirm approve -->
+              <input type="password" name="pin" class="form-control" placeholder="กรุณาใส่รหัสผ่าน" required>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+              <button type="submit" class="btn btn-primary">ยืนยัน</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -550,16 +401,35 @@
       $('select[name="serial_no"]').select2({
         width: "100%",
         allowClear: true,
-        placeholder: "เลือกอุปกรณ์",
+        // placeholder: "เลือกอุปกรณ์",
       });
     });
   </script>
 
   <script>
-    function set_serial_item() {
-      $('#set_serial').modal('show');
-    }
+    // save_serial button click
+    $('#save_serial').click(function(){
+      // submit form to action url
+      let form = $('#set_serial_form');
+      form.submit();
+    })
   </script>
+
+  <script>
+    $('#save_btn').click(function(){
+      let data_form = $('#bill_detail_form');
+      // $('#save_test').modal('show');
+      $('#data_form').html(data_form);
+      console.log(data_form);
+    });
+  </script>
+
+  <!-- <script>
+    $('#approve_form').submit(function(event) {
+      event.preventDefault();  // Prevent the default form submission
+  </script> -->
+
+
 </section>
 {% include 'components/photoswipe.html' %}
 {% endblock content %}

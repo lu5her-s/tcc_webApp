@@ -1,9 +1,9 @@
 import os
-from tempfile import NamedTemporaryFile
-from django.http import FileResponse
-from django.template.loader import get_template, render_to_string
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 from datetime import datetime
-from django.db.models import Q, ObjectDoesNotExist
+from django.db.models import Q
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -24,6 +24,7 @@ from account.models import (
 )
 
 from .models import (
+    RejectBillNote,
     RequestBill,
     RequestBillDetail,
     RequestItem
@@ -317,13 +318,6 @@ def test_create_bill(request):
         return HttpResponse(bill_id)
 
 
-def approve_request(request, pk):
-    bill = get_object_or_404(RequestBill, pk=pk)
-    bill.billdetail.approved = True
-    bill.billdetail.save()
-    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
-
-
 def paid_item(request, pk):
     bill = get_object_or_404(RequestBill, pk=pk)
     bill.billdetail.paid = True
@@ -360,14 +354,22 @@ def parcel_list(request):
 
 
 # TODO: refactor and make set item to form submit all in form save all[template]
-def set_serial_item(request):
+def set_serial_item(request, pk):
+    bill = get_object_or_404(RequestBill, pk=pk)
+    items = RequestItem.objects.filter(bill=bill)
     if request.method == 'POST':
-        serial_no = request.POST.get('serial_no')
-        item = get_object_or_404(StockItem, serial=serial_no)
-        print(f"item: {item}")
-        print(f"serial_no: {serial_no}")
-        print(f"item: {item}")
-        return redirect(reverse_lazy('parcel:recieve_item', kwargs={'pk': item.pk}))
+        serials_no = request.POST.getlist('serial_no')
+        stock_items = StockItem.objects.filter(serial__in=serials_no)
+        item_serial_mapping = {item: serial_no for item, serial_no in zip(items, serials_no)}
+        stock_item_mapping = {stock_item.serial: stock_item for stock_item in stock_items}
+        for item, serial_no in item_serial_mapping.items():
+            stock_item = stock_item_mapping.get(serial_no)
+            if stock_item:
+                item.item = stock_item
+                item.serial_no = serial_no
+                item.save()
+        return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
+    return HttpResponse("Error")
 
 
 def request_approve(request, pk):
@@ -383,9 +385,6 @@ def approve_bill(request, pk):
     bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.APPROVED
     bill.save()
     return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
-
-
-# TODO: make view for paid and recieved item
 
 
 def bill_to_pdf(request: HttpResponse, pk: int):
@@ -407,3 +406,63 @@ def bill_to_pdf(request: HttpResponse, pk: int):
     response = HttpResponse(pdf, content_type='application/pdf')
 
     return response
+
+
+def save_draft(request, pk):
+    bill = get_object_or_404(RequestBill, pk=pk)
+    data = request.POST
+    bill_detail = RequestBillDetail.objects.get(bill=bill)
+    bill_detail.request_case = data.get('request_case')
+    bill_detail.item_type = data.get('item_type')
+    bill_detail.item_control = data.get('item_control')
+    bill_detail.money_type = data.get('money_type')
+    bill_detail.job_no = data.get('job_no')
+    bill_detail.request_reference = data.get('request_reference')
+    if data.get('receiver'):
+        bill_detail.receiver = get_object_or_404(Profile, pk=data.get('receiver'))
+    else:
+        bill_detail.receiver = None
+    bill_detail.save()
+    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+
+
+def request_bill(request, pk):
+    RequestBill.objects.filter(pk=pk).update(status=RequestBill.BillStatus.REQUEST)
+    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+
+
+def request_approve(request, pk):
+    bill = get_object_or_404(RequestBill, pk=pk)
+    bill.status = RequestBill.BillStatus.IN_PROGRESS
+    bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.WAIT
+    bill.save()
+    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+
+
+def validate_pin(request, pk):
+    """
+    Validate pin for approve bill
+    use password check to approve bill
+    """
+    if request.method == 'POST':
+        bill = get_object_or_404(RequestBill, pk=pk)
+        entered_pin = request.POST.get('pin')
+        user = request.user
+        if user.check_password(entered_pin):
+            bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.APPROVED
+            bill.save()
+        return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+
+
+def reject_bill(request, pk):
+    if request.method == 'POST':
+        bill = get_object_or_404(RequestBill, pk=pk)
+        note = request.POST.get('note')
+        bill_reject = RejectBillNote.objects.create(
+            bill=bill,
+            user=request.user,
+            note=note
+        )
+        bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.UNAPPROVED
+        bill.save()
+        return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))

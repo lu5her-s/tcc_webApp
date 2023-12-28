@@ -47,7 +47,8 @@
                   <th scope="col" style="width: 10%">เลขที่ใบเบิก</th>
                   <th scope="col" style="width: 15%">วันที่ขอเบิก</th>
                   <th scope="col" style="width: 25%">ผู้เบิก</th>
-                  <th scope="col" style="width: 10%">การอนุมัติ</th>
+                  <!-- condition show header relate user -->
+                  <th scope="col" style="width: 10%">สถานะ</th>
                   <th scope="col" style="width: 10%">การจ่าย</th>
                   <th scope="col" style="width: 8%">จัดการ</th>
                 </tr>
@@ -59,7 +60,14 @@
                   <td>{{ object.pk }}/{{ object.created_at.year|thaiyear }}</td>
                   <td>{{ object.created_at|thaidate }}</td>
                   <td>{{ object.user.profile }}</td>
-                  <td>{{ object.billdetail.get_approve_status_display }}</td>
+                  <!-- relate show status -->
+                  {% if request.user == object.user %}
+                  <td>{{ object.get_status_display }}</td>
+                  {% elif request.user|has_group:"StockManager" %}
+                  <td>{{ object.billdetail.get_approve_status_display|default:"-" }}</td>
+                  {% else %}
+                  <td>{{ object.billdetail.get_approve_status_display|default:"-" }}</td>
+                  {% endif %}
                   <td>{{ object.billdetail.paid_at|default:"-" }}</td>
                   <td>
                     <a href="{% url 'parcel:bill_detail' object.pk %}" class="btn btn-sm btn-primary" style="width: 100%;">

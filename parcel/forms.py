@@ -45,6 +45,7 @@ class RequestBillDetailForm(forms.ModelForm):
             'item_control',
             'money_type',
             'job_no',
+            'request_reference',
             'receiver'
         )
         widgets = {
@@ -53,6 +54,7 @@ class RequestBillDetailForm(forms.ModelForm):
             'item_control': forms.TextInput(attrs={'class': 'form-control'}),
             'money_type': forms.TextInput(attrs={'class': 'form-control'}),
             'job_no': forms.TextInput(attrs={'class': 'form-control'}),
+            'request_reference': forms.TextInput(attrs={'class': 'form-control'}),
             'receiver': forms.Select(attrs={'class': 'form-select'}),
         }
         labels = {
@@ -61,6 +63,7 @@ class RequestBillDetailForm(forms.ModelForm):
             'item_control': 'สายงานควบคุม',
             'money_type': 'ประเภทเงิน',
             'job_no': 'เลขที่งาน',
+            'request_reference': 'เอกสารอ้างอิง',
             'receiver': 'ผู้รับแทน',
         }
 

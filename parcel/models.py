@@ -74,9 +74,9 @@ class RequestItem(models.Model):
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
     quantity_approve = models.PositiveIntegerField(null=True, blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    # price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     # quantity_approve = models.PositiveIntegerField(default=1)
-    serial_no = models.CharField(max_length=50, null=True, blank=True)
+    # serial_no = models.CharField(max_length=50, null=True, blank=True)
     paid = models.BooleanField(default=False)
     paid_date = models.DateField(null=True, blank=True)
     recieved = models.BooleanField(default=False)
@@ -86,8 +86,8 @@ class RequestItem(models.Model):
         verbose_name_plural = "Request Items"
 
     def total_price(self):
-        if self.price and self.quantity:
-            return self.price * self.quantity
+        if self.item.price and self.quantity:
+            return self.item.price * self.quantity
         else:
             return None
 
@@ -113,7 +113,7 @@ class RequestBillDetail(models.Model):
     class ApproveStatus(models.TextChoices):
         APPROVED = 'APPROVED', 'อนุมัติ'
         WAIT = 'WAIT', 'รออนุมัติ'
-        UNAPPROVED = 'UNAPPROVED', 'ยังไม่อนุมัติ'
+        UNAPPROVED = 'UNAPPROVED', 'ไม่อนุมัติ'
 
     class RequestCase(models.TextChoices):
         BASIC = 'BASIC', 'ขั้นต้น'
@@ -171,6 +171,19 @@ class BillNote(models.Model):
 
     class Meta:
         verbose_name_plural = "Bill Notes"
+
+    def __str__(self):
+        return f'{self.bill.pk}/{self.created_at.year+543} - {self.user}'
+
+
+class RejectBillNote(models.Model):
+    bill = models.OneToOneField(RequestBill, on_delete=models.CASCADE)
+    note = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = "Reject Bill Notes"
 
     def __str__(self):
         return f'{self.bill.pk}/{self.created_at.year+543} - {self.user}'

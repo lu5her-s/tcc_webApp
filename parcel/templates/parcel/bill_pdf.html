@@ -1,5 +1,6 @@
 {% load static %}
 {% load tags %}
+{% load humanize %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +24,7 @@
 
     .thai-font {
       font-family: "TH Sarabun";
-      font-size: 20px;
+      font-size: 16px;
     }
 
     .table-bg {
@@ -61,7 +62,6 @@
   <body>
     <main id="main" class="thai-font">
       {% block content %}
-      {{ context.bill }}
 
       <table class="table table-bordered" style="text-align: center; width: 100%; vertical-align: middle; border: 1px solid black;">
         <tr>
@@ -126,15 +126,15 @@
         <tr>
           <td>{{ forloop.counter }}</td>
           <td>
-            {{ item.serial_no|default:"-" }}
+            {{ item.item.serial|default:"-" }}
           </td>
           <td>{{ item.category }}</td>
           <td>{{ item.quantity_approve|default:"-" }}</td>
           <td>{{ item.category.stockitem_set.all|available|count }}</td>
-          <td>{{ item.stockitem.count_text|default:"-" }}</td>
+          <td>{{ item.item.count_text|default:"หน่วย" }}</td>
           <td>{{ item.quantity }}</td>
-          <td>{{ item.price|default:"-" }}</td>
-          <td>{{ item.total_price|default:"-" }}</td>
+          <td>{{ item.item.price|intcomma|default:"-" }}</td>
+          <td>{{ item.total_price|intcomma|default:"-" }}</td>
           <!-- WARN: change to paid item -->
           <td>{{ item.quantity_approve|default:"-" }}</td>
         </tr>

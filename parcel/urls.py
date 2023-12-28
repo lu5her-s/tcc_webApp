@@ -12,18 +12,24 @@ urlpatterns = [
     path('test_create_bill/', views.test_create_bill, name='test_create_bill'),
     path('bill_create/', views.BillCreateView.as_view(), name='bill_create'),
     path('parcel_list/', views.parcel_list, name='parcel_list'),
+    path('bill/save_draft/<int:pk>/', views.save_draft, name='save_draft'),
+    path('bill/request_bill/<int:pk>/', views.request_bill, name='request_bill',),
+
+    # user after request_bill
+    path('recieve_item/<int:pk>/', views.recieve_items, name='recieve_item'),
 
     # manager ulrs
     path('manager/list/', views.BillManagerListView.as_view(), name='manager_list'),
     path('manager/wait_approve/', views.BillWaitApproveListView.as_view(), name='manager_wait_approve'),
     path('manager/wait_paid/', views.BillWaitPaidListView.as_view(), name='manager_wait_paid'),
     path('manager/all_bills/', views.ManagerAllBillListView.as_view(), name='manager_all_bills'),
-
-    path('recieve_item/<int:pk>/', views.recieve_items, name='recieve_item'),
+    path('manager/request_approve/<int:pk>/', views.request_approve, name='request_approve',),
+    path('set_serial_item/<int:pk>/', views.set_serial_item, name='set_serial_item'),
     path('paid_item/<int:pk>/', views.paid_item, name='paid_item'),
-    path('approve_request/<int:pk>/', views.approve_request, name='approve_request'),
 
-    path('set_serial_item/', views.set_serial_item, name='set_serial_item'),
+    # command urls
+    # path('approve_request/<int:pk>/', views.approve_request, name='approve_request'),
+    path('validate_pin/<int:pk>/', views.validate_pin, name='validate_pin'),
 
     path('bill_to_pdf/<int:pk>/', views.bill_to_pdf, name='bill_to_pdf'),
 ]
