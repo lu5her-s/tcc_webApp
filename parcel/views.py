@@ -224,11 +224,9 @@ class BillCreateView(LoginRequiredMixin, View):
 class BillDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
         bill = get_object_or_404(RequestBill, pk=pk)
-        recievers = Profile.objects.all().exclude(user=bill.user)
+        recievers = Profile.objects.exclude(user=bill.user)
         items = RequestItem.objects.filter(bill=bill)
-        bill_detail = RequestBillDetail.objects.get(bill=bill) if bill.billdetail else RequestBillDetail.objects.create(
-            bill=bill
-        )
+        bill_detail, _ = RequestBillDetail.objects.get_or_create(bill=bill)
         context = {
             'bill': bill,
             'items': items,

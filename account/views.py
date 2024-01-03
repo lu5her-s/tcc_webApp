@@ -45,6 +45,7 @@ from document.models import Department, Document
 from inform.models import Inform
 from journal.models import Journal
 from assign.models import Assign
+from parcel.models import RequestBill, RequestBillDetail
 
 
 # Create your views here.
@@ -100,6 +101,14 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context['wait_approve'] = Inform.objects.filter(
             Q(inform_status = Inform.InformStatus.WAIT) &
             Q(approve_status = None)
+        )
+        bills = RequestBill.objects.filter(user=self.request.user)
+        context['request_bills'] = bills
+        context['bill_wait_approve'] = bills.filter(
+            status=RequestBill.BillStatus.REQUEST,
+            billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED
+        ).exclude(
+            billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED
         )
 
         return context
