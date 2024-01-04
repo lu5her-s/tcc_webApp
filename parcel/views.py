@@ -1,14 +1,10 @@
 import os
-from django.contrib.auth.models import User
-from django.http import JsonResponse
 from django.template.loader import render_to_string
-from datetime import datetime
 from django.db.models import Q
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import (
-    DetailView,
     ListView,
     TemplateView,
     View
@@ -49,6 +45,9 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
             bill__in=all_bill,
             item__status=StockItem.Status.ON_HAND
         )
+
+        # TODO: command context
+        # for command views
 
         # for manager views
         context['stock_bills'] = all_bill.filter(
@@ -430,11 +429,20 @@ def request_bill(request, pk):
 
 
 def request_approve(request, pk):
-    bill = get_object_or_404(RequestBill, pk=pk)
-    bill.status = RequestBill.BillStatus.IN_PROGRESS
-    bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.WAIT
-    bill.save()
-    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+    if request.method == 'POST':
+        bill = get_object_or_404(RequestBill, pk=pk)
+        entered_pin = request.POST.get('pin')
+        user = request.user
+        if user.check_password(entered_pin):
+            bill.status = RequestBill.BillStatus.IN_PROGRESS
+            bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.WAIT
+            bill.billdetail.agent = request.user
+            bill.billdetail.add_request_approve_date()
+            bill.billdetail.save()
+            bill.save()
+            return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+        else:
+            return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
 
 
 def validate_pin(request, pk):

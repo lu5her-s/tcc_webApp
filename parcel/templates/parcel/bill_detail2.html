@@ -34,7 +34,7 @@
               </button>
             </li>
 
-            {% if request.user.profile.department == bill.stock %}
+            {% if request.user.profile.department == bill.stock and not bill.status == 'IN_PROGRESS' %}
             <li class="nav-item">
               <button class="nav-link" data-bs-toggle="tab" data-bs-target="#stock_item">
                 จัดการพัสดุ
@@ -101,16 +101,27 @@
                 <tr>
                   <th>วันที่ทำรายการ</th>
                   <td>{{ bill.created_at|thaidate }} 
-                    เวลา {{ bill.created_at|date:"h:i" }} น.
+                    เวลา {{ bill.created_at|date:"H:i" }} น.
                   </td>
                 </tr>
+
+                {% if bill.billdetail.agent %}
+                <tr>
+                  <th>ผู้ขออนุมัติ</th>
+                  <td>{{ bill.billdetail.agent.profile }}</td>
+                </tr>
+                <tr>
+                  <th>วันที่ขออนุมัติ</th>
+                  <td>{{ bill.billdetail.request_approve_date|thaidate }} เวลา {{ bill.billdetail.request_approve_date|date:"H:i" }} น.</td>
+                </tr>
+                {% endif %}
 
               </table>
               <br>
 
               <h6 class="card-title">รายละเอียดเพิ่มเติม</h6>
 
-              {% if request.user == bill.user %}
+              {% if request.user == bill.user and not bill.status == 'IN_PROGRESS' %}
               <table class="table table-borderless" style="text-align: left;">
                 <form id="bill_detail_form" action="{% url 'parcel:save_draft' pk=bill.pk %}" method="post">
                   {% csrf_token %}
@@ -277,11 +288,13 @@
           <tr>
             <td colspan="2">
               <div class="container float-center text-center">
-                <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#set_serial" id="save_bill">บันทึก</button>
+                <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#set_serial" id="save_bill">บันทึก</button> -->
                 {% if bill.billdetail.approved %}
                 <a href="#" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check">จ่ายพัสดุ</a>
-                {% else %}
+                {% elif not bill.billdetail.agent %}
                 <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#request_approve">ขออนุมัติ</a>
+                {% else %}
+                <button class="btn btn-lg btn-success" disabled>รออนุมัติ</button>
                 {% endif %}
                 <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">pdf</a>
               </div>
@@ -289,12 +302,12 @@
           </tr>
         </table>
 
-        {% elif request.user|has_group:"command" %}
+        {% elif request.user|has_group:"Command" %}
         <table class="table table-borderless">
           <tr>
             <td colspan="2">
               <div class="container float-center text-center">
-                {% if not bill.billdetail.approve_status == 'approved' %}
+                {% if not bill.billdetail.approve_status == 'approved' and bill.billdetail.agent %}
                 <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#approve_bill">อนุมัติ</a>
                 {% endif %}
                 <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">pdf</a>
@@ -330,7 +343,7 @@
       </div>
     </div>
 
-    <!-- modal for confirm approve -->
+    <!-- modal for request approve -->
     <div class="modal fade" id="confirm_request">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -387,10 +400,24 @@
                 id="approve_form"
                 class="pin-code">
             <div class="modal-body">
+
+              <p>
+              ยืนยันการอนุมัติใบเบิกที่ : {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}
+              <br>
+              คลังเจ้าของพัสดุ : {{ bill.stock }}
+              <br>
+              ผู้ขออนุมัติ : {{ bill.billdetail.agent.profile }}
+              </p>
               <!-- form to enter pin number to confirm approve -->
               {% csrf_token %}
               <!-- enter password to confirm approve -->
-              <input type="password" name="pin" class="form-control" placeholder="กรุณาใส่รหัสผ่าน" required>
+              <input 
+                 type="password" 
+                 name="pin" 
+                 class="form-control" 
+                 placeholder="กรุณาใส่รหัสผ่านเพื่ออนุมัติ" 
+                 required
+                 />
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
@@ -410,14 +437,28 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form method="post"
-                action="{% url 'parcel:validate_pin' pk=bill.pk %}"
+                action="{% url 'parcel:request_approve' pk=bill.pk %}"
                 id="approve_form"
                 class="pin-code">
             <div class="modal-body">
               <!-- form to enter pin number to confirm approve -->
               {% csrf_token %}
+              <p>เพื่อขออนุมัติ ใบเบิกที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</p>
+
+              <p>
+                {% for item in items %}
+                {{ forloop.counter }}.{{ item.category }} 
+                <br> &nbsp;&nbsp;&nbsp; - หมายเลข {{ item.item.serial }}
+                <br> &nbsp;&nbsp;&nbsp; - จำนวน {{ item.quantity }} {{ item.count_text|default:"หน่วย" }}
+                <br>{% if not forloop.last %}
+                <hr>
+                {% endif %}
+                {% endfor %}
+              </p>
               <!-- enter password to confirm approve -->
-              <input type="password" name="pin" class="form-control" placeholder="กรุณาใส่รหัสผ่าน" required>
+              
+              <!-- <p>กรุณาใส่รหัสผ่าน</p> -->
+              <input type="password" name="pin" class="form-control" placeholder="กรุณาใส่รหัสผ่านเพื่อขออนุมัติ" required>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
@@ -462,6 +503,13 @@
       $('#data_form').html(data_form);
       console.log(data_form);
     });
+  </script>
+
+  <script>
+    // set auto focus fo all modal input
+    $('.modal').on('shown.bs.modal', function () {
+      $(this).find('input:first').focus()
+    })
   </script>
 
   <!-- <script>

@@ -93,12 +93,12 @@ class RequestItem(models.Model):
 
     def mark_as_recieved(self):
         self.recieved = True
-        self.recieved_date = datetime.date.today()
+        self.recieved_date = datetime.now()
         self.save()
 
     def paid_item(self):
         self.paid = True
-        self.paid_date = datetime.date.today()
+        self.paid_date = datetime.now()
         self.save()
 
     def __str__(self):
@@ -121,7 +121,7 @@ class RequestBillDetail(models.Model):
         BORROW = 'BORROW', 'ยืม'
 
     # Define model fields
-    approve_date = models.DateField(null=True, blank=True)
+    approve_date = models.DateTimeField(null=True, blank=True)
     approve_status = models.CharField(
         max_length=50,
         choices=ApproveStatus.choices,
@@ -143,6 +143,8 @@ class RequestBillDetail(models.Model):
     job_no = models.CharField(max_length=50, null=True, blank=True)
     request_reference = models.CharField(max_length=50, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
+    agent = models.ForeignKey(User, related_name='bill_agent', on_delete=models.CASCADE, null=True, blank=True)
+    request_approve_date = models.DateTimeField(null=True, blank=True)
 
     # Define model relationships
     bill = models.OneToOneField(RequestBill, on_delete=models.CASCADE, related_name='billdetail')
@@ -158,8 +160,12 @@ class RequestBillDetail(models.Model):
         Mark the approved date if approve_status update to APPROVE.
         """
         if self.approve_status == RequestBillDetail.ApproveStatus.APPROVE:
-            self.approve_date = datetime.date.today()
+            self.approve_date = datetime.now()
             self.save()
+
+    def add_request_approve_date(self):
+        self.request_approve_date = datetime.now()
+        self.save()
 
 
 class BillNote(models.Model):
