@@ -377,11 +377,11 @@ def request_approve(request, pk):
     return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
 
 
-def approve_bill(request, pk):
-    bill = get_object_or_404(RequestBill, pk=pk)
-    bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.APPROVED
-    bill.save()
-    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+# def approve_bill(request, pk):
+#     bill = get_object_or_404(RequestBill, pk=pk)
+#     bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.APPROVED
+#     bill.save()
+#     return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
 
 
 def bill_to_pdf(request: HttpResponse, pk: int):
@@ -445,7 +445,7 @@ def request_approve(request, pk):
             return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
 
 
-def validate_pin(request, pk):
+def approve_bill(request, pk):
     """
     Validate pin for approve bill
     use password check to approve bill
@@ -456,6 +456,7 @@ def validate_pin(request, pk):
         user = request.user
         if user.check_password(entered_pin):
             bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.APPROVED
+            bill.billdetail.save()
             bill.save()
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
 
@@ -472,3 +473,15 @@ def reject_bill(request, pk):
         bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.UNAPPROVED
         bill.save()
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+
+
+class CommandWaitApproveListView(LoginRequiredMixin, ListView):
+    model = RequestBill
+    template_name = 'parcel/bill_list.html'
+    # context_object_name = 'bills'
+
+    def get_queryset(self):
+        return self.model.objects.filter(
+            billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT,
+            status=RequestBill.BillStatus.IN_PROGRESS
+        )

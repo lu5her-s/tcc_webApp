@@ -289,7 +289,7 @@
             <td colspan="2">
               <div class="container float-center text-center">
                 <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#set_serial" id="save_bill">บันทึก</button> -->
-                {% if bill.billdetail.approved %}
+                {% if bill.billdetail.approve_status == 'APPROVED' %}
                 <a href="#" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check">จ่ายพัสดุ</a>
                 {% elif not bill.billdetail.agent %}
                 <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#request_approve">ขออนุมัติ</a>
@@ -307,7 +307,7 @@
           <tr>
             <td colspan="2">
               <div class="container float-center text-center">
-                {% if not bill.billdetail.approve_status == 'approved' and bill.billdetail.agent %}
+                {% if not bill.billdetail.approve_status == 'APPROVED' and bill.billdetail.agent %}
                 <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#approve_bill">อนุมัติ</a>
                 {% endif %}
                 <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">pdf</a>
@@ -396,7 +396,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form method="post"
-                action="{% url 'parcel:validate_pin' pk=bill.pk %}"
+                action="{% url 'parcel:approve_bill' pk=bill.pk %}"
                 id="approve_form"
                 class="pin-code">
             <div class="modal-body">

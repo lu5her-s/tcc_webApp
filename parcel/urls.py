@@ -29,7 +29,8 @@ urlpatterns = [
 
     # command urls
     # path('approve_request/<int:pk>/', views.approve_request, name='approve_request'),
-    path('validate_pin/<int:pk>/', views.validate_pin, name='validate_pin'),
+    path('approve_bill/<int:pk>/', views.approve_bill, name='approve_bill'),
+    path('command_wait_approve/list/', views.CommandWaitApproveListView.as_view(), name='command_wait_approve'),
 
     path('bill_to_pdf/<int:pk>/', views.bill_to_pdf, name='bill_to_pdf'),
 ]

@@ -62,7 +62,11 @@
                   <td>{{ object.user.profile }}</td>
                   <!-- relate show status -->
                   {% if request.user == object.user %}
+                  {% if not object.billdetail.approve_status %}
                   <td>{{ object.get_status_display }}</td>
+                  {% else %}
+                  <td>{{ object.billdetail.get_approve_status_display }}</td>
+                  {% endif %}
                   {% elif request.user|has_group:"StockManager" %}
                   <td>{{ object.billdetail.get_approve_status_display|default:"-" }}</td>
                   {% else %}
