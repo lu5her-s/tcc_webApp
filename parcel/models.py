@@ -94,11 +94,16 @@ class RequestItem(models.Model):
     def mark_as_recieved(self):
         self.recieved = True
         self.recieved_date = datetime.now()
+        self.item.item.status = StockItem.Status.ON_HAND
+        self.item.item.save()
         self.save()
 
-    def paid_item(self):
+    def mark_as_paid(self):
         self.paid = True
         self.paid_date = datetime.now()
+        # change status to on_hold
+        self.item.item.status = StockItem.Status.ON_HOLD
+        self.item.item.save()
         self.save()
 
     def __str__(self):
@@ -161,6 +166,15 @@ class RequestBillDetail(models.Model):
         """
         if self.approve_status == RequestBillDetail.ApproveStatus.APPROVE:
             self.approve_date = datetime.now()
+            self.save()
+
+    def mark_as_paid(self, user):
+        """
+        Mark the paid date if approve_status update to PAID.
+        """
+        if self.approve_status == RequestBillDetail.ApproveStatus.PAID:
+            self.paid_at = datetime.now()
+            self.paider = user
             self.save()
 
     def add_request_approve_date(self):

@@ -121,7 +121,7 @@
 
               <h6 class="card-title">รายละเอียดเพิ่มเติม</h6>
 
-              {% if request.user == bill.user and not bill.status == 'IN_PROGRESS' %}
+              {% if request.user == bill.user %}
               <table class="table table-borderless" style="text-align: left;">
                 <form id="bill_detail_form" action="{% url 'parcel:save_draft' pk=bill.pk %}" method="post">
                   {% csrf_token %}
@@ -133,11 +133,18 @@
                       <div class="container float-center text-center">
                         <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
                         <!-- <a type="submit" class="btn btn-lg btn-primary">บันทึก</a> -->
-                        {% if bill.status == 'DRAFT' or not bill.status == 'REQUEST' %}
+                        {% if bill.status == 'DRAFT' %}
+                        {{ bill.status }}
                         <button type="submit" class="btn btn-lg btn-primary" id="save_draft">บันทึก</button>
                         <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_request">ขอเบิก</a>
-                        {% endif %}
+                        {% elif not bill.status == 'IN_PROGRESS' %}
                         <a href="{{ request.meta.http_referer }}" class="btn btn-lg btn-danger">ยกเลิก</a>
+                        {% else %}
+                        {% if bill.billdetail.paider %}
+                        <a href="{{ request.meta.http_referer }}" class="btn btn-lg btn-success">รับพัสดุ</a>
+                        {% endif %}
+                        <a href="{{ request.meta.http_referer }}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                        {% endif %}
                       </div>
                     </td>
                   </tr>

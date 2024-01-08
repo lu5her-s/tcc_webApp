@@ -315,13 +315,6 @@ def test_create_bill(request):
         return HttpResponse(bill_id)
 
 
-def paid_item(request, pk):
-    bill = get_object_or_404(RequestBill, pk=pk)
-    bill.billdetail.paid = True
-    bill.billdetail.save()
-    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
-
-
 def recieve_items(request, pk):
     bill = get_object_or_404(RequestBill, pk=pk)
     items = RequestItem.objects.filter(bill=bill)
@@ -485,3 +478,15 @@ class CommandWaitApproveListView(LoginRequiredMixin, ListView):
             billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT,
             status=RequestBill.BillStatus.IN_PROGRESS
         )
+
+
+def paid_item(request, pk):
+    bill = get_object_or_404(RequestBill, pk=pk)
+    bill.billdetail.paid = True
+    bill.billdetail.mark_as_paid(request.user)
+    bill.billdetail.save()
+    items = RequestItem.objects.filter(bill=bill)
+    for item in items:
+        item.mark_as_paid()
+        # item.save()
+    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))

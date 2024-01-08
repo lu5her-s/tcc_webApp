@@ -65,7 +65,11 @@
                   {% if not object.billdetail.approve_status %}
                   <td>{{ object.get_status_display }}</td>
                   {% else %}
-                  <td>{{ object.billdetail.get_approve_status_display }}</td>
+                    {% if object.billdetail.approve_status == 'APPROVED' %}
+                      <td><i class="bi bi-check-circle" style="color: green;"></i>&nbsp;{{ object.billdetail.get_approve_status_display }}</td>
+                    {% else %}
+                      <td>{{ object.billdetail.get_approve_status_display }}</td>
+                    {% endif %}
                   {% endif %}
                   {% elif request.user|has_group:"StockManager" %}
                   <td>{{ object.billdetail.get_approve_status_display|default:"-" }}</td>
