@@ -125,6 +125,10 @@ class RequestBillDetail(models.Model):
         REPLACE = 'REPLACE', 'ทดแทน'
         BORROW = 'BORROW', 'ยืม'
 
+    class PaidStatus(models.TextChoices):
+        PAID = 'PAID', 'เตรียมจ่ายพัสดุ'
+        RECIEVED = 'RECEIVED', 'รับพัสดุแล้ว'
+
     # Define model fields
     approve_date = models.DateTimeField(null=True, blank=True)
     approve_status = models.CharField(
@@ -135,6 +139,12 @@ class RequestBillDetail(models.Model):
     approver = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     receiver = models.ForeignKey(Profile, related_name='bill_receiver', on_delete=models.CASCADE, null=True, blank=True)
     received_at = models.DateTimeField(null=True, blank=True)
+    paid_status = models.CharField(
+        max_length=50,
+        choices=PaidStatus.choices,
+        null=True,
+        blank=True
+    )
     paider = models.ForeignKey(User, related_name='bill_paider', on_delete=models.CASCADE, null=True, blank=True)
     paid_at = models.DateTimeField(null=True, blank=True)
     request_case = models.CharField(
@@ -160,22 +170,23 @@ class RequestBillDetail(models.Model):
     def __str__(self):
         return f'{self.bill.pk}/{self.bill.created_at.year+543}'
 
-    def mark_as_approved(self):
+    def mark_as_approved(self, user):
         """
         Mark the approved date if approve_status update to APPROVE.
         """
         if self.approve_status == RequestBillDetail.ApproveStatus.APPROVE:
             self.approve_date = datetime.now()
+            self.approver = user
             self.save()
 
     def mark_as_paid(self, user):
         """
         Mark the paid date if approve_status update to PAID.
         """
-        if self.approve_status == RequestBillDetail.ApproveStatus.PAID:
-            self.paid_at = datetime.now()
-            self.paider = user
-            self.save()
+        self.paid_status = RequestBillDetail.PaidStatus.PAID
+        self.paid_at = datetime.now()
+        self.paider = user
+        self.save()
 
     def add_request_approve_date(self):
         self.request_approve_date = datetime.now()

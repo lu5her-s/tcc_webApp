@@ -50,7 +50,7 @@
                   <!-- condition show header relate user -->
                   <th scope="col" style="width: 10%">สถานะ</th>
                   <th scope="col" style="width: 10%">การจ่าย</th>
-                  <th scope="col" style="width: 8%">จัดการ</th>
+                  <th scope="col" style="width: 8%">การจัดการ</th>
                 </tr>
               </thead>
               <!-- object list -->
@@ -72,11 +72,20 @@
                     {% endif %}
                   {% endif %}
                   {% elif request.user|has_group:"StockManager" %}
-                  <td>{{ object.billdetail.get_approve_status_display|default:"-" }}</td>
+                    {% if object.billdetail.approve_status == 'APPROVED' %}
+                      <td><i class="bi bi-check-circle" style="color: green;"></i>&nbsp;{{ object.billdetail.get_approve_status_display }}</td>
+                    {% else %}
+                      <td>{{ object.billdetail.get_approve_status_display }}</td>
+                    {% endif %}
                   {% else %}
                   <td>{{ object.billdetail.get_approve_status_display|default:"-" }}</td>
                   {% endif %}
+
+                  {% if object.billdetail.approve_status == 'APPROVED' %}
+                  <td><i class="bi bi-exclamation-circle" style="color: red;"></i>&nbsp;รอการจ่าย</td>
+                  {% else %}
                   <td>{{ object.billdetail.paid_at|default:"-" }}</td>
+                  {% endif %}
                   <td>
                     <a href="{% url 'parcel:bill_detail' object.pk %}" class="btn btn-sm btn-primary" style="width: 100%;">
                       <i class="bi bi-eye"></i>

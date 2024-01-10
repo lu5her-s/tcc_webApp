@@ -448,9 +448,10 @@ def approve_bill(request, pk):
         entered_pin = request.POST.get('pin')
         user = request.user
         if user.check_password(entered_pin):
-            bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.APPROVED
-            bill.billdetail.save()
-            bill.save()
+            # bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.APPROVED
+            bill.billdetail.mark_as_approved(user)
+            # bill.billdetail.save()
+            # bill.save()
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
 
 
@@ -481,12 +482,15 @@ class CommandWaitApproveListView(LoginRequiredMixin, ListView):
 
 
 def paid_item(request, pk):
-    bill = get_object_or_404(RequestBill, pk=pk)
-    bill.billdetail.paid = True
-    bill.billdetail.mark_as_paid(request.user)
-    bill.billdetail.save()
-    items = RequestItem.objects.filter(bill=bill)
-    for item in items:
-        item.mark_as_paid()
-        # item.save()
-    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+    if request.method == 'POST':
+        bill = get_object_or_404(RequestBill, pk=pk)
+        entered_pin = request.POST.get('pin')
+        user = request.user
+        if user.check_password(entered_pin):
+            bill.billdetail.paid = True
+            bill.billdetail.mark_as_paid(user)
+            items = RequestItem.objects.filter(bill=bill)
+            for item in items:
+                item.mark_as_paid()
+                # item.save()
+        return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))

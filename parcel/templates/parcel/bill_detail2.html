@@ -121,7 +121,7 @@
 
               <h6 class="card-title">รายละเอียดเพิ่มเติม</h6>
 
-              {% if request.user == bill.user %}
+              {% if request.user == bill.user and bill.status == 'DRAFT' %}
               <table class="table table-borderless" style="text-align: left;">
                 <form id="bill_detail_form" action="{% url 'parcel:save_draft' pk=bill.pk %}" method="post">
                   {% csrf_token %}
@@ -141,7 +141,7 @@
                         <a href="{{ request.meta.http_referer }}" class="btn btn-lg btn-danger">ยกเลิก</a>
                         {% else %}
                         {% if bill.billdetail.paider %}
-                        <a href="{{ request.meta.http_referer }}" class="btn btn-lg btn-success">รับพัสดุ</a>
+                        <a href="#" class="btn btn-lg btn-success">รับพัสดุ</a>
                         {% endif %}
                         <a href="{{ request.meta.http_referer }}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
                         {% endif %}
@@ -297,7 +297,7 @@
               <div class="container float-center text-center">
                 <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#set_serial" id="save_bill">บันทึก</button> -->
                 {% if bill.billdetail.approve_status == 'APPROVED' %}
-                <a href="#" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check">จ่ายพัสดุ</a>
+                <a href="#" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#paid_confirm">จ่ายพัสดุ</a>
                 {% elif not bill.billdetail.agent %}
                 <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#request_approve">ขออนุมัติ</a>
                 {% else %}
@@ -476,6 +476,45 @@
       </div>
     </div>
 
+    <!-- modal for confirm paid item -->
+    <div class="modal fade" id="paid_confirm">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">ยืนยันการจ่ายพัสดุ</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="post"
+                action="{% url 'parcel:paid_item' pk=bill.pk %}"
+                id="approve_form"
+                class="pin-code">
+            <div class="modal-body">
+              <!-- form to enter pin number to confirm approve -->
+              {% csrf_token %}
+              <p>เพื่อจ่ายพัสดุตาม ใบเบิกที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</p>
+
+              <p>ผู้เบิก : {{ bill.user.profile }}</p>
+              <p>ผู้อนุมัติ : {{ bill.billdetail.approver.profile }}</p>
+
+              {% if bill.billdetail.receiver %}
+              <p>ผู้รับแทน : {{ bill.billdetail.receiver }}</p>
+              {% else %}
+              <p>ผู้รับ : {{ bill.user.profile }}</p>
+              {% endif %}
+
+              <!-- enter password to confirm approve -->
+              
+              <!-- <p>กรุณาใส่รหัสผ่าน</p> -->
+              <input type="password" name="pin" class="form-control" placeholder="กรุณาใส่รหัสผ่านเพื่อขออนุมัติ" required>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+              <button type="submit" class="btn btn-primary">ยืนยัน</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
