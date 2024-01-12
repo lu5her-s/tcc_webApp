@@ -1,4 +1,5 @@
 from django import template
+from django.db.models import Q
 from textwrap import wrap
 from asset.models import StockItem
 
@@ -130,7 +131,9 @@ def get_fuel(fuel_now, fuel_max):
 
 @register.filter(name='available')
 def available(obj):
-    qs = obj.filter(status=StockItem.Status.AVAILABLE)
+    qs = obj.filter(
+        Q(status=StockItem.Status.AVAILABLE) | Q(status=StockItem.Status.HOLD)
+    )
     return qs
 
 

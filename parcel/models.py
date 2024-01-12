@@ -73,7 +73,7 @@ class RequestItem(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
-    quantity_approve = models.PositiveIntegerField(null=True, blank=True)
+    quantity_approve = models.PositiveIntegerField(default=1)
     # price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     # quantity_approve = models.PositiveIntegerField(default=1)
     # serial_no = models.CharField(max_length=50, null=True, blank=True)
@@ -94,20 +94,20 @@ class RequestItem(models.Model):
     def mark_as_recieved(self):
         self.recieved = True
         self.recieved_date = datetime.now()
-        self.item.item.status = StockItem.Status.ON_HAND
-        self.item.item.save()
+        self.item.status = StockItem.Status.ON_HAND
+        self.item.save()
         self.save()
 
     def mark_as_paid(self):
         self.paid = True
         self.paid_date = datetime.now()
         # change status to on_hold
-        self.item.item.status = StockItem.Status.ON_HOLD
-        self.item.item.save()
+        self.item.status = StockItem.Status.HOLD
+        self.item.save()
         self.save()
 
     def __str__(self):
-        return f'{self.bill.pk}'
+        return f'Bill no : {self.bill.pk} - {self.item.item_name} [quantity: {self.quantity}]'
 
 
 class RequestBillDetail(models.Model):
@@ -168,7 +168,7 @@ class RequestBillDetail(models.Model):
         verbose_name_plural = "Request Bill Details"
 
     def __str__(self):
-        return f'{self.bill.pk}/{self.bill.created_at.year+543}'
+        return f'Bill no: {self.bill.pk}/{self.bill.created_at.year+543} - Request User: {self.bill.user}'
 
     def mark_as_approved(self, user):
         """

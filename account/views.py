@@ -103,6 +103,11 @@ class HomeView(LoginRequiredMixin, TemplateView):
             Q(approve_status = None)
         )
         bills = RequestBill.objects.filter(user=self.request.user)
+        bill_manager = RequestBill.objects.filter(
+            Q(stock=self.request.user.profile.department) &
+            ~Q(status=RequestBill.BillStatus.DRAFT)
+        )
+        context['bill_manager'] = bill_manager
         context['request_bills'] = bills
         context['bill_wait_approve'] = bills.filter(
             status=RequestBill.BillStatus.REQUEST,
