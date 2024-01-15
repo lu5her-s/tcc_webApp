@@ -11,6 +11,7 @@ from django.views.generic import (
 )
 
 from asset.models import (
+    ItemOnHand,
     StockItem,
     Category
 )
@@ -315,26 +316,10 @@ def test_create_bill(request):
         return HttpResponse(bill_id)
 
 
-def recieve_items(request, pk):
-    bill = get_object_or_404(RequestBill, pk=pk)
-    items = RequestItem.objects.filter(bill=bill)
-
-    print(items)
-    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
-    # for item in items:
-    #     item.mark_as_received()
-    #     item.status = StockItem.Status.ON_HAND
-    #     item.save()
-    # bill.mark_as_recieved()
-    # bill.save()
-    # bill.billdetail.received_at = datetime.date.today()
-    # bill.billdetail.save()
-    # return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
-
-
 def parcel_list(request):
     items = RequestItem.objects.filter(
         bill__user=request.user,
+        bill__billdetail__paid_status=RequestBillDetail.PaidStatus.RECEIVED
     ).select_related('bill__user')
     context = {
         'object_list': items,
@@ -493,15 +478,22 @@ def paid_item(request, pk):
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
 
 
-def get_item(request, pk):
+def recieve_items(request, pk):
     if request.method == 'POST':
         bill = get_object_or_404(RequestBill, pk=pk)
         entered_pin = request.POST.get('pin')
         user = request.user
         if user.check_password(entered_pin):
-            bill.billdetail.mark_as_paid(user)
             items = RequestItem.objects.filter(bill=bill)
+            item_on_hand = []
             for item in items:
-                item.mark_as_paid()
-                # item.save()
+                item.mark_as_received()
+                item_on_hand.append(ItemOnHand(item=item.item, user=user))
+            ItemOnHand.objects.bulk_create(item_on_hand)
+            bill.billdetail.mark_as_received()
+            print(item_on_hand)
+        else:
+            # show alert
+            print("wrong pin")
+            return HttpResponse("wrong pin")
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))

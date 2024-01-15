@@ -328,7 +328,7 @@
             <tr>
               <td colspan="2">
                 <div class="container float-center text-center">
-                  {% if bill.billdetail.paider %}
+                  {% if bill.billdetail.paider and not bill.billdetail.paid_status == 'RECEIVED' %}
                     {% if request.user.profile == bill.billdetail.receiver %}
                       <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#get_item">รับพัสดุ</a>
                     {% else %}
@@ -545,7 +545,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form method="post"
-                action="{% url 'parcel:paid_item' pk=bill.pk %}"
+                action="{% url 'parcel:recieve_item' pk=bill.pk %}"
                 id="approve_form"
                 class="pin-code">
             <div class="modal-body">

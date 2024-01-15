@@ -91,7 +91,7 @@ class RequestItem(models.Model):
         else:
             return None
 
-    def mark_as_recieved(self):
+    def mark_as_received(self):
         self.recieved = True
         self.recieved_date = datetime.now()
         self.item.status = StockItem.Status.ON_HAND
@@ -127,7 +127,7 @@ class RequestBillDetail(models.Model):
 
     class PaidStatus(models.TextChoices):
         PAID = 'PAID', 'เตรียมจ่ายพัสดุ'
-        RECIEVED = 'RECEIVED', 'รับพัสดุแล้ว'
+        RECEIVED = 'RECEIVED', 'รับพัสดุแล้ว'
 
     # Define model fields
     approve_date = models.DateTimeField(null=True, blank=True)
@@ -192,6 +192,10 @@ class RequestBillDetail(models.Model):
         self.request_approve_date = datetime.now()
         self.save()
 
+    def mark_as_received(self):
+        self.received_at = datetime.now()
+        self.paid_status = RequestBillDetail.PaidStatus.RECIEVED
+        self.save()
 
 class BillNote(models.Model):
     bill = models.OneToOneField(RequestBill, on_delete=models.CASCADE)

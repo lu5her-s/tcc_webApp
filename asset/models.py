@@ -1,5 +1,6 @@
 from django.db import models
 from django.shortcuts import reverse
+from django.contrib.auth.models import User
 
 from account.models import Department
 
@@ -144,3 +145,14 @@ class ItemLocation(models.Model):
 
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
     location = models.ForeignKey(Department, on_delete=models.CASCADE)
+
+
+class ItemOnHand(models.Model):
+    """ItemOnHand."""
+
+    item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"{self.item.item_name} - {self.user.get_full_name()}"

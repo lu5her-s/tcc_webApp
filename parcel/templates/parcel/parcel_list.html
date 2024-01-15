@@ -58,18 +58,14 @@
                   <td>{{ object.category }}</td>
                   <td>{{ object.bill.created_at|thaidate }}</td>
                   <td>
-                    {% if object.billdetail.approved %}
+                    {% if object.bill.billdetail.approve_status %}
                     <i class="bi bi-check-circle" style="color: green;"><span>&nbsp;อนุมัติ</span></i>
                     {% else %}
                     <i class="bi bi-x-circle" style="color: red;"><span>&nbsp;ยังไม่อนุมัติ</span></i>
                     {% endif %}
                   </td>
                   <td>
-                    {% if object.billdetail.paid %}
-                    <i class="bi bi-check-circle" style="color: green;"><span>&nbsp;จ่ายแล้ว</span></i>
-                    {% else %}
-                    <i class="bi bi-x-circle" style="color: red;"><span>&nbsp;ยังไม่จ่าย</span></i>
-                    {% endif %}
+                    {{ object.bill.billdetail.get_paid_status_display|default:'ยังไม่จ่าย' }}
                   </td>
                 </tr>
                 {% endfor %}
