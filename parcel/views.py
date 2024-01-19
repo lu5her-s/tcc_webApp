@@ -75,9 +75,8 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
         #     all_bill.filter(billdetail__is_paid=True)
         # )).count()
         context['on_hand'] = RequestItem.objects.filter(
-            item__status=StockItem.Status.AVAILABLE,
             bill__in=all_bill,
-        ).filter(bill__is_done=True)
+        ).filter(bill__billdetail__paid_status=RequestBillDetail.PaidStatus.RECEIVED)
         return context
 
 

@@ -1,6 +1,7 @@
 from django.contrib.auth.models import Permission
 from django.contrib.auth.views import HttpResponseRedirect, reverse_lazy
 from django.shortcuts import (
+    HttpResponse,
     get_list_or_404,
     get_object_or_404,
     redirect,
@@ -16,6 +17,7 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
+from account.models import Department
 from asset.forms import StockItemForm
 
 from asset.models import (
@@ -325,3 +327,31 @@ class StockItemDeleteView(LoginRequiredMixin, DeleteView):
         self.object.is_delete = True
         self.object.save()
         return redirect(reverse_lazy('asset:stockitem_list'))
+
+
+def set_item(request, pk):
+    """set_item.
+
+    :param request:
+    :param pk:
+    """
+    item = get_object_or_404(StockItem, pk=pk)
+    if request.method == 'POST':
+        location = request.POST.get('location')
+        item.status = StockItem.Status.IN_USE
+        item.location = get_object_or_404(Department, pk=location)
+        item.save()
+        return HttpResponse(status=204)
+
+
+def remove_item(request, pk):
+    """remove_item.
+
+    :param request:
+    :param pk:
+    """
+    item = get_object_or_404(StockItem, pk=pk)
+    if request.method == 'POST':
+        item.status = StockItem.Status.AVAILABLE
+        item.save()
+        return HttpResponse(status=204)

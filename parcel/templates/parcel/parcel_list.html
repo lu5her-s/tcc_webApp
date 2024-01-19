@@ -3,85 +3,108 @@
 {% load crispy_forms_tags %}
 {% load tags %}
 {% load tz %}
-
-{% block title %}Items Management{% endblock title %}
-
-
+{% block title %}
+    Items Management
+{% endblock title %}
 {% block content %}
-
-<div class="pagetitle">
-  <h1>รายการพัสดุที่เบิก</h1>
-  <nav>
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'parcel:home' %}">Parcel Home</a></li>
-      <li class="breadcrumb-item active">Items List</li>
-    </ol>
-  </nav>
-</div><!-- End Page Title -->
-
-<section class="section profile">
-  <div class="row">
-
-    <div class="col-xl-12">
-
-      <!-- Recent Job -->
-      <div class="col-12">
-        <div class="card recent-sales overflow-auto">
-
-          <div class="card-body">
-            <h5 class="card-title">{{ title }}
-              <span>| {{ request.user.profile }}</span>
-            </h5>
-
-            <br>
-
-            <table class="table table-hover" id="dataTable">
-              <thead>
-                <tr>
-                  <th scope="col" style="width: 15%">เลขที่ใบเบิก</th>
-                  <th scope="col" style="width: 35%">พัสดุ</th></th>
-                  <th scope="col" style="width: 25%">วันที่ขอเบิก</th>
-                  <th scope="col" style="width: 15%">การอนุมัติ</th>
-                  <th scope="col" style="width: 15%">การจ่าย</th>
-                </tr>
-              </thead>
-              <!-- object list -->
-              <tbody>
-                {% for object in object_list %}
-                <tr>
-                  <td>
-                    <a href="{% url 'parcel:bill_detail' object.bill.pk %}">
-                      {{ object.bill.pk }}/{{ object.bill.created_at.year|thaiyear }}
-                    </a>
-                  </td>
-                  <td>{{ object.category }}</td>
-                  <td>{{ object.bill.created_at|thaidate }}</td>
-                  <td>
-                    {% if object.bill.billdetail.approve_status %}
-                    <i class="bi bi-check-circle" style="color: green;"><span>&nbsp;อนุมัติ</span></i>
-                    {% else %}
-                    <i class="bi bi-x-circle" style="color: red;"><span>&nbsp;ยังไม่อนุมัติ</span></i>
-                    {% endif %}
-                  </td>
-                  <td>
-                    {{ object.bill.billdetail.get_paid_status_display|default:'ยังไม่จ่าย' }}
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-
-          </div>
-
-        </div>
-      </div><!-- End Announce List -->
-      {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
-
+    <div class="pagetitle">
+        <h1>รายการพัสดุที่เบิก</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'home' %}">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'parcel:home' %}">Parcel Home</a>
+                </li>
+                <li class="breadcrumb-item active">Items List</li>
+            </ol>
+        </nav>
     </div>
-  </div>
+    <!-- End Page Title -->
+    <section class="section profile">
+        <div class="row">
+            <div class="col-xl-12">
+                <!-- Recent Job -->
+                <div class="col-12">
+                    <div class="card recent-sales overflow-auto">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {{ title }}
+                                <span>| {{ request.user.profile }}</span>
+                            </h5>
+                            <br>
+                            <table class="table table-hover" id="dataTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 15%">เลขที่ใบเบิก</th>
+                                        <th scope="col" style="width: 30%">พัสดุ</th>
+                                    </th>
+                                    <th scope="col" style="width: 20%">วันที่ขอเบิก</th>
+                                    <th scope="col" style="width: 15%">การอนุมัติ</th>
+                                    <th scope="col" style="width: 15%">การจ่าย</th>
+                                    <th scope="col" style="width: 5%">...</th>
+                                </tr>
+                            </thead>
+                            <!-- object list -->
+                            <tbody>
+                                {% for object in object_list %}
+                                    <tr>
+                                        <td>
+                                            <a href="{% url 'parcel:bill_detail' object.bill.pk %}">
+                                                {{ object.bill.pk }}/{{ object.bill.created_at.year|thaiyear }}
+                                            </a>
+                                        </td>
+                                        <td>{{ object.category }}</td>
+                                        <td>{{ object.bill.created_at|thaidate }}</td>
+                                        <td>
+                                            {% if object.bill.billdetail.approve_status %}
+                                                <i class="bi bi-check-circle" style="color: green;"><span>&nbsp;อนุมัติ</span></i>
+                                            {% else %}
+                                                <i class="bi bi-x-circle" style="color: red;"><span>&nbsp;ยังไม่อนุมัติ</span></i>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ object.bill.billdetail.get_paid_status_display|default:'ยังไม่จ่าย' }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#set_item">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End Announce List -->
+            {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="set_item" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="#">
+                    <div class="modal-header">
+                        <h5 class="modal-title">ติดตั้งพัสดุ</h5>
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">test</div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </section>
-
 <script>
   $(document).ready(() => {
     $("#dataTable").DataTable({
@@ -97,5 +120,4 @@
     });
   });
 </script>
-
 {% endblock content %}
