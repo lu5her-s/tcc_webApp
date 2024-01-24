@@ -156,3 +156,15 @@ class ItemOnHand(models.Model):
 
     def __str__(self) -> str:
         return f"{self.item.item_name} - {self.user.get_full_name()}"
+
+
+class ItemHistory(models.Model):
+    """ItemHistory."""
+
+    item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return f"{self.item.item_name} - {self.user.get_full_name()}"

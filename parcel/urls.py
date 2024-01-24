@@ -17,6 +17,9 @@ urlpatterns = [
 
     # user after request_bill
     path('recieve_item/<int:pk>/', views.recieve_items, name='recieve_item'),
+    path('parcel_detail/<int:pk>/', views.parcel_detail, name='parcel_detail',),
+
+    path('set_item_location/<int:pk>/', views.set_item_location, name='set_item_location',),
 
     # manager ulrs
     path('manager/list/', views.BillManagerListView.as_view(), name='manager_list'),

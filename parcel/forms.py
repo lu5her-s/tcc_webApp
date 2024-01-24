@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import formset_factory
 from account.models import Department, Profile
+from asset.models import StockItem
 from .models import (
     RequestBill,
     RequestBillDetail,

@@ -38,12 +38,12 @@
                                 <thead>
                                     <tr>
                                         <th scope="col" style="width: 15%">เลขที่ใบเบิก</th>
-                                        <th scope="col" style="width: 30%">พัสดุ</th>
+                                        <th scope="col" style="width: 25%">พัสดุ</th>
                                     </th>
                                     <th scope="col" style="width: 20%">วันที่ขอเบิก</th>
                                     <th scope="col" style="width: 15%">การอนุมัติ</th>
                                     <th scope="col" style="width: 15%">การจ่าย</th>
-                                    <th scope="col" style="width: 5%">...</th>
+                                    <th scope="col" style="width: 10%">...</th>
                                 </tr>
                             </thead>
                             <!-- object list -->
@@ -70,6 +70,10 @@
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#set_item">
                                                 <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <a href="{% url 'parcel:parcel_detail' object.pk %}" class="btn btn-sm btn-info"
+                                              >
+                                              <i class="bi bi-eye"></i>
                                             </button>
                                         </td>
                                     </tr>

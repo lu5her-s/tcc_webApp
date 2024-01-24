@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load tags %}
+{% block title %}Parcel Detail{% endblock %}
+{% block content %}
+    <h1>รายละเอียดพัสดุ</h1>
+    <br>
+    <div class="container">
+        <table class="table table-bordered"
+               style="text-align: center;
+                      width: 100%;
+                      vertical-align: middle">
+            <tr>
+                <th style="width: 25%">ประเภท</th>
+                <td>{{ parcel.category }}</td>
+            </tr>
+            <tr>
+                <th style="width: 25%">ชื่อพัสดุ</th>
+                <td>{{ parcel.item.item_name }}</td>
+            </tr>
+            <tr>
+                <th style="width: 25%">หมายเลขพัสดุ</th>
+                <td>{{ parcel.item.serial }}</td>
+            </tr>
+            <tr>
+                <th style="width: 25%">สถานะพัสดุ/ใบเบิก</th>
+                <td>ใบเบิกที่ {{ parcel.bill.pk }}/{{ parcel.bill.created_at.year|thaiyear }}</td>
+            </tr>
+            <tr>
+                <th style="width: 25%">การติดตั้ง</th>
+                <td>
+                    <button class="btn btn-lg btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#set_item_location"
+                            data-bs-pk="{{ parcel.item.pk }}">ติดตั้ง</button>
+                    <button class="btn btn-lg btn-secondary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#set_item_replace"
+                            data-bs-pk="{{ parcel.item.pk }}">ทดแทน</button>
+                </button>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <div class="container" style="text-align: center; margin-top: 5px">
+      <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-secondary">Back</a>
+    </div>
+</div>
+
+<!-- modal -->
+<div class="modal" tabindex="-1" id="set_item_location">
+    <div class="modal-dialog">
+      <form action="{% url 'parcel:set_item_location' pk=parcel.pk %}" method="post">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">ติดตั้งพัสดุ</h5>
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% csrf_token %}
+            <p>ติดตั้งพัสดุ {{ parcel.item.item_name }}</p>
+            <label for="location">สถานที่ติดตั้ง</label>
+            <select id="location" name="location" class="form-select">
+              {% for item in location  %}
+              <option value="{{ item.pk }}">{{ item.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success">Save changes</button>
+          </div>
+        </div>
+      </form>
+    </div>
+</div>
+
+<!-- TODO: make relate dropdown -->
+<div class="modal" tabindex="-1" id="set_item_replace">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ติดตั้งพัสดุทดแทน</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" name="set_item_replace_form" id="set_item_replace_form" method="get">
+                    {% csrf_token %}
+                    <p>ติดตั้งพัสดุ {{ parcel.item.item_name }}</p>
+                    <label for="location">สถานที่ติดตั้ง</label>
+                    <select id="location_replace" name="location_replace" form="set_item_replace_form" class="form-select">
+                      {% for item in location  %}
+                        <option value="{{ item.pk }}">{{ item.name }}</option>
+                      {% endfor %}
+                    </select>
+                    <label for="item_replace">เพื่อทดแทนพัสดุ</label>
+                    <select id="item_replace" name="item_replace" form="set_item_replace_form" class="form-select">
+                      {% for item in items  %}
+                        <option value="{{ item.pk }}">{{ item.item_name }} [{{ item.serial }}]</option>
+                      {% endfor %}
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button onclick="setReciver()" type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+  function showData() {
+    request_case = document.getElementsByName('request_case')
+    for (i = 0; i < request_case.length; i++) {
+      if (request_case[i].checked) {
+        request_case = request_case[i].value
+        break
+      }
+    }
+    data = {
+      'money': document.getElementById('money').value,
+      'for_recv': document.getElementById('for_recv').value,
+      'job_no': document.getElementById('job_no').value,
+      'request_case': request_case,
+      'serail_no': document.getElementById('serail_no').value,
+      'note': document.getElementById('note').value,
+      'reciver': document.getElementById('selectReciever').value,
+      'request_ref': document.getElementById('request_ref').value
+    }
+    alert(JSON.stringify(data))
+  }
+</script>
+<script>
+  $(document).ready(function () {
+    //change selectboxes to selectize mode to be searchable
+    $("#location").select2({
+      width: '100%',
+      dropdownParent: $('#set_item_location')
+    });
+    $("#location_replace").select2({
+      width: '100%',
+      dropdownParent: $('#set_item_replace')
+    });
+    $("#item_replace").select2({
+      width: '100%',
+      dropdownParent: $('#set_item_replace')
+    });
+  });
+</script>
+<script>
+  function print_page() {
+    // print only in id printArea
+    var printContents = document.getElementById('printArea').innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
+
+    return false;
+  }
+
+  function setReciver() {
+    // set reciver
+    reciver = document.getElementsByName('reciver')
+    document.getElementById('for_recv').value = reciver
+  }
+</script>
+
+<!-- script to get item in location -->
+{% comment %}
+  
+<!-- <script>
+  document.getElementById("location_replace").addEventListener("change", function () {
+    document.getElementById("item_replace").innerHTML = "";
+    axios.get("{% url 'parcel:get_item_in_location' %}", {
+      params: {
+        location: $("#location_replace").val(),
+      }
+    })
+      .then(function (response) {
+        var select = document.getElementById("item_replace");
+        for (var i = 0; i < response.data.length; i++) {
+          var option = document.createElement("option");
+          option.value = response.data[i];
+          option.innerHTML = response.data[i];
+          select.appendChild(option);
+          console.log(response.data[i]);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  });
+</script> -->
+{% endcomment %}
+
+{% endblock %}

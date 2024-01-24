@@ -1,4 +1,5 @@
 import os
+from django.http.response import HttpResponseRedirect, JsonResponse
 from django.template.loader import render_to_string
 from django.db.models import Q
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
@@ -11,6 +12,7 @@ from django.views.generic import (
 )
 
 from asset.models import (
+    ItemHistory,
     ItemOnHand,
     StockItem,
     Category
@@ -496,3 +498,41 @@ def recieve_items(request, pk):
             print("wrong pin")
             return HttpResponse("wrong pin")
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+
+
+def set_item_location(request, pk: int):
+    if request.method == 'POST':
+        item = RequestItem.objects.select_related('item').get(pk=pk)
+        location = request.POST.get('location')
+        dept = get_object_or_404(Department, pk=location)
+        item.item.location = dept
+        item.item.status = StockItem.Status.IN_USE
+        item.save()
+        description = f"Item {item.item} set to {dept}"
+        ItemHistory.objects.create(
+            item=item.item,
+            user=request.user,
+            description=description
+        )
+        return HttpResponseRedirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': item.bill.pk}))
+    return HttpResponse("Error")
+
+
+def parcel_detail(request, pk):
+    parcel = get_object_or_404(RequestItem, pk=pk)
+    bill = get_object_or_404(RequestBill, pk=parcel.bill.pk)
+    location = Department.objects.all()
+    items = StockItem.objects.all()
+    context = {
+        'parcel': parcel,
+        'bill': bill,
+        'location': location,
+        'items': items
+    }
+    return render(request, 'parcel/parcel_detail.html', context)
+
+
+def set_replace_item(request):
+    if request.method == 'POST':
+        item = request.POST.get('item')
+        location = request.POST.get('location')

@@ -30,7 +30,7 @@
           <ul class="nav nav-tabs nav-tabs-bordered">
             <li class="nav-item">
               <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
-                รายละเอียด
+                รายละเอียด {{ request.user }}-{{ bill.user }}-{{ bill.billdetail.paid_status }}
               </button>
             </li>
 
@@ -47,6 +47,14 @@
             <li class="nav-item">
               <button class="nav-link" data-bs-toggle="tab" data-bs-target="#approve">
                 ไม่อนุมัติ
+              </button>
+            </li>
+            {% endif %}
+
+            {% if request.user == bill.user and bill.billdetail.paid_status == 'RECEIVED' %}
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#parcel">
+                พัสดุ
               </button>
             </li>
             {% endif %}
