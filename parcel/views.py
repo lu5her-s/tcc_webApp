@@ -45,7 +45,9 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
         context['all_bill'] = all_bill.filter(user=self.request.user)
         context['wait_approve'] = all_bill.filter(billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT)
         context['parcel_list'] = RequestItem.objects.filter(
-            bill__in=all_bill,
+            bill__in=all_bill.filter(
+                user=self.request.user
+            ),
             item__status=StockItem.Status.ON_HAND
         )
 
@@ -55,7 +57,7 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
         # for manager views
         context['stock_bills'] = all_bill.filter(
             stock=self.request.user.profile.department,
-            status=RequestBill.BillStatus.REQUEST
+            status=RequestBill.BillStatus.REQUEST,
         )
         context['stock_bills_wait'] = all_bill.filter(
             stock=self.request.user.profile.department,
@@ -77,7 +79,9 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
         #     all_bill.filter(billdetail__is_paid=True)
         # )).count()
         context['on_hand'] = RequestItem.objects.filter(
-            bill__in=all_bill,
+            bill__in=all_bill.filter(
+                user=self.request.user
+            ),
         ).filter(bill__billdetail__paid_status=RequestBillDetail.PaidStatus.RECEIVED)
         return context
 
@@ -201,9 +205,12 @@ class SelecItemView(LoginRequiredMixin, View):
 class BillCreateView(LoginRequiredMixin, View):
     def post(self, request):
         cart = Cart(request)
+        stock = request.POST.get('stock')
+        stock = get_object_or_404(Department, pk=stock)
+        print(stock)
         bill = RequestBill.objects.create(
             user=request.user,
-            stock=request.POST.get('stock')
+            stock=stock,
         )
         for item in cart:
             RequestItem.objects.create(
@@ -216,6 +223,7 @@ class BillCreateView(LoginRequiredMixin, View):
         )
         cart.clear()
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
+        # return HttpResponse(stock)
 
     # def get(self, request):
     #     form = BillCreateForm()
@@ -445,12 +453,13 @@ def reject_bill(request, pk):
     if request.method == 'POST':
         bill = get_object_or_404(RequestBill, pk=pk)
         note = request.POST.get('note')
-        bill_reject = RejectBillNote.objects.create(
+        RejectBillNote.objects.create(
             bill=bill,
             user=request.user,
             note=note
         )
         bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.UNAPPROVED
+        bill.billdetail.save()
         bill.save()
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
 

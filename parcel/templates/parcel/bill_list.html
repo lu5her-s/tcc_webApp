@@ -81,10 +81,10 @@
                   <td>{{ object.billdetail.get_approve_status_display|default:"-" }}</td>
                   {% endif %}
 
-                  {% if object.billdetail.approve_status == 'APPROVED' %}
+                  {% if not object.billdetail.paid_status %}
                   <td><i class="bi bi-exclamation-circle" style="color: red;"></i>&nbsp;รอการจ่าย</td>
                   {% else %}
-                  <td>{{ object.billdetail.paid_at|default:"-" }}</td>
+                  <td>{{ object.billdetail.get_paid_status_display|default:"-" }}</td>
                   {% endif %}
                   <td>
                     <a href="{% url 'parcel:bill_detail' object.pk %}" class="btn btn-sm btn-primary" style="width: 100%;">

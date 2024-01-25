@@ -30,7 +30,7 @@
           <ul class="nav nav-tabs nav-tabs-bordered">
             <li class="nav-item">
               <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
-                รายละเอียด {{ request.user }}-{{ bill.user }}-{{ bill.billdetail.paid_status }}
+                รายละเอียด
               </button>
             </li>
 
@@ -142,7 +142,6 @@
                         <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
                         <!-- <a type="submit" class="btn btn-lg btn-primary">บันทึก</a> -->
                         {% if bill.status == 'DRAFT' %}
-                        {{ bill.status }}
                         <button type="submit" class="btn btn-lg btn-primary" id="save_draft">บันทึก</button>
                         <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_request">ขอเบิก</a>
                         {% elif not bill.status == 'IN_PROGRESS' %}
@@ -254,7 +253,7 @@
             </div><!-- end detail -->
 
             <div id="approve" class="tab-pane fade pt-3">
-            </div><!-- end notes -->
+            </div>
 
             <div id="stock_item" class='tab-pane fade pt-3'>
               <form method="post" id="set_serial_form" action="{% url 'parcel:set_serial_item' pk=bill.pk %}">
@@ -310,7 +309,7 @@
                 {% else %}
                 <button class="btn btn-lg btn-success" disabled>รออนุมัติ</button>
                 {% endif %}
-                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">เอกสาร</a>
+                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-info" target="_blank">เอกสาร</a>
               </div>
             </td>
           </tr>
@@ -321,37 +320,39 @@
           <tr>
             <td colspan="2">
               <div class="container float-center text-center">
-                {% if not bill.billdetail.approve_status == 'APPROVED' and bill.billdetail.agent %}
+                {% if bill.billdetail.approve_status == 'WAIT' and bill.billdetail.agent %}
+                <a href="#" class="btn btn-lg btn-warning" data-bs-toggle="modal" data-bs-target="#reject_bill">ไม่อนุมัติ</a>
                 <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#approve_bill">อนุมัติ</a>
                 {% endif %}
-                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">เอกสาร</a>
+                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-info" target="_blank">เอกสาร</a>
               </div>
             </td>
           </tr>
         </table>
         {% else %}
 
-          {% if request.user == bill.user or request.user.profile == bill.billdetail.receiver %}
-          <table class="table table-borderless">
-            <tr>
-              <td colspan="2">
-                <div class="container float-center text-center">
-                  {% if bill.billdetail.paider and not bill.billdetail.paid_status == 'RECEIVED' %}
-                    {% if request.user.profile == bill.billdetail.receiver %}
-                      <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#get_item">รับพัสดุ</a>
-                    {% else %}
-                    <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#get_item">รับพัสดุ</a>
-                    {% endif %}
+        {% if request.user == bill.user or request.user.profile == bill.billdetail.receiver %}
+        <table class="table table-borderless">
+          <tr>
+            <td colspan="2">
+              <div class="container float-center text-center">
+                {% if bill.billdetail.paider and not bill.billdetail.paid_status == 'RECEIVED' %}
+                {% if request.user.profile == bill.billdetail.receiver %}
+                <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#get_item">รับพัสดุ</a>
+                {% else %}
+                <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#get_item">รับพัสดุ</a>
+                {% endif %}
 
-                    <!-- <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#paid_confirm">รับพัสดุ</a> -->
+                <!-- <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#paid_confirm">รับพัสดุ</a> -->
 
-                  {% endif %}
-                  <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-secondary" target="_blank">เอกสาร</a>
-                </div>
-              </td>
-            </tr>
-          </table>
-          {% endif %}
+                {% endif %}
+                <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-info" target="_blank">ย้อนกลับ</a>
+                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-info" target="_blank">เอกสาร</a>
+              </div>
+            </td>
+          </tr>
+        </table>
+        {% endif %}
         {% endif %}
 
       </div><!-- end col -->
@@ -390,13 +391,13 @@
             <form method="post" action="{% url 'parcel:request_bill' pk=bill.pk %}">
               {% csrf_token %}
               <p>
-                {% for item in items %}
-                {{ forloop.counter }}.{{ item.category }} 
-                <br> &nbsp;&nbsp;&nbsp; - จำนวน {{ item.quantity }} {{ item.count_text|default:"หน่วย" }}
-                <br>{% if not forloop.last %}
-                <hr>
-                {% endif %}
-                {% endfor %}
+              {% for item in items %}
+              {{ forloop.counter }}.{{ item.category }} 
+              <br> &nbsp;&nbsp;&nbsp; - จำนวน {{ item.quantity }} {{ item.count_text|default:"หน่วย" }}
+              <br>{% if not forloop.last %}
+              <hr>
+              {% endif %}
+              {% endfor %}
               </p>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
@@ -409,16 +410,25 @@
     </div>
 
     <!-- modal for confirm_reject -->
-    <div class="modal fade" id="save_test">
+    <div class="modal fade" id="reject_bill">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">ยืนยันการไม่อนุมัติ</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <form action="{% url 'parcel:reject_bill' pk=bill.pk %}">
+          {% csrf_token %}
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">ยืนยันการไม่อนุมัติ</h5>
+            </div>
+            <div class="modal-body" id="reject_reason">
+              <p>เหตุผลที่ไม่อนุมัติ</p>
+              <textarea class="form-control" name="note" id="note" cols="30" rows="3"></textarea>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+              <button type="submit" class="btn btn-primary">ยืนยัน</button>
+            </div>
           </div>
-          <div class="modal-body" id="data_form">
-          </div>
-        </div>
+        </form>
       </div>
     </div>
 
@@ -481,17 +491,17 @@
               <p>เพื่อขออนุมัติ ใบเบิกที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</p>
 
               <p>
-                {% for item in items %}
-                {{ forloop.counter }}.{{ item.category }} 
-                <br> &nbsp;&nbsp;&nbsp; - หมายเลข {{ item.item.serial }}
-                <br> &nbsp;&nbsp;&nbsp; - จำนวน {{ item.quantity }} {{ item.count_text|default:"หน่วย" }}
-                <br>{% if not forloop.last %}
-                <hr>
-                {% endif %}
-                {% endfor %}
+              {% for item in items %}
+              {{ forloop.counter }}.{{ item.category }} 
+              <br> &nbsp;&nbsp;&nbsp; - หมายเลข {{ item.item.serial }}
+              <br> &nbsp;&nbsp;&nbsp; - จำนวน {{ item.quantity }} {{ item.count_text|default:"หน่วย" }}
+              <br>{% if not forloop.last %}
+              <hr>
+              {% endif %}
+              {% endfor %}
               </p>
               <!-- enter password to confirm approve -->
-              
+
               <!-- <p>กรุณาใส่รหัสผ่าน</p> -->
               <input type="password" name="pin" class="form-control" placeholder="กรุณาใส่รหัสผ่านเพื่อขออนุมัติ" required>
             </div>
@@ -531,7 +541,7 @@
               {% endif %}
 
               <!-- enter password to confirm approve -->
-              
+
               <!-- <p>กรุณาใส่รหัสผ่าน</p> -->
               <input type="password" name="pin" class="form-control" placeholder="กรุณาใส่รหัสผ่านเพื่อขออนุมัติ" required>
             </div>
@@ -567,7 +577,7 @@
               {% endfor %}
 
               <!-- enter password to confirm approve -->
-              
+
               <!-- <p>กรุณาใส่รหัสผ่าน</p> -->
               <input type="password" name="pin" class="form-control" placeholder="กรุณาใส่รหัสผ่านเพื่อยืนยันการรับพัสดุ" required>
             </div>

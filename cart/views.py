@@ -10,9 +10,10 @@ from .cart import Cart
 @require_POST
 def cart_add(request, category_id):
     cart = Cart(request)
-    category = get_object_or_404(Category, pk=category_id)
+    # category = get_object_or_404(Category, pk=category_id)
     quantity = request.POST.get('quantity', 1)
     overide = request.POST.get('override', False)
+    stock = request.POST.get('stock')
     cart.add(
         category_id=category_id,
         quantity=quantity,
@@ -59,9 +60,11 @@ def cart_remove(request, category_id):
 def cart_detail(request):
     cart = Cart(request)
     categories = Category.objects.all()
+    stock = request.GET.get('stock', 0)
     context = {
         'cart': cart,
-        'categories': categories
+        'categories': categories,
+        'stock': stock
     }
     return render(request, 'cart/detail.html', context)
 
