@@ -80,317 +80,37 @@
             <div class="row">
 
               <!-- Announce Card -->
-              <div class="col-xxl-4 col-md-6">
-                <div class="card info-card bg-card">
-
-
-                  <a href="{% url 'announce:list' %}">
-                    <div class="card-body">
-                      <h5 class="card-title">ประชาสัมพันธ์/สั่งการ <span>| All</span></h5>
-
-                      <div class="d-flex align-items-center">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-bell text-danger"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>{{ announce.count }} เรื่อง</h6>
-                          {% if user.is_authenticated %}
-                          <span class="text-success small pt-1 fw-bold">{{ not_read.count }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่อ่าน</span>
-                          {% endif %}
-
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-
-                </div>
-              </div><!-- End Announce Card -->
+              {% include "components/announce_card.html" %}
+              <!-- End Announce Card -->
 
               <!-- Assigned Card -->
-              <!-- DONE : make condition staff and member list url-->
-              <div class="col-xxl-4 col-md-6">
-                <div class="card info-card bg-card">
-
-                  {% if request.user|has_group:"Staff" %}
-                  <a href="{% url 'assign:staff-list' %}">
-                    {% else %}
-                    <a href="{% url 'assign:list' %}">
-                      {% endif %}
-                      <div class="card-body">
-                        <h5 class="card-title">การมอบหมาย <span>| All</span></h5>
-
-                        <div class="d-flex align-items-center">
-                          <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                            <i class="bi bi-briefcase text-danger"></i>
-                          </div>
-                          <div class="ps-3">
-                            <h6>{{ assign.count }} รายการ</h6>
-                            <span class="text-success small pt-1 fw-bold">{{ wait_assign.count }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่ตอบรับ</span>
-
-                          </div>
-                        </div>
-                      </div>
-                    </a>
-
-                </div>
-              </div><!-- End Revenue Card -->
+              {% include "components/assign_card.html" %}
+              <!-- End Assigned Card -->
 
               <!-- Journal Card -->
-              <div class="col-xxl-4 col-md-6">
-                <div class="card info-card bg-card">
-
-                  <a href="{% url 'journal:list' %}">
-                    <div class="card-body">
-                      <h5 class="card-title">การปฏิบัติงาน <span>| All</span></h5>
-
-                      <div class="d-flex align-items-center">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-clipboard-plus text-info"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>{{ journal.count }} งาน</h6>
-                          <span class="text-success small pt-1 fw-bold">{{ today_journal.count }}</span> <span class="text-muted small pt-2 ps-1">วันนี้</span>
-
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-
-                </div>
-              </div><!-- End Journal Card -->
+              {% include "components/journal_card.html" %}
+              <!-- End Journal Card -->
 
               <!-- StockItem Card -->
-              <div class="col-xxl-4 col-md-6">
-                <div class="card info-card bg-card">
-
-                  <a href="{% url 'inform:home' %}">
-                    <div class="card-body">
-                      {% if request.user|has_group:"Command" %}
-                      <h5 class="card-title">รายการรออนุมัติ <span>| All</span></h5>
-
-                      <div class="d-flex align-items-center">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-question-circle" style="color: orange"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>{{ wait_approve.count }} รายการ</h5>
-
-                        </div>
-                      </div>
-
-                      {% else %}
-                      <h5 class="card-title">รายการแจ้งซ่อม <span>| {{ request.user.profile.department }}</span></h5>
-
-                      <div class="d-flex align-items-center">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-wrench" style="color: orange"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>{{ inform_department.count }} แจ้งซ่อม</h6>
-                          <span class="text-success small pt-1 fw-bold">{{ inform_department.count }}</span> <span class="text-muted small pt-2 ps-1">การแจ้งซ่อม</span>
-
-                        </div>
-                      </div>
-                    
-                      {% endif %}
-                    </div>
-                  </a>
-
-                </div>
-              </div><!-- End Dummy Card -->
+              {% include "components/stockitem_card.html" %}
+              <!-- End StockItem Card -->
 
               <!-- Document Card -->
-              <div class="col-xxl-4 col-xl-12">
+              {% include "components/document_card.html" %}
+              <!-- End Document Card -->
 
-                <div class="card info-card bg-card">
-
-
-                  <a href="{% url 'document:home' %}">
-                    <div class="card-body">
-                      <h5 class="card-title">สารบรรณ <span>| {{ request.user.profile.sector.name }}</span></h5>
-
-                      <div class="d-flex align-items-center">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-book-half" style="color: purple"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>{{ all_inbox }} ฉบับ</h6>
-                          <span class="text-danger small pt-1 fw-bold">{{ new_inbox }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่ตอบรับ</span>
-
-                        </div>
-                      </div>
-
-                    </div>
-                  </a>
-                </div>
-
-              </div><!-- End Document Card -->
-
-              <!-- Stock request -->
-              <div class="col-xxl-4 col-xl-12">
-
-                <div class="card info-card bg-card">
-
-
-                  <a href="{% url 'parcel:home' %}">
-                    <div class="card-body">
-                      <h5 class="card-title">ใบเบิก <span>| {{ request.user.profile }}</span></h5>
-
-                      <div class="d-flex align-items-center">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-clipboard-plus" style="color: green"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>จำนวน 
-                            {% if request.user|has_group:"StockManager" %}
-                            {{ bill_manager.count }}
-                            {% else %}
-                            {{ request_bills.count }}
-                            {% endif %}
-                            ใบเบิก</h6>
-                          <span class="text-danger small pt-1 fw-bold">รออนุมัติ {{ bill_wait_approve.count }}</span> <span class="text-muted small pt-2 ps-1">ใบเบิก</span>
-
-                        </div>
-                      </div>
-
-                    </div>
-                  </a>
-                </div>
-
-              </div><!-- End Stock Card -->
+              <!-- Parcel card -->
+              {% include "components/parcel_card.html" %}
+              <!-- End Parcel Card -->
 
               <!-- Recent Request Repair -->
-              <div class="col-12">
-                <div class="card top-selling overflow-auto">
-
-
-                  <div class="card-body pb-0">
-                    <h5 class="card-title">รายการแจ้งซ่อม <span>| วันนี้</span></h5>
-
-                    <table class="table table-borderless" id="repairTable">
-                      <thead>
-                        <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">ผู้แจ้ง</th>
-                          <th scope="col">พัสดุ</th>
-                          <th scope="col">ความเร่งด่วน</th>
-                          <th scope="col">สถานะ</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for inform in informs %}
-                        <tr>
-                          <th scope="row">
-                            <!--a href="{% url 'inform:detail' pk=inform.pk %}"-->
-                              {{ inform.pk }}/{{ inform.created_at.year|thaiyear }}
-                            <!--/a-->
-                          </th>
-                          {% if inform.customer.profile %}
-                          <td>{{ inform.customer.profile }}</td>
-                          {% else %}
-                          <td>{{ inform.customer }}</td>
-                          {% endif %}
-                          <td>{{ inform.stockitem.item_name }}</td>
-                          <td class="fw-bold">{{ inform.get_urgency_display }}</td>
-                          {% if not inform.approve_status %}
-                          {% if inform.inform_status == 'INF' %}
-                          <td style="color:red;">
-                            <!-- <i class="bi bi-exclamation-circle" style="color: red;"></i> -->
-                            {% else %}
-                            <td>
-                              {% endif %}
-                              <span class="badge bg-info">
-                                {{ inform.get_inform_status_display }}
-                              </span>
-                            </td>
-
-
-                            {% elif inform.approve_status == 'APR' %}
-                            <td>
-                              <span class="badge bg-success">
-                              {{ inform.get_approve_status_display }}
-                              </span>
-                            </td>
-                            {% elif inform.approve_status == 'RJT' %}
-                            <td>
-                              <span class="badge bg-danger">
-                              {{ inform.get_approve_status_display }}
-                              </span>
-                            </td>
-                            {% endif %}
-                          </td>
-                        
-                        {% endfor %}
-                      </tbody>
-                    </table>
-
-                  </div>
-
-                </div>
-              </div><!-- End Top Selling -->
+              {% include "components/recent_repair_table.html" %}
+              <!-- End Recent Request Repair -->
 
 
               <!-- Recent Job -->
-              <div class="col-12">
-                <div class="card recent-sales overflow-auto">
-
-
-                  <div class="card-body">
-                    <h5 class="card-title">รายการงานวงรอบ<span>| List</span></h5>
-
-                    <table class="table table-borderless datatable" id="testTable">
-                      <thead>
-                        <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">Dummy</th>
-                          <th scope="col">Dummy</th>
-                          <th scope="col">Dummy</th>
-                          <th scope="col">Dummy</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <th scope="row"><a href="#">#2457</a></th>
-                          <td>Brandon Jacob</td>
-                          <td><a href="#" class="text-primary">At praesentium minu</a></td>
-                          <td>$64</td>
-                          <td><span class="badge bg-success">Approved</span></td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#">#2147</a></th>
-                          <td>Bridie Kessler</td>
-                          <td><a href="#" class="text-primary">Blanditiis dolor omnis similique</a></td>
-                          <td>$47</td>
-                          <td><span class="badge bg-warning">Pending</span></td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#">#2049</a></th>
-                          <td>Ashleigh Langosh</td>
-                          <td><a href="#" class="text-primary">At recusandae consectetur</a></td>
-                          <td>$147</td>
-                          <td><span class="badge bg-success">Approved</span></td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#">#2644</a></th>
-                          <td>Angus Grady</td>
-                          <td><a href="#" class="text-primar">Ut voluptatem id earum et</a></td>
-                          <td>$67</td>
-                          <td><span class="badge bg-danger">Rejected</span></td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#">#2644</a></th>
-                          <td>Raheem Lehner</td>
-                          <td><a href="#" class="text-primary">Sunt similique distinctio</a></td>
-                          <td>$165</td>
-                          <td><span class="badge bg-success">Approved</span></td>
-                        </tr>
-                      </tbody>
-                    </table>
-
-                  </div>
-
-                </div>
-              </div><!-- End Recent Sales -->
+              {% include "components/recent_job_table.html" %}
+              <!-- End Recent Job -->
 
             </div>
           </div><!-- End Left side columns -->
@@ -399,28 +119,9 @@
           <div class="col-lg-4">
 
 
-            <!-- News & Updates Traffic -->
-            <div class="card">
-
-              <div class="card-body pb-0">
-                <h5 class="card-title">Comments <span>| ล่าสุด</span></h5>
-
-                <div class="news">
-                  {% for comment in recent_comment %}
-
-                  <div class="post-item clearfix">
-                    <img src="{{ comment.author.profile.image.url }}" alt="">
-                    <h4><a href="{% url 'announce:detail' pk=comment.announce.pk %}">in {{ comment.announce.title }}</a></h4>
-                    <p>{{ comment.comment }}
-                    </p>
-                  </div>
-
-                  {% endfor %}
-                  <br>
-                </div><!-- End sidebar recent posts-->
-
-              </div>
-            </div><!-- End News & Updates -->
+            <!-- New comments -->
+            {% include "components/comments.html" %}
+            <!-- End New comments -->
 
           </div><!-- End Right side columns -->
 

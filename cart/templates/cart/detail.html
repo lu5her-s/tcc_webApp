@@ -87,14 +87,24 @@
     });
 
 
+    // loop for get data from tag name quantity and store to var stocks
+
+
     function setStock() {
       let category_first = $("[name='quantity']").first().attr('bs-data');
       // console.log(category_first);
       let stock = $("[name='stock']").val(category_first);
       console.log(stock);
-      let form = document.querySelector('form');
-      form.submit();
+      //let form = document.querySelector('form');
+      //form.submit();
+      let stocks = []
+      $("[name='quantity']").each((index, element) => {
+        stocks.push(element.getAttribute('bs-data'))
+      })
+      console.log(stocks);
     }
+
+
     
   </script>
 {% endblock %}

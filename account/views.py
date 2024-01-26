@@ -109,12 +109,13 @@ class HomeView(LoginRequiredMixin, TemplateView):
         )
         context['bill_manager'] = bill_manager
         context['request_bills'] = bills
-        context['bill_wait_approve'] = bills.filter(
-            status=RequestBill.BillStatus.REQUEST,
-            billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED
-        ).exclude(
-            billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED
-        )
+        # context['bill_wait_approve'] = bills.filter(
+        #     status=RequestBill.BillStatus.REQUEST,
+        #     billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED
+        # ).exclude(
+        #     billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED
+        # )
+        context['bill_wait_approve'] = bills.filter(billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT)
 
         return context
 

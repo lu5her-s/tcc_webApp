@@ -442,7 +442,7 @@
           </div>
           <form method="post"
                 action="{% url 'parcel:approve_bill' pk=bill.pk %}"
-                id="approve_form"
+                id="approve_bill"
                 class="pin-code">
             <div class="modal-body">
 
@@ -483,7 +483,7 @@
           </div>
           <form method="post"
                 action="{% url 'parcel:request_approve' pk=bill.pk %}"
-                id="approve_form"
+                id="request_bill_form"
                 class="pin-code">
             <div class="modal-body">
               <!-- form to enter pin number to confirm approve -->
@@ -524,7 +524,7 @@
           </div>
           <form method="post"
                 action="{% url 'parcel:paid_item' pk=bill.pk %}"
-                id="approve_form"
+                id="confirm_paid_form"
                 class="pin-code">
             <div class="modal-body">
               <!-- form to enter pin number to confirm approve -->
@@ -564,7 +564,7 @@
           </div>
           <form method="post"
                 action="{% url 'parcel:recieve_item' pk=bill.pk %}"
-                id="approve_form"
+                id="confirm_get_form"
                 class="pin-code">
             <div class="modal-body">
               <!-- form to enter pin number to confirm approve -->

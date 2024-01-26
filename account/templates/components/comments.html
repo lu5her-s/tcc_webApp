@@ -1,0 +1,22 @@
+{% load tags %}
+<div class="card">
+    <div class="card-body pb-0">
+        <h5 class="card-title">
+            Comments <span>| ล่าสุด</span>
+        </h5>
+        <div class="news">
+            {% for comment in recent_comment %}
+                <div class="post-item clearfix">
+                    <img src="{{ comment.author.profile.image.url }}" alt="">
+                    <h4>
+                        <a href="{% url 'announce:detail' pk=comment.announce.pk %}">in {{ comment.announce.title }}</a>
+                    </h4>
+                    <p>{{ comment.comment }}</p>
+                </div>
+            {% endfor %}
+            <br>
+        </div>
+        <!-- End sidebar recent posts-->
+    </div>
+</div>
+<!-- End News & Updates -->
