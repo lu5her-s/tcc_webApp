@@ -16,10 +16,10 @@ urlpatterns = [
     path('bill/request_bill/<int:pk>/', views.request_bill, name='request_bill',),
 
     # user after request_bill
-    path('recieve_item/<int:pk>/', views.recieve_items, name='recieve_item'),
-    path('parcel_detail/<int:pk>/', views.parcel_detail, name='parcel_detail',),
+    path('recieve_item/<int:pk>/', views.RecieveItemsView.as_view(), name='recieve_item'),
+    path('parcel_detail/<int:pk>/', views.ParcelDetailView.as_view(), name='parcel_detail',),
 
-    path('set_item_location/<int:pk>/', views.set_item_location, name='set_item_location',),
+    path('set_item_location/<int:pk>/', views.SetItemLocationView.as_view(), name='set_item_location',),
 
     # manager ulrs
     path('manager/list/', views.BillManagerListView.as_view(), name='manager_list'),

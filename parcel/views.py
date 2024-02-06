@@ -6,6 +6,7 @@ from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import (
+    DetailView,
     ListView,
     TemplateView,
     View
@@ -476,6 +477,20 @@ class CommandWaitApproveListView(LoginRequiredMixin, ListView):
         )
 
 
+class PaidItemView(LoginRequiredMixin, DetailView):
+    model = RequestBill
+    template_name = 'parcel/bill_detail.html'
+
+    def post(self, request, *args, **kwargs):
+        bill = self.get_object()
+        entered_pin = request.POST.get('pin')
+        user = request.user
+        if user.check_password(entered_pin):
+            bill.billdetail.mark_as_paid(user)
+            RequestItem.objects.filter(bill=bill).update(paid=True)
+        return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
+
+
 def paid_item(request, pk):
     if request.method == 'POST':
         bill = get_object_or_404(RequestBill, pk=pk)
@@ -488,11 +503,15 @@ def paid_item(request, pk):
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
 
 
-def recieve_items(request, pk):
-    if request.method == 'POST':
-        bill = get_object_or_404(RequestBill, pk=pk)
+class RecieveItemsView(LoginRequiredMixin, DetailView):
+    model = RequestBill
+    template_name = 'parcel/bill_detail.html'
+
+    def post(self, request, pk):
+        bill = self.get_object()
         entered_pin = request.POST.get('pin')
         user = request.user
+
         if user.check_password(entered_pin):
             items = RequestItem.objects.filter(bill=bill)
             item_on_hand = []
@@ -508,9 +527,12 @@ def recieve_items(request, pk):
             return HttpResponse("wrong pin")
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
 
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
-def set_item_location(request, pk: int):
-    if request.method == 'POST':
+
+class SetItemLocationView(LoginRequiredMixin, View):
+    def post(self, request, pk):
         item = RequestItem.objects.select_related('item').get(pk=pk)
         location = request.POST.get('location')
         dept = get_object_or_404(Department, pk=location)
@@ -524,24 +546,23 @@ def set_item_location(request, pk: int):
             description=description
         )
         return HttpResponseRedirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': item.bill.pk}))
-    return HttpResponse("Error")
+
+    def get(self):
+        return HttpResponse("Error")
 
 
-def parcel_detail(request, pk):
-    parcel = get_object_or_404(RequestItem, pk=pk)
-    bill = get_object_or_404(RequestBill, pk=parcel.bill.pk)
-    location = Department.objects.all()
-    items = StockItem.objects.all()
-    context = {
-        'parcel': parcel,
-        'bill': bill,
-        'location': location,
-        'items': items
-    }
-    return render(request, 'parcel/parcel_detail.html', context)
+class ParcelDetailView(LoginRequiredMixin, DetailView):
+    model = RequestItem
+    template_name = 'parcel/parcel_detail.html'
+    context_object_name = 'parcel'
 
-
-def set_replace_item(request):
-    if request.method == 'POST':
-        item = request.POST.get('item')
-        location = request.POST.get('location')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        parcel = self.get_object()
+        bill = get_object_or_404(RequestBill, pk=parcel.bill.pk)
+        location = Department.objects.all()
+        items = StockItem.objects.all()
+        context['bill'] = bill
+        context['location'] = location
+        context['items'] = items
+        return context
