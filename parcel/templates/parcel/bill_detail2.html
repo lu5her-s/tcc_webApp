@@ -346,7 +346,7 @@
                 <!-- <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#paid_confirm">รับพัสดุ</a> -->
 
                 {% endif %}
-                <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-info" target="_blank">ย้อนกลับ</a>
+                <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
                 <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-info" target="_blank">เอกสาร</a>
               </div>
             </td>

@@ -72,17 +72,17 @@
           <td rowspan="2">จาก</td>
           <td rowspan="2" colspan="2">{{ context.bill.stock }}</td>
           <td colspan="3" style="width: 20%;">ที่ {{ context.bill.pk }}/{{ context.bill.created_at.year|thaiyear }}</td>
-          <td colspan="3" style="text-align: left">สายงานที่ควบคุม</td>
+          <td colspan="3" style="text-align: left">&nbsp;สายงานที่ควบคุม</td>
           <td style="width: 10%;">{{ context.bill_detail.item_control }}</td>
         </tr>
         <tr>
           <td colspan="3">เบิกในกรณี</td>
-          <td colspan="3" style="text-align: left">ประเภทสิ่งอุปกรณ์</td>
+          <td colspan="3" style="text-align: left">&nbsp;ประเภทสิ่งอุปกรณ์</td>
           <td style="width: 10%;">{{ context.bill_detail.item_type }}</td>
         </tr>
         <tr>
           <td rowspan="2">To</td>
-          <td style="text-align: left">หน่วยเบิก</td>
+          <td style="text-align: left">&nbsp;หน่วยเบิก</td>
           <td>{{ context.bill.user.profile.department }}</td>
           <td rowspan="2" colspan="3">
             {{ context.bill_detail.get_request_case_display }}
@@ -91,22 +91,22 @@
             <i class="fas fa-check"></i>
           </td>
           <td colspan="2" style="text-align: left">
-            ประเภทเงิน
+            &nbsp;ประเภทเงิน
           </td>
           <td colspan="2">{{ context.bill_detail.money_type|default:'-' }}</td>
         </tr>
         <tr>
           <td style="text-align: left">
-            เบิกให้
+            &nbsp;เบิกให้
           </td>
           <td>
-            {{ context.bill.billdetail.reciever.department|default:'-' }}
+            {{ context.bill_detail.receiver.department|default:'-' }}
           </td>
           <!-- <td><input type="radio" name="request_case" value="1"></td> -->
           <!-- <td><input type="radio" name="request_case" value="2"></td> -->
           <!-- <td><input type="radio" name="request_case" value="3"></td> -->
           <td colspan="2" style="text-align: left">
-            เลขงาน
+            &nbsp;เลขงาน
           </td>
           <td colspan="2">{{ context.bill_detail.job_no|default:'-' }}</td>
         </tr>
@@ -145,7 +145,7 @@
         <table class="table" style="width: 100%; vertical-align: middle;">
           <tr>
             <td>หลักฐานที่ใช้ในการเบิก</td>
-            <td>Test</td>
+            <td>{{ context.bill_detail.request_ref|default:"-" }}</td>
           </tr>
         </table>
       </div>

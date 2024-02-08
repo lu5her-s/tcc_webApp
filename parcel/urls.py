@@ -20,6 +20,7 @@ urlpatterns = [
     path('parcel_detail/<int:pk>/', views.ParcelDetailView.as_view(), name='parcel_detail',),
 
     path('set_item_location/<int:pk>/', views.SetItemLocationView.as_view(), name='set_item_location',),
+    path('replace_item_location/<int:pk>/', views.ReplaceItemLocationView.as_view(), name='replace_item_location',),
 
     # manager ulrs
     path('manager/list/', views.BillManagerListView.as_view(), name='manager_list'),
@@ -28,7 +29,7 @@ urlpatterns = [
     path('manager/all_bills/', views.ManagerAllBillListView.as_view(), name='manager_all_bills'),
     path('manager/request_approve/<int:pk>/', views.request_approve, name='request_approve',),
     path('set_serial_item/<int:pk>/', views.set_serial_item, name='set_serial_item'),
-    path('paid_item/<int:pk>/', views.paid_item, name='paid_item'),
+    path('paid_item/<int:pk>/', views.PaidItemView.as_view(), name='paid_item'),
 
     # command urls
     # path('approve_request/<int:pk>/', views.approve_request, name='approve_request'),

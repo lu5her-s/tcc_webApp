@@ -491,16 +491,18 @@ class PaidItemView(LoginRequiredMixin, DetailView):
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
 
 
-def paid_item(request, pk):
-    if request.method == 'POST':
+class PaidItemView(View):
+    def post(self, request, pk):
         bill = get_object_or_404(RequestBill, pk=pk)
         entered_pin = request.POST.get('pin')
         user = request.user
+
         if user.check_password(entered_pin):
             bill.billdetail.mark_as_paid(user)
-            items = RequestItem.objects.filter(bill=bill)
-            items.update(paid=True)
+            RequestItem.objects.filter(bill=bill).update(paid=True)
+
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+
 
 
 class RecieveItemsView(LoginRequiredMixin, DetailView):
@@ -566,3 +568,32 @@ class ParcelDetailView(LoginRequiredMixin, DetailView):
         context['location'] = location
         context['items'] = items
         return context
+
+
+class ReplaceItemLocationView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        item_replace = request.POST.get('item_replace')
+        location_replace = request.POST.get('location_replace')
+        parcel = RequestItem.objects.get(pk=pk)
+
+        item = StockItem.objects.get(pk=item_replace)
+        item.status = StockItem.Status.ON_HAND
+        item.location = None
+        item.save()
+
+        dept = get_object_or_404(Department, pk=location_replace)
+        parcel.item.location = dept
+        parcel.item.status = StockItem.Status.IN_USE
+        parcel.save()
+
+        description = f"Item {parcel.item} replaced with {item} at {dept}"
+
+        ItemHistory.objects.create(
+            item=parcel.item,
+            user=request.user,
+            description=description
+        )
+        return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': parcel.bill.pk}))
+
+    def get(self):
+        return HttpResponse("Error")

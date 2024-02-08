@@ -194,7 +194,7 @@ class RequestBillDetail(models.Model):
 
     def mark_as_received(self):
         self.received_at = datetime.now()
-        self.paid_status = RequestBillDetail.PaidStatus.RECIEVED
+        self.paid_status = RequestBillDetail.PaidStatus.RECEIVED
         self.save()
 
 class BillNote(models.Model):
