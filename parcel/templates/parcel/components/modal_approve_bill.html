@@ -1,0 +1,40 @@
+    <!-- modal for enter pin to approve bill -->
+    <div class="modal fade" id="approve_bill">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">ยืนยันการอนุมัติ</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="post"
+                action="{% url 'parcel:approve_bill' pk=bill.pk %}"
+                id="approve_bill"
+                class="pin-code">
+            <div class="modal-body">
+
+              <p>
+              ยืนยันการอนุมัติใบเบิกที่ : {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}
+              <br>
+              คลังเจ้าของพัสดุ : {{ bill.stock }}
+              <br>
+              ผู้ขออนุมัติ : {{ bill.billdetail.agent.profile }}
+              </p>
+              <!-- form to enter pin number to confirm approve -->
+              {% csrf_token %}
+              <!-- enter password to confirm approve -->
+              <input 
+                 type="password" 
+                 name="pin" 
+                 class="form-control" 
+                 placeholder="กรุณาใส่รหัสผ่านเพื่ออนุมัติ" 
+                 required
+                 />
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+              <button type="submit" class="btn btn-primary">ยืนยัน</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>

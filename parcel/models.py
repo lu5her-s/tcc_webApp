@@ -17,7 +17,7 @@ from asset.models import (
 # Create your models here.
 
 
-class RequestBill(models.Model):
+class ParcelRequest(models.Model):
     """
     Model representing a request for a bill.
 
@@ -28,7 +28,7 @@ class RequestBill(models.Model):
         category_request (models.ForeignKey): The category of the item requested.
     """
 
-    class BillStatus(models.TextChoices):
+    class RequestStatus(models.TextChoices):
         DRAFT = 'DRAFT', 'ร่าง'
         REQUEST = 'REQUEST', 'ขอเบิก'
         IN_PROGRESS = 'IN_PROGRESS', 'กำลังดำเนินการ'
@@ -39,14 +39,14 @@ class RequestBill(models.Model):
     stock = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
     status = models.CharField(
         max_length=50,
-        choices=BillStatus.choices,
-        default=BillStatus.DRAFT
+        choices=RequestStatus.choices,
+        default=RequestStatus.DRAFT
     )
     is_done = models.BooleanField(default=False)
     date_done = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        verbose_name_plural = "Request Bills"
+        verbose_name_plural = "Parcel Request Bills"
 
     def get_absolute_url(self):
         return reverse_lazy('bill_detail', kwargs={'pk': self.pk})
@@ -69,7 +69,7 @@ class RequestItem(models.Model):
         quantity (models.PositiveIntegerField): The quantity requested.
         serial_no (models.CharField): The serial number of the item.
     """
-    bill = models.ForeignKey(RequestBill, on_delete=models.CASCADE, related_name='billitems')
+    bill = models.ForeignKey(ParcelRequest, on_delete=models.CASCADE, related_name='billitems')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
@@ -162,7 +162,7 @@ class RequestBillDetail(models.Model):
     request_approve_date = models.DateTimeField(null=True, blank=True)
 
     # Define model relationships
-    bill = models.OneToOneField(RequestBill, on_delete=models.CASCADE, related_name='billdetail')
+    bill = models.OneToOneField(ParcelRequest, on_delete=models.CASCADE, related_name='billdetail')
 
     class Meta:
         verbose_name_plural = "Request Bill Details"
@@ -197,28 +197,28 @@ class RequestBillDetail(models.Model):
         self.paid_status = RequestBillDetail.PaidStatus.RECEIVED
         self.save()
 
-class BillNote(models.Model):
-    bill = models.OneToOneField(RequestBill, on_delete=models.CASCADE)
+class ParcelRequestNote(models.Model):
+    bill = models.OneToOneField(ParcelRequest, on_delete=models.CASCADE)
     note = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     quantity_check = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
-        verbose_name_plural = "Bill Notes"
+        verbose_name_plural = "Parcel Request Bill Notes"
 
     def __str__(self):
         return f'{self.bill.pk}/{self.created_at.year+543} - {self.user}'
 
 
 class RejectBillNote(models.Model):
-    bill = models.OneToOneField(RequestBill, on_delete=models.CASCADE)
+    bill = models.OneToOneField(ParcelRequest, on_delete=models.CASCADE)
     note = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name_plural = "Reject Bill Notes"
+        verbose_name_plural = "Reject Parcel Request Bill Notes"
 
     def __str__(self):
         return f'{self.bill.pk}/{self.created_at.year+543} - {self.user}'

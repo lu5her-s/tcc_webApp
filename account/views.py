@@ -45,7 +45,7 @@ from document.models import Department, Document
 from inform.models import Inform
 from journal.models import Journal
 from assign.models import Assign
-from parcel.models import RequestBill, RequestBillDetail
+from parcel.models import ParcelRequest, RequestBillDetail
 from parcel.views import ItemOnHand
 
 
@@ -103,10 +103,10 @@ class HomeView(LoginRequiredMixin, TemplateView):
             Q(inform_status = Inform.InformStatus.WAIT) &
             Q(approve_status = None)
         )
-        bills = RequestBill.objects.filter(user=self.request.user)
-        bill_manager = RequestBill.objects.filter(
+        bills = ParcelRequest.objects.filter(user=self.request.user)
+        bill_manager = ParcelRequest.objects.filter(
             Q(stock=self.request.user.profile.department) &
-            ~Q(status=RequestBill.BillStatus.DRAFT)
+            ~Q(status=ParcelRequest.RequestStatus.DRAFT)
         )
         context['bill_manager'] = bill_manager
         context['request_bills'] = bills

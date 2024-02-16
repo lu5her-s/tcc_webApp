@@ -1,0 +1,39 @@
+    <div class="modal fade" id="request_approve">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">ยืนยันการขออนุมัติ</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="post"
+                action="{% url 'parcel:request_approve' pk=bill.pk %}"
+                id="request_bill_form"
+                class="pin-code">
+            <div class="modal-body">
+              <!-- form to enter pin number to confirm approve -->
+              {% csrf_token %}
+              <p>เพื่อขออนุมัติ ใบเบิกที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</p>
+
+              <p>
+              {% for item in items %}
+              {{ forloop.counter }}.{{ item.category }} 
+              <br> &nbsp;&nbsp;&nbsp; - หมายเลข {{ item.item.serial }}
+              <br> &nbsp;&nbsp;&nbsp; - จำนวน {{ item.quantity }} {{ item.count_text|default:"หน่วย" }}
+              <br>{% if not forloop.last %}
+              <hr>
+              {% endif %}
+              {% endfor %}
+              </p>
+              <!-- enter password to confirm approve -->
+
+              <!-- <p>กรุณาใส่รหัสผ่าน</p> -->
+              <input type="password" name="pin" class="form-control" placeholder="กรุณาใส่รหัสผ่านเพื่อขออนุมัติ" required>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+              <button type="submit" class="btn btn-primary">ยืนยัน</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>

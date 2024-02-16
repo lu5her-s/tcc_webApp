@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import RequestBill, RequestItem, RequestBillDetail
+from .models import ParcelRequest, RequestItem, RequestBillDetail
 
 # Register your models here.
 
 # admin.site.register(RequestBill)
-@admin.register(RequestBill)
+@admin.register(ParcelRequest)
 class RequestBillAdmin(admin.ModelAdmin):
     list_filter = ('user', 'created_at', 'stock')
     search_fields = ('pk', 'user', 'created_at',)

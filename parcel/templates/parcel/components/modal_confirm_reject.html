@@ -1,0 +1,22 @@
+    <!-- modal for confirm_reject -->
+    <div class="modal fade" id="reject_bill">
+      <div class="modal-dialog">
+        <form action="{% url 'parcel:reject_bill' pk=bill.pk %}">
+          {% csrf_token %}
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">ยืนยันการไม่อนุมัติ</h5>
+            </div>
+            <div class="modal-body" id="reject_reason">
+              <p>เหตุผลที่ไม่อนุมัติ</p>
+              <textarea class="form-control" name="note" id="note" cols="30" rows="3"></textarea>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+              <button type="submit" class="btn btn-primary">ยืนยัน</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>

@@ -24,8 +24,9 @@ from account.models import (
 )
 
 from .models import (
+    ParcelRequestNote,
+    ParcelRequest,
     RejectBillNote,
-    RequestBill,
     RequestBillDetail,
     RequestItem
 )
@@ -42,7 +43,7 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        all_bill = RequestBill.objects.all()
+        all_bill = ParcelRequest.objects.all()
         context['all_bill'] = all_bill.filter(user=self.request.user)
         context['wait_approve'] = all_bill.filter(billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT)
         context['parcel_list'] = RequestItem.objects.filter(
@@ -58,21 +59,21 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
         # for manager views
         context['stock_bills'] = all_bill.filter(
             stock=self.request.user.profile.department,
-            status=RequestBill.BillStatus.REQUEST,
+            status=ParcelRequest.RequestStatus.REQUEST,
         )
         context['stock_bills_wait'] = all_bill.filter(
             stock=self.request.user.profile.department,
-            status=RequestBill.BillStatus.IN_PROGRESS,
+            status=ParcelRequest.RequestStatus.IN_PROGRESS,
             billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT
         )
         context['wait_paid'] = all_bill.filter(
             stock=self.request.user.profile.department,
-            status=RequestBill.BillStatus.IN_PROGRESS,
+            status=ParcelRequest.RequestStatus.IN_PROGRESS,
             billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED,
             is_done=False
         )
         context['all_stock_bills'] = all_bill.filter(
-            Q(stock=self.request.user.profile.department) & ~Q(status=RequestBill.BillStatus.DRAFT),
+            Q(stock=self.request.user.profile.department) & ~Q(status=ParcelRequest.RequestStatus.DRAFT),
         )
 
         # context['on_hand'] = Q(all_bill.billitems.filter(item.status==StockItem.Status.AVAILABLE)) & Q(all_bill.bill_detail.filter(is_paid=True))
@@ -89,7 +90,7 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
 
 class BillListView(LoginRequiredMixin, ListView):
     template_name = 'parcel/bill_list.html'
-    model = RequestBill
+    model = ParcelRequest
 
     def get_queryset(self):
         return self.model.objects.filter(user=self.request.user)
@@ -102,12 +103,12 @@ class BillListView(LoginRequiredMixin, ListView):
 
 class BillManagerListView(LoginRequiredMixin, ListView):
     template_name = 'parcel/bill_list.html'
-    model = RequestBill
+    model = ParcelRequest
 
     def queryset(self):
         return self.model.objects.filter(
             stock=self.request.user.profile.department,
-            status=RequestBill.BillStatus.REQUEST
+            status=ParcelRequest.RequestStatus.REQUEST
         )
 
     def get_context_data(self, **kwargs):
@@ -118,12 +119,12 @@ class BillManagerListView(LoginRequiredMixin, ListView):
 
 class BillWaitApproveListView(LoginRequiredMixin, ListView):
     template_name = 'parcel/bill_list.html'
-    model = RequestBill
+    model = ParcelRequest
 
     def get_queryset(self):
         return self.model.objects.filter(
             stock=self.request.user.profile.department,
-            status=RequestBill.BillStatus.IN_PROGRESS,
+            status=ParcelRequest.RequestStatus.IN_PROGRESS,
             billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT
         )
 
@@ -135,12 +136,12 @@ class BillWaitApproveListView(LoginRequiredMixin, ListView):
 
 class BillWaitPaidListView(LoginRequiredMixin, ListView):
     template_name = 'parcel/bill_list.html'
-    model = RequestBill
+    model = ParcelRequest
 
     def get_queryset(self):
         return self.model.objects.filter(
             stock=self.request.user.profile.department,
-            status=RequestBill.BillStatus.IN_PROGRESS,
+            status=ParcelRequest.RequestStatus.IN_PROGRESS,
             billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED,
             is_done=False
         )
@@ -153,11 +154,11 @@ class BillWaitPaidListView(LoginRequiredMixin, ListView):
 
 class ManagerAllBillListView(LoginRequiredMixin, ListView):
     template_name = 'parcel/bill_list.html'
-    model = RequestBill
+    model = ParcelRequest
 
     def get_queryset(self):
         return self.model.objects.filter(
-            Q(stock=self.request.user.profile.department) & ~Q(status=RequestBill.BillStatus.DRAFT),
+            Q(stock=self.request.user.profile.department) & ~Q(status=ParcelRequest.RequestStatus.DRAFT),
         )
 
     def get_context_data(self, **kwargs):
@@ -209,7 +210,7 @@ class BillCreateView(LoginRequiredMixin, View):
         stock = request.POST.get('stock')
         stock = get_object_or_404(Department, pk=stock)
         print(stock)
-        bill = RequestBill.objects.create(
+        bill = ParcelRequest.objects.create(
             user=request.user,
             stock=stock,
         )
@@ -233,7 +234,7 @@ class BillCreateView(LoginRequiredMixin, View):
 
 class BillDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
-        bill = get_object_or_404(RequestBill, pk=pk)
+        bill = get_object_or_404(ParcelRequest, pk=pk)
         recievers = Profile.objects.exclude(user=bill.user)
         items = RequestItem.objects.filter(bill=bill)
         bill_detail, _ = RequestBillDetail.objects.get_or_create(bill=bill)
@@ -272,60 +273,6 @@ class BillDetailView(LoginRequiredMixin, View):
 #         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
 
 
-def test_create_bill(request):
-    if request.method == 'POST':
-        cart = Cart(request)
-        bill_id = "test/001"
-        user = request.user
-        created_at = datetime.now()
-        department = request.user.profile.department.name
-        items = []
-        for item in cart:
-            items.append({
-                'category': item['category'].name,
-                'quantity': item['quantity']
-            })
-        print(f"""
-                        bill_id: {bill_id}
-                        user: {user}
-                        created_at: {created_at}
-                        department: {department}
-        """)
-        count = 1
-        for item in items:
-            if int(item['quantity']) > 1:
-                for _ in range(int(item['quantity'])):
-                    print(f"""
-                        --------------------
-                        Count: {count}
-                        Category: {item['category']}
-                        Items Can Add : {StockItem.objects.filter(
-                            category__name=item['category'],
-                            status=StockItem.Status.AVAILABLE,
-                            location__name__startswith="คลัง"
-                            )}
-                        Quantity: {item['quantity']}
-                        --------------------
-                      """)
-                    count += 1
-            else:
-                print(f"""
-                      --------------------
-                      Count: {count}
-                      Category: {item['category']}
-                        Items Can Add : {StockItem.objects.filter(
-                            category__name=item['category'],
-                            status=StockItem.Status.AVAILABLE,
-                            location__name__startswith="คลัง"
-                            )}
-                      Quantity: {item['quantity']}
-                      --------------------
-                  """)
-                count += 1
-
-        return HttpResponse(bill_id)
-
-
 def parcel_list(request):
     items = RequestItem.objects.filter(
         bill__user=request.user,
@@ -340,7 +287,7 @@ def parcel_list(request):
 
 # TODO: refactor and make set item to form submit all in form save all[template]
 def set_serial_item(request, pk):
-    bill = get_object_or_404(RequestBill, pk=pk)
+    bill = get_object_or_404(ParcelRequest, pk=pk)
     items = RequestItem.objects.filter(bill=bill)
     if request.method == 'POST':
         serials_no = request.POST.getlist('serial_no')
@@ -358,8 +305,8 @@ def set_serial_item(request, pk):
 
 
 def request_approve(request, pk):
-    bill = get_object_or_404(RequestBill, pk=pk)
-    bill.status = RequestBill.BillStatus.IN_PROGRESS
+    bill = get_object_or_404(ParcelRequest, pk=pk)
+    bill.status = ParcelRequest.RequestStatus.IN_PROGRESS
     bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.WAIT
     bill.save()
     return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
@@ -373,7 +320,7 @@ def request_approve(request, pk):
 
 
 def bill_to_pdf(request: HttpResponse, pk: int):
-    bill = RequestBill.objects.get(pk=pk)
+    bill = ParcelRequest.objects.get(pk=pk)
     items = RequestItem.objects.filter(bill=bill)
     bill_detail = RequestBillDetail.objects.get(bill=bill)
     # bill_detail = bill.billdetail
@@ -394,7 +341,7 @@ def bill_to_pdf(request: HttpResponse, pk: int):
 
 
 def save_draft(request, pk):
-    bill = get_object_or_404(RequestBill, pk=pk)
+    bill = get_object_or_404(ParcelRequest, pk=pk)
     data = request.POST
     bill_detail = RequestBillDetail.objects.get(bill=bill)
     bill_detail.request_case = data.get('request_case')
@@ -412,17 +359,17 @@ def save_draft(request, pk):
 
 
 def request_bill(request, pk):
-    RequestBill.objects.filter(pk=pk).update(status=RequestBill.BillStatus.REQUEST)
+    ParcelRequest.objects.filter(pk=pk).update(status=ParcelRequest.RequestStatus.REQUEST)
     return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
 
 
 def request_approve(request, pk):
     if request.method == 'POST':
-        bill = get_object_or_404(RequestBill, pk=pk)
+        bill = get_object_or_404(ParcelRequest, pk=pk)
         entered_pin = request.POST.get('pin')
         user = request.user
         if user.check_password(entered_pin):
-            bill.status = RequestBill.BillStatus.IN_PROGRESS
+            bill.status = ParcelRequest.RequestStatus.IN_PROGRESS
             bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.WAIT
             bill.billdetail.agent = request.user
             bill.billdetail.add_request_approve_date()
@@ -439,7 +386,7 @@ def approve_bill(request, pk):
     use password check to approve bill
     """
     if request.method == 'POST':
-        bill = get_object_or_404(RequestBill, pk=pk)
+        bill = get_object_or_404(ParcelRequest, pk=pk)
         entered_pin = request.POST.get('pin')
         user = request.user
         if user.check_password(entered_pin):
@@ -452,7 +399,7 @@ def approve_bill(request, pk):
 
 def reject_bill(request, pk):
     if request.method == 'POST':
-        bill = get_object_or_404(RequestBill, pk=pk)
+        bill = get_object_or_404(ParcelRequest, pk=pk)
         note = request.POST.get('note')
         RejectBillNote.objects.create(
             bill=bill,
@@ -466,19 +413,19 @@ def reject_bill(request, pk):
 
 
 class CommandWaitApproveListView(LoginRequiredMixin, ListView):
-    model = RequestBill
+    model = ParcelRequest
     template_name = 'parcel/bill_list.html'
     # context_object_name = 'bills'
 
     def get_queryset(self):
         return self.model.objects.filter(
             billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT,
-            status=RequestBill.BillStatus.IN_PROGRESS
+            status=ParcelRequest.RequestStatus.IN_PROGRESS
         )
 
 
 class PaidItemView(LoginRequiredMixin, DetailView):
-    model = RequestBill
+    model = ParcelRequest
     template_name = 'parcel/bill_detail.html'
 
     def post(self, request, *args, **kwargs):
@@ -493,7 +440,7 @@ class PaidItemView(LoginRequiredMixin, DetailView):
 
 class PaidItemView(View):
     def post(self, request, pk):
-        bill = get_object_or_404(RequestBill, pk=pk)
+        bill = get_object_or_404(ParcelRequest, pk=pk)
         entered_pin = request.POST.get('pin')
         user = request.user
 
@@ -506,7 +453,7 @@ class PaidItemView(View):
 
 
 class RecieveItemsView(LoginRequiredMixin, DetailView):
-    model = RequestBill
+    model = ParcelRequest
     template_name = 'parcel/bill_detail.html'
 
     def post(self, request, pk):
@@ -561,7 +508,7 @@ class ParcelDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         parcel = self.get_object()
-        bill = get_object_or_404(RequestBill, pk=parcel.bill.pk)
+        bill = get_object_or_404(ParcelRequest, pk=parcel.bill.pk)
         location = Department.objects.all()
         items = StockItem.objects.all()
         context['bill'] = bill
@@ -597,3 +544,8 @@ class ReplaceItemLocationView(LoginRequiredMixin, View):
 
     def get(self):
         return HttpResponse("Error")
+
+
+class RemoveItemView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        pass

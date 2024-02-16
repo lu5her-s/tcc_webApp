@@ -227,6 +227,16 @@
                       <td><a href="">{{ bill_detail.receiver|default:'-' }}</a></td>
                     </tr>
 
+                    <tr>
+                      <th>สถานะ</th>
+                      <td>
+                        {{ bill.get_status_display }}
+                        {% if bill_detail.paid_status %}
+                        <span class="badge bg-success">{{ bill_detail.get_paid_status_display }}</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+
 
                     {% endif %}
 
@@ -286,6 +296,41 @@
                   </tr>
                 </table>
               </form>
+
+            </div>
+
+            <div id="parcel" class='tab-pane fade pt-3'>
+              <table class="table table-striped">
+
+                <!-- note: for loop to set serial to item -->
+                <tr>
+                  <th style="width: 5%;">..</th>
+                  <th style="width: 20%;">ประเภท</th>
+                  <th style="width: 60%;">หมายเลข</th>
+                  <th style="width: 15%;">จัดการ</th>
+                </tr>
+
+                {% for item in items %}
+                <tr>
+                  <td style="width: 5%;">{{ forloop.counter }}</td>
+                  <td style="width: 20%;">{{ item.category }}</td>
+                  <td style="width: 60%;">
+                    {{ item.item.item_name }} - {{ item.item.serial }}
+                  </td>
+                  <td style="width: 15%;">
+                    <a href="#" 
+                       data-bs-toggle="modal"
+                       data-bs-target="#set_item_location"
+                       data-object="{{ item.item.item_name }} [{{ item.item.serial }}]"
+                       id="set_item_location_btn"
+                      class="btn btn-sm btn-primary">
+                      ติดตั้ง
+                    </a>
+                    <a href="#" class="btn btn-sm btn-warning">ทดแทน</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </table>
 
             </div>
 
@@ -380,139 +425,16 @@
     </div>
 
     <!-- modal for request approve -->
-    <div class="modal fade" id="confirm_request">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">ยืนยันการขอเบิก ใบเบิกที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form method="post" action="{% url 'parcel:request_bill' pk=bill.pk %}">
-              {% csrf_token %}
-              <p>
-              {% for item in items %}
-              {{ forloop.counter }}.{{ item.category }} 
-              <br> &nbsp;&nbsp;&nbsp; - จำนวน {{ item.quantity }} {{ item.count_text|default:"หน่วย" }}
-              <br>{% if not forloop.last %}
-              <hr>
-              {% endif %}
-              {% endfor %}
-              </p>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                <button type="submit" class="btn btn-primary">ยืนยัน</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+    {% include "parcel/components/modal_to_request_approve.html" %}
 
-    <!-- modal for confirm_reject -->
-    <div class="modal fade" id="reject_bill">
-      <div class="modal-dialog">
-        <form action="{% url 'parcel:reject_bill' pk=bill.pk %}">
-          {% csrf_token %}
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">ยืนยันการไม่อนุมัติ</h5>
-            </div>
-            <div class="modal-body" id="reject_reason">
-              <p>เหตุผลที่ไม่อนุมัติ</p>
-              <textarea class="form-control" name="note" id="note" cols="30" rows="3"></textarea>
+    <!-- modal for confirm reject -->
+    {% include "parcel/components/modal_confirm_reject.html" %}
 
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-              <button type="submit" class="btn btn-primary">ยืนยัน</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- modal for enter pin to approve bill -->
-    <div class="modal fade" id="approve_bill">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">ยืนยันการอนุมัติ</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <form method="post"
-                action="{% url 'parcel:approve_bill' pk=bill.pk %}"
-                id="approve_bill"
-                class="pin-code">
-            <div class="modal-body">
-
-              <p>
-              ยืนยันการอนุมัติใบเบิกที่ : {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}
-              <br>
-              คลังเจ้าของพัสดุ : {{ bill.stock }}
-              <br>
-              ผู้ขออนุมัติ : {{ bill.billdetail.agent.profile }}
-              </p>
-              <!-- form to enter pin number to confirm approve -->
-              {% csrf_token %}
-              <!-- enter password to confirm approve -->
-              <input 
-                 type="password" 
-                 name="pin" 
-                 class="form-control" 
-                 placeholder="กรุณาใส่รหัสผ่านเพื่ออนุมัติ" 
-                 required
-                 />
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-              <button type="submit" class="btn btn-primary">ยืนยัน</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    <!-- modal for approve bill -->
+    {% include "parcel/components/modal_approve_bill.html" %}
 
     <!-- modal for enter pin to request bill -->
-    <div class="modal fade" id="request_approve">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">ยืนยันการขออนุมัติ</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <form method="post"
-                action="{% url 'parcel:request_approve' pk=bill.pk %}"
-                id="request_bill_form"
-                class="pin-code">
-            <div class="modal-body">
-              <!-- form to enter pin number to confirm approve -->
-              {% csrf_token %}
-              <p>เพื่อขออนุมัติ ใบเบิกที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</p>
-
-              <p>
-              {% for item in items %}
-              {{ forloop.counter }}.{{ item.category }} 
-              <br> &nbsp;&nbsp;&nbsp; - หมายเลข {{ item.item.serial }}
-              <br> &nbsp;&nbsp;&nbsp; - จำนวน {{ item.quantity }} {{ item.count_text|default:"หน่วย" }}
-              <br>{% if not forloop.last %}
-              <hr>
-              {% endif %}
-              {% endfor %}
-              </p>
-              <!-- enter password to confirm approve -->
-
-              <!-- <p>กรุณาใส่รหัสผ่าน</p> -->
-              <input type="password" name="pin" class="form-control" placeholder="กรุณาใส่รหัสผ่านเพื่อขออนุมัติ" required>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-              <button type="submit" class="btn btn-primary">ยืนยัน</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    {% include "parcel/components/modal_request_bill.html" %}
 
     <!-- modal for confirm paid item -->
     <div class="modal fade" id="paid_confirm">
@@ -589,6 +511,8 @@
         </div>
       </div>
     </div>
+
+    {% include "parcel/components/modal_set_item_location.html" %}
 
   </div>
 
