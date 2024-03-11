@@ -1,0 +1,140 @@
+        <div class="col-xxl-4 col-md-6">
+          <div class="card info-card bg-card">
+            <a href="{% url 'parcel:manager_list' %}">
+              <div class="card-body">
+                <h5 class="card-title">รายการใบเบิก <span>| {{ request.user.profile.department}}</span></h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-clipboard-plus text-info"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ stock_bills.count }} ใบเบิก</h6>
+                    <span class="text-success small pt-1 fw-bold">รอตรวจสอบ  </span>
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div class="col-xxl-4 col-md-6">
+          <div class="card info-card bg-card">
+            <a href="{% url 'parcel:manager_wait_approve' %}">
+              <div class="card-body">
+                <h5 class="card-title">รายการรออนุมัติ <span>| {{ request.user.profile.department }}</span></h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-list-check text-danger"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ stock_bills_wait.count }} รายการ</h6>
+                    <span class="text-success small pt-1 fw-bold">รอการอนุมัติ</span>
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div class="col-xxl-4 col-md-6">
+          <div class="card info-card bg-card">
+            <a href="{% url 'parcel:manager_wait_paid' %}">
+              <div class="card-body">
+                <h5 class="card-title">รายการรอจ่าย <span>| {{ request.user.profile.department }}</span></h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-exclamation-diamond text-success"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ wait_paid.count }} รายการ</h6>
+                    <span class="text-success small pt-1 fw-bold">ยังไม่ดำเนินการ</span>
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div class="col-xxl-4 col-md-6">
+          <div class="card info-card bg-card">
+            <a href="{% url 'parcel:manager_all_bills' %}">
+              <div class="card-body">
+                <h5 class="card-title">รายการใบเบิกทั้งหมด <span>| {{ request.user.profile.department }}</span></h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-clipboard-data text-secondary"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ all_stock_bills.count }} รายการ</h6>
+                    <span class="text-success small pt-1 fw-bold">ยังไม่ดำเนินการ</span> <span class="text-muted small pt-2 ps-1">{{ stock_bills.count }} รายการ</span>
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <hr>
+        <br>
+        <!-- for return bill -->
+        <div class="col-xxl-4 col-md-6">
+          <div class="card info-card bg-card">
+            <a href="{% url 'parcel:manager_all_bills' %}">
+              <div class="card-body">
+                <h5 class="card-title">รายการใบส่งคืน <span>| {{ request.user.profile.department }}</span></h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-clipboard-data text-secondary"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ all_stock_bills.count }} รายการ</h6>
+                    <span class="text-success small pt-1 fw-bold">รอตรวจสอบ</span>
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="col-xxl-4 col-md-6">
+          <div class="card info-card bg-card">
+            <a href="{% url 'parcel:manager_all_bills' %}">
+              <div class="card-body">
+                <h5 class="card-title">รออนุมัติ <span>| {{ request.user.profile.department }}</span></h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-clipboard-data text-secondary"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ all_stock_bills.count }} รายการ</h6>
+                    <span class="text-success small pt-1 fw-bold">รอการรับทราบของผู้บังคับบัญชา</span>
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="col-xxl-4 col-md-6">
+          <div class="card info-card bg-card">
+            <a href="{% url 'parcel:manager_all_bills' %}">
+              <div class="card-body">
+                <h5 class="card-title">รายการใบส่งคืนทั้งหมด <span>| {{ request.user.profile.department }}</span></h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-clipboard-data text-secondary"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ all_stock_bills.count }} รายการ</h6>
+                    <span class="text-success small pt-1 fw-bold">ยังไม่ดำเนินการ</span> <span class="text-muted small pt-2 ps-1">{{ stock_bills.count }} รายการ</span>
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>

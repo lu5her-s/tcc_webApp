@@ -1,0 +1,40 @@
+
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card bg-card">
+                <a href="{% url 'parcel:bill_list' %}">
+                    <div class="card-body">
+                      <h5 class="card-title">รายการใบเบิก <span>| {{ request.user.profile }}</span></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-clipboard-plus text-info"></i>
+                            </div>
+                            <div class="ps-3">
+                              <h6>{{ all_bill.count }} ใบเบิก</h6>
+                                <span class="text-success small pt-1 fw-bold">รออนุมัติ  </span> <span class="text-muted small pt-2 ps-1">{{ wait_approve.count }} รายการ</span>
+
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-xxl-4 col-md-6">
+            <div class="card info-card bg-card">
+                <a href="{% url 'parcel:parcel_list' %}">
+                    <div class="card-body">
+                        <h5 class="card-title">รายการพัสดุ <span>| {{ request.user.profile }}</span></h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-cart-plus text-danger"></i>
+                            </div>
+                            <div class="ps-3">
+                              <h6>{{ parcel_list.count }} รายการ</h6>
+                                <span class="text-success small pt-1 fw-bold">ยังไม่ดำเนินการ</span> <span class="text-muted small pt-2 ps-1">{{ on_hand.count }} รายการ</span>
+
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
