@@ -160,6 +160,7 @@ class RequestBillDetail(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     agent = models.ForeignKey(User, related_name='bill_agent', on_delete=models.CASCADE, null=True, blank=True)
     request_approve_date = models.DateTimeField(null=True, blank=True)
+    paid_no = models.CharField(max_length=10, null=True, blank=True)
 
     # Define model relationships
     bill = models.OneToOneField(ParcelRequest, on_delete=models.CASCADE, related_name='billdetail')

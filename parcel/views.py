@@ -70,8 +70,8 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
             stock=self.request.user.profile.department,
             status=ParcelRequest.RequestStatus.IN_PROGRESS,
             billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED,
-            is_done=False
-        )
+            is_done=False,
+        ).exclude(billdetail__paid_status=RequestBillDetail.PaidStatus.RECEIVED)
         context['all_stock_bills'] = all_bill.filter(
             Q(stock=self.request.user.profile.department) & ~Q(status=ParcelRequest.RequestStatus.DRAFT),
         )
@@ -232,20 +232,29 @@ class BillCreateView(LoginRequiredMixin, View):
     #     return render(request, 'parcel/bill_create.html', {'form': form})
 
 
-class BillDetailView(LoginRequiredMixin, View):
-    def get(self, request, pk):
-        bill = get_object_or_404(ParcelRequest, pk=pk)
+class BillDetailView(LoginRequiredMixin, DetailView):
+    template_name = 'parcel/bill_detail2.html'
+    model = ParcelRequest
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        bill = self.get_object()
+        # bill = get_object_or_404(ParcelRequest, pk=object.pk)
         recievers = Profile.objects.exclude(user=bill.user)
         items = RequestItem.objects.filter(bill=bill)
+        replace_item = StockItem.objects.all().exclude(id__in=items)
         bill_detail, _ = RequestBillDetail.objects.get_or_create(bill=bill)
+        locations = Department.objects.all().order_by('name')
         context = {
             'bill': bill,
             'items': items,
             'bill_detail': bill_detail,
             'recievers': recievers,
             'bill_detail_form': RequestBillDetailForm(instance=bill_detail),
+            'locations': locations,
+            'replace_item': replace_item
         }
-        return render(request, 'parcel/bill_detail2.html', context)
+        return context
 
     # # TODO: get item from serail or pk and set item status to HOLD
     # def post(self, request, pk):
@@ -480,26 +489,6 @@ class RecieveItemsView(LoginRequiredMixin, DetailView):
         return super().get(request, *args, **kwargs)
 
 
-class SetItemLocationView(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        item = RequestItem.objects.select_related('item').get(pk=pk)
-        location = request.POST.get('location')
-        dept = get_object_or_404(Department, pk=location)
-        item.item.location = dept
-        item.item.status = StockItem.Status.IN_USE
-        item.save()
-        description = f"Item {item.item} set to {dept}"
-        ItemHistory.objects.create(
-            item=item.item,
-            user=request.user,
-            description=description
-        )
-        return HttpResponseRedirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': item.bill.pk}))
-
-    def get(self):
-        return HttpResponse("Error")
-
-
 class ParcelDetailView(LoginRequiredMixin, DetailView):
     model = RequestItem
     template_name = 'parcel/parcel_detail.html'
@@ -517,30 +506,47 @@ class ParcelDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+class SetItemLocationView(LoginRequiredMixin, View):
+    def post(self, request):
+        pin = request.POST.get('pin-set-item')
+        user = request.user
+        if user.check_password(pin):
+            item_pk = request.POST.get('item_pk')
+            item = StockItem.objects.get(pk=item_pk)
+            location = request.POST.get('location')
+            location = get_object_or_404(Department, pk=location)
+            item.location = location
+            item.status = StockItem.Status.IN_USE
+            item.save()
+            # return redirect to previous page
+            return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': item.bill.pk}))
+        else:
+            return HttpResponse("wrong pin")
+
+    def get(self):
+        return HttpResponse("Error")
+
 class ReplaceItemLocationView(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        item_replace = request.POST.get('item_replace')
-        location_replace = request.POST.get('location_replace')
-        parcel = RequestItem.objects.get(pk=pk)
+    def post(self, request):
+        pin = request.POST.get('pin-replace-item')
+        user = request.user
+        if user.check_password(pin):
+            replace_item = request.POST.get('replace_item')
+            replace_item = get_object_or_404(StockItem, pk=replace_item)
+            location = replace_item.location
+            replace_item.location = None
+            replace_item.status = StockItem.Status.ON_HAND
+            replace_item.save()
 
-        item = StockItem.objects.get(pk=item_replace)
-        item.status = StockItem.Status.ON_HAND
-        item.location = None
-        item.save()
+            new_item = request.POST.get('new_item')
+            new_item = get_object_or_404(StockItem, pk=new_item)
+            new_item.location = location
+            new_item.status = StockItem.Status.IN_USE
+            new_item.save()
 
-        dept = get_object_or_404(Department, pk=location_replace)
-        parcel.item.location = dept
-        parcel.item.status = StockItem.Status.IN_USE
-        parcel.save()
-
-        description = f"Item {parcel.item} replaced with {item} at {dept}"
-
-        ItemHistory.objects.create(
-            item=parcel.item,
-            user=request.user,
-            description=description
-        )
-        return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': parcel.bill.pk}))
+            return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': new_item.bill.pk}))
+        else:
+            return HttpResponse("wrong pin")
 
     def get(self):
         return HttpResponse("Error")

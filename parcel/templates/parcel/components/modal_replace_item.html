@@ -1,0 +1,68 @@
+{% load tags %}
+    <!-- modal for set item location -->
+    <div class="modal fade" id="replace_item">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">ทดแทน</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="post"
+                action="{% url 'parcel:replace_item' %}"
+                id="replace_item_form"
+                class="pin-code">
+            <div class="modal-body">
+              <!-- form to enter pin number to confirm approve -->
+
+
+              <!-- show object item from data-bs-object -->
+              <h3 id='show_data_replace'></h3>
+              
+              <!-- add location to select set location to item -->
+              {% csrf_token %}
+
+              <!-- select location -->
+              <select name="replace_item" class="form-select">
+                <option value=""></option>
+                {% for item in replace_item %}
+                <option value="{{ item.pk }}">{{ item }}</option>
+                {% endfor %}
+              </select>
+
+
+              <!-- enter password to confirm approve -->
+
+              <!-- <p>กรุณาใส่รหัสผ่าน</p> -->
+              <input 
+              type="password" 
+              name="pin-replace-item" 
+              class="form-control" 
+              placeholder="กรุณาใส่รหัสผ่านเพื่อยืนยันการติดตั้ง" 
+              style="margin-top: 10px;"
+              required
+              >
+
+              <input type="hidden" name='new_item' id="new_item" value="">
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+              <button type="submit" class="btn btn-primary">ยืนยัน</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $(document).on('click', '#replace_item_btn', function(){
+        var data = $(this).data('object');
+        $('#show_data_replace').html(data);
+        //console.log(typeof data);
+        var pk = $(this).data('pk');
+        $('#replace_item').modal('show');
+        $("#new_item").val(pk);
+      });
+
+
+    </script>

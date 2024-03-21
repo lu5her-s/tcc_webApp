@@ -41,6 +41,13 @@ def thaiyear(var):
 	y = var + 543
 	return f'{y}'
 
+@register.filter
+def thaidate_short(var):
+	n = ['ม.ค.', 'ก.พ', 'มี.ค.', 'เม.ย', 'พ.ค.', 'มิ.ย', 'ก.ค.', 'ส.ค.', 'ก.ย', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
+	d = var.day
+	m = n[var.month - 1 ]
+	y = var.year + 543
+	return f'{d} {m} {y}'
 
 def number_format(num, places=0):
     return '{:20,.2f}'.format(num)

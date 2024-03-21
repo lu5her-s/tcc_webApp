@@ -13,14 +13,14 @@ urlpatterns = [
     path('bill_create/', views.BillCreateView.as_view(), name='bill_create'),
     path('parcel_list/', views.parcel_list, name='parcel_list'),
     path('bill/save_draft/<int:pk>/', views.save_draft, name='save_draft'),
-    path('bill/request_bill/<int:pk>/', views.request_bill, name='request_bill',),
+    path('bill/request_bill/<int:pk>/', views.request_bill, name='request_bill'),
 
     # user after request_bill
     path('recieve_item/<int:pk>/', views.RecieveItemsView.as_view(), name='recieve_item'),
-    path('parcel_detail/<int:pk>/', views.ParcelDetailView.as_view(), name='parcel_detail',),
+    path('parcel_detail/<int:pk>/', views.ParcelDetailView.as_view(), name='parcel_detail'),
 
-    path('set_item_location/<int:pk>/', views.SetItemLocationView.as_view(), name='set_item_location',),
-    path('replace_item_location/<int:pk>/', views.ReplaceItemLocationView.as_view(), name='replace_item_location',),
+    path('set_item/', views.SetItemLocationView.as_view(), name='set_item'),
+    path('replace_item/', views.ReplaceItemLocationView.as_view(), name='replace_item'),
 
     # manager ulrs
     path('manager/list/', views.BillManagerListView.as_view(), name='manager_list'),

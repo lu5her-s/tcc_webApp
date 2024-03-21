@@ -299,40 +299,7 @@
 
             </div>
 
-            <div id="parcel" class='tab-pane fade pt-3'>
-              <table class="table table-striped">
-
-                <!-- note: for loop to set serial to item -->
-                <tr>
-                  <th style="width: 5%;">..</th>
-                  <th style="width: 20%;">ประเภท</th>
-                  <th style="width: 60%;">หมายเลข</th>
-                  <th style="width: 15%;">จัดการ</th>
-                </tr>
-
-                {% for item in items %}
-                <tr>
-                  <td style="width: 5%;">{{ forloop.counter }}</td>
-                  <td style="width: 20%;">{{ item.category }}</td>
-                  <td style="width: 60%;">
-                    {{ item.item.item_name }} - {{ item.item.serial }}
-                  </td>
-                  <td style="width: 15%;">
-                    <a href="#" 
-                       data-bs-toggle="modal"
-                       data-bs-target="#set_item_location"
-                       data-object="{{ item.item.item_name }} [{{ item.item.serial }}]"
-                       id="set_item_location_btn"
-                      class="btn btn-sm btn-primary">
-                      ติดตั้ง
-                    </a>
-                    <a href="#" class="btn btn-sm btn-warning">ทดแทน</a>
-                  </td>
-                </tr>
-                {% endfor %}
-              </table>
-
-            </div>
+            {% include "parcel/components/parcel_pane.html" %}
 
           </div><!-- end tab-content -->
 
@@ -512,7 +479,6 @@
       </div>
     </div>
 
-    {% include "parcel/components/modal_set_item_location.html" %}
 
   </div>
 

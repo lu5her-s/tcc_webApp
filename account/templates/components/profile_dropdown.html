@@ -1,0 +1,70 @@
+{% load static %}
+<li class="nav-item dropdown pe-3">
+
+  <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+    {% if request.user.profile.image %}
+    <img src="{{ request.user.profile.image.url }}" alt="Profile" class="rounded-circle">
+      {% else %}
+    <img src="{% static 'assets/img/profile.png' %}" alt="Profile" class="rounded-circle">
+      {% endif %}
+      {% if request.user.first_name and request.user.last_name %}
+    <span class="d-none d-md-block dropdown-toggle ps-2">{{ request.user.get_full_name }}</span>
+    {% else %}
+    <span class="d-none d-md-block dropdown-toggle ps-2">กรุณาอัพเดทข้อมูลส่วนตัว</span>
+    {% endif %}
+  </a><!-- End Profile Iamge Icon -->
+
+  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+    <li class="dropdown-header">
+      {% if request.user.first_name and request.user.last_name %}
+      <h6>{{ request.user.get_full_name }}</h6>
+      {% if request.user.profile.position %}
+      <span>{{ request.user.profile.position.name }}</span>
+      {% endif %}
+      {% else %}
+      <p class="small mb-0">อัพเดท ข้อมูล <a href="{% url 'account:profile' %}">ที่นี่</a></p>
+      {% endif %}
+    </li>
+    <li>
+      <hr class="dropdown-divider">
+    </li>
+
+    <li>
+      <a class="dropdown-item d-flex align-items-center" href="{% url 'account:profile' %}">
+        <i class="bi bi-person"></i>
+        <span>ข้อมูลส่วนตัว</span>
+      </a>
+    </li>
+    <li>
+      <hr class="dropdown-divider">
+    </li>
+
+    <li>
+      <a class="dropdown-item d-flex align-items-center" href="#">
+        <i class="bi bi-question-circle"></i>
+        <span>ความช่วยเหลือ?</span>
+      </a>
+    </li>
+    <li>
+      <hr class="dropdown-divider">
+    </li>
+
+    <li>
+      <a class="dropdown-item d-flex align-items-center" href="{% url 'contact' %}">
+        <i class="bi bi-envelope"></i>
+        <span>ข้อมูลติดต่อ</span>
+      </a>
+    </li>
+    <li>
+      <hr class="dropdown-divider">
+    </li>
+
+    <li>
+      <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>ออกจากกระบบ</span>
+      </a>
+    </li>
+
+  </ul><!-- End Profile Dropdown Items -->
+</li><!-- End Profile Nav -->

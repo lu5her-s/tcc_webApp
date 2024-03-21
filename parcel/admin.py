@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ParcelRequest, RequestItem, RequestBillDetail
+from .models import ParcelRequest, RequestItem, RequestBillDetail, ParcelRequestNote, RejectBillNote
 
 # Register your models here.
 
@@ -46,3 +46,17 @@ class RequestBillDetailAdmin(admin.ModelAdmin):
         return obj.bill.stock
 
     list_display = ('bill_no', 'stock')
+
+@admin.register(ParcelRequestNote)
+class ParcelRequestNoteAdmin(admin.ModelAdmin):
+    list_filter = ('bill',)
+    search_fields = ('bill',)
+    list_display = ('bill', 'note')
+    raw_id_fields = ('bill', 'user')
+
+@admin.register(RejectBillNote)
+class RejectBillNoteAdmin(admin.ModelAdmin):
+    list_filter = ('bill',)
+    search_fields = ('bill',)
+    list_display = ('bill', 'note')
+    raw_id_fields = ('bill', 'user')

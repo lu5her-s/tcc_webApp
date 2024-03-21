@@ -1,0 +1,69 @@
+{% load tags %}
+<div id="parcel" class='tab-pane fade pt-3'>
+  <table class="table table-striped">
+
+    <!-- note: for loop to set serial to item -->
+    <tr>
+      <th style="width: 5%;">..</th>
+      <th style="width: 20%;">ประเภท</th>
+      <th style="width: 60%;">พัสดุ</th>
+      <th style="width: 15%;">จัดการ</th>
+    </tr>
+
+    {% for item in items %}
+    <tr>
+      <td style="width: 5%;">{{ forloop.counter }}</td>
+      <td style="width: 20%;">{{ item.category }}</td>
+      <td style="width: 60%;">
+        {{ item.item.item_name }} - {{ item.item.serial }}
+      </td>
+      
+      <td style="width: 15%;">
+      {% if item.item.status == 'ON_HAND' %}
+        <a href="#" 
+          data-bs-toggle="modal"
+          data-bs-target="#set_item"
+          data-object="{{ item.item.item_name }} [{{ item.item.serial }}]"
+          data-pk="{{ item.item.pk }}"
+          id="set_item_btn"
+          class="btn btn-sm btn-primary">
+          ติดตั้ง
+        </a>
+
+        <a href="#" 
+          data-bs-toggle="modal"
+          data-bs-target="#replace_item"
+          data-object="{{ item.item.item_name }} [{{ item.item.serial }}]"
+          data-pk="{{ item.item.pk }}"
+          id="replace_item_btn"
+          class="btn btn-sm btn-warning">
+          ทดแทน
+        </a>
+      {% else %}
+        <p><i class="bi bi-check-circle text-success"></i> ติดตั้งแล้ว</p>
+      {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  {% include "parcel/components/modal_set_item.html" %}
+  {% include "parcel/components/modal_replace_item.html" %}
+
+  <script>
+        $(document).ready(function () {
+            $("select[name='replace_item']").select2({
+                width: "100%",
+                dropdownParent: $('#replace_item'),
+                placeholder: "เลือกพัสดุ",
+                allowClear: true,
+            });
+            $("select[name='location']").select2({
+                width: "100%",
+                dropdownParent: $('#set_item'),
+                placeholder: "เลือกสถานที่",
+                allowClear: true,
+            });
+        });
+  </script>
+</div>

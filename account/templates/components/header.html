@@ -18,7 +18,6 @@
             <button type="submit" title="Search"><i class="bi bi-search"></i></button>
         </form>
     </div><!-- End Search Bar -->
-    <!-- assign={{ assign_not_accepted.count }}::announce={{ announce_not_read.count }}::total={{ count_total }} -->
 
     <nav class="header-nav ms-auto">
         <ul class="d-flex align-items-center">
@@ -40,189 +39,22 @@
               {% endif %}
 
               <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-                <li class="dropdown-header">
-                  You have {{ count_total }} new notifications
                   <!-- <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a> -->
-                </li>
-                      <li>
-                        <hr class="dropdown-divider">
-                      </li>
-
-                    {% if announce_not_read.count %}
-                    <li class="notification-item">
-                      <i class="bi bi-bell text-warning"></i>
-                      <a href="#">
-                        <div>
-                          <h4>ประชาสัมพันธ์/สั่งการ</h4>
-                          <p>ยังไม่ได้อ่าน</p>
-                          <p>จำนวน {{ announce_not_read.count }} เรื่อง</p>
-                        </div>
-                      </a>
-                    </li>
-                    {% endif %}
-
-                    <li>
-                      <hr class="dropdown-divider">
-                    </li>
-
-                    {% if assign_not_accepted %}
-                    <a href="{% url 'assign:list' %}">
-                      <li class="notification-item">
-                        <i class="bi bi-briefcase text-danger"></i>
-                        <div>
-                          <h4>การมอบหมายงาน</h4>
-                          <p>รอตอบรับ</p>
-                          <p>จำนวน {{ assign_not_accepted.count }} งาน</p>
-                        </div>
-                      </li>
-                    </a>
-                    {% endif %}
-
-                    <li>
-                      <hr class="dropdown-divider">
-                    </li>
-
-                    {% if document_not_accepted %}
-                    <a href="{% url 'document:home' %}">
-                      <li class="notification-item">
-                        <i class="bi bi-book text-success"></i>
-                        <div>
-                          <h4>เอกสารที่ยังไม่ตอบรับ</h4>
-                          <p>{{ request.user.profile.sector.name }}</p>
-                          <p>จำนวน {{ document_not_accepted }} ฉบับ</p>
-                        </div>
-                      </li>
-                    </a>
-                    {% endif %}
-
-                    {% if new_inform.count %}
-                    <li>
-                      <hr class="dropdown-divider">
-                    </li>
-
-
-                    <a href="{% url 'inform:home' %}">
-                      <li class="notification-item">
-                        <i class="bi bi-info-circle text-primary"></i>
-                        <div>
-                          <h4>รายการแจ้งซ่อม</h4>
-                          <p>รอตรวจสอบ</p>
-                          <p>จำนวน {{ new_inform.count }} รายการ</p>
-                        </div>
-                      </li>
-                    </a>
-
-                    <li>
-                      {% endif %}
-                        <hr class="dropdown-divider">
-                        </li>
-                    <li class="dropdown-footer">
-                        <a href="#">Show all notifications</a>
-                        </li>
-
-                    </ul><!-- End Notification Dropdown Items -->
-
-                </li><!-- End Notification Nav -->
+                  {% include "components/notification_list.html" %}
 
                 {% if request.session.cart %}
                 
-                <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                  <i class="bi bi-basket"></i>
-                  <span class="badge bg-success badge-number" id="basket-count">{{ request.session.cart|length }}</span>
-                </a><!-- End Messages Icon -->
-
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
-                  <li class="dropdown-header">
-                    You have {{ request.session.cart|length }} item in your cart
-                    <a href="{% url 'cart:cart_detail' %}"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-                  </li>
+                {% include "components/cart_dropdown.html" %}
 
                 </ul><!-- End Messages Dropdown Items -->
                 {% endif %}
 
                 </li><!-- End Messages Nav -->
 
-            <li class="nav-item dropdown pe-3">
-
-                <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                    {% if request.user.profile.image %}
-                        <img src="{{ request.user.profile.image.url }}" alt="Profile" class="rounded-circle">
-                    {% else %}
-                        <img src="{% static 'assets/img/profile.png' %}" alt="Profile" class="rounded-circle">
-                    {% endif %}
-                    {% if request.user.first_name and request.user.last_name %}
-                        <span class="d-none d-md-block dropdown-toggle ps-2">{{ request.user.get_full_name }}</span>
-                    {% else %}
-                        <span class="d-none d-md-block dropdown-toggle ps-2">กรุณาอัพเดทข้อมูลส่วนตัว</span>
-                    {% endif %}
-                </a><!-- End Profile Iamge Icon -->
-
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                    <li class="dropdown-header">
-                        {% if request.user.first_name and request.user.last_name %}
-                            <h6>{{ request.user.get_full_name }}</h6>
-                        {% if request.user.profile.position %}
-                            <span>{{ request.user.profile.position.name }}</span>
-                        {% endif %}
-                        {% else %}
-                            <p class="small mb-0">อัพเดท ข้อมูล <a href="{% url 'account:profile' %}">ที่นี่</a></p>
-                        {% endif %}
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center" href="{% url 'account:profile' %}">
-                            <i class="bi bi-person"></i>
-                            <span>ข้อมูลส่วนตัว</span>
-                        </a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center" href="#">
-                            <i class="bi bi-question-circle"></i>
-                            <span>ความช่วยเหลือ?</span>
-                        </a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center" href="{% url 'contact' %}">
-                            <i class="bi bi-envelope"></i>
-                            <span>ข้อมูลติดต่อ</span>
-                        </a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                            <i class="bi bi-box-arrow-right"></i>
-                            <span>ออกจากกระบบ</span>
-                        </a>
-                    </li>
-
-                </ul><!-- End Profile Dropdown Items -->
-            </li><!-- End Profile Nav -->
+                {% include "components/profile_dropdown.html" %}
 
             {% else %}
-            <a class="nav-link nav-icon" href="{% url 'account:register' %}">
-                <i class="bi bi-person-check"></i>
-                <span class="badge bg-primary badge-number"></span>
-                ลงทะเบียนเข้าใช้งาน
-            </a><!-- End Notification Icon -->
-            <a class="nav-link nav-icon" href="{% url 'login' %}">
-                <i class="bi bi-layer-forward"></i>
-                <span class="badge bg-primary badge-number"></span>
-                เข้าสู่ระบบ
-            </a><!-- End Notification Icon -->
+            {% include "components/register_dropdown.html" %}
 
             {% endif %}
 

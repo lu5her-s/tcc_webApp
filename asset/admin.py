@@ -7,6 +7,7 @@ from asset.models import (
     Network,
     StockItem,
     StockItemImage,
+    ItemHistory
 )
 
 # Register your models here.
@@ -51,6 +52,15 @@ class ManufacturerAdmin(admin.ModelAdmin):
     list_display = ('name', 'description', 'created_at', 'updated_at')
     list_filter = ('created_at', 'updated_at')
     search_fields = ('name',)
+
+
+@admin.register(ItemHistory)
+class ItemHistoryAdmin(admin.ModelAdmin):
+    def user_profile(self) -> str:
+        return self.user.get_full_name()
+    list_display = ('item', user_profile, 'description', 'created_at')
+    list_filter = ('item__item_name', 'user__profile', 'created_at',)
+    search_fields = ('item', 'user__profile')
 
 admin.site.register(StockItemImage)
 # admin.site.register(Manufacturer)
