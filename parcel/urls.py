@@ -14,6 +14,7 @@ urlpatterns = [
     path('parcel_list/', views.parcel_list, name='parcel_list'),
     path('bill/save_draft/<int:pk>/', views.save_draft, name='save_draft'),
     path('bill/request_bill/<int:pk>/', views.request_bill, name='request_bill'),
+    path('item_on_hand_list/', views.ItemOnHandListView.as_view(), name='item_on_hand_list'),
 
     # user after request_bill
     path('recieve_item/<int:pk>/', views.RecieveItemsView.as_view(), name='recieve_item'),
@@ -21,6 +22,8 @@ urlpatterns = [
 
     path('set_item/', views.SetItemLocationView.as_view(), name='set_item'),
     path('replace_item/', views.ReplaceItemLocationView.as_view(), name='replace_item'),
+
+    path('return_parcel/', views.ReturnParcelView.as_view(), name='return_parcel'),
 
     # manager ulrs
     path('manager/list/', views.BillManagerListView.as_view(), name='manager_list'),

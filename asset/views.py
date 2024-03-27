@@ -91,7 +91,7 @@ class StockDepartmentListView(LoginRequiredMixin, ListView):
         return item in department as user work
         """
         user = self.request.user
-        qs = StockItem.objects.filter(location=user.profile.department)
+        qs = StockItem.objects.filter(location_install=user.profile.department)
         return qs
 
     def get_context_data(self, **kwargs):

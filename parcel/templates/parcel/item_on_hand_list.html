@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+{% block title %}
+Item On Hand List
+{% endblock title %}
+{% block content %}
+<div class="pagetitle">
+  <h1>รายการพัสดุที่เบิก</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'home' %}">Home</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'parcel:home' %}">Parcel Home</a>
+      </li>
+      <li class="breadcrumb-item active">Items List</li>
+    </ol>
+  </nav>
+</div>
+<!-- End Page Title -->
+<section class="section profile">
+  <div class="row">
+    <div class="col-xl-12">
+      <!-- Recent Job -->
+      <div class="col-12">
+        <div class="card recent-sales overflow-auto">
+          <div class="card-body">
+            <h5 class="card-title">
+              {{ title }}
+              <span>| {{ request.user.profile }}</span>
+            </h5>
+            <br>
+            <form method="POST" id="return_item_form" action="{% url 'parcel:return_parcel' %}">
+              {% csrf_token %}
+              <table class="table table-hover" id="dataTable">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">ประเภท</th>
+                    <th style="width: 30%;">พัสดุ</th>
+                    <th style="width: 25%;">Serial</th>
+                    <th style="width: 15%;">จัดการ</th>
+                    <th style="width: 10%;">คืน</th>
+                  </tr>
+                </thead>
+                <!-- object list -->
+                <tbody>
+                  {% for item in items %}
+                  <tr>
+                    <td style="width: 20%;">{{ item.item.category }}</td>
+                    <td style="width: 30%;">
+                      {{ item.item.item_name }}
+                    </td>
+                    <td style="width: 25%;">
+                      {{ item.item.serial }}
+                    </td>
+
+                    <td style="width: 15%;">
+                      {% if item.item.status == 'ON_HAND' %}
+                      <a href="#" 
+                         data-bs-toggle="modal"
+                         data-bs-target="#set_item"
+                         data-object="{{ item.item.item_name }} [{{ item.item.serial }}]"
+                         data-pk="{{ item.item.pk }}"
+                         id="set_item_btn"
+                         class="btn btn-sm btn-primary">
+                        ติดตั้ง
+                      </a>
+
+                      <a href="#" 
+                         data-bs-toggle="modal"
+                         data-bs-target="#replace_item"
+                         data-object="{{ item.item.item_name }} [{{ item.item.serial }}]"
+                         data-pk="{{ item.item.pk }}"
+                         id="replace_item_btn"
+                         class="btn btn-sm btn-warning">
+                        ทดแทน
+                      </a>
+                      {% else %}
+                      <p><i class="bi bi-check-circle text-success"></i> ติดตั้งแล้ว</p>
+                      {% endif %}
+                    </td>
+                    <td style="width: 10%;">
+                      <input type="checkbox" class="form-check-input" name="return_item" value="{{ item.item.pk }}">
+                    </td>
+                  </tr>
+                  {% endfor %}
+
+                </tbody>
+              </table>
+              <a href="#" data-bs-toggle="modal" data-bs-target="#return_item_modal" class="btn btn-lg btn-danger float-end" style="display: none" id="return_item_btn">คืนพัสดุ</a>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- End Announce List -->
+      {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
+    </div>
+  </div>
+  <!-- Modal -->
+  {% include "parcel/components/modal_set_item.html" %}
+  {% include "parcel/components/modal_replace_item.html" %}
+
+  <!-- modal show data -->
+  <div class="modal fade" id="return_item_modal" tabindex="-1" aria-labelledby="return_item_modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="return_item_modal">คืนพัสดุ</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>คุณต้องการคืนพัสดุหรือไม่ ?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+          <button onclick="setReturn()" type="button" class="btn btn-primary">ตกลง</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+<script>
+  $(document).ready(() => {
+    $("#dataTable").DataTable({
+      "fnDrawCallback": function (oSettings) {
+        if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+        } else {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+        }
+      },
+      "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+      order: [[0, 'desc']],
+    });
+
+    // check if any checkbox name return_item is checked show return_item_btn else hide
+    $('input[name="return_item"]').on('change', function() {
+      if ($('input[name="return_item"]:checked').length > 0) {
+        $('#return_item_btn').show();
+      }
+      else {
+        $('#return_item_btn').hide();
+      }
+    })
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    $("select[name='replace_item']").select2({
+      width: "100%",
+      dropdownParent: $('#replace_item'),
+      placeholder: "เลือกพัสดุ",
+      allowClear: true,
+    });
+    $("select[name='location']").select2({
+      width: "100%",
+      dropdownParent: $('#set_item'),
+      placeholder: "เลือกสถานที่",
+      allowClear: true,
+    });
+  });
+
+  function setReturn() {
+    // send submit
+    $('#return_item_form').submit();
+  }
+</script>
+{% endblock content %}

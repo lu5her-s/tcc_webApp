@@ -99,6 +99,14 @@
                   <td>{{ object.location.name }}</td>
                 </tr>
 
+                {% if object.location_install %}
+                <tr>
+                  <th>การติดตั้ง</th>
+                  <td>{{ object.location_install.name }}</td>
+                </tr>
+                
+                {% endif %}
+
                 <tr>
                   <th>สถานภาพ</th>
                   <td>{{ object.get_status_display }}</td>
@@ -171,10 +179,23 @@
 
         <!-- TODO: make condition for button -->
         <div class="container float-start text-center">
-          <a href="{% url 'asset:stockitem_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
           <!-- DONE: send pk to booking view -->
           {% if object.status == 'AVAILABLE' %}
-          <a href="#" class="btn btn-lg btn-warning">ขอเบิก</a>
+          <form id="add-form" action="{% url 'cart:cart_add' object.category.pk %}" method="post">
+            {% csrf_token %}
+            <!-- <a href="#" class="btn btn-primary" onclick="addTest"><span class="bi bi-plus-circle"></span> Add to cart</a> -->
+            <!-- input quantity increase and decreasee button -->
+            <input type="hidden" name="quantity" id="quantity-{{ object.category.pk }}" value="1" class="form-control mb-2">
+            {% if ct.pk in request.session.cart %}
+            <input type="hidden" name="override" id="override-{{ object.category.pk }}" value="False">
+            {% else %}
+            <input type="hidden" name="override" id="override-{{ object.category.pk }}" value="True">
+            {% endif %}
+            <input type="hidden" name"stock" value="{{ object.location.pk }}">
+            <!-- <a href="#" class="btn btn-primary"><span class="bi bi-plus-circle"></span> Add to cart</a> -->
+            <a href="{% url 'asset:stockitem_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+            <button type="submit" class="btn btn-lg btn-primary">ขอเบิก</button>
+            <!-- <a href="#" class="btn btn-lg btn-warning">ขอเบิก</a> -->
           {% endif %}
           {% if perms.asset.change_stockitem or request.user.profile.department == object.location %}
           <a href="{% url 'asset:stockitem_update' pk=object.pk %}" class="btn btn-lg btn-info">แก้ไข</a>

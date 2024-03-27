@@ -3,6 +3,7 @@ from assign.models import Assign
 from announce.models import Announce
 from document.models import Department, Document
 from inform.models import Inform
+from asset.models import ItemOnHand
 
 
 def assign_not_accepted(request):
@@ -77,3 +78,11 @@ def count_total(request):
         return {'count_total': total_notification}
     except:
         return {'count_total': None}
+
+def items_on_hand(request):
+    try:
+        return {'items_on_hand': ItemOnHand.objects.filter(
+            user=request.user
+        )}
+    except:
+        return {'items_on_hand': None}

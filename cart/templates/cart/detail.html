@@ -65,8 +65,8 @@
     <form action="{% url 'parcel:bill_create' %}" method="post">
       {% csrf_token %}
       <input type="hidden" name="stock" value="">
-      <button onclick="setStock()" class="btn btn-success" style="float: right">Checkout</button>
-      <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-primary">Continue Shopping</a>
+      <button onclick="setStock()" class="btn btn-success" style="float: right">สร้างใบเบิก</button>
+      <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-primary">เลือกพัสดุต่อ</a>
     </form>
     <!-- <button class="btn btn-primary" id="continueShopping">Continue Shopping</button> -->
   </p>

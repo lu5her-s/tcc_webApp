@@ -1,83 +1,89 @@
-<li class="dropdown-header">
-  You have {{ count_total }} new notifications
+<a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+  <i class="bi bi-bell"></i>
+  <span class="badge bg-warning badge-number">{{ count_total }}</span>
+</a><!-- End Notification Icon -->
+<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
   <!-- <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a> -->
-</li>
-<li>
-  <hr class="dropdown-divider">
-</li>
 
-{% if announce_not_read.count %}
-<li class="notification-item">
-  <i class="bi bi-bell text-warning"></i>
-  <a href="#">
-    <div>
-      <h4>ประชาสัมพันธ์/สั่งการ</h4>
-      <p>ยังไม่ได้อ่าน</p>
-      <p>จำนวน {{ announce_not_read.count }} เรื่อง</p>
-    </div>
-  </a>
-</li>
-{% endif %}
-
-<li>
-  <hr class="dropdown-divider">
-</li>
-
-{% if assign_not_accepted %}
-<a href="{% url 'assign:list' %}">
-  <li class="notification-item">
-    <i class="bi bi-briefcase text-danger"></i>
-    <div>
-      <h4>การมอบหมายงาน</h4>
-      <p>รอตอบรับ</p>
-      <p>จำนวน {{ assign_not_accepted.count }} งาน</p>
-    </div>
+  <li class="dropdown-header">
+    You have {{ count_total }} new notifications
+    <!-- <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a> -->
   </li>
-</a>
-{% endif %}
-
-<li>
-  <hr class="dropdown-divider">
-</li>
-
-{% if document_not_accepted %}
-<a href="{% url 'document:home' %}">
-  <li class="notification-item">
-    <i class="bi bi-book text-success"></i>
-    <div>
-      <h4>เอกสารที่ยังไม่ตอบรับ</h4>
-      <p>{{ request.user.profile.sector.name }}</p>
-      <p>จำนวน {{ document_not_accepted }} ฉบับ</p>
-    </div>
+  <li>
+    <hr class="dropdown-divider">
   </li>
-</a>
-{% endif %}
 
-{% if new_inform.count %}
-<li>
-  <hr class="dropdown-divider">
-</li>
-
-
-<a href="{% url 'inform:home' %}">
+  {% if announce_not_read.count %}
   <li class="notification-item">
-    <i class="bi bi-info-circle text-primary"></i>
-    <div>
-      <h4>รายการแจ้งซ่อม</h4>
-      <p>รอตรวจสอบ</p>
-      <p>จำนวน {{ new_inform.count }} รายการ</p>
-    </div>
+    <i class="bi bi-bell text-warning"></i>
+    <a href="{% url 'announce:list' %}">
+      <div>
+        <h4>ประชาสัมพันธ์/สั่งการ</h4>
+        <p>ยังไม่ได้อ่าน</p>
+        <p>จำนวน {{ announce_not_read.count }} เรื่อง</p>
+      </div>
+    </a>
   </li>
-</a>
-
-<li>
   {% endif %}
-  <hr class="dropdown-divider">
-</li>
-<li class="dropdown-footer">
-  <a href="#">Show all notifications</a>
-</li>
 
-</ul><!-- End Notification Dropdown Items -->
+  <li>
+    <hr class="dropdown-divider">
+  </li>
 
-</li><!-- End Notification Nav -->
+  {% if assign_not_accepted %}
+  <a href="{% url 'assign:list' %}">
+    <li class="notification-item">
+      <i class="bi bi-briefcase text-danger"></i>
+      <div>
+        <h4>การมอบหมายงาน</h4>
+        <p>รอตอบรับ</p>
+        <p>จำนวน {{ assign_not_accepted.count }} งาน</p>
+      </div>
+    </li>
+  </a>
+  {% endif %}
+
+  <li>
+    <hr class="dropdown-divider">
+  </li>
+
+  {% if document_not_accepted %}
+  <a href="{% url 'document:home' %}">
+    <li class="notification-item">
+      <i class="bi bi-book text-success"></i>
+      <div>
+        <h4>เอกสารที่ยังไม่ตอบรับ</h4>
+        <p>{{ request.user.profile.sector.name }}</p>
+        <p>จำนวน {{ document_not_accepted }} ฉบับ</p>
+      </div>
+    </li>
+  </a>
+  {% endif %}
+
+  {% if new_inform.count %}
+  <li>
+    <hr class="dropdown-divider">
+  </li>
+
+
+  <a href="{% url 'inform:home' %}">
+    <li class="notification-item">
+      <i class="bi bi-info-circle text-primary"></i>
+      <div>
+        <h4>รายการแจ้งซ่อม</h4>
+        <p>รอตรวจสอบ</p>
+        <p>จำนวน {{ new_inform.count }} รายการ</p>
+      </div>
+    </li>
+  </a>
+
+  <li>
+    {% endif %}
+    <hr class="dropdown-divider">
+  </li>
+  <li class="dropdown-footer">
+    <a href="#">Show all notifications</a>
+  </li>
+
+</ul>
+<!-- End Messages Dropdown Items -->

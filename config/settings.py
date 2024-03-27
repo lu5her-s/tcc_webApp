@@ -115,6 +115,7 @@ TEMPLATES = [
                 'account.context_processors.new_inform',
 
                 'account.context_processors.count_total',
+                'account.context_processors.items_on_hand',
             ],
         },
     },
@@ -162,6 +163,8 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Bangkok'
 
 USE_I18N = True
+
+USE_L10N = True
 
 USE_TZ = False
 

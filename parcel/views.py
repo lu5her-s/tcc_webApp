@@ -518,7 +518,15 @@ class SetItemLocationView(LoginRequiredMixin, View):
             item.location = location
             item.status = StockItem.Status.IN_USE
             item.save()
-            # return redirect to previous page
+
+            # create ItemHistory
+            description = f'{item.name} set in {location}'
+            ItemHistory.objects.create(
+                item=item,
+                user=user,
+                description=description
+            )
+
             return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': item.bill.pk}))
         else:
             return HttpResponse("wrong pin")
@@ -544,6 +552,20 @@ class ReplaceItemLocationView(LoginRequiredMixin, View):
             new_item.status = StockItem.Status.IN_USE
             new_item.save()
 
+            # create ItemHistory for this
+            description = f'Replace item {replace_item.name} with {new_item.name}'
+            ItemHistory.objects.create(
+                item=replace_item,
+                user=user,
+                description=description
+            )
+            description = f'{new_item.name} Set in {location}'
+            ItemHistory.objects.create(
+                item=new_item,
+                user=user,
+                description=description
+            )
+
             return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': new_item.bill.pk}))
         else:
             return HttpResponse("wrong pin")
@@ -555,3 +577,39 @@ class ReplaceItemLocationView(LoginRequiredMixin, View):
 class RemoveItemView(LoginRequiredMixin, View):
     def post(self, request, pk):
         pass
+
+
+class ItemOnHandListView(LoginRequiredMixin, ListView):
+    model = ItemOnHand
+    template_name = 'parcel/item_on_hand_list.html'
+
+    def get_queryset(self):
+        return ItemOnHand.objects.filter(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        items = self.get_queryset()
+        replace_item = StockItem.objects.all().exclude(id__in=items)
+        locations = Department.objects.all().order_by('name')
+        context = {
+            'items': items,
+            'locations': locations,
+            'replace_item': replace_item
+        }
+        return context
+
+
+class ReturnParcelView(LoginRequiredMixin, View):
+    def post(self, request):
+        items = request.POST.getlist('return_item')
+        location_item = []
+        
+        for item in items:
+            item = get_object_or_404(StockItem, pk=item)
+            location_item.append({
+                'item': item,
+                'location': item.location
+            })
+            print(item)
+            print(item.location)
+        return HttpResponse("success")

@@ -12,6 +12,9 @@ from django.dispatch import receiver
 
 # Create your models here.
 
+def user_directory_path(instance, filename):
+    return 'user_{0}/{1}'.format(instance.user.id, filename)
+
 class Sector(models.Model):
     ''' This class for sector '''
     name = models.CharField(max_length=200)

@@ -46,7 +46,7 @@ from inform.models import Inform
 from journal.models import Journal
 from assign.models import Assign
 from parcel.models import ParcelRequest, RequestBillDetail
-from parcel.views import ItemOnHand
+from asset.models import StockItem, ItemOnHand
 
 
 # Create your views here.
@@ -117,12 +117,6 @@ class HomeView(LoginRequiredMixin, TemplateView):
         #     billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED
         # )
         context['bill_wait_approve'] = bills.filter(billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT)
-
-        items_on_hand = ItemOnHand.objects.filter(
-            user=self.request.user,
-            is_done=False
-        )
-        context['items_on_hand'] = items_on_hand
 
         return context
 

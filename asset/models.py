@@ -103,6 +103,8 @@ class StockItem(models.Model):
     # location   = models.CharField(max_length=255, null=True, blank=True)
     location = models.ForeignKey(
         Department, on_delete=models.CASCADE, null=True, blank=True)
+    location_install = models.ForeignKey(
+        Department, on_delete=models.CASCADE, null=True, blank=True, related_name='location_setup')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     manufacturer = models.ForeignKey(

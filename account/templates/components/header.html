@@ -3,79 +3,67 @@
 <!-- ======= Header ======= -->
 <header id="header" class="header fixed-top d-flex align-items-center">
 
-    <div class="d-flex align-items-center justify-content-between">
-        <a href="{% url 'home'  %}" class="logo d-flex align-items-center">
-            <img src="{% static 'assets/img/logo.png' %}" alt="">
-            <span class="d-none d-lg-block">TCC Portal</span>
-        </a>
-        <i class="bi bi-list toggle-sidebar-btn"></i>
-    </div><!-- End Logo -->
+  <div class="d-flex align-items-center justify-content-between">
+    <a href="{% url 'home'  %}" class="logo d-flex align-items-center">
+      <img src="{% static 'assets/img/logo.png' %}" alt="">
+      <span class="d-none d-lg-block">TCC Portal</span>
+    </a>
+    <i class="bi bi-list toggle-sidebar-btn"></i>
+  </div><!-- End Logo -->
 
-    <!-- TODO: make qs in all web search -->
-    <div class="search-bar">
-        <form class="search-form d-flex align-items-center" method="GET" action="#">
-            <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-            <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-        </form>
-    </div><!-- End Search Bar -->
+  <!-- TODO: make qs in all web search -->
 
-    <nav class="header-nav ms-auto">
-        <ul class="d-flex align-items-center">
+  <nav class="header-nav ms-auto">
+    <ul class="d-flex align-items-center">
+<li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
+            <i class="bi bi-search"></i>
+          </a>
+        </li><!-- End Search Icon-->
 
-            <li class="nav-item d-block d-lg-none">
-                <a class="nav-link nav-icon search-bar-toggle " href="#">
-                    <i class="bi bi-search"></i>
-                </a>
-            </li><!-- End Search Icon-->
+        {% if count_total %}
+        {% include "components/notification_list.html" %}
+        
+        {% endif %}
 
-            {% if request.user.is_authenticated %}
-            <li class="nav-item dropdown">
+        {% if items_on_hand %}
+        {% include "components/on_hand_dropdown.html" %}
+        
+        {% endif %}
 
-              {% if count_total %}
-              <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                <i class="bi bi-bell"></i>
-                <span class="badge bg-warning badge-number">{{ count_total }}</span>
-              </a><!-- End Notification Icon -->
-              {% endif %}
+        {% if request.session.cart %}
+        {% include "components/cart_dropdown.html" %}
+        
+        {% endif %}
 
-              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-                  <!-- <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a> -->
-                  {% include "components/notification_list.html" %}
+        <li class="nav-item dropdown pe-3">
 
-                {% if request.session.cart %}
-                
-                {% include "components/cart_dropdown.html" %}
+          {% if request.user.is_authenticated %}
+          {% include "components/profile_dropdown.html" %}
 
-                </ul><!-- End Messages Dropdown Items -->
-                {% endif %}
+          {% else %}
+          {% include "components/login_dropdown.html" %}
+          
+          {% endif %}
 
-                </li><!-- End Messages Nav -->
-
-                {% include "components/profile_dropdown.html" %}
-
-            {% else %}
-            {% include "components/register_dropdown.html" %}
-
-            {% endif %}
-
-
-        </ul>
-    </nav><!-- End Icons Navigation -->
+        </li><!-- End Profile Nav -->
+    </ul>
+  </nav><!-- End Icons Navigation -->
 
 </header><!-- End Header -->
 
 <div class="modal fade" id="logoutModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">ต้องการออกจากระบบ?</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">ยืนยันการออกจากระบบ</div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                <a href="{% url 'logout' %}" type="button" class="btn btn-danger">ออกจากกระบบ</a>
-            </div>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">ต้องการออกจากระบบ?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">ยืนยันการออกจากระบบ</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <a href="{% url 'logout' %}" type="button" class="btn btn-danger">ออกจากกระบบ</a>
+      </div>
     </div>
+  </div>
 </div>
