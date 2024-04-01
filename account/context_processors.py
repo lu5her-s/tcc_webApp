@@ -3,7 +3,7 @@ from assign.models import Assign
 from announce.models import Announce
 from document.models import Department, Document
 from inform.models import Inform
-from asset.models import ItemOnHand
+from parcel.models import ParcelRequest, RequestBillDetail, RequestItem
 
 
 def assign_not_accepted(request):
@@ -81,8 +81,12 @@ def count_total(request):
 
 def items_on_hand(request):
     try:
-        return {'items_on_hand': ItemOnHand.objects.filter(
-            user=request.user
-        )}
+        all_bill = ParcelRequest.objects.all()
+        items_on_hand = RequestItem.objects.filter(
+            bill__in=all_bill.filter(
+                user=request.user
+            ),
+        ).filter(bill__billdetail__paid_status=RequestBillDetail.PaidStatus.RECEIVED)
+        return {'items_on_hand': items_on_hand}
     except:
         return {'items_on_hand': None}

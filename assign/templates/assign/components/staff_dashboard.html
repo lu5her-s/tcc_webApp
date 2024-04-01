@@ -1,0 +1,51 @@
+<section class="section dashboard">
+  {% comment %}<div class="row">{% endcomment %}
+    <div class="row justify-content-center">
+      <!-- Inbox card -->
+      <div class="col-xxl-4 col-md-6">
+        <div class="card info-card bg-card">
+          <a href="#">
+            <div class="card-body">
+              <h5 class="card-title">งานที่มอบหมาย <span>| All</span></h5>
+              <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="bi bi-journal-arrow-up text-danger"></i>
+                </div>
+                <div class="ps-3">
+                  <h6>{{ assign_by_user.count }} งาน</h6>
+                  <span class="text-success small pt-1 fw-bold">{{ assign_by_user_not_accepted.count }} งาน</span> <span
+                    class="text-muted small pt-2 ps-1">ยังไม่ตอบรับ</span>
+
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <!-- End Inbox -->
+
+      <!-- Outbox card -->
+      <div class="col-xxl-4 col-md-6">
+        <div class="card info-card bg-card">
+          <a href="{% url 'document:outbox' %}">
+            <div class="card-body">
+              <h5 class="card-title">งานที่แล้วเสร็จ <span>| All</span></h5>
+              <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="bi bi-journal-check text-success"></i>
+                </div>
+                <div class="ps-3">
+                  <h6>{{ outbox.count }} งาน</h6>
+                  <span class="text-success small pt-1 fw-bold">{{ today_outbox.count }} งาน</span> <span
+                    class="text-muted small pt-2 ps-1">วันนี้</span>
+
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <!-- End Outbox -->
+
+    </div>
+</section>

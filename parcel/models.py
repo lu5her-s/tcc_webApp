@@ -175,7 +175,7 @@ class RequestBillDetail(models.Model):
         """
         Mark the approved date if approve_status update to APPROVE.
         """
-        if self.approve_status == RequestBillDetail.ApproveStatus.APPROVE:
+        if self.approve_status == RequestBillDetail.ApproveStatus.APPROVED:
             self.approve_date = datetime.now()
             self.approver = user
             self.save()
@@ -220,6 +220,138 @@ class RejectBillNote(models.Model):
 
     class Meta:
         verbose_name_plural = "Reject Parcel Request Bill Notes"
+
+    def __str__(self):
+        return f'{self.bill.pk}/{self.created_at.year+543} - {self.user}'
+
+
+# For Return Parcel
+class ParcelReturn(models.Model):
+
+    class Status(models.TextChoices):
+        DRAFT = 'DRAFT', 'ร่าง'
+        REQUEST = 'REQUEST', 'ขอคืน'
+        WAIT = 'WAIT', 'รอการตรวจสอบ'
+        DONE = 'DONE', 'ตรวจสอบเสร็จสิ้น'
+
+    status = models.CharField(
+        max_length=50,
+        choices=Status.choices,
+        default=Status.WAIT
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    stock_reciever = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True, related_name='stock_reciever')
+    department_return = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True, related_name='department_return')
+    is_done = models.BooleanField(default=False)
+    date_done = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Parcel Return Bills"
+
+    def __str__(self):
+        return f'{self.pk}/{self.created_at.year+543} - {self.user}'
+
+
+class ParcelReturnDetail(models.Model):
+    class ApproveStatus(models.TextChoices):
+        APPROVED = 'APPROVED', 'อนุมัติ'
+        WAIT = 'WAIT', 'รออนุมัติ'
+        UNAPPROVED = 'UNAPPROVED', 'ไม่อนุมัติ'
+
+    class ReturnCase(models.TextChoices):
+        BROKEN = 'BROKEN', 'เสีย'
+        REPORT = 'REPORT', 'แจ้งเตือน'
+        RETURN = 'RETURN', 'ส่งคืน'
+        NORMAL = 'NORMAL', 'ปกติ'
+        EXCEED = 'EXCEED', 'เกินกําหนด'
+        BORROW = 'BORROW', 'ยืม'
+
+    class ReturnStatus(models.TextChoices):
+        WAIT = 'WAIT', 'รอการตรวจสอบ'
+        RETURNED = 'RETURNED', 'ส่งคืนแล้ว'
+
+    # Define model fields
+    approve_date = models.DateTimeField(null=True, blank=True)
+    approve_status = models.CharField(
+        max_length=50,
+        choices=ApproveStatus.choices,
+        default=ApproveStatus.WAIT
+    )
+    approver = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    returned_at = models.DateTimeField(null=True, blank=True)
+    return_status = models.CharField(
+        max_length=50,
+        choices=ReturnStatus.choices,
+        null=True,
+        blank=True
+    )
+    receiver = models.ForeignKey(User, related_name='parcel_receiver', on_delete=models.CASCADE, null=True, blank=True)
+    request_case = models.CharField(
+        max_length=50,
+        choices=ReturnCase.choices,
+        null=True,
+        blank=True
+    )
+    item_type = models.CharField(max_length=50, null=True, blank=True, default='2 และ 4')
+    item_control = models.CharField(max_length=50, null=True, blank=True, default='ส.')
+    money_type = models.CharField(max_length=50, null=True, blank=True)
+    job_no = models.CharField(max_length=50, null=True, blank=True)
+    request_reference = models.CharField(max_length=50, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    return_approve_date = models.DateTimeField(null=True, blank=True)
+    return_no = models.CharField(max_length=10, null=True, blank=True)
+    controler = models.ForeignKey(User, related_name='bill_controler', on_delete=models.CASCADE, null=True, blank=True)
+
+    # Define model relationships
+    bill = models.OneToOneField(ParcelReturn, on_delete=models.CASCADE, related_name='billdetail')
+
+    class Meta:
+        verbose_name_plural = "Parcel Return Bill Details"
+
+    def __str__(self):
+        return f'Bill no: {self.bill.pk}/{self.bill.created_at.year+543} - Request User: {self.bill.user}'
+
+    def mark_as_approved(self, user):
+        """
+        Mark the approved date if approve_status update to APPROVE.
+        """
+        if self.approve_status == ParcelReturnDetail.ApproveStatus.APPROVED:
+            self.approve_date = datetime.now()
+            self.approver = user
+            self.save()
+
+    def mark_as_return(self, user):
+        """
+        Mark the paid date if approve_status update to PAID.
+        """
+        self.return_status = ParcelReturnDetail.ReturnStatus.RETURNED
+        self.returned_at = datetime.now()
+        self.receiver = user
+        self.save()
+
+    def add_return_approve_date(self):
+        self.return_approve_date = datetime.now()
+        self.save()
+
+
+class RejectReturnBillNote(models.Model):
+    bill = models.OneToOneField(ParcelReturn, on_delete=models.CASCADE)
+    note = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    verbose_name_plural = "Reject Parcel Return Bill Notes"
+
+    def __str__(self):
+        return f'{self.bill.pk}/{self.created_at.year+543} - {self.user}'
+
+class ParcelReturnBillNote(models.Model):
+    bill = models.OneToOneField(ParcelReturn, on_delete=models.CASCADE)
+    note = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    verbose_name_plural = "Parcel Return Bill Notes"
 
     def __str__(self):
         return f'{self.bill.pk}/{self.created_at.year+543} - {self.user}'

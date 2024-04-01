@@ -1,4 +1,5 @@
 import os
+from typing import Set
 from django.http.response import HttpResponseRedirect, JsonResponse
 from django.template.loader import render_to_string
 from django.db.models import Q
@@ -399,7 +400,7 @@ def approve_bill(request, pk):
         entered_pin = request.POST.get('pin')
         user = request.user
         if user.check_password(entered_pin):
-            # bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.APPROVED
+            bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.APPROVED
             bill.billdetail.mark_as_approved(user)
             # bill.billdetail.save()
             # bill.save()
@@ -584,7 +585,8 @@ class ItemOnHandListView(LoginRequiredMixin, ListView):
     template_name = 'parcel/item_on_hand_list.html'
 
     def get_queryset(self):
-        return ItemOnHand.objects.filter(user=self.request.user)
+        all_parcel_request = RequestItem.objects.filter(bill__user=self.request.user, bill__billdetail__paid_status=RequestBillDetail.PaidStatus.RECEIVED).select_related('bill__user')
+        return all_parcel_request
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -602,14 +604,17 @@ class ItemOnHandListView(LoginRequiredMixin, ListView):
 class ReturnParcelView(LoginRequiredMixin, View):
     def post(self, request):
         items = request.POST.getlist('return_item')
-        location_item = []
-        
+        print(items)
+        location_set: set = set()
         for item in items:
             item = get_object_or_404(StockItem, pk=item)
-            location_item.append({
-                'item': item,
-                'location': item.location
-            })
-            print(item)
-            print(item.location)
+            location_set.add(item.location)
+        
+        print(location_set)
+
+        for location in location_set:
+            print(f'>1Return to {location}')
+            item_in_location = ItemOnHand.objects.filter(item__location=location, user=request.user)
+            print(f'Item have {item_in_location}')
+
         return HttpResponse("success")

@@ -80,7 +80,7 @@ class StockItemForm(forms.ModelForm):
                 'multiple': True,
             }
         ),
-        label="ภาพสินทรัพย์",
+        label="ภาพพัสดุ",
         required=False,
     )
     class Meta:

@@ -5,7 +5,8 @@ from assign import views
 app_name = 'assign'
 
 urlpatterns = [
-    path('', views.AssignListView.as_view(), name='list'),
+    path('', views.AssignHomeView.as_view(), name='home'),
+    path('user/', views.AssignListView.as_view(), name='list'),
     path('staff/', views.AssignStaffListView.as_view(), name='staff-list'),
     path('<int:pk>/', views.AssignDetailView.as_view(), name='detail'),
     path('create/', views.AssignCreateView.as_view(), name='create'),

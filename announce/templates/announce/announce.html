@@ -8,7 +8,7 @@
 
 {% block content %}
 <div class="pagetitle">
-    <h1>All Announce List</h1>
+    <h1>ประชาสัมพันธ์/สั่งการ</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
@@ -29,7 +29,7 @@
 
                     <div class="card-body">
                         <h5 class="card-title">{{ title }} 
-                            <span>| List</span>
+                            <span>| ทั้งหมด {{ object_list|length }} เรื่อง</span>
                             <span>
                                 <a href="{% url 'announce:create' %}" class="align-right btn btn-success" style="float: right">
                                     <i class="bi bi-plus">
@@ -46,7 +46,7 @@
                                     <th scope="col">ประเภท</th>
                                     <th scope="col">สถานะ</th>
                                     <th scope="col">เรื่อง</th>
-                                    <th scope="col">เมื่อ</th>
+                                    <th scope="col">สร้างเมื่อ</th>
                                     <th scope="col">การดำเนินการ</th>
                                 </tr>
                             </thead>
@@ -58,11 +58,11 @@
                                     <td><a href="{% url 'announce:detail' pk=object.pk %}" class="text-primary">{{ object.title }}</a></td>
                                     <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }}</td>
                                     {% if not object in read and not object.author == request.user %}
-                                    <td><a href="{% url 'announce:detail' pk=object.pk %}"><span  class="badge bg-warning text-black">Not Read</span></a></td>
+                                    <td><a href="{% url 'announce:detail' pk=object.pk %}"><span  class="badge bg-warning text-black"><i class="bi bi-exclamation-circle"></i>&nbsp;ยังไม่อ่าน</span></a></td>
                                     {% elif object.author == request.user %}
-                                    <td><a href="{% url 'announce:detail' pk=object.pk %}"><span href="#" class="badge bg-secondary">Own</span></a></td>
+                                    <td><a href="{% url 'announce:detail' pk=object.pk %}"><span href="#" class="badge bg-secondary">เจ้าของเรื่อง</span></a></td>
                                     {% else %}
-                                    <td><a href="{% url 'announce:detail' pk=object.pk %}"><span href="#" class="badge bg-success">Accepted</span></a></td>
+                                    <td><a href="{% url 'announce:detail' pk=object.pk %}"><span href="#" class="badge bg-success">ตอบรับแล้ว</span></a></td>
                                     {% endif %}
                                 </tr>
                                 {% endfor %}

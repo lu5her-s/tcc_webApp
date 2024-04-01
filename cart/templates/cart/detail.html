@@ -4,107 +4,119 @@
 {% block title %}Cart{% endblock %}
 
 {% block content %}
-  <h1>Cart</h1>
-  <table class="table" id="dataTable">
-    <thead>
-      <tr>
-        <th style="width: 18%">Image</th>
-        <th>Categorie</th>
-        <th style="width: 15%">Quantity</th>
-        <th style="width: 10%;">Remove</th>
-      </tr>
-    </thead>
+<h1>ตะกร้า</h1>
+<table class="table" id="dataTable">
+  <thead>
+    <tr>
+      <th style="width: 18%">ภาพ</th>
+      <th>ประเภท</th>
+      <th style="width: 15%">จำนวน</th>
+      <th style="width: 10%;">นำออก</th>
+    </tr>
+  </thead>
 
-    <tbody>
-      {% for item in cart %}
-        <tr>
-          <td><img src="{{ item.category.image.url }}" width="100" height="100"></td>
-          <td>{{ item.category.name }}</td>
-          <td>
-            <!-- <p>{{ item.category.stockitem_set.first.location }}</p> -->
-            <form action="{% url 'cart:cart_add' item.category.id %}" method="post">
-              {% csrf_token %}
-              <input 
-                                                                      id="quantity-{{ item.category.id }}"
-                                                                      bs-data="{{ item.category.stockitem_set.first.location.id }}"
-                                                                      type="number"
-                                                                      name="quantity"
-                                                                      min="1"
-                                                                      max="{{ item.available_quantity }}"
-                                                                      value="{{ item.quantity }}"
-                                                                      style="width: 50px"
-                                                                      >
-              <input type="hidden" name="override" value="True">
-              <button class="btn btn-sm btn-primary" type="submit">Update</button>
-            </form>
-          </td>
-          <td>
-            <form action="{% url 'cart:cart_remove' item.category.id %}" method="post">
-              {% csrf_token %}
-              <button class="btn btn-sm btn-danger">Remove</button>
-            </form>
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <p>
-  {% with total_items=cart|length %}
-  {% if total_items > 0 %}
-  You have {{ total_items }} items in your cart.
-  
-  {% endif %}
-  {% endwith %}
-  </p>
+  <tbody>
+    {% for item in cart %}
+    <tr>
+      <td><img src="{{ item.category.image.url }}" width="100" height="100"></td>
+      <td>{{ item.category.name }}</td>
+      <td>
+        <!-- <p>{{ item.category.stockitem_set.first.location }}</p> -->
+        <form action="{% url 'cart:cart_add' item.category.id %}" method="post">
+          {% csrf_token %}
+          <input 
+                                                                  id="quantity-{{ item.category.id }}"
+                                                                  bs-data="{{ item.category.stockitem_set.first.location.id }}"
+                                                                  type="number"
+                                                                  name="quantity"
+                                                                  min="1"
+                                                                  max="{{ item.available_quantity }}"
+                                                                  value="{{ item.quantity }}"
+                                                                  style="width: 50px"
+                                                                  >
+                                                                  <input type="hidden" name="override" value="True">
+                                                                  <button class="btn btn-sm btn-primary" type="submit">Update</button>
+        </form>
+      </td>
+      <td>
+        <form action="{% url 'cart:cart_remove' item.category.id %}" method="post">
+          {% csrf_token %}
+          <button class="btn btn-sm btn-danger">Remove</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<p>
+{% with total_items=cart|length %}
+{% if total_items > 0 %}
+You have {{ total_items }} items in your cart.
+
+{% endif %}
+{% endwith %}
+</p>
 
 
-  {% if cart %}
-  
-  <p style="text-align: right">
-    <!-- <button id="checkout" class="btn btn-success">Checkout</button> -->
-    <form action="{% url 'parcel:bill_create' %}" method="post">
-      {% csrf_token %}
-      <input type="hidden" name="stock" value="">
-      <button onclick="setStock()" class="btn btn-success" style="float: right">สร้างใบเบิก</button>
-      <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-primary">เลือกพัสดุต่อ</a>
-    </form>
-    <!-- <button class="btn btn-primary" id="continueShopping">Continue Shopping</button> -->
-  </p>
-  {% endif %}
+{% if cart %}
 
-  <script>
-    $(document).ready(() => {
-      $("#dataTable").DataTable({
-        "fnDrawCallback" : function(oSettings) {
-          if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
-            $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
-          } else {
-            $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
-          }
-        },
-        "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
-      });
+<p style="text-align: right">
+<!-- <button id="checkout" class="btn btn-success">Checkout</button> -->
+<form action="{% url 'parcel:bill_create' %}" method="post">
+  {% csrf_token %}
+  <input type="hidden" name="stock" value="{{ stock }}">
+  <button onclick="setStock()" class="btn btn-success" style="float: right">สร้างใบเบิก</button>
+  <a onclick="continueShopping()" id="continueShopping" class="btn btn-primary">เลือกพัสดุต่อ</a>
+</form>
+<!-- <button class="btn btn-primary" id="continueShopping">Continue Shopping</button> -->
+</p>
+{% endif %}
+
+<script>
+  $(document).ready(() => {
+    $("#dataTable").DataTable({
+      "fnDrawCallback" : function(oSettings) {
+        if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+        } else {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+        }
+      },
+      "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
     });
+  });
 
 
-    // loop for get data from tag name quantity and store to var stocks
+  // loop for get data from tag name quantity and store to var stocks
 
 
-    function setStock() {
-      let category_first = $("[name='quantity']").first().attr('bs-data');
-      // console.log(category_first);
-      let stock = $("[name='stock']").val(category_first);
-      console.log(stock);
-      //let form = document.querySelector('form');
-      //form.submit();
-      let stocks = []
-      $("[name='quantity']").each((index, element) => {
-        stocks.push(element.getAttribute('bs-data'))
-      })
-      console.log(stocks);
-    }
+  function setStock() {
+    let category_first = $("[name='quantity']").first().attr('bs-data');
+    // console.log(category_first);
+    let stock = $("[name='stock']").val(category_first);
+    // console.log(stock);
+    //let form = document.querySelector('form');
+    //form.submit();
+    let stocks = []
+    $("[name='quantity']").each((index, element) => {
+      stocks.push(element.getAttribute('bs-data'))
+    })
+    // console.log(stocks);
+  }
 
+  $(document).ready(() => {
+    stock_pk = $("[name=quantity]").first().attr('bs-data');
+    $("[name='stock']").val(stock_pk);
+    console.log(stock_pk);
 
-    
-  </script>
+  });
+  function continueShopping() {
+    var stock_pk = $("[name=quantity]").first().attr('bs-data');
+    // console.log(stock_pk);
+    var url = '/parcel/select_item/' + stock_pk;
+    // console.log(url);
+    window.location.href = url
+  }
+
+</script>
 {% endblock %}

@@ -178,11 +178,16 @@
 
           <tr style="text-align: center">
             <td><u>{{ context.bill.parcelrequestnote.user.profile|default:"ไม่ระบุ" }}</u></td>
-            <td><u>{{ context.bill.parcelrequestnote.created_at|thaidate_short|default:"ไม่ระบุ" }}</u></td>
+            {% if context.bill.parcelrequestnote.created_at %}
+            <td><u>{{ context.bill.parcelrequestnote.created_at|thaidate_short }}</u></td>
+            {% endif %}
 
             <!-- FIXIT: add signature -->
             <td><u>{{ context.bill.user.profile }}</u></td>
+            {% if context.bill.created_at %}
             <td><u>{{ context.bill.created_at|thaidate_short }}</u></td>
+            
+            {% endif %}
           </tr>
 
           <tr style="text-align: center">
@@ -207,7 +212,10 @@
 
           <tr style="text-align: center">
             <td><u>{{ context.bill_detail.approver.profile }}</u></td>
+            {% if context.bill_detail.approve_date %}
             <td><u>{{ context.bill_detail.approve_date|thaidate_short }}</u></td>
+            
+            {% endif %}
 
             <!-- FIXIT: add signature -->
             {% if context.bill_detail.receiver %}
@@ -215,7 +223,10 @@
             {% else %}
             <td><u>{{ context.bill.user.profile }}</u></td>
             {% endif %}
+            {% if context.bill_detail.received_at %}
             <td><u>{{ context.bill_detail.received_at|thaidate_short }}</u></td>
+            
+            {% endif %}
           </tr>
 
           <tr style="text-align: center">
@@ -232,7 +243,9 @@
 
           <tr style="text-align: center">
             <td><u>{{ context.bill_detail.paider.profile }}</u></td>
+            {% if context.bill_detail.paid_at %}
             <td><u>{{ context.bill_detail.paid_at|thaidate_short }}</u></td>
+            {% endif %}
           </tr>
 
           <tr style="text-align: center">

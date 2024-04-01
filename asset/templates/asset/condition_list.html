@@ -73,7 +73,11 @@
                                     </td>
                                     <td>{{ object.serial }}</td>
                                     <td>{{ object.get_status_display }}</td>
+                                    {% if object.location_install %}
+                                    <td>{{ object.location_install.name }}</td>
+                                    {% else %}
                                     <td>{{ object.location.name }}</td>
+                                    {% endif %}
                                     <td>
                                         <a href="{% url 'asset:network_list' pk=object.network.pk %}">
                                             {{ object.network.ip_addr }}

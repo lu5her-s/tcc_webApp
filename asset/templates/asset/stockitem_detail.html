@@ -112,6 +112,13 @@
                   <td>{{ object.get_status_display }}</td>
                 </tr>
 
+                {% if object.location_install %}
+                <tr>
+                  <th>สถานที่ติดตั้ง</th>
+                  <td>{{ object.location_install.name }}</td>
+                </tr>
+                {% endif %}
+
               </table>
 
 

@@ -108,8 +108,13 @@
 
                 <tr>
                   <th>วันที่ทำรายการ</th>
-                  <td>{{ bill.created_at|thaidate }} 
+                  <td>
+                    {% if bill.created_at %}
+                    {{ bill.created_at|thaidate }} 
                     เวลา {{ bill.created_at|date:"H:i" }} น.
+                    {% else %}
+                    -
+                    {% endif %}
                   </td>
                 </tr>
 
@@ -120,7 +125,14 @@
                 </tr>
                 <tr>
                   <th>วันที่ขออนุมัติ</th>
-                  <td>{{ bill.billdetail.request_approve_date|thaidate }} เวลา {{ bill.billdetail.request_approve_date|date:"H:i" }} น.</td>
+                  <td>
+                    {% if bill.billdetail.request_approve_date %}
+                    {{ bill.billdetail.request_approve_date|thaidate }} เวลา {{ bill.billdetail.request_approve_date|date:"H:i" }} น.
+                    
+                    {% else %}
+                    -
+                    {% endif %}
+                  </td>
                 </tr>
                 {% endif %}
 

@@ -14,6 +14,7 @@ from django.views.generic import (
     DetailView,
     UpdateView,
     DeleteView,
+    TemplateView
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models           import Q
@@ -28,6 +29,24 @@ from assign.models import (
     )
 
 # Create your views here.
+
+class AssignHomeView(LoginRequiredMixin, TemplateView):
+    login_url = reverse_lazy('login')
+    template_name = 'assign/home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Home'
+        assign_to_user = Assign.objects.filter(assigned_to=self.request.user.profile)
+        context['assign_to_user'] = assign_to_user
+        context['assign_to_user_not_accepted'] = assign_to_user.filter(accepted=False)
+        assign_by_user = Assign.objects.filter(author=self.request.user)
+        context['assign_by_user'] = assign_by_user
+        context['assign_by_user_not_accepted'] = assign_by_user.filter(accepted=False)
+        context['assign_by_user_done'] = assign_by_user.filter(accepted=True)
+
+        return context
+
 
 class AssignStaffListView(LoginRequiredMixin, ListView):
     login_url     = reverse_lazy('login')

@@ -51,7 +51,7 @@ class AnnounceListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context          = super(AnnounceListView, self).get_context_data(**kwargs)
         context['read']  = Announce.objects.filter(reads__id=self.request.user.id)
-        context['title'] = "ประชาสัมพันธ์"
+        context['title'] = "ประชาสัมพันธ์/สั่งการ"
         return context
 
     def get_queryset(self, **kwargs):
