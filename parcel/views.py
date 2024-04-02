@@ -235,6 +235,7 @@ class BillCreateView(LoginRequiredMixin, View):
 
 class BillDetailView(LoginRequiredMixin, DetailView):
     template_name = 'parcel/bill_detail2.html'
+    # template_name = 'parcel/detail.html'
     model = ParcelRequest
 
     def get_context_data(self, **kwargs):
@@ -283,16 +284,23 @@ class BillDetailView(LoginRequiredMixin, DetailView):
 #         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
 
 
-def parcel_list(request):
-    items = RequestItem.objects.filter(
-        bill__user=request.user,
-        bill__billdetail__paid_status=RequestBillDetail.PaidStatus.RECEIVED
-    ).select_related('bill__user')
-    context = {
-        'object_list': items,
-        'title': 'Parcel List'
-    }
-    return render(request, 'parcel/parcel_list.html', context)
+class ParcelListView(ListView):
+    model = RequestItem
+    template_name = 'parcel/parcel_list.html'
+    context_object_name = 'object_list'
+
+    def get_queryset(self):
+        return RequestItem.objects.filter(
+            bill__user=self.request.user,
+            bill__billdetail__paid_status=RequestBillDetail.PaidStatus.RECEIVED
+        ).select_related('bill__user')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Parcel List'
+        context['replace_item'] = StockItem.objects.all().exclude(id__in=self.get_queryset())
+        context['locations'] = Department.objects.all().order_by('name')
+        return context
 
 
 # TODO: refactor and make set item to form submit all in form save all[template]
@@ -513,15 +521,17 @@ class SetItemLocationView(LoginRequiredMixin, View):
         user = request.user
         if user.check_password(pin):
             item_pk = request.POST.get('item_pk')
-            item = StockItem.objects.get(pk=item_pk)
             location = request.POST.get('location')
+            item = StockItem.objects.get(pk=item_pk)
             location = get_object_or_404(Department, pk=location)
             item.location = location
             item.status = StockItem.Status.IN_USE
+            item.itenonhand.is_done = True
+            item.itemonhand.save()
             item.save()
 
             # create ItemHistory
-            description = f'{item.name} set in {location}'
+            description = f'{item.item_name} set in {location}'
             ItemHistory.objects.create(
                 item=item,
                 user=user,
@@ -551,6 +561,8 @@ class ReplaceItemLocationView(LoginRequiredMixin, View):
             new_item = get_object_or_404(StockItem, pk=new_item)
             new_item.location = location
             new_item.status = StockItem.Status.IN_USE
+            new_item.itemonhand.is_done = True
+            new_item.itemonhand.save()
             new_item.save()
 
             # create ItemHistory for this
@@ -611,10 +623,14 @@ class ReturnParcelView(LoginRequiredMixin, View):
             location_set.add(item.location)
         
         print(location_set)
+        item_location = ItemOnHand.objects.filter(item__location__in=location_set)
+        print(f'\n{item_location} -- {item_location.count()}\n')
 
         for location in location_set:
             print(f'>1Return to {location}')
-            item_in_location = ItemOnHand.objects.filter(item__location=location, user=request.user)
-            print(f'Item have {item_in_location}')
+            # item_in_location = ItemOnHand.objects.filter(item__location=location, user=request.user)
+            # print(f'Item have {item_in_location}--{item_in_location.count()}')
+            item = item_location.filter(item__location=location)
+            print(f'{item} -- {item.count()}')
 
         return HttpResponse("success")

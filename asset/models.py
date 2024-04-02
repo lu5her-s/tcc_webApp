@@ -152,7 +152,7 @@ class ItemLocation(models.Model):
 class ItemOnHand(models.Model):
     """ItemOnHand."""
 
-    item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
+    item = models.OneToOneField(StockItem, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     is_done = models.BooleanField(default=False)

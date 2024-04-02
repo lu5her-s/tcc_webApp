@@ -79,12 +79,16 @@ Item On Hand List
                          class="btn btn-sm btn-warning">
                         ทดแทน
                       </a>
+
+                      <td style="width: 10%;">
+                        <input type="checkbox" class="form-check-input" name="return_item" value="{{ item.item.pk }}">
+                      </td>
                       {% else %}
                       <p><i class="bi bi-check-circle text-success"></i> ติดตั้งแล้ว</p>
+                      <td style="width: 10%;">
+                        <input type="checkbox" class="form-check-input" name="return_item" value="{{ item.item.pk }}" disabled>
+                      </td>
                       {% endif %}
-                    </td>
-                    <td style="width: 10%;">
-                      <input type="checkbox" class="form-check-input" name="return_item" value="{{ item.item.pk }}">
                     </td>
                   </tr>
                   {% endfor %}
