@@ -237,7 +237,7 @@ class ParcelReturn(models.Model):
     status = models.CharField(
         max_length=50,
         choices=Status.choices,
-        default=Status.WAIT
+        default=Status.DRAFT
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -261,12 +261,12 @@ class ParcelReturnDetail(models.Model):
         UNAPPROVED = 'UNAPPROVED', 'ไม่อนุมัติ'
 
     class ReturnCase(models.TextChoices):
-        BROKEN = 'BROKEN', 'เสีย'
-        REPORT = 'REPORT', 'แจ้งเตือน'
-        RETURN = 'RETURN', 'ส่งคืน'
-        NORMAL = 'NORMAL', 'ปกติ'
-        EXCEED = 'EXCEED', 'เกินกําหนด'
-        BORROW = 'BORROW', 'ยืม'
+        UWT = 'Wear and tear', 'ใช้ในราชการไม่ได้เนื่องจากชำรุดตามสภาพ'
+        UAI = 'Investigation report', 'ใช้ในราชการไม่ได้ตามรายงานการสอบสวน'
+        UCD = 'Compensation', 'ใช้ในราชการไม่ได้ซึ่งต้องชดใช้ค่าเสียหาย'
+        S = 'Serviceable', 'ใช้ในราชการได้'
+        E = 'Exess', 'เกินอัตรา'
+        L = 'On loan', 'ยืม'
 
     class ReturnStatus(models.TextChoices):
         WAIT = 'WAIT', 'รอการตรวจสอบ'
@@ -288,7 +288,7 @@ class ParcelReturnDetail(models.Model):
         blank=True
     )
     receiver = models.ForeignKey(User, related_name='parcel_receiver', on_delete=models.CASCADE, null=True, blank=True)
-    request_case = models.CharField(
+    return_case = models.CharField(
         max_length=50,
         choices=ReturnCase.choices,
         null=True,
@@ -355,3 +355,13 @@ class ParcelReturnBillNote(models.Model):
 
     def __str__(self):
         return f'{self.bill.pk}/{self.created_at.year+543} - {self.user}'
+
+class ParcelReturnItem(models.Model):
+    bill = models.ForeignKey(ParcelReturn, on_delete=models.CASCADE, related_name='return_bill')
+    item = models.ForeignKey(StockItem, on_delete=models.CASCADE, related_name='return_item')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    verbose_name_plural = "Parcel Return Items"
+
+    def __str__(self):
+        return f'{self.bill.pk}/{self.created_at.year+543} - {self.item}'

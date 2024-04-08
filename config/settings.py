@@ -115,7 +115,8 @@ TEMPLATES = [
                 'account.context_processors.new_inform',
 
                 'account.context_processors.count_total',
-                'account.context_processors.items_on_hand',
+                # 'account.context_processors.items_on_hand',
+                'parcel.context_processors.items_on_hand',
             ],
         },
     },

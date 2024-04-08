@@ -1,5 +1,16 @@
 from django.contrib import admin
-from .models import ParcelRequest, RequestItem, RequestBillDetail, ParcelRequestNote, RejectBillNote
+from .models import (
+    ParcelRequest,
+    RequestItem,
+    RequestBillDetail,
+    ParcelRequestNote,
+    RejectBillNote,
+    ParcelReturn,
+    ParcelReturnItem,
+    ParcelReturnDetail,
+    ParcelReturnBillNote,
+    RejectReturnBillNote,
+)
 
 # Register your models here.
 
@@ -56,6 +67,57 @@ class ParcelRequestNoteAdmin(admin.ModelAdmin):
 
 @admin.register(RejectBillNote)
 class RejectBillNoteAdmin(admin.ModelAdmin):
+    list_filter = ('bill',)
+    search_fields = ('bill',)
+    list_display = ('bill', 'note')
+    raw_id_fields = ('bill', 'user')
+
+@admin.register(ParcelReturn)
+class ParcelReturnAdmin(admin.ModelAdmin):
+    search_fields = ('pk', 'user', 'created_at',)
+
+    def bill_no(self, obj):
+        return f'{obj.pk}/{obj.created_at.year+543}'
+
+    def stock(self, obj):
+        return obj.stock.name
+
+    # list_filter = ('user', 'created_at', 'stock')
+    list_display = ('bill_no', 'user', 'created_at', 'stock', 'status')
+
+@admin.register(ParcelReturnItem)
+class ParcelReturnItemAdmin(admin.ModelAdmin):
+    list_filter = ('bill', 'item',)
+    search_fields = ('bill', 'item',)
+
+    def bill_no(self, obj):
+        return f'{obj.bill.pk}/{obj.bill.created_at.year+543}'
+
+    list_display = ('bill_no', 'item')
+
+@admin.register(ParcelReturnDetail)
+class ParcelReturnDetailAdmin(admin.ModelAdmin):
+    # add stock to list filter
+    list_filter = ('bill', )
+    search_fields = ('bill',)
+
+    def bill_no(self, obj):
+        return f'{obj.bill.pk}/{obj.bill.created_at.year+543}'
+
+    def stock(self, obj):
+        return obj.bill.stock
+
+    list_display = ('bill_no', 'stock')
+
+@admin.register(ParcelReturnBillNote)
+class ParcelReturnBillNoteAdmin(admin.ModelAdmin):
+    list_filter = ('bill',)
+    search_fields = ('bill',)
+    list_display = ('bill', 'note')
+    raw_id_fields = ('bill', 'user')
+
+@admin.register(RejectReturnBillNote)
+class RejectReturnBillNoteAdmin(admin.ModelAdmin):
     list_filter = ('bill',)
     search_fields = ('bill',)
     list_display = ('bill', 'note')

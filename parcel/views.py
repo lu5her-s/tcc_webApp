@@ -27,6 +27,8 @@ from account.models import (
 from .models import (
     ParcelRequestNote,
     ParcelRequest,
+    ParcelReturn,
+    ParcelReturnItem,
     RejectBillNote,
     RequestBillDetail,
     RequestItem
@@ -587,6 +589,7 @@ class ReplaceItemLocationView(LoginRequiredMixin, View):
         return HttpResponse("Error")
 
 
+# TODO: RemoveItemView for trmove form location to on_hand
 class RemoveItemView(LoginRequiredMixin, View):
     def post(self, request, pk):
         pass
@@ -613,24 +616,32 @@ class ItemOnHandListView(LoginRequiredMixin, ListView):
         return context
 
 
-class ReturnParcelView(LoginRequiredMixin, View):
+class ReturnParcelCreateView(LoginRequiredMixin, View):
     def post(self, request):
         items = request.POST.getlist('return_item')
-        print(items)
-        location_set: set = set()
-        for item in items:
-            item = get_object_or_404(StockItem, pk=item)
-            location_set.add(item.location)
-        
-        print(location_set)
+        location_set = set(StockItem.objects.filter(pk__in=items).values_list('location', flat=True))
         item_location = ItemOnHand.objects.filter(item__location__in=location_set)
-        print(f'\n{item_location} -- {item_location.count()}\n')
 
         for location in location_set:
-            print(f'>1Return to {location}')
-            # item_in_location = ItemOnHand.objects.filter(item__location=location, user=request.user)
-            # print(f'Item have {item_in_location}--{item_in_location.count()}')
-            item = item_location.filter(item__location=location)
-            print(f'{item} -- {item.count()}')
+            items = item_location.filter(item__location=location)
+            return_parcel = ParcelReturn.objects.create(
+                stock=location,
+                user=request.user
+            )
+            # print(f'Stock : {location} --  Have {items.count()} items')
+            for item in items:
+                ParcelReturnItem.objects.create(
+                    return_parcel=return_parcel,
+                    item=item.item
+                )
+                # print(f' = {item} -- {item.item}')
 
-        return HttpResponse("success")
+        return redirect(reverse_lazy('parcel:item_on_hand_list'))
+
+
+class ParcelReturnDraftListView(LoginRequiredMixin, ListView):
+    model = ParcelReturn
+    template_name = 'parcel/parcel_return_draft_list.html'
+
+    def get_queryset(self):
+        return ParcelReturn.objects.filter(user=self.request.user, status=ParcelReturn.Status.DRAFT)
