@@ -8,7 +8,7 @@ Item On Hand List
 {% endblock title %}
 {% block content %}
 <div class="pagetitle">
-  <h1>รายการพัสดุที่รอดำเนินการ</h1>
+  <h1>รายการพัสดุที่เบิก</h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
@@ -60,42 +60,36 @@ Item On Hand List
 
                     <td style="width: 15%;">
                       {% if item.item.status == 'ON_HAND' %}
-                      <a href="#" 
-                         data-bs-toggle="modal"
-                         data-bs-target="#set_item"
-                         data-object="{{ item.item.item_name }} [{{ item.item.serial }}]"
-                         data-pk="{{ item.item.pk }}"
-                         id="set_item_btn"
-                         class="btn btn-sm btn-primary">
+                      <a href="#" data-bs-toggle="modal" data-bs-target="#set_item"
+                        data-object="{{ item.item.item_name }} [{{ item.item.serial }}]" data-pk="{{ item.item.pk }}"
+                        id="set_item_btn" class="btn btn-sm btn-primary">
                         ติดตั้ง
                       </a>
 
-                      <a href="#" 
-                         data-bs-toggle="modal"
-                         data-bs-target="#replace_item"
-                         data-object="{{ item.item.item_name }} [{{ item.item.serial }}]"
-                         data-pk="{{ item.item.pk }}"
-                         id="replace_item_btn"
-                         class="btn btn-sm btn-warning">
+                      <a href="#" data-bs-toggle="modal" data-bs-target="#replace_item"
+                        data-object="{{ item.item.item_name }} [{{ item.item.serial }}]" data-pk="{{ item.item.pk }}"
+                        id="replace_item_btn" class="btn btn-sm btn-warning">
                         ทดแทน
                       </a>
 
-                      <td style="width: 10%;">
-                        <input type="checkbox" class="form-check-input" name="return_item" value="{{ item.item.pk }}">
-                      </td>
-                      {% else %}
-                      <p><i class="bi bi-check-circle text-success"></i> ติดตั้งแล้ว</p>
-                      <td style="width: 10%;">
-                        <input type="checkbox" class="form-check-input" name="return_item" value="{{ item.item.pk }}" disabled>
-                      </td>
-                      {% endif %}
+                    <td style="width: 10%;">
+                      <input type="checkbox" class="form-check-input" name="return_item" value="{{ item.item.pk }}">
+                    </td>
+                    {% else %}
+                    <p><i class="bi bi-check-circle text-success"></i> ติดตั้งแล้ว</p>
+                    <td style="width: 10%;">
+                      <input type="checkbox" class="form-check-input" name="return_item" value="{{ item.item.pk }}"
+                        disabled>
+                    </td>
+                    {% endif %}
                     </td>
                   </tr>
                   {% endfor %}
 
                 </tbody>
               </table>
-              <a href="#" data-bs-toggle="modal" data-bs-target="#return_item_modal" class="btn btn-lg btn-danger float-end" style="display: none" id="return_item_btn">คืนพัสดุ</a>
+              <a href="#" data-bs-toggle="modal" data-bs-target="#return_item_modal"
+                class="btn btn-lg btn-danger float-end" style="display: none" id="return_item_btn">คืนพัสดุ</a>
             </form>
           </div>
         </div>
@@ -127,7 +121,7 @@ Item On Hand List
     });
 
     // check if any checkbox name return_item is checked show return_item_btn else hide
-    $('input[name="return_item"]').on('change', function() {
+    $('input[name="return_item"]').on('change', function () {
       if ($('input[name="return_item"]:checked').length > 0) {
         $('#return_item_btn').show();
       }
@@ -153,27 +147,9 @@ Item On Hand List
     });
   });
 
-</script>
-<script>
-  $(document).ready(function () {
-    $("select[name='replace_item']").select2({
-      width: "100%",
-      dropdownParent: $('#replace_item'),
-      placeholder: "เลือกพัสดุ",
-      allowClear: true,
-    });
-    $("select[name='location']").select2({
-      width: "100%",
-      dropdownParent: $('#set_item'),
-      placeholder: "เลือกสถานที่",
-      allowClear: true,
-    });
-  });
-
-function setReturn() {
+  function setReturn() {
     // send submit
     $('#return_item_form').submit();
-    $("#submit_btn").prop("disabled", true);
-}
+  }
 </script>
-{% endblock content %}
+{

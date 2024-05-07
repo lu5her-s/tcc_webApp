@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+{% block title %}
+Return Draft
+{% endblock title %}
+
+{% block content %}
+<div class="pagetitle">
+  <h1>รายการร่างใบส่งคืน</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'home' %}">Home</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'parcel:home' %}">Parcel Home</a>
+      </li>
+      <li class="breadcrumb-item active">Return Draft List</li>
+    </ol>
+  </nav>
+</div>
+<!-- End Page Title -->
+<section class="section profile">
+  <div class="row">
+    <div class="col-xl-12">
+      <!-- Recent Job -->
+      <div class="col-12">
+        <div class="card recent-sales overflow-auto">
+          <div class="card-body">
+            <h5 class="card-title">
+              {{ title }}
+              <span>| {{ request.user.profile }}</span>
+            </h5>
+            <br>
+              <table class="table table-hover" id="dataTable">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">ใบส่งคืน</th>
+                    <th style="width: 30%;">คลัง</th>
+                    <th style="width: 20%;">สร้างเมื่อ</th>
+                    <th style="width: 20%;">สถานะ</th>
+                    <th style="width: 10%;">...</th>
+                  </tr>
+                </thead>
+                <!-- object list -->
+                <tbody>
+                  {% for object in object_list %}
+                  <tr>
+                    <td>{{ object.pk }}/{{ object.created_at.year|thaiyear }}</td>
+                    <td>{{ object.stock }}</td>
+                    <td>{{ object.created_at|thaidate }}</td>
+                    <td>{{ object.get_status_display }}</td>
+                    <td>
+                      <a href="#" class="btn btn-sm btn-primary"><i class="bi bi-tools"></i></a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+          </div>
+        </div>
+      </div>
+      <!-- End Announce List -->
+      {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
+    </div>
+  </div>
+
+</section>
+<script>
+  $(document).ready(() => {
+    $("#dataTable").DataTable({
+      "fnDrawCallback": function (oSettings) {
+        if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+        } else {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+        }
+      },
+      "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+      order: [[0, 'desc']],
+    });
+
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    $("select[name='replace_item']").select2({
+      width: "100%",
+      dropdownParent: $('#replace_item'),
+      placeholder: "เลือกพัสดุ",
+      allowClear: true,
+    });
+    $("select[name='location']").select2({
+      width: "100%",
+      dropdownParent: $('#set_item'),
+      placeholder: "เลือกสถานที่",
+      allowClear: true,
+    });
+  });
+
+  function setReturn() {
+    // send submit
+    $('#return_item_form').submit();
+  }
+</script>
+{% endblock %}

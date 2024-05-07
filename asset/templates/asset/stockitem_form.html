@@ -118,6 +118,13 @@
                             </div>
 
                             <div class="row mb-3">
+                                <label for="{{ form.stock_control.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.stock_control.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.stock_control }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
                                 <label for="{{ form.images.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.images.label }}</label>
                                 <div class="col-md-8 col-lg-9">
                                     {{ form.images }}
@@ -132,9 +139,9 @@
                             {% comment %}</div>{% endcomment %}
 
                             <input 
-                                id="{{ form.location.name }}"
+                                id="{{ form.location_install.name }}"
                                 type="hidden" 
-                                name="{{ form.location.name }}" 
+                                name="{{ form.location_install.name }}" 
                                 value="{{ request.user.profile.department.pk }}"
                                 />
 

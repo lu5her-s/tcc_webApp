@@ -42,7 +42,7 @@
                                     <th scope="col" style="width: 20%">วันที่ขอเบิก</th>
                                     <th scope="col" style="width: 15%">การอนุมัติ</th>
                                     <th scope="col" style="width: 15%">การจ่าย</th>
-                                    <th scope="col" style="width: 15%"></th>
+                                    <th scope="col" style="width: 15%">...</th>
                                   </tr>
                             </thead>
                             <!-- object list -->
@@ -54,7 +54,7 @@
                                                 {{ object.bill.pk }}/{{ object.bill.created_at.year|thaiyear }}
                                             </a>
                                         </td>
-                                        <td>{{ object.category }}</td>
+                                        <td>{{ object.category }} - {{ object.item.item_name }}</td>
                                         <td>{{ object.bill.created_at|thaidate }}</td>
                                         <td>
                                             {% if object.bill.billdetail.approve_status %}
@@ -64,6 +64,8 @@
                                             {% endif %}
                                         </td>
                                         <td>{{ object.bill.billdetail.get_paid_status_display|default:'ยังไม่จ่าย' }}</td>
+                                        {% if object.item.status == "ON_HAND" %}
+                                        
                                         <td style="text-align: center;">
                                           <button class="btn btn-sm btn-primary"
                                                   data-bs-toggle="modal"
@@ -72,17 +74,33 @@
                                                   data-pk="{{ object.item.pk }}"
                                                   id="set_item_btn"
                                                   >
-                                                <i class="bi bi-gear"></i>
-                                            </button>
-                                            <a href="#" class="btn btn-sm btn-warning"
-                                              >
-                                              <i class="bi bi-tools"></i>
-                                            </a>
-                                            <a href="#" class="btn btn-sm btn-info"
-                                              >
-                                              <i class="bi bi-pencil"></i>
-                                            </a>
+                                                  <i class="bi bi-gear"></i>
+                                          </button>
+                                          <button class="btn btn-sm btn-warning"
+                                                  data-bs-toggle="modal"
+                                                  data-bs-target="#replace_item"
+                                                  data-object="{{ object.item.item_name }} [{{ object.item.serial }}]"
+                                                  data-pk="{{ object.item.pk }}"
+                                                  id="replace_item_btn"
+                                                  >
+                                                  <i class="bi bi-tools"></i>
+                                          </button>
+                                          <button class="btn btn-sm btn-info"
+                                                  data-bs-toggle="modal"
+                                                  data-bs-target="#detail_item"
+                                                  data-object="{{ object }}"
+                                                  id="detail_item_btn"
+                                                  >
+                                                  <i class="bi bi-pencil"></i>
+                                          </button>
                                         </td>
+                                        {% else %}
+                                        
+                                        <td style="text-align: center;">
+                                          <i class="bi bi-check-circle" style="color: green;">&nbsp;ติดตั้งแล้ว</i>
+                                        </td>
+                                        {% endif %}
+                                        
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -96,6 +114,7 @@
     </div>
     <!-- Modal -->
     {% include "parcel/components/modal_set_item.html" %}
+    {% include "parcel/components/modal_replace_item.html" %}
 </section>
 <script>
   $(document).ready(() => {

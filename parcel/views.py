@@ -1,6 +1,13 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# File              : views.py
+# Author            : lu5her <lu5her@mail>
+# Date              : Thu Apr, 18 2024, 20:38 109
+# Last Modified Date: Thu Apr, 18 2024, 20:39 109
+# Last Modified By  : lu5her <lu5her@mail>
+# -----
 import os
-from typing import Set
-from django.http.response import HttpResponseRedirect, JsonResponse
+from itertools import chain
 from django.template.loader import render_to_string
 from django.db.models import Q
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
@@ -28,6 +35,7 @@ from .models import (
     ParcelRequestNote,
     ParcelRequest,
     ParcelReturn,
+    ParcelReturnDetail,
     ParcelReturnItem,
     RejectBillNote,
     RequestBillDetail,
@@ -49,6 +57,7 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
         all_bill = ParcelRequest.objects.all()
         context['all_bill'] = all_bill.filter(user=self.request.user)
         context['wait_approve'] = all_bill.filter(billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT)
+        context['bill_draft'] = all_bill.filter(status=ParcelRequest.RequestStatus.DRAFT)
         context['parcel_list'] = RequestItem.objects.filter(
             bill__in=all_bill.filter(
                 user=self.request.user
@@ -88,6 +97,17 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
                 user=self.request.user
             ),
         ).filter(bill__billdetail__paid_status=RequestBillDetail.PaidStatus.RECEIVED)
+        
+        # for return parcel bill
+        all_return = ParcelReturn.objects.filter(user=self.request.user)
+        context['all_return'] = all_return
+        context['return_draft'] = all_return.filter(status=ParcelReturn.Status.DRAFT)
+        context['return_wait_approve'] = ParcelReturnDetail.objects.filter(
+            bill__in=all_return.filter(
+                user=self.request.user
+            ),
+            approve_status=RequestBillDetail.ApproveStatus.WAIT
+        )
         return context
 
 
@@ -195,7 +215,7 @@ class SelecItemView(LoginRequiredMixin, View):
     def get(self, request, pk):
         stock = get_object_or_404(Department, pk=pk)
         items = StockItem.objects.filter(
-            location=stock,
+            stock_control=stock,
             status=StockItem.Status.AVAILABLE
         )
         categories = Category.objects.filter(stockitem__in=items).distinct()
@@ -324,12 +344,12 @@ def set_serial_item(request, pk):
     return HttpResponse("Error")
 
 
-def request_approve(request, pk):
-    bill = get_object_or_404(ParcelRequest, pk=pk)
-    bill.status = ParcelRequest.RequestStatus.IN_PROGRESS
-    bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.WAIT
-    bill.save()
-    return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+# def request_approve(request, pk):
+#     bill = get_object_or_404(ParcelRequest, pk=pk)
+#     bill.status = ParcelRequest.RequestStatus.IN_PROGRESS
+#     bill.billdetail.approve_status = RequestBillDetail.ApproveStatus.WAIT
+#     bill.save()
+#     return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
 
 
 # def approve_bill(request, pk):
@@ -458,17 +478,17 @@ class PaidItemView(LoginRequiredMixin, DetailView):
         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': bill.pk}))
 
 
-class PaidItemView(View):
-    def post(self, request, pk):
-        bill = get_object_or_404(ParcelRequest, pk=pk)
-        entered_pin = request.POST.get('pin')
-        user = request.user
-
-        if user.check_password(entered_pin):
-            bill.billdetail.mark_as_paid(user)
-            RequestItem.objects.filter(bill=bill).update(paid=True)
-
-        return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
+# class PaidItemView(View):
+#     def post(self, request, pk):
+#         bill = get_object_or_404(ParcelRequest, pk=pk)
+#         entered_pin = request.POST.get('pin')
+#         user = request.user
+#
+#         if user.check_password(entered_pin):
+#             bill.billdetail.mark_as_paid(user)
+#             RequestItem.objects.filter(bill=bill).update(paid=True)
+#
+#         return redirect(reverse_lazy('parcel:bill_detail', kwargs={'pk': pk}))
 
 
 
@@ -526,7 +546,7 @@ class SetItemLocationView(LoginRequiredMixin, View):
             location = request.POST.get('location')
             item = StockItem.objects.get(pk=item_pk)
             location = get_object_or_404(Department, pk=location)
-            item.location = location
+            item.location_install = location
             item.status = StockItem.Status.IN_USE
             item.itenonhand.is_done = True
             item.itemonhand.save()
@@ -554,14 +574,14 @@ class ReplaceItemLocationView(LoginRequiredMixin, View):
         if user.check_password(pin):
             replace_item = request.POST.get('replace_item')
             replace_item = get_object_or_404(StockItem, pk=replace_item)
-            location = replace_item.location
-            replace_item.location = None
+            location = replace_item.location_install
+            replace_item.location_install = None
             replace_item.status = StockItem.Status.ON_HAND
             replace_item.save()
 
             new_item = request.POST.get('new_item')
             new_item = get_object_or_404(StockItem, pk=new_item)
-            new_item.location = location
+            new_item.location_install = location
             new_item.status = StockItem.Status.IN_USE
             new_item.itemonhand.is_done = True
             new_item.itemonhand.save()
@@ -589,19 +609,14 @@ class ReplaceItemLocationView(LoginRequiredMixin, View):
         return HttpResponse("Error")
 
 
-# TODO: RemoveItemView for trmove form location to on_hand
-class RemoveItemView(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        pass
-
-
 class ItemOnHandListView(LoginRequiredMixin, ListView):
-    model = ItemOnHand
     template_name = 'parcel/item_on_hand_list.html'
 
     def get_queryset(self):
-        all_parcel_request = RequestItem.objects.filter(bill__user=self.request.user, bill__billdetail__paid_status=RequestBillDetail.PaidStatus.RECEIVED).select_related('bill__user')
-        return all_parcel_request
+        # all_parcel_request = RequestItem.objects.filter(bill__user=self.request.user, bill__billdetail__paid_status=RequestBillDetail.PaidStatus.RECEIVED).select_related('bill__user')
+        on_hand = ItemOnHand.objects.filter(user=self.request.user, item__status=StockItem.Status.ON_HAND)
+        # stock_on_hand = StockItem.objects.filter(status=StockItem.Status.ON_HAND, itemonhand__user=self.request.user)
+        return on_hand
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -618,25 +633,40 @@ class ItemOnHandListView(LoginRequiredMixin, ListView):
 
 class ReturnParcelCreateView(LoginRequiredMixin, View):
     def post(self, request):
-        items = request.POST.getlist('return_item')
-        location_set = set(StockItem.objects.filter(pk__in=items).values_list('location', flat=True))
-        item_location = ItemOnHand.objects.filter(item__location__in=location_set)
+        # items = request.POST.getlist('return_item')
+        items = StockItem.objects.filter(pk__in=request.POST.getlist('return_item'))
+        # location_set = set(StockItem.objects.filter(pk__in=items).values_list('location', flat=True))
+        location_set = items.values_list('location', flat=True).distinct()
+        # item_location = ItemOnHand.objects.filter(item__location__in=location_set)
+        item_location = ItemOnHand.objects.prefetch_related('item').filter(item__location_install__in=location_set, user=request.user)
 
         for location in location_set:
-            items = item_location.filter(item__location=location)
+            items_on = item_location.filter(item__location_install=location)
+            stock = Department.objects.get(pk=location)
             return_parcel = ParcelReturn.objects.create(
-                stock=location,
+                stock=stock,
                 user=request.user
             )
-            # print(f'Stock : {location} --  Have {items.count()} items')
-            for item in items:
+            # print(f'Stock : {stock} --  Have {items.count()} items')
+            # ParcelReturnItem.objects.bulk_create([
+            #     ParcelReturnItem(
+            #         bill=return_parcel,
+            #         item=item.item
+            #     )
+            #     for item in items
+            # ])
+            for item in items_on:
                 ParcelReturnItem.objects.create(
-                    return_parcel=return_parcel,
+                    bill=return_parcel,
                     item=item.item
                 )
-                # print(f' = {item} -- {item.item}')
+                item.item.status = StockItem.Status.CHECK
+                item.item.save()
+            # StockItem.objects.filter(pk__in=items.values_list('pk', flat=True)).update(status=StockItem.Status.CHECK)
 
-        return redirect(reverse_lazy('parcel:item_on_hand_list'))
+                # print(f' = {item} -- {item.item.status}')
+
+        return redirect(reverse_lazy('parcel:draft_list'))
 
 
 class ParcelReturnDraftListView(LoginRequiredMixin, ListView):
@@ -645,3 +675,45 @@ class ParcelReturnDraftListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return ParcelReturn.objects.filter(user=self.request.user, status=ParcelReturn.Status.DRAFT)
+
+
+class AllDraftListView(LoginRequiredMixin, View):
+    template_name = 'parcel/all_draft_list.html'
+
+    def get_queryset(self):
+        request_bill = ParcelRequest.objects.filter(user=self.request.user, status=ParcelRequest.RequestStatus.DRAFT)
+        return_bill = ParcelReturn.objects.filter(user=self.request.user, status=ParcelReturn.Status.DRAFT)
+        all_draft = list(chain(request_bill, return_bill))
+        return all_draft
+
+
+# for render location list for select to get item remove from this
+class LocationListView(LoginRequiredMixin, ListView):
+    model = Department
+    template_name = 'parcel/location_list.html'
+
+
+class ItemOnLocationView(LoginRequiredMixin, View):
+    template_name = 'parcel/remove_item.html'
+
+    def get(self, request, pk):
+        context = {
+            'object_list' : StockItem.objects.filter(location_install__pk=pk),
+            'location' : Department.objects.get(pk=pk)
+        }
+        return render(self.request, self.template_name, context)
+
+
+class RemoveItemView(LoginRequiredMixin, View):
+
+    def post(self, request):
+            remove_items = request.POST.getlist('remove_item')
+            items_to_create = []
+            for item_id in remove_items:
+                items_to_create.append(ItemOnHand(item_id=item_id, user=request.user))
+
+            ItemOnHand.objects.bulk_create(items_to_create)
+
+            StockItem.objects.filter(pk__in=remove_items).update(status=StockItem.Status.ON_HAND, location_install=None)
+
+            return redirect(reverse_lazy('parcel:location_list'))

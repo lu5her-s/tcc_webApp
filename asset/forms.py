@@ -3,9 +3,11 @@
 # File              : forms.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Wed Dec, 21 2022, 01:12 355
-# Last Modified Date: Thu Dec, 22 2022, 16:41 356
+# Last Modified Date: Fri Apr, 19 2024, 16:15 110
 # Last Modified By  : lu5her <lu5her@mail>
 from django import forms
+
+from account.models import Department
 
 from asset.models import (
     Category,
@@ -97,7 +99,8 @@ class StockItemForm(forms.ModelForm):
             'supplier',
             'price',
             'network',
-            'location',
+            'location_install',
+            'stock_control',
             'images',
         )
 
@@ -112,7 +115,8 @@ class StockItemForm(forms.ModelForm):
             'price':        'ราคา',
             'supplier':     'ผู้จัดจำหน่าย',
             'network':      'เครือข่าย',
-            'location':     'สถานที่ติดตั้ง',
+            'location_install':     'สถานที่ติดตั้ง',
+            'stock_control': 'คลัง',
         }
 
         widgets = {
@@ -127,5 +131,10 @@ class StockItemForm(forms.ModelForm):
             'supplier':     forms.Select(attrs={'class': 'form-select'}),
             'network':      forms.Select(attrs={'class': 'form-select'}),
             # 'location':     forms.Select(attrs={'class': 'form-select'}),
-            'location':     forms.HiddenInput(attrs={'class': 'form-select'}),
+            'location_install':     forms.HiddenInput(attrs={'class': 'form-select'}),
+            'stock_control': forms.Select(attrs={'class': 'form-select'}),
         }
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields['stock_control'].choices = [(c.id, c.name) for c in Department.objects.filter(name__startswith='คลัง')]

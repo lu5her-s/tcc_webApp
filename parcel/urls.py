@@ -24,6 +24,10 @@ urlpatterns = [
     path('replace_item/', views.ReplaceItemLocationView.as_view(), name='replace_item'),
 
     path('return_parcel/create', views.ReturnParcelCreateView.as_view(), name='return_parcel_create'),
+    path('draft_list/', views.ParcelReturnDraftListView.as_view(), name='draft_list'),
+    path('location_list/', views.LocationListView.as_view(), name='location_list',),
+    path('item_on_location/<int:pk>/', views.ItemOnLocationView.as_view(), name='item_on_location',),
+    path('remove_item/', views.RemoveItemView.as_view(), name='remove_item'),
 
     # manager ulrs
     path('manager/list/', views.BillManagerListView.as_view(), name='manager_list'),

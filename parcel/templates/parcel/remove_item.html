@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Request Stock Bill{% endblock title %}
+
+{% block content %}
+<div class="pagetitle">
+  <h1>Select Item in {{ stock }}</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'parcel:home' %}">Parcel Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'parcel:select_stock' %}">Select Stock</a></li>
+            <li class="breadcrumb-item active">{{ location.name }}</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section profile">
+  <div class="row">
+
+    <div class="col-xl-12">
+
+      <!-- Recent Job -->
+      <div class="col-12">
+        <div class="card recent-sales overflow-auto">
+
+          <div class="card-body">
+            <h5 class="card-title">{{ title }}
+              <span>เลือกพัสดุที่ต้องการรื้อถอน | {{ request.user.profile }}</span>
+            </h5>
+
+            <br>
+
+            <form method="POST" id="remove_item_form" action="{% url 'parcel:remove_item' %}">
+              {% csrf_token %}
+              <table class="table table-hover" id="dataTable">
+                <thead>
+                  <tr>
+                    <th scope="col">พัสดุ</th>
+                    <th scope="col">หมายเลข</th>
+                    <th scope="col">คลังควบคุม</th>
+                    <th scope="col" style="width: 10%">...</th>
+                  </tr>
+                </thead>
+                <!-- object list -->
+                <tbody>
+                  {% for object in object_list %}
+                  <tr>
+                    <td>{{ object.item_name }}</td>
+                    <td>{{ object.serial }}</td>
+                    <td>{{ object.stock_control }}</td>
+                    <td style="width: 10%;">
+                      <input type="checkbox" class="form-check-input" name="remove_item" value="{{ object.pk }}">
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <a href="#" data-bs-toggle="modal" data-bs-target="#remove_item_modal" class="btn btn-lg btn-danger float-end" style="display: none" id="remove_item_btn">รื้อถอนพัสดุ</a>
+            </form>
+
+          </div>
+
+        </div>
+      </div><!-- End Announce List -->
+      {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
+
+    </div>
+  </div>
+  {% include "parcel/components/modal_remove_parcel.html" %}
+</section>
+
+<script>
+  $(document).ready(() => {
+    $("#dataTable").DataTable({
+      "fnDrawCallback": function (oSettings) {
+        if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+        } else {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+        }
+      },
+      "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    });
+  });
+  $('input[name="remove_item"]').on('change', function() {
+    if ($('input[name="remove_item"]:checked').length > 0) {
+      $('#remove_item_btn').show();
+    }
+    else {
+      $('#remove_item_btn').hide();
+    }
+  });
+  function setRemove() {
+    // send submit
+    $('#remove_item_form').submit();
+    $("#submit_btn").prop("disabled", true);
+}
+
+</script>
+
+{% endblock content %}

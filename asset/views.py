@@ -1,5 +1,12 @@
-from django.contrib.auth.models import Permission
-from django.contrib.auth.views import HttpResponseRedirect, reverse_lazy
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# File              : views.py
+# Author            : lu5her <lu5her@mail>
+# Date              : Fri Apr, 19 2024, 16:36 110
+# Last Modified Date: Fri Apr, 19 2024, 16:36 110
+# Last Modified By  : lu5her <lu5her@mail>
+# -----
+from django.contrib.auth.views import reverse_lazy
 from django.shortcuts import (
     HttpResponse,
     get_list_or_404,
@@ -153,7 +160,7 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
             stockitem = form.save(commit=False)
             stockitem.save()
 
-            if not self.request.user.groups.filter(name="Stock").exists():
+            if not self.request.user.groups.filter(name="StockManager").exists():
                 stockitem.status = StockItem.Status.IN_USE
                 stockitem.save()
 
@@ -171,7 +178,7 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
         # return super().post(request, *args, **kwargs)
 
 
-class StockStockItemListView(LoginRequiredMixin, ListView):
+class StockItemListView(LoginRequiredMixin, ListView):
     """
     StockStockItemListView.
     show list asset stock
@@ -182,7 +189,7 @@ class StockStockItemListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         # return stock item filter by department = user profile department
-        return StockItem.objects.filter(department=self.request.user.profile.department)
+        return StockItem.objects.filter(stock_control=self.request.user.profile.department, status=StockItem.Status.AVAILABLE)
 
 
 # DONE: make list separate from stock asset name from user profile department
@@ -246,7 +253,7 @@ class StockManageHomeView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['stockitems'] = StockItem.objects.filter(
-            location=self.request.user.profile.department
+            stock_control=self.request.user.profile.department
         )
         return context
 
@@ -265,7 +272,7 @@ class StockManagerListView(LoginRequiredMixin, ListView):
         get_queryset.
         return item filter user profile department
         """
-        return StockItem.objects.filter(location=self.request.user.profile.department)
+        return StockItem.objects.filter(stock_control=self.request.user.profile.department)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -339,7 +346,7 @@ def set_item(request, pk):
     if request.method == 'POST':
         location = request.POST.get('location')
         item.status = StockItem.Status.IN_USE
-        item.location = get_object_or_404(Department, pk=location)
+        item.location_install = get_object_or_404(Department, pk=location)
         item.save()
         return HttpResponse(status=204)
 

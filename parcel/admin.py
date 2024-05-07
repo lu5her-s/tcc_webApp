@@ -80,7 +80,7 @@ class ParcelReturnAdmin(admin.ModelAdmin):
         return f'{obj.pk}/{obj.created_at.year+543}'
 
     def stock(self, obj):
-        return obj.stock.name
+        return obj.stock_reciever.name
 
     # list_filter = ('user', 'created_at', 'stock')
     list_display = ('bill_no', 'user', 'created_at', 'stock', 'status')

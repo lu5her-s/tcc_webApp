@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# File              : models.py
+# Author            : lu5her <lu5her@mail>
+# Date              : Thu Apr, 18 2024, 18:51 109
+# Last Modified Date: Fri Apr, 19 2024, 16:36 110
+# Last Modified By  : lu5her <lu5her@mail>
+# -----
 from django.db import models
 from django.shortcuts import reverse
 from django.contrib.auth.models import User
@@ -101,8 +109,8 @@ class StockItem(models.Model):
         Supplier, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
     # location   = models.CharField(max_length=255, null=True, blank=True)
-    location = models.ForeignKey(
-        Department, on_delete=models.CASCADE, null=True, blank=True)
+    stock_control = models.ForeignKey(
+        Department, on_delete=models.CASCADE, null=True, blank=True, related_name='stock_control')
     location_install = models.ForeignKey(
         Department, on_delete=models.CASCADE, null=True, blank=True, related_name='location_setup')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -126,7 +134,7 @@ class StockItem(models.Model):
     available = StockItemManager()  # Custom manager filter available stock_item
 
     def __str__(self):
-        return f"{self.item_name} Serial: {self.serial} Status: {self.status} Location: {self.location}"
+        return f"{self.item_name} Serial: {self.serial} Status: {self.status} Location: {self.stock_control}"
 
     def get_absolute_url(self):
         return reverse('asset:stockitem_detail', kwargs={'pk': self.pk})
@@ -152,7 +160,7 @@ class ItemLocation(models.Model):
 class ItemOnHand(models.Model):
     """ItemOnHand."""
 
-    item = models.OneToOneField(StockItem, on_delete=models.CASCADE)
+    item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     is_done = models.BooleanField(default=False)

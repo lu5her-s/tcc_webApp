@@ -242,7 +242,7 @@ class ParcelReturn(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    stock_reciever = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True, related_name='stock_reciever')
+    stock = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True, related_name='stock_reciever')
     department_return = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True, related_name='department_return')
     is_done = models.BooleanField(default=False)
     date_done = models.DateTimeField(null=True, blank=True)
@@ -361,7 +361,9 @@ class ParcelReturnItem(models.Model):
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE, related_name='return_item')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    verbose_name_plural = "Parcel Return Items"
 
+    class Meta:
+        verbose_name_plural = "Return Items"
+    
     def __str__(self):
         return f'{self.bill.pk}/{self.created_at.year+543} - {self.item}'

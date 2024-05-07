@@ -89,11 +89,11 @@
                   <td>
                     {% if object.status == 'DRAFT' %}
                     <a href="{% url 'parcel:bill_detail' object.pk %}" class="btn btn-sm btn-warning" style="width: 100%;">
-                      ร่าง
+                      <i class="bi bi-pencil-square">&nbsp;แก้ไขร่าง</i>
                     </a>
                     {% else %}
                     <a href="{% url 'parcel:bill_detail' object.pk %}" class="btn btn-sm btn-primary" style="width: 100%;">
-                      <i class="bi bi-eye"></i>
+                      <i class="bi bi-eye">&nbsp;จัดการ</i>
                     </a>
                     
                     {% endif %}

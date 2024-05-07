@@ -86,12 +86,12 @@
                                     <td>{% if object.location_install %}
                                       {{ object.location_install.name }}
                                     {% else %}
-                                      {{ object.location.name }}
+                                      {{ object.stock_control.name }}
                                     {% endif %}</td>
                                     <td>
                                       {% if object.network %}
                                         <a href="{% url 'asset:network_list' pk=object.network.pk %}">
-                                            {{ object.network.ip_addr }}
+                                            {{ object.network.ip_addr|default:"-" }}
                                         </a>
                                       {% endif %}
                                     </td>

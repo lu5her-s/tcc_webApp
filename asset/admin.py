@@ -32,7 +32,7 @@ class NetworkAdmin(admin.ModelAdmin):
 
 @admin.register(StockItem)
 class StockItemAdmin(admin.ModelAdmin):
-    list_display = ('item_name', 'category', 'serial', 'supplier', 'network', 'location')
+    list_display = ('item_name', 'category', 'serial', 'supplier', 'network', 'stock_control', 'status')
     list_filter = ('category', 'supplier', 'network', 'created_at', 'updated_at')
     search_fields = ('item_name', 'serial', 'location',)
 
