@@ -5,9 +5,12 @@
 
 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
   <li class="dropdown-header">
-    You have {{ items_on_hand.count }} item in your Hand
-    <a href="{% url 'parcel:item_on_hand_list' %}"><span class="badge rounded-pill bg-primary p-2 ms-2">View
-        all</span></a>
+    คุณมีพัสดุ {{ items_on_hand.count }} รายการ รอการจัดการ
+    <a href="{% url 'parcel:item_on_hand_list' %}">
+      <span class="badge rounded-pill bg-primary p-2 ms-2">
+        ดูทั้งหมด
+      </span>
+    </a>
   </li>
 
 </ul><!-- End Messages Dropdown Items -->

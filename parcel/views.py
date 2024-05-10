@@ -41,7 +41,7 @@ from .models import (
     RequestBillDetail,
     RequestItem
 )
-from .forms import RequestBillDetailForm, SelectStockForm
+from .forms import RequestBillDetailForm, SelectStockForm, ReturnBillDetailForm
 from cart.cart import Cart
 from config.utils import generate_pdf
 
@@ -636,16 +636,19 @@ class ReturnParcelCreateView(LoginRequiredMixin, View):
         # items = request.POST.getlist('return_item')
         items = StockItem.objects.filter(pk__in=request.POST.getlist('return_item'))
         # location_set = set(StockItem.objects.filter(pk__in=items).values_list('location', flat=True))
-        location_set = items.values_list('location', flat=True).distinct()
+        location_set = items.values_list('stock_control', flat=True).distinct()
         # item_location = ItemOnHand.objects.filter(item__location__in=location_set)
-        item_location = ItemOnHand.objects.prefetch_related('item').filter(item__location_install__in=location_set, user=request.user)
+        item_location = ItemOnHand.objects.prefetch_related('item').filter(item__stock_control__in=location_set, user=request.user)
 
         for location in location_set:
-            items_on = item_location.filter(item__location_install=location)
+            items_on = item_location.filter(item__stock_control=location)
             stock = Department.objects.get(pk=location)
             return_parcel = ParcelReturn.objects.create(
                 stock=stock,
                 user=request.user
+            )
+            ParcelReturnDetail.objects.create(
+                bill=return_parcel,
             )
             # print(f'Stock : {stock} --  Have {items.count()} items')
             # ParcelReturnItem.objects.bulk_create([
@@ -666,7 +669,15 @@ class ReturnParcelCreateView(LoginRequiredMixin, View):
 
                 # print(f' = {item} -- {item.item.status}')
 
-        return redirect(reverse_lazy('parcel:draft_list'))
+        return redirect(reverse_lazy('parcel:return_parcel_list'))
+
+
+class ParcelReturnListView(LoginRequiredMixin, ListView):
+    model = ParcelReturn
+    template_name = 'parcel/parcel_return_list.html'
+
+    def get_queryset(self):
+        return ParcelReturn.objects.filter(user=self.request.user)
 
 
 class ParcelReturnDraftListView(LoginRequiredMixin, ListView):
@@ -677,7 +688,48 @@ class ParcelReturnDraftListView(LoginRequiredMixin, ListView):
         return ParcelReturn.objects.filter(user=self.request.user, status=ParcelReturn.Status.DRAFT)
 
 
+class ReturnParcelDetailView(LoginRequiredMixin, DetailView):
+    '''
+    This view is a detail view for the ParcelReturn model.
+    It is used to display the details of a specific parcel return.
+    '''
+    model = ParcelReturn
+    template_name = 'parcel/parcel_return_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'ใบส่งคืน'
+        context['bill'] = self.object
+        context['items'] = ParcelReturnItem.objects.filter(bill=self.object)
+        context['bill_detail_form'] = ReturnBillDetailForm(instance=self.object.billdetail)
+        return context
+
+
+def save_return_draft(request, pk):
+    if request.method == 'POST':
+        data = request.POST
+        bill = ParcelReturn.objects.get(pk=pk)
+        bill_detail = bill.billdetail
+        bill_detail.return_case = data.get('return_case')
+        bill_detail.item_type = data.get('item_type')
+        bill_detail.item_control = data.get('item_control')
+        bill_detail.money_type = data.get('money_type')
+        bill_detail.job_no = data.get('job_no')
+        bill_detail.return_no = data.get('return_no')
+        bill_detail.save()
+    return redirect(reverse_lazy('parcel:return_parcel_detail', kwargs={'pk': pk}))
+
+
+def return_item(request, pk):
+    if request.method == 'POST':
+        ParcelReturn.objects.filter(pk=pk).update(status=ParcelReturn.Status.REQUEST)
+    return redirect(reverse_lazy('parcel:return_parcel_detail', kwargs={'pk': pk}))
+
+
 class AllDraftListView(LoginRequiredMixin, View):
+    '''
+    View for list all draft return bill
+    '''
     template_name = 'parcel/all_draft_list.html'
 
     def get_queryset(self):

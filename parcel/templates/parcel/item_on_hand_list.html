@@ -39,11 +39,12 @@ Item On Hand List
               <table class="table table-hover" id="dataTable">
                 <thead>
                   <tr>
-                    <th style="width: 20%;">ประเภท</th>
+                    <th style="width: 15%;">ประเภท</th>
                     <th style="width: 30%;">พัสดุ</th>
                     <th style="width: 25%;">Serial</th>
+                    <th style="width: 10%;">คลัง</th>
                     <th style="width: 15%;">จัดการ</th>
-                    <th style="width: 10%;">คืน</th>
+                    <th style="width: 5%;">คืน</th>
                   </tr>
                 </thead>
                 <!-- object list -->
@@ -56,6 +57,9 @@ Item On Hand List
                     </td>
                     <td style="width: 25%;">
                       {{ item.item.serial }}
+                    </td>
+                    <td style="width: 10%;">
+                      {{ item.item.stock_control }}
                     </td>
 
                     <td style="width: 15%;">

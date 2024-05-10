@@ -246,6 +246,7 @@ class ParcelReturn(models.Model):
     department_return = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True, related_name='department_return')
     is_done = models.BooleanField(default=False)
     date_done = models.DateTimeField(null=True, blank=True)
+    deleted = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Parcel Return Bills"
@@ -298,11 +299,13 @@ class ParcelReturnDetail(models.Model):
     item_control = models.CharField(max_length=50, null=True, blank=True, default='ส.')
     money_type = models.CharField(max_length=50, null=True, blank=True)
     job_no = models.CharField(max_length=50, null=True, blank=True)
-    request_reference = models.CharField(max_length=50, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
     return_approve_date = models.DateTimeField(null=True, blank=True)
     return_no = models.CharField(max_length=10, null=True, blank=True)
     controler = models.ForeignKey(User, related_name='bill_controler', on_delete=models.CASCADE, null=True, blank=True)
+    control_date = models.DateTimeField(null=True, blank=True)
+    checker = models.ForeignKey(User, related_name='bill_checker', on_delete=models.CASCADE, null=True, blank=True)
+    checked_date = models.DateTimeField(null=True, blank=True)
 
     # Define model relationships
     bill = models.OneToOneField(ParcelReturn, on_delete=models.CASCADE, related_name='billdetail')
@@ -347,11 +350,10 @@ class RejectReturnBillNote(models.Model):
         return f'{self.bill.pk}/{self.created_at.year+543} - {self.user}'
 
 class ParcelReturnBillNote(models.Model):
-    bill = models.OneToOneField(ParcelReturn, on_delete=models.CASCADE)
+    bill = models.OneToOneField(ParcelReturn, on_delete=models.CASCADE, related_name='bill_note')
     note = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    verbose_name_plural = "Parcel Return Bill Notes"
 
     def __str__(self):
         return f'{self.bill.pk}/{self.created_at.year+543} - {self.user}'
@@ -361,6 +363,7 @@ class ParcelReturnItem(models.Model):
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE, related_name='return_item')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    quantity = models.PositiveIntegerField(default=1)
 
     class Meta:
         verbose_name_plural = "Return Items"

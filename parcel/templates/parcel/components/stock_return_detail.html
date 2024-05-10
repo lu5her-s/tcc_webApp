@@ -1,0 +1,160 @@
+{% load tags %}
+<table class="table" style="text-align: left;">
+  <tr>
+    <th>สาเหตุที่ส่งคืน</th>
+    <td>
+      {{ bill.billdetail.return_case|default:'-' }}
+    </td>
+  </tr>
+
+  <tr>
+    <th>ประเภท สป.</th>
+    <td>{{ bill.billdetail.item_type|default:'-' }}</td>
+  </tr>
+
+  <tr>
+    <th>สายงานควบคุม</th>
+    <td>{{ bill.billdetail.item_control|default:'-' }}</td>
+  </tr>
+
+  <tr>
+    <th>ประเภทเงิน</th>
+    <td>{{ bill.billdetail.money_type|default:'-' }}</td>
+  </tr>
+
+  <tr>
+    <th>เลขที่งาน</th>
+    <td>{{ bill.billdetail.job_no|default:'-' }}</td>
+  </tr>
+
+  <tr>
+    <th>เจ้าหน้าที่บัญชีคุม</th>
+    <td>
+      <!-- FIX: edit condition remove not condition in use -->
+      {% if not request.user|has_group:"Manager" and not bill.billdetail.controler %}
+      <a href="#" data-bs-toggle="modal" data-bs-target="#controlModal" class="btn btn-sm btn-primary">
+        รับรองการส่งคืน
+      </a>
+      {% else %}
+      {{ bill.billdetail.controler.profile|default:"-" }}
+
+      {% endif %}
+    </td>
+  </tr>
+
+  <tr>
+    <th>วันที่รับรองการส่งคืน</th>
+    <td>
+      {% if bill.billdetail.control_date %}
+      {{ bill.billdetail.control_date }} เวลา {{ bill.billdetail.control_date|date:'H:i' }} น.
+
+      {% else %}
+      -
+      {% endif %}
+    </td>
+  </tr>
+
+  <tr>
+    <th>ผู้ตรวจสอบ</th>
+    <td>
+      {% if not request.user|has_group:"Manager" %}
+      <a href="#" data-bs-toggle="modal" data-bs-target="#checkerModal" class="btn btn-sm btn-primary">
+        ตรวจสอบการส่งคืน
+      </a>
+      {% else %}
+    <td>{{ bill.billdetail.checker.profile|default:"-" }}</td>
+    {% endif %}
+
+    {{ bill.billdetail.checker.profile }}
+    </td>
+  </tr>
+  <tr>
+    <th>ตรวจสอบแล้วเห็นว่า</th>
+    <td>{{ bill.bill_note|default:"-" }}</td>
+  </tr>
+  <tr>
+    <th>วันที่ตรวจสอบการส่งคืน</th>
+    <td>
+      {% if bill.billdetail.checked_date %}
+      {{ bill.billdetail.checked_date }} เวลา {{ bill.billdetail.checked_date|date:'H:i' }} น.
+
+      {% else %}
+      -
+      {% endif %}
+    </td>
+  </tr>
+
+  <tr>
+    <th>ผู้รับ</th>
+    <td>
+      {% if not request.user|has_group:"Manager" and not request.user.profile.department == bill.stock %}
+      <a href="#" data-bs-toggle="modal" data-bs-target="#receiveModal" class="btn btn-sm btn-primary">
+        รับพัสดุตามรายการ
+      </a>
+      {% else %}
+    <td>{{ bill.billdetail.receiver.profile|default:"-" }}</td>
+    {% endif %}
+
+    </td>
+  </tr>
+
+  <tr>
+    <th>วันที่รับพัสดุ</th>
+    <td>
+      {% if bill.billdetail.returned_at %}
+      {{ bill.billdetail.returned_at }} เวลา {{ bill.billdetail.returned_at|date:'H:i' }} น.
+
+      {% else %}
+      -
+      {% endif %}
+    </td>
+  </tr>
+
+  <tr>
+    <th>ทะเบียนหน่วยรับคืน</th>
+    <td>
+      {% if request.user == bill.user %}
+      <a href="#" data-bs-toggle="modal" data-bs-target="#return_no" class="btn btn-sm btn-primary">
+        ทะเบียนหน่วยรับคืน
+      </a>
+      {% else %}
+      {{ bill.billdetail.return_no|default:"-" }}
+      {% endif %}
+      
+    </td>
+  </tr>
+
+</table>
+
+<!-- modal for return_no -->
+<div class="modal fade" id="return_no" tabindex="-1" aria-labelledby="return_no" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="return_no">ทะเบียนหน่วยรับคืน</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="return_no_form" method="post" action="#">
+          {% csrf_token %}
+          <table class="table table-bordered">
+            <tr>
+              <th>ทะเบียนหน่วยรับคืน</th>
+              <td>
+                <input type="text" name="return_no" class="form-control" required>
+              </td>
+            </tr>
+
+          </table>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+            <button type="submit" class="btn btn-primary">บันทึก</button>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

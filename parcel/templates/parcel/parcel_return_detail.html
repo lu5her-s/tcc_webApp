@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Parcel{% endblock title %}
+
+
+{% block content %}
+
+<div class="pagetitle">
+  <h1>
+    {{ title }}เลขที่ {{ bill.pk }}
+  </h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'parcel:home' %}">Parcel Home</a></li>
+      <li class="breadcrumb-item active">ใบส่งคืนเลขที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</li>
+    </ol>
+  </nav>
+</div><!-- End Page Title -->
+
+
+<section class="section">
+  <div class="row">
+
+    <div class="col-xl-12">
+      <div class="card">
+        <div class="card-body pt-3">
+          <ul class="nav nav-tabs nav-tabs-bordered">
+            <li class="nav-item">
+              <button class="nav-link active" 
+                      data-bs-toggle="tab" 
+                      data-bs-target="#detail"
+                      >
+                      รายละเอียด
+              </button>
+            </li>
+
+            {% if request.user.profile.department == bill.stock and not bill.status == 'IN_PROGRESS' %}
+            <li class="nav-item">
+              <button class="nav-link" 
+                      data-bs-toggle="tab" 
+                      data-bs-target="#stock_item"
+                      >
+                      จัดการพัสดุ
+              </button>
+            </li>
+
+            {% endif %}
+
+            {% if reason %}
+            <li class="nav-item">
+              <button class="nav-link" 
+                      data-bs-toggle="tab" 
+                      data-bs-target="#approve"
+                      >
+                      ไม่อนุมัติ
+              </button>
+            </li>
+            {% endif %}
+
+            {% if request.user == bill.user and bill.billdetail.paid_status == 'RECEIVED' %}
+            <li class="nav-item">
+              <button class="nav-link" 
+                      data-bs-toggle="tab" 
+                      data-bs-target="#parcel"
+                      >
+                      พัสดุ
+              </button>
+            </li>
+            {% endif %}
+          </ul>
+
+          <div class="tab-content pt-2">
+
+            <div id="detail" class="tab-pane fade show active">
+              <h6 class="card-title">
+                รายละเอียด | <span>ใบส่งคืนที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</span> 
+              </h6>
+
+              <table class="table">
+                <tr>
+                  <th>ใบส่งคืนที่</th>
+                  <td>{{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</td>
+                </tr>
+
+                <tr>
+                  <th>คลังเจ้าของพัสดุ</th>
+                  <td>{{ bill.stock }}</td>
+                </tr>
+
+                <tr>
+                  <th>พัสุที่ขอคืน</th>
+                  <td>
+                    {% for item in items %}
+                    {{ forloop.counter }}.{{ item.item.category }}
+                    <br> &nbsp;&nbsp;&nbsp; - หมายเลข {{ item.item.serial }}
+                    <br> &nbsp;&nbsp;&nbsp; - จำนวน {{ item.quantity }} {{ item.count_text|default:"หน่วย" }}
+                    <br>{% if not forloop.last %}
+                    <hr>
+                    {% endif %}
+                    {% endfor %}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>หน่วยรับคืน</th>
+                  <td>{{ bill.stock }}</td>
+                </tr>
+
+                <tr>
+                  <th>ผู้ขอส่งคืน</th>
+                  <td>
+                    {% if bill.user.profile %}
+                    <a href="#" target="_blank">{{ bill.user.profile }}</a>
+
+                    {% else %}
+                    <a href="#" target="_blank">{{ bill.user }}</a>
+
+                    {% endif %}
+
+                  </td>
+                </tr>
+
+                {% if object.approve_status == 'rjt' %}
+                <tr>
+                  <th>เหตุผล</th>
+                  <td>{{ reason.reason }}</td>
+                </tr>
+                {% endif %}
+
+                <tr>
+                  <th>วันที่ทำรายการ</th>
+                  <td>
+                    {% if bill.created_at %}
+                    {{ bill.created_at|thaidate }}
+                    เวลา {{ bill.created_at|date:'H:i' }} น.
+                    {% else %}
+                    -
+                    {% endif %}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>ผู้อนุมัติ</th>
+                  <td>
+                    {% if not bill.billdetail.approver and not request.user|has_group:"Command" and not bill.billdetail.checker %}
+                    <a href="#"
+                       data-bs-toggle="modal"
+                       data-bs-target="#approverModal"
+                       class="btn btn-sm btn-primary"
+                       >
+                       อนุมัติให้รับคืนได้
+                    </a>
+
+                      {% else %}
+                      {{ bill.billdetail.approver.profile|default:"-" }}
+                      {% endif %}
+
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>วันที่อนุมัติ</th>
+                  <td>
+                    {% if bill.billdetail.approve_date %}
+                    {{ bill.billdetail.approve_date }} เวลา {{ bill.billdetail.approve_date|date:'H:i' }} น.
+
+                    {% else %}
+                    -
+                    {% endif %} 
+                  </td>
+                </tr>
+
+              </table>
+              <br>
+
+              <h6 class="card-title">รายละเอียดเพิ่มเติม</h6>
+
+              <table class="table table-borderless" style="text-align: left;">
+                {% if not request.user == bill.user and bill.status == 'DRAFT' %}
+                {% include "parcel/components/user_return_detail.html" %}
+
+                {% elif request.user.profile.department == bill.stock %}
+                {% include "parcel/components/stock_return_detail.html" %}
+
+                {% else %}
+                {% comment %}
+                  
+                {% include "parcel/components/stock_return_detail.html" %}
+                {% endcomment %}
+                <!-- FIX: edit condition -->
+                {% include "parcel/components/return_detail.html" %}
+
+                {% endif %}
+
+
+              </table>
+
+
+            </div><!-- end detail -->
+
+          </div><!-- end tab-content -->
+
+        </div><!--end card-->
+        <table class="table table-borderless">
+          <tr>
+            <td colspan="2">
+              <div class="container float-center text-center">
+                {% if bill.billdetail.paider and not bill.billdetail.paid_status == 'RECEIVED' %}
+                {% if request.user.profile == bill.billdetail.receiver %}
+                <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal"
+                                                           data-bs-target="#get_item">รับพัสดุ</a>
+                {% else %}
+                <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal"
+                                                           data-bs-target="#get_item">รับพัสดุ</a>
+                {% endif %}
+
+                <!-- <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#paid_confirm">รับพัสดุ</a> -->
+
+                {% endif %}
+                <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-info"
+                                                                    target="_blank">เอกสาร</a>
+              </div>
+            </td>
+          </tr>
+        </table>
+
+      </div><!-- end col -->
+
+    </div>
+
+    <!-- modal for request approve -->
+    {% comment %}
+
+
+    <!-- modal for confirm reject -->
+    {% include "parcel/components/modal_confirm_reject.html" %}
+
+    <!-- modal for approve bill -->
+    {% include "parcel/components/modal_approve_bill.html" %}
+
+    {% endcomment %}
+    {% include "parcel/components/modal_to_request_approve.html" %}
+    <!-- modal for enter pin to request bill -->
+    {% include "parcel/components/modal_return_bill.html" %}
+    {% include "parcel/components/modal_control_return.html" %}
+    {% include "parcel/components/modal_checker_return.html" %}
+    {% include "parcel/components/modal_approver_return.html" %}
+
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      // if repair_category select option == 'AGN' disabled assigned_to field
+      $('select[name="return_case"]').select2({
+        width: "100%",
+        allowClear: true,
+        placeholder: "เหตุที่ส่งคืน",
+      });
+    });
+  </script>
+
+  <script>
+    $('#save_btn').click(function () {
+      let data_form = $('#bill_detail_form');
+      // $('#save_test').modal('show');
+      $('#data_form').html(data_form);
+      console.log(data_form);
+    });
+  </script>
+
+  <script>
+    // set auto focus fo all modal input
+    $('.modal').on('shown.bs.modal', function () {
+      $(this).find('input:first').focus()
+    })
+  </script>
+
+  <!-- <script>
+    $('#approve_form').submit(function(event) {
+      event.preventDefault();  // Prevent the default form submission
+  </script> -->
+
+
+</section>
+{% include 'components/photoswipe.html' %}
+{% endblock content %}

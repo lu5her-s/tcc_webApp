@@ -1,0 +1,54 @@
+{% load tags %}
+
+<!-- modal for request approve -->
+<div class="modal fade" id="controlModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          รับรองการส่งคืน ใบส่งคืนที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}
+        </h5>
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                >
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post"
+              action="#"
+              id="confirm_return"
+              class="pin-code">
+          <div class="modal-body">
+
+            <p> ขอรับรองว่าจำนวนที่แจ้งในช่อง "จำนวนส่งคืน" ได้รับการอนุมัติให้ส่งคืนจริง </p>
+            <!-- form to enter pin number to confirm approve -->
+            {% csrf_token %}
+            <!-- enter password to confirm approve -->
+            <input
+                type="password"
+                name="pin"
+                class="form-control"
+                placeholder="กรุณาใส่รหัสผ่านเพื่ออนุมัติ"
+                required
+                />
+          </div>
+          <div class="modal-footer">
+            <button type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                    >
+                    ยกเลิก
+            </button>
+              <button type="submit"
+                      class="btn btn-primary"
+                      >
+                      ยืนยัน
+              </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
