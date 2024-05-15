@@ -125,6 +125,7 @@
                   </td>
                 </tr>
 
+                <!-- TODO: reject return -->
                 {% if object.approve_status == 'rjt' %}
                 <tr>
                   <th>เหตุผล</th>
@@ -147,7 +148,7 @@
                 <tr>
                   <th>ผู้อนุมัติ</th>
                   <td>
-                    {% if not bill.billdetail.approver and not request.user|has_group:"Command" and not bill.billdetail.checker %}
+                    {% if not bill.billdetail.approver and request.user|has_group:"Command" and bill.billdetail.checker %}
                     <a href="#"
                        data-bs-toggle="modal"
                        data-bs-target="#approverModal"
@@ -157,7 +158,7 @@
                     </a>
 
                       {% else %}
-                      {{ bill.billdetail.approver.profile|default:"-" }}
+                      {{ bill.billdetail.approver.profile|default:"รออนุมัติ" }}
                       {% endif %}
 
                   </td>
@@ -181,17 +182,13 @@
               <h6 class="card-title">รายละเอียดเพิ่มเติม</h6>
 
               <table class="table table-borderless" style="text-align: left;">
-                {% if not request.user == bill.user and bill.status == 'DRAFT' %}
+                {% if request.user == bill.user and bill.status == 'DRAFT' %}
                 {% include "parcel/components/user_return_detail.html" %}
 
-                {% elif request.user.profile.department == bill.stock %}
+                {% elif request.user.profile.department == bill.stock %} <!-- FIX: condition to department == stcok -->
                 {% include "parcel/components/stock_return_detail.html" %}
 
                 {% else %}
-                {% comment %}
-                  
-                {% include "parcel/components/stock_return_detail.html" %}
-                {% endcomment %}
                 <!-- FIX: edit condition -->
                 {% include "parcel/components/return_detail.html" %}
 
@@ -212,11 +209,21 @@
               <div class="container float-center text-center">
                 {% if bill.billdetail.paider and not bill.billdetail.paid_status == 'RECEIVED' %}
                 {% if request.user.profile == bill.billdetail.receiver %}
-                <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal"
-                                                           data-bs-target="#get_item">รับพัสดุ</a>
+                <a href="#" 
+                   class="btn btn-lg btn-success"
+                   data-bs-toggle="modal"
+                   data-bs-target="#get_item"
+                   >
+                   รับพัสดุ
+                </a>
                 {% else %}
-                <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal"
-                                                           data-bs-target="#get_item">รับพัสดุ</a>
+                <a href="#"
+                   class="btn btn-lg btn-success"
+                   data-bs-toggle="modal"
+                   data-bs-target="#get_item"
+                   >
+                   รับพัสดุ
+                </a>
                 {% endif %}
 
                 <!-- <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#paid_confirm">รับพัสดุ</a> -->
@@ -272,6 +279,11 @@
       $('#data_form').html(data_form);
       console.log(data_form);
     });
+
+    $('#confirm_return_btn').click(function () {
+      let form = $('#bill_detail_form');
+      form.submit();
+    })
   </script>
 
   <script>
@@ -281,10 +293,6 @@
     })
   </script>
 
-  <!-- <script>
-    $('#approve_form').submit(function(event) {
-      event.preventDefault();  // Prevent the default form submission
-  </script> -->
 
 
 </section>

@@ -31,7 +31,7 @@
     <th>เจ้าหน้าที่บัญชีคุม</th>
     <td>
       <!-- FIX: edit condition remove not condition in use -->
-      {% if not request.user|has_group:"Manager" and not bill.billdetail.controler %}
+      {% if request.user|has_group:"Manager" and bill.billdetail.controler and request.user.profile.department == bill.stock %}
       <a href="#" data-bs-toggle="modal" data-bs-target="#controlModal" class="btn btn-sm btn-primary">
         รับรองการส่งคืน
       </a>
@@ -57,12 +57,13 @@
   <tr>
     <th>ผู้ตรวจสอบ</th>
     <td>
-      {% if not request.user|has_group:"Manager" %}
+      <!-- FIX: edit condition user for checker -->
+      {% if request.user|has_group:"Manager" and request.user.profile.department == bill.stock %}
       <a href="#" data-bs-toggle="modal" data-bs-target="#checkerModal" class="btn btn-sm btn-primary">
         ตรวจสอบการส่งคืน
       </a>
       {% else %}
-    <td>{{ bill.billdetail.checker.profile|default:"-" }}</td>
+      {{ bill.billdetail.checker.profile|default:"-" }}
     {% endif %}
 
     {{ bill.billdetail.checker.profile }}
@@ -87,12 +88,12 @@
   <tr>
     <th>ผู้รับ</th>
     <td>
-      {% if not request.user|has_group:"Manager" and not request.user.profile.department == bill.stock %}
+      {% if request.user|has_group:"Manager" and request.user.profile.department == bill.stock %}
       <a href="#" data-bs-toggle="modal" data-bs-target="#receiveModal" class="btn btn-sm btn-primary">
         รับพัสดุตามรายการ
       </a>
       {% else %}
-    <td>{{ bill.billdetail.receiver.profile|default:"-" }}</td>
+      {{ bill.billdetail.receiver.profile|default:"-" }}
     {% endif %}
 
     </td>
@@ -113,7 +114,7 @@
   <tr>
     <th>ทะเบียนหน่วยรับคืน</th>
     <td>
-      {% if request.user == bill.user %}
+      {% if request.user.profile.department == bill.stock and not bill.billdetail.return_no %}
       <a href="#" data-bs-toggle="modal" data-bs-target="#return_no" class="btn btn-sm btn-primary">
         ทะเบียนหน่วยรับคืน
       </a>

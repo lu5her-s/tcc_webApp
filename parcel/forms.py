@@ -81,7 +81,6 @@ class ReturnBillDetailForm(forms.ModelForm):
             'item_control',
             'money_type',
             'job_no',
-            'return_no',
         )
         widgets = {
             'return_case': forms.Select(attrs={'class': 'form-select'}),
@@ -89,7 +88,6 @@ class ReturnBillDetailForm(forms.ModelForm):
             'item_control': forms.TextInput(attrs={'class': 'form-control'}),
             'money_type': forms.TextInput(attrs={'class': 'form-control'}),
             'job_no': forms.TextInput(attrs={'class': 'form-control'}),
-            'return_no': forms.TextInput(attrs={'class': 'form-control'}),
         }
         labels = {
             'return_case': 'เหตุที่ส่งคืน',
@@ -97,6 +95,5 @@ class ReturnBillDetailForm(forms.ModelForm):
             'item_control': 'สายงานควบคุม',
             'money_type': 'ประเภทเงิน',
             'job_no': 'เลขที่งาน',
-            'return_no': 'ทะเบียนหน่วยรับคืน',
         }
 

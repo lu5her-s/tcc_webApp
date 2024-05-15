@@ -370,3 +370,9 @@ class ParcelReturnItem(models.Model):
     
     def __str__(self):
         return f'{self.bill.pk}/{self.created_at.year+543} - {self.item}'
+
+    def total_price(self):
+        if self.item.price and self.quantity:
+            return self.item.price * self.quantity
+        else:
+            return None

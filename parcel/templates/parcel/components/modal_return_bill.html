@@ -5,26 +5,43 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">ยืนยันการขอส่งคืน ใบส่งคืนที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title">
+          ยืนยันการขอส่งคืน ใบส่งคืนที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}
+        </h5>
+        <button type="button" 
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                >
+        </button>
       </div>
       <div class="modal-body">
-        <form method="post" action="{% url 'parcel:return_item' pk=bill.pk %}">
-          {% csrf_token %}
-          <p>
-          {% for item in items %}
-          {{ forloop.counter }}.{{ item.item.category }} 
-          <br> &nbsp;&nbsp;&nbsp; - จำนวน {{ item.quantity }} {{ item.count_text|default:"หน่วย" }}
-          <br>{% if not forloop.last %}
-          <hr>
-          {% endif %}
-          {% endfor %}
-          </p>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-            <button type="submit" class="btn btn-primary">ยืนยัน</button>
-          </div>
-        </form>
+        {% for item in items %}
+        {{ forloop.counter }}.{{ item.item.category }} 
+        <br>
+        &nbsp;&nbsp;&nbsp; - หมายเลข {{ item.item.serial }}
+        <br> 
+        &nbsp;&nbsp;&nbsp; - จำนวน {{ item.quantity }} {{ item.count_text|default:"หน่วย" }}
+        <br>
+        {% if not forloop.last %}
+        <hr>
+        {% endif %}
+        {% endfor %}
+        </p>
+        <div class="modal-footer">
+          <button type="button" 
+                  class="btn btn-secondary" 
+                  data-bs-dismiss="modal"
+                  >
+                  ยกเลิก
+          </button>
+            <button type="button" 
+                    id="confirm_return_btn" 
+                    class="btn btn-primary"
+                    >
+                    ยืนยัน
+            </button>
+        </div>
       </div>
     </div>
   </div>

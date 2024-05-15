@@ -32,7 +32,6 @@ from account.models import (
 )
 
 from .models import (
-    ParcelRequestNote,
     ParcelRequest,
     ParcelReturn,
     ParcelReturnDetail,
@@ -101,6 +100,7 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
         # for return parcel bill
         all_return = ParcelReturn.objects.filter(user=self.request.user)
         context['all_return'] = all_return
+        context['all_return_request'] = all_return.filter(status=ParcelReturn.Status.REQUEST)
         context['return_draft'] = all_return.filter(status=ParcelReturn.Status.DRAFT)
         context['return_wait_approve'] = ParcelReturnDetail.objects.filter(
             bill__in=all_return.filter(
@@ -706,6 +706,32 @@ class ReturnParcelDetailView(LoginRequiredMixin, DetailView):
 
 
 def save_return_draft(request, pk):
+    """Saves the draft of a return parcel.
+
+    Args:
+        request (HttpRequest): The request object.
+        pk (int): The primary key of the parcel return.
+
+    Returns:
+        HttpResponseRedirect: A redirect to the detail page of the parcel return.
+    """
+    if request.method == 'POST':
+        data = request.POST
+        bill = ParcelReturn.objects.get(pk=pk)
+        bill_detail = bill.billdetail
+        print(data.get('item_control'))
+        bill_detail.return_case = data.get('return_case')
+        bill_detail.item_type = data.get('item_type')
+        bill_detail.item_control = data.get('item_control')
+        bill_detail.money_type = data.get('money_type')
+        bill_detail.job_no = data.get('job_no')
+        bill_detail.return_no = data.get('return_no')
+        
+        bill_detail.save()
+    return redirect(reverse_lazy('parcel:return_parcel_detail', kwargs={'pk': pk}))
+
+
+def return_item(request, pk):
     if request.method == 'POST':
         data = request.POST
         bill = ParcelReturn.objects.get(pk=pk)
@@ -716,13 +742,11 @@ def save_return_draft(request, pk):
         bill_detail.money_type = data.get('money_type')
         bill_detail.job_no = data.get('job_no')
         bill_detail.return_no = data.get('return_no')
+        bill.status = ParcelReturn.Status.REQUEST
+        bill.save()
         bill_detail.save()
-    return redirect(reverse_lazy('parcel:return_parcel_detail', kwargs={'pk': pk}))
-
-
-def return_item(request, pk):
-    if request.method == 'POST':
-        ParcelReturn.objects.filter(pk=pk).update(status=ParcelReturn.Status.REQUEST)
+        # print(data.get('item_control'))
+        # ParcelReturn.objects.filter(pk=pk).update(status=ParcelReturn.Status.REQUEST)
     return redirect(reverse_lazy('parcel:return_parcel_detail', kwargs={'pk': pk}))
 
 
@@ -748,7 +772,7 @@ class LocationListView(LoginRequiredMixin, ListView):
 class ItemOnLocationView(LoginRequiredMixin, View):
     template_name = 'parcel/remove_item.html'
 
-    def get(self, request, pk):
+    def get(self, pk):
         context = {
             'object_list' : StockItem.objects.filter(location_install__pk=pk),
             'location' : Department.objects.get(pk=pk)
@@ -769,3 +793,24 @@ class RemoveItemView(LoginRequiredMixin, View):
             StockItem.objects.filter(pk__in=remove_items).update(status=StockItem.Status.ON_HAND, location_install=None)
 
             return redirect(reverse_lazy('parcel:location_list'))
+
+
+def return_pdf(request: HttpResponse, pk: int):
+    bill = ParcelReturn.objects.get(pk=pk)
+    items = ParcelReturnItem.objects.filter(bill=bill)
+    bill_detail = bill.billdetail
+    # bill_detail = bill.billdetail
+    context = {
+        'bill': bill,
+        'items': items,
+        'bill_detail': bill_detail
+    }
+    temp_html = 'parcel/temp.html'
+    with open(temp_html, 'w') as f:
+        f.write(render_to_string('parcel/return_pdf.html', {'context': context}))
+    pdf = generate_pdf(data={'context': context}, template_path='parcel/return_pdf.html')
+    os.remove(temp_html)
+
+    response = HttpResponse(pdf, content_type='application/pdf')
+
+    return response

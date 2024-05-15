@@ -31,7 +31,7 @@
     <th>เจ้าหน้าที่บัญชีคุม</th>
     <td>
       <!-- FIX: edit condition remove not condition in use -->
-      {% if not request.user|has_group:"Manager" and not bill.billdetail.controler %}
+      {% if request.user.profile.department == bill.stock and request.user|has_group:"Manager" and bill.billdetail.controler %}
       <a href="#" data-bs-toggle="modal" data-bs-target="#controlModal" class="btn btn-sm btn-primary">
         รับรองการส่งคืน
       </a>
@@ -92,7 +92,7 @@
         รับพัสดุตามรายการ
       </a>
       {% else %}
-    <td>{{ bill.billdetail.receiver.profile|default:"-" }}</td>
+    {{ bill.billdetail.receiver.profile|default:"-" }}
     {% endif %}
 
     </td>
@@ -113,7 +113,7 @@
   <tr>
     <th>ทะเบียนหน่วยรับคืน</th>
     <td>
-      {% if request.user == bill.user %}
+      {% if request.user.profile.department == bill.stock %}
       <a href="#" data-bs-toggle="modal" data-bs-target="#return_no" class="btn btn-sm btn-primary">
         ทะเบียนหน่วยรับคืน
       </a>

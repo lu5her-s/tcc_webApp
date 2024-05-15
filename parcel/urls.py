@@ -51,4 +51,5 @@ urlpatterns = [
     path('reject_bill/<int:pk>/', views.reject_bill, name='reject_bill'),
 
     path('bill_to_pdf/<int:pk>/', views.bill_to_pdf, name='bill_to_pdf'),
+    path('return_parcel/pdf/<int:pk>/', views.return_pdf, name='return_pdf',),
 ]
