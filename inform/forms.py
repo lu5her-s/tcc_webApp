@@ -11,112 +11,103 @@ class InformForm(forms.ModelForm):
     """
     Form for inform
 
-    Attributes: 
+    Attributes:
         queryset: StockItem.objects.all()
     """
+
     images = forms.ImageField(
         widget=widgets.ClearableFileInput(
-            attrs={
-                'class': 'form-control',
-                'multiple': True
-            }
+            attrs={"class": "form-control", "multiple": True}
         ),
-        label='ภาพประกอบการแจ้งซ่อม',
-        required=False
+        label="ภาพประกอบการแจ้งซ่อม",
+        required=False,
     )
 
     class Meta:
         model = Inform
         fields = (
-            'urgency',
-            'stockitem',
-            'issue_category',
-            'issue',
-            'customer',
+            "urgency",
+            "stockitem",
+            "issue_category",
+            "issue",
+            "customer",
         )
         widgets = {
-            'stockitem': widgets.Select(
-                attrs={'class': 'form-select'}
-            ),
-            'issue_category': widgets.Select(
-                attrs={'class': 'form-select'}
-            ),
-            'issue': RichTextFormField(),
-            'urgency': widgets.Select(
-                attrs={'class': 'form-select'}
-            ),
+            "stockitem": widgets.Select(attrs={"class": "form-select"}),
+            "issue_category": widgets.Select(attrs={"class": "form-select"}),
+            "issue": RichTextFormField(),
+            "urgency": widgets.Select(attrs={"class": "form-select"}),
         }
         labels = {
-            'urgency': 'ความเร่งด่วน',
-            'stockitem': 'พัสดุที่แจ้งซ่อม',
-            'issue_category': 'ประเภทการแจ้งซ่อม',
-            'issue': 'อาการ/สาเหตุ',
-            'customer': 'ผู้แจ้ง',
+            "urgency": "ความเร่งด่วน",
+            "stockitem": "พัสดุที่แจ้งซ่อม",
+            "issue_category": "ประเภทการแจ้งซ่อม",
+            "issue": "อาการ/สาเหตุ",
+            "customer": "ผู้แจ้ง",
         }
 
     def __init__(self, request, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # field stockitem query only in user.profile.department
-        self.fields['stockitem'].queryset = StockItem.objects.filter(
-            location=request.user.profile.department
+        self.fields["stockitem"].queryset = StockItem.objects.filter(
+            location_install=request.user.profile.department
         )
 
-    
+
 class ManagerCheckForm(forms.ModelForm):
-    """ Form for manager check """
+    """Form for manager check"""
+
     class Meta:
         model = Inform
         fields = (
-            'repair_category',
-            'inform_status',
-            'assigned_to',
+            "repair_category",
+            "inform_status",
+            "assigned_to",
         )
         labels = {
-            'repair_category': 'ประเภทการแจ้งซ่อม',
-            'inform_status': 'สถานะการแจ้งซ่อม',
-            'assigned_to': 'หัวหน้าชุดซ่อม',
+            "repair_category": "ประเภทการแจ้งซ่อม",
+            "inform_status": "สถานะการแจ้งซ่อม",
+            "assigned_to": "หัวหน้าชุดซ่อม",
         }
 
         widgets = {
-            'repair_category': widgets.Select(
-                attrs={'class': 'form-select'}
-            ),
-            'inform_status': widgets.HiddenInput(),
-            'assigned_to': widgets.Select(
-                attrs={'class': 'form-select'}
-            )
+            "repair_category": widgets.Select(attrs={"class": "form-select"}),
+            "inform_status": widgets.HiddenInput(),
+            "assigned_to": widgets.Select(attrs={"class": "form-select"}),
         }
 
 
 class ProgressForm(forms.ModelForm):
-    """ Form for progress """
+    """Form for progress"""
+
     class Meta:
         model = InformProgress
         fields = (
-            'note',
-            'status',
+            "note",
+            "status",
         )
         labels = {
-            'note': 'บันทึก',
-            'status': 'สถานะ',
+            "note": "บันทึก",
+            "status": "สถานะ",
         }
         widgets = {
-            'note': forms.Textarea(
+            "note": forms.Textarea(
                 attrs={
-                    'class': 'form-control',
+                    "class": "form-control",
                 }
             ),
-            'status': widgets.Select(
-                attrs={'class': 'form-select'}
-            ),
+            "status": widgets.Select(attrs={"class": "form-select"}),
         }
 
 
 class ReviewForm(forms.Form):
-    """ Form for review """
+    """Form for review"""
+
     rating = forms.IntegerField(
-        widget=forms.Select(choices=[(i, i) for i in range(1, 6)], attrs={'class': 'form-control'})
+        widget=forms.Select(
+            choices=[(i, i) for i in range(1, 6)], attrs={"class": "form-control"}
+        )
     )
     description = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5})
+        widget=forms.Textarea(attrs={"class": "form-control", "rows": 5})
     )
