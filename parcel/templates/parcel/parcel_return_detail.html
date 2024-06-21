@@ -39,13 +39,14 @@
               </button>
             </li>
 
-            {% if request.user.profile.department == bill.stock and not bill.status == 'IN_PROGRESS' %}
+              
+            {% if request.user.profile.department == bill.stock or request.user == bill.user %}
             <li class="nav-item">
               <button class="nav-link" 
                       data-bs-toggle="tab" 
-                      data-bs-target="#stock_item"
+                      data-bs-target="#return_item"
                       >
-                      จัดการพัสดุ
+                      พัสดุที่ต้องการส่งคืน
               </button>
             </li>
 
@@ -148,7 +149,7 @@
                 <tr>
                   <th>ผู้อนุมัติ</th>
                   <td>
-                    {% if not bill.billdetail.approver and request.user|has_group:"Command" and bill.billdetail.checker %}
+                    {% if not bill.billdetail.approver and request.user|has_group:"Command" and bill.bill_note %}
                     <a href="#"
                        data-bs-toggle="modal"
                        data-bs-target="#approverModal"
@@ -168,7 +169,7 @@
                   <th>วันที่อนุมัติ</th>
                   <td>
                     {% if bill.billdetail.approve_date %}
-                    {{ bill.billdetail.approve_date }} เวลา {{ bill.billdetail.approve_date|date:'H:i' }} น.
+                    {{ bill.billdetail.approve_date|thaidate }} เวลา {{ bill.billdetail.approve_date|date:'H:i' }} น.
 
                     {% else %}
                     -
@@ -203,6 +204,29 @@
           </div><!-- end tab-content -->
 
         </div><!--end card-->
+
+        <!-- return parcel -->
+        <div id="return_item" class='tab-pane fade pt-3'>
+          <table class="table table-striped">
+            <!-- note: for loop to set serial to item -->
+            <tr>
+              <th style="width: 5%;">ลําดับ</th>
+              <th style="width: 20%;">ประเภท</th>
+              <th style="width: 60%;">หมายเลข</th>
+            </tr>
+            {% for item in items %}
+            <tr>
+              <td style="width: 5%;" align="center">{{ forloop.counter }}</td>
+              <td style="width: 20%;">{{ item.item.category }}</td>
+              <td style="width: 60%;">
+                <a href="{% url 'asset:stockitem_detail' pk=item.item.pk %}" target="_blank">{{ item.item.item_name }} - {{ item.item.serial }}</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+
+        </div>
+
         <table class="table table-borderless">
           <tr>
             <td colspan="2">
@@ -229,9 +253,17 @@
                 <!-- <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#paid_confirm">รับพัสดุ</a> -->
 
                 {% endif %}
-                <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                <a href="{% url 'parcel:bill_to_pdf' pk=bill.pk %}" class="btn btn-lg btn-info"
-                                                                    target="_blank">เอกสาร</a>
+                <a href="{{ request.META.HTTP_REFERER }}"
+                  class="btn btn-lg btn-secondary"
+                >
+                  ย้อนกลับ
+                </a>
+                <a href="{% url 'parcel:return_pdf' pk=bill.pk %}"
+                  class="btn btn-lg btn-info"
+                  target="_blank"
+                >
+                  เอกสาร
+                </a>
               </div>
             </td>
           </tr>
@@ -241,8 +273,8 @@
 
     </div>
 
-    <!-- modal for request approve -->
     {% comment %}
+    <!-- modal for request approve -->
 
 
     <!-- modal for confirm reject -->
@@ -252,6 +284,7 @@
     {% include "parcel/components/modal_approve_bill.html" %}
 
     {% endcomment %}
+
     {% include "parcel/components/modal_to_request_approve.html" %}
     <!-- modal for enter pin to request bill -->
     {% include "parcel/components/modal_return_bill.html" %}
@@ -260,6 +293,8 @@
     {% include "parcel/components/modal_approver_return.html" %}
 
   </div>
+
+
 
   <script>
     $(document).ready(function () {
@@ -273,15 +308,19 @@
   </script>
 
   <script>
-    $('#save_btn').click(function () {
-      let data_form = $('#bill_detail_form');
-      // $('#save_test').modal('show');
-      $('#data_form').html(data_form);
-      console.log(data_form);
+    $('#save_draft').click(function () {
+      // set url to parcel:save_return_draft and send data via post
+      let form = $('#bill_detail_form');
+      form.attr('action', '{% url "parcel:save_return_draft" pk=bill.pk %}');
+      form.attr('method', 'POST');
+      form.submit();
     });
 
     $('#confirm_return_btn').click(function () {
+      $('#confirm_return_btn').attr('disabled', true);
       let form = $('#bill_detail_form');
+      form.attr('action', '{% url "parcel:return_item" pk=bill.pk %}');
+      form.attr('method', 'POST');
       form.submit();
     })
   </script>
@@ -292,8 +331,6 @@
       $(this).find('input:first').focus()
     })
   </script>
-
-
 
 </section>
 {% include 'components/photoswipe.html' %}

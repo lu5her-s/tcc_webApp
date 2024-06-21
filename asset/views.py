@@ -45,7 +45,7 @@ class StockItemListView(LoginRequiredMixin, ListView):
     """
 
     model = StockItem
-    template_name = 'asset/stockitem_list.html'
+    template_name = "asset/stockitem_list.html"
 
     def get_queryset(self):
         """
@@ -56,17 +56,16 @@ class StockItemListView(LoginRequiredMixin, ListView):
         """
         return StockItem.objects.all()
 
-
     def get_context_data(self, **kwargs) -> dict:
         """
         Returns the context data for the StockItemListView.
 
         :return: context data
         :rtype: dict
-            
+
         """
         context = super().get_context_data(**kwargs)
-        context['title'] = 'แสดงรายการพัสดุ'
+        context["title"] = "แสดงรายการพัสดุ"
         return context
 
 
@@ -76,12 +75,13 @@ class StockItemDetailView(LoginRequiredMixin, DetailView):
     StockItemDetailView.
     Detail view for StockItem
     """
+
     model = StockItem
-    template_name = 'asset/stockitem_detail.html'
+    template_name = "asset/stockitem_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['images'] = StockItemImage.objects.filter(stock_item=self.get_object())
+        context["images"] = StockItemImage.objects.filter(stock_item=self.get_object())
         return context
 
 
@@ -90,7 +90,7 @@ class StockDepartmentListView(LoginRequiredMixin, ListView):
     Show ListView filter from department
     """
 
-    template = 'asset/stockitem_list.html'
+    template = "asset/stockitem_list.html"
     model = StockItem
 
     def get_queryset(self):
@@ -103,8 +103,9 @@ class StockDepartmentListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = self.request.user.profile.department.name
+        context["title"] = self.request.user.profile.department.name
         return context
+
 
 class StockItemHomeView(LoginRequiredMixin, TemplateView):
     """
@@ -112,13 +113,13 @@ class StockItemHomeView(LoginRequiredMixin, TemplateView):
     render home page for home asset stock
     """
 
-    template_name = 'asset/stockitem_home.html'
+    template_name = "asset/stockitem_home.html"
 
     def get_context_data(self, **kwargs):
         # return categories from Category model
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        context['stockitems'] = StockItem.available.all()
+        context["categories"] = Category.objects.all()
+        context["stockitems"] = StockItem.available.all()
         return context
 
 
@@ -130,20 +131,20 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
 
     model = StockItem
     form_class = StockItemForm
-    template_name = 'asset/stockitem_form.html'
-    success_url = reverse_lazy('asset:stockitem_list')
+    template_name = "asset/stockitem_form.html"
+    success_url = reverse_lazy("asset:stockitem_list")
 
     def get_success_url(self):
         """get_success_url."""
         # return detail of stock item
         self.object = self.get_object()
-        return reverse('asset:stockitem_detail', kwargs={'pk': self.object.pk})
+        return reverse("asset:stockitem_detail", kwargs={"pk": self.object.pk})
 
     def get_context_data(self, **kwargs):
         """get_context_data."""
         context = super().get_context_data(**kwargs)
-        context['title'] = self.request.user.profile.department.name
-        context['form'] = self.form_class
+        context["title"] = self.request.user.profile.department.name
+        context["form"] = self.form_class
         return context
 
     def post(self, request, *args, **kwargs):
@@ -155,7 +156,7 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
         """
         form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
-            images = request.FILES.getlist('images')
+            images = request.FILES.getlist("images")
             # save images to StockItemImage
             stockitem = form.save(commit=False)
             stockitem.save()
@@ -165,31 +166,33 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
                 stockitem.save()
 
             for image in images:
-                StockItemImage.objects.create(
-                    stock_item=stockitem, images=image)
+                StockItemImage.objects.create(stock_item=stockitem, images=image)
             return redirect(self.success_url)
         else:
             print(form.errors)
             context = {
-                'errors': form.errors.as_text(),
-                'form': self.form_class,
+                "errors": form.errors.as_text(),
+                "form": self.form_class,
             }
             return render(request, self.template_name, context)
         # return super().post(request, *args, **kwargs)
 
 
-class StockItemListView(LoginRequiredMixin, ListView):
-    """
-    StockStockItemListView.
-    show list asset stock
-    """
-
-    model = StockItem
-    template_name = 'asset/stockitem_list.html'
-
-    def get_queryset(self):
-        # return stock item filter by department = user profile department
-        return StockItem.objects.filter(stock_control=self.request.user.profile.department, status=StockItem.Status.AVAILABLE)
+# class StockItemManagerListView(LoginRequiredMixin, ListView):
+#     """
+#     StockStockItemListView.
+#     show list asset stock
+#     """
+#
+#     model = StockItem
+#     template_name = "asset/stockitem_list.html"
+#
+#     def get_queryset(self):
+#         # return stock item filter by department = user profile department
+#         return StockItem.objects.filter(
+#             stock_control=self.request.user.profile.department,
+#             status=StockItem.Status.AVAILABLE,
+#         )
 
 
 # DONE: make list separate from stock asset name from user profile department
@@ -202,11 +205,11 @@ def categories_list(request, pk):
     # items = StockItem.objects.filter(category__pk=pk)
     items = get_list_or_404(StockItem, category__pk=pk)
     context = {
-        'object_list': items,
-        'h_title': Category.objects.get(pk=pk).name,
-        'title': Category.objects.get(pk=pk).name
+        "object_list": items,
+        "h_title": Category.objects.get(pk=pk).name,
+        "title": Category.objects.get(pk=pk).name,
     }
-    return render(request, 'asset/condition_list.html', context)
+    return render(request, "asset/condition_list.html", context)
 
 
 def manufacturer_list(request, pk):
@@ -217,11 +220,11 @@ def manufacturer_list(request, pk):
     """
     items = get_list_or_404(StockItem, manufacturer__pk=pk)
     context = {
-        'object_list': items,
-        'h_title': Manufacturer.objects.get(pk=pk).name,
-        'title': Manufacturer.objects.get(pk=pk).name
+        "object_list": items,
+        "h_title": Manufacturer.objects.get(pk=pk).name,
+        "title": Manufacturer.objects.get(pk=pk).name,
     }
-    return render(request, 'asset/condition_list.html', context)
+    return render(request, "asset/condition_list.html", context)
 
 
 def network_list(request, pk):
@@ -232,11 +235,11 @@ def network_list(request, pk):
     """
     items = get_list_or_404(StockItem, network__pk=pk)
     context = {
-        'object_list': items,
-        'h_title': Network.objects.get(pk=pk).name,
-        'title': Network.objects.get(pk=pk).name
+        "object_list": items,
+        "h_title": Network.objects.get(pk=pk).name,
+        "title": Network.objects.get(pk=pk).name,
     }
-    return render(request, 'asset/condition_list.html', context)
+    return render(request, "asset/condition_list.html", context)
 
 
 # TODO: make StockManageHomeView for Stock Manager
@@ -252,7 +255,7 @@ class StockManageHomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['stockitems'] = StockItem.objects.filter(
+        context["stockitems"] = StockItem.objects.filter(
             stock_control=self.request.user.profile.department
         )
         return context
@@ -264,40 +267,48 @@ class StockManagerListView(LoginRequiredMixin, ListView):
     For list item in Manager stock
     """
 
-    template_name = 'asset/condition_list.html'
+    template_name = "asset/condition_list.html"
     model = StockItem
 
+    # def get_queryset(self):
+    #     """
+    #     get_queryset.
+    #     return item filter user profile department
+    #     """
+    #     return StockItem.objects.filter(
+    #         stock_control=self.request.user.profile.department
+    #     )
     def get_queryset(self):
-        """
-        get_queryset.
-        return item filter user profile department
-        """
-        return StockItem.objects.filter(stock_control=self.request.user.profile.department)
+        # return stock item filter by department = user profile department
+        return StockItem.objects.filter(
+            stock_control=self.request.user.profile.department,
+            status=StockItem.Status.AVAILABLE,
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['h_title'] = self.request.user.profile.department.name
-        context['title'] = 'รายการสินทรัพย์'
+        context["h_title"] = self.request.user.profile.department.name
+        context["title"] = "รายการสินทรัพย์"
         return context
 
 
 class StockItemUpdateView(LoginRequiredMixin, UpdateView):
-    template_name = 'asset/stockitem_form.html'
+    template_name = "asset/stockitem_form.html"
     model = StockItem
     form_class = StockItemForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'แก้ไขรายการพัสดุ'
+        context["title"] = "แก้ไขรายการพัสดุ"
         # instance images to field
-        context['images'] = self.object.images.all()
+        context["images"] = self.object.images.all()
         return context
 
     def post(self, request, **kwargs):
         self.object = self.get_object()
         form = self.form_class(request.POST, request.FILES, instance=self.object)
         if form.is_valid():
-            images = request.FILES.getlist('images')
+            images = request.FILES.getlist("images")
             form_save = form.save()
             form_id = get_list_or_404(StockItem, pk=form_save.pk)
 
@@ -306,34 +317,33 @@ class StockItemUpdateView(LoginRequiredMixin, UpdateView):
                     old_img = StockItemImage.objects.filter(stock_item=self.object)
                     old_img.delete()
                     new_img = StockItemImage.objects.create(
-                        stock_item=self.object,
-                        images=image
+                        stock_item=self.object, images=image
                     )
                     new_img.save()
             else:
                 form_save.save()
-            return redirect(reverse_lazy('asset:stockitem_list'))
+            return redirect(reverse_lazy("asset:stockitem_list"))
         else:
             form = self.form_class(instance=self.object)
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {"form": form})
 
 
 class StockItemDeleteView(LoginRequiredMixin, DeleteView):
-    template_name = 'asset/stockitem_confirm_delete.html'
+    template_name = "asset/stockitem_confirm_delete.html"
     model = StockItem
-    success_url = reverse_lazy('asset:stockitem_list')
+    success_url = reverse_lazy("asset:stockitem_list")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'ลบรายการพัสดุ'
-        context['item'] = self.get_object()
+        context["title"] = "ลบรายการพัสดุ"
+        context["item"] = self.get_object()
         return context
 
     def post(self, request, **kwargs):
         self.object = self.get_object()
         self.object.is_delete = True
         self.object.save()
-        return redirect(reverse_lazy('asset:stockitem_list'))
+        return redirect(reverse_lazy("asset:stockitem_list"))
 
 
 def set_item(request, pk):
@@ -343,8 +353,8 @@ def set_item(request, pk):
     :param pk:
     """
     item = get_object_or_404(StockItem, pk=pk)
-    if request.method == 'POST':
-        location = request.POST.get('location')
+    if request.method == "POST":
+        location = request.POST.get("location")
         item.status = StockItem.Status.IN_USE
         item.location_install = get_object_or_404(Department, pk=location)
         item.save()
@@ -358,7 +368,7 @@ def remove_item(request, pk):
     :param pk:
     """
     item = get_object_or_404(StockItem, pk=pk)
-    if request.method == 'POST':
+    if request.method == "POST":
         item.status = StockItem.Status.AVAILABLE
         item.save()
         return HttpResponse(status=204)

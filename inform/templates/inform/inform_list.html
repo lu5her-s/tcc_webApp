@@ -4,86 +4,88 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Inform Management{% endblock title %}
+  {% block title %}Inform Management{% endblock title %}
 
-{% block content %}
+  {% block content %}
 
-<div class="pagetitle">
-  <h1>รายการแจ้งซ่อม {{ title }}</h1>
-  <nav>
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-      <li class="breadcrumb-item"><a href="{% url 'inform:home' %}">Inform Home</a></li>
-      <li class="breadcrumb-item active">Inform list</li>
-    </ol>
-  </nav>
-</div><!-- End Page Title -->
+  <div class="pagetitle">
+    <h1>รายการแจ้งซ่อม {{ title }}</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'inform:home' %}">Inform Home</a></li>
+        <li class="breadcrumb-item active">Inform list</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
 
-<section class="section profile">
-  <div class="row">
+  <section class="section profile">
+    <div class="row">
 
-    <div class="col-xl-12">
+      <div class="col-xl-12">
 
-      <!-- Recent Job -->
-      <div class="col-12">
-        <div class="card recent-sales overflow-auto">
+        <!-- Recent Job -->
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
 
-          <div class="card-body">
-            <h5 class="card-title">{{ title }}
-              <span>| </span>
-              {% if add_inform %}
-              <a href="{% url 'inform:create' %}" class="btn btn-success" style="float: right;">
-                <i class="bi bi-plus"></i>
-                แจ้งซ่อม
-              </a>
-              {% endif %}
-            </h5>
+            <div class="card-body">
+              <h5 class="card-title">{{ title }}
+                <span>| </span>
+                {% if add_inform %}
+                <a href="{% url 'inform:create' %}" class="btn btn-success" style="float: right;">
+                  <i class="bi bi-plus"></i>
+                  แจ้งซ่อม
+                </a>
+                {% endif %}
+              </h5>
 
-            <br>
+              <br>
 
-            <table class="table table-hover" id="dataTable">
-              <thead>
-                <tr>
-                  <th scope="col">เลขที่แจ้งซ่อม</th>
-                  <th scope="col">ชื่อพัสดุ</th>
-                  <th scope="col">สถานที่</th>
-                  <th scope="col">ผู้แจ้ง</th>
-                  <th scope="col">ความเร่งด่วน</th>
-                  {% if request.user|has_group:"Command" or request.user|has_group:"StaffRepair" %}
+              <table class="table table-hover" id="dataTable">
+                <thead>
+                  <tr>
+                    <th scope="col">เลขที่แจ้งซ่อม</th>
+                    <th scope="col">ชื่อพัสดุ</th>
+                    <th scope="col">สถานที่</th>
+                    <th scope="col">ผู้แจ้ง</th>
+                    <th scope="col">ความเร่งด่วน</th>
+                    {% if request.user|has_group:"Command" or request.user|has_group:"StaffRepair" %}
                     <th scope="col">...</th>
-                  {% endif %}
-                </tr>
-              </thead>
-              <tbody>
-                {% for object in object_list %}
-                <tr>
-                  <td>
-                    <a href="{% url 'inform:detail' pk=object.pk %}">
-                      {{ object.pk }}/{{ object.created_at.year|thaiyear }}
-                      {% comment %}{% if object.approve %}Test{% endif %}{% endcomment %}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{% url 'asset:stockitem_detail' pk=object.stockitem.pk %}" target="_blank">
-                      {{ object.stockitem.item_name }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="#">
-                      {{ object.stockitem.location.name }}
-                      {% comment %}{{ object.status }}{% endcomment %}
-                    </a>
-                  </td>
-                  <td>{{ object.customer.profile }}</td>
-                  <td>{{ object.get_urgency_display }}
-                    {% if object.get_status_display == 'แจ้งซ่อม' %}
-                    <sup>
-                      <i class="bi bi-exclamation-circle text-danger">
-                      </i>
-                    </sup>
                     {% endif %}
-                  </td>
-                  {% if request.user|has_group:"Command" or request.user|has_group:"StaffRepair" %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for object in object_list %}
+                  <tr>
+                    <td>
+                      <a href="{% url 'inform:detail' pk=object.pk %}">
+                        {{ object.pk }}/{{ object.created_at.year|thaiyear }}
+                        {% comment %}{% if object.approve %}Test{% endif %}{% endcomment %}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="{% url 'asset:stockitem_detail' pk=object.stockitem.pk %}" target="_blank">
+                        {{ object.stockitem.item_name }}
+                      </a>
+                    </td>
+                    <td>
+                      {{ object.stockitem.location_install }}
+                      {% comment %}{{ object.status }}{% endcomment %}
+                    </td>
+                    <td>
+                      <a href="{% url 'account:member' pk=object.customer.pk %}" target="_blank">
+                        {{ object.customer.profile }}
+                      </a>
+                    </td>
+                    <td>{{ object.get_urgency_display }}
+                      {% if object.get_status_display == 'แจ้งซ่อม' %}
+                      <sup>
+                        <i class="bi bi-exclamation-circle text-danger">
+                        </i>
+                      </sup>
+                      {% endif %}
+                    </td>
+                    {% if request.user|has_group:"Command" or request.user|has_group:"StaffRepair" %}
                     {% if object.approve_status %}
                     <td>{{ object.get_approve_status_display }}</td>
                     {% elif object.repair_status %}
@@ -91,23 +93,23 @@
                     {% else %}
                     <td>{{ object.get_status_display }}</td>
                     {% endif %}
-                  {% endif %}
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+                    {% endif %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+            </div>
 
           </div>
+        </div><!-- End Announce List -->
+        {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
 
-        </div>
-      </div><!-- End Announce List -->
-      {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
-
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<script>
+  <script>
   $(document).ready(() => {
     $("#dataTable").DataTable({
       "fnDrawCallback": function (oSettings) {
@@ -121,5 +123,5 @@
       order: [[0, "desc"]],
     });
   });
-</script>
-{% endblock content %}
+  </script>
+  {% endblock content %}

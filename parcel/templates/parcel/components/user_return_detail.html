@@ -1,4 +1,5 @@
-<form id="bill_detail_form" method="post" action="{% url 'parcel:save_return_draft' pk=bill.pk %}">
+{% load tags %}
+<form id="bill_detail_form" method="post" action="">
   {% csrf_token %}
   <tr>
     <td>{{ bill_detail_form.as_table }}</td>
@@ -9,14 +10,12 @@
         <!-- <button type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal" data-bs-target="#manager_check" id="manager_check">บันทึก</button> -->
         <!-- <a type="submit" class="btn btn-lg btn-primary">บันทึก</a> -->
         {% if bill.status == 'DRAFT' %}
-        <button type="submit" class="btn btn-lg btn-primary" id="save_draft">
-          บันทึก
+        <button type="submit" class="btn btn-lg btn-warning" id="save_draft">
+          บันทึกร่าง
         </button>
-        <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal" data-bs-target="#confirm_return">
-          ขอคืน
-        </a>
-        <a href="#" class="btn btn-lg btn-danger" data-bs-toggle="modal" data-bs-target="#cancel_return">
-          ยกเลิก
+        <a href="#" class="btn btn-lg btn-success" data-bs-toggle="modal"
+          data-bs-target="#confirm_return">
+          ยื่นขอคืน
         </a>
         {% endif %}
 

@@ -31,7 +31,7 @@
     <th>เจ้าหน้าที่บัญชีคุม</th>
     <td>
       <!-- FIX: edit condition remove not condition in use -->
-      {% if request.user.profile.department == bill.stock and request.user|has_group:"Manager" and bill.billdetail.controler %}
+      {% if request.user.profile.department == bill.stock and request.user|has_group:"StockManager" and not bill.billdetail.controler %}
       <a href="#" data-bs-toggle="modal" data-bs-target="#controlModal" class="btn btn-sm btn-primary">
         รับรองการส่งคืน
       </a>
@@ -46,7 +46,7 @@
     <th>วันที่รับรองการส่งคืน</th>
     <td>
       {% if bill.billdetail.control_date %}
-      {{ bill.billdetail.control_date }} เวลา {{ bill.billdetail.control_date|date:'H:i' }} น.
+      {{ bill.billdetail.control_date|thaidate }} เวลา {{ bill.billdetail.control_date|date:'H:i' }} น.
 
       {% else %}
       -
@@ -57,26 +57,27 @@
   <tr>
     <th>ผู้ตรวจสอบ</th>
     <td>
-      {% if not request.user|has_group:"Manager" %}
+      {% if request.user|has_group:"StockManager" and not bill.bill_note and request.user.profile.department == bill.stock %}
       <a href="#" data-bs-toggle="modal" data-bs-target="#checkerModal" class="btn btn-sm btn-primary">
         ตรวจสอบการส่งคืน
       </a>
       {% else %}
-    <td>{{ bill.billdetail.checker.profile|default:"-" }}</td>
-    {% endif %}
+      {{ bill.bill_note.user.profile|default:"-" }}
+      {% endif %}
+    </td>
 
     {{ bill.billdetail.checker.profile }}
     </td>
   </tr>
   <tr>
     <th>ตรวจสอบแล้วเห็นว่า</th>
-    <td>{{ bill.bill_note|default:"-" }}</td>
+    <td>{{ bill.bill_note.note|default:"-" }}</td>
   </tr>
   <tr>
     <th>วันที่ตรวจสอบการส่งคืน</th>
     <td>
-      {% if bill.billdetail.checked_date %}
-      {{ bill.billdetail.checked_date }} เวลา {{ bill.billdetail.checked_date|date:'H:i' }} น.
+      {% if bill.bill_note %}
+      {{ bill.bill_note.created_at|thaidate }} เวลา {{ bill.bill_note.created_at|date:'H:i' }} น.
 
       {% else %}
       -
@@ -102,7 +103,7 @@
     <th>วันที่รับพัสดุ</th>
     <td>
       {% if bill.billdetail.returned_at %}
-      {{ bill.billdetail.returned_at }} เวลา {{ bill.billdetail.returned_at|date:'H:i' }} น.
+      {{ bill.billdetail.returned_at|thaidate }} เวลา {{ bill.billdetail.returned_at|date:'H:i' }} น.
 
       {% else %}
       -
@@ -113,7 +114,7 @@
   <tr>
     <th>ทะเบียนหน่วยรับคืน</th>
     <td>
-      {% if request.user.profile.department == bill.stock %}
+      {% if request.user.profile.department == bill.stock and not bill.billdetail.return_no %}
       <a href="#" data-bs-toggle="modal" data-bs-target="#return_no" class="btn btn-sm btn-primary">
         ทะเบียนหน่วยรับคืน
       </a>
@@ -135,7 +136,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="return_no_form" method="post" action="#">
+        <form id="return_no_form" method="post" action="{% url 'parcel:return_done' pk=bill.pk %}">
           {% csrf_token %}
           <table class="table table-bordered">
             <tr>
@@ -144,12 +145,17 @@
                 <input type="text" name="return_no" class="form-control" required>
               </td>
             </tr>
+            <tr>
+              <td colspan="2">
+                <input type="password" name="pin" class="form-control" placeholder="กรุณาใส่รหัสผ่านเพื่อยืนยันการส่งคิน" required>
+              </td>
+            </tr>
 
           </table>
 
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
-            <button type="submit" class="btn btn-primary">บันทึก</button>
+            <button type="submit" class="btn btn-primary">ยืนยัน</button>
           </div>
 
         </form>

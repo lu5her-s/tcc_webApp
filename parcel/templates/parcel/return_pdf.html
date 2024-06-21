@@ -71,12 +71,12 @@
       <table class="table table-bordered" style="text-align: center; width: 100%; vertical-align: middle; border: 1px solid black;">
         
         <tr>
-          <td colspan="4" style="width: 75%;"><b>ใบส่งคืน</b></td>
-          <td colspan="4" class="page-number" id="pageNumberId">แผ่นที่ </td>
+          <td colspan="4" style="width: 50%;"><b>ใบส่งคืน</b></td>
+          <td colspan="4" style="width: 50%;" class="page-number" id="pageNumberId">แผ่นที่ ......../........</td>
         </tr>
 
         <tr>
-          <td rowspan="2" style="width: 10%;">ถึง</td>
+          <td rowspan="2" style="width: 5%;">ถึง</td>
           <td rowspan="2" style="width: 20%;">หน่วยรับคืน</td>
           <td rowspan="2" style="width: 20%;">{{ context.bill.stock }}</td>
 
@@ -93,7 +93,7 @@
         </tr>
         
         <tr>
-          <td rowspan="2" style="width: 10%;">จาก</td>
+          <td rowspan="2" style="width: 5%;">จาก</td>
           <td rowspan="2" style="width: 20%;">หน่วยส่งคืน</td>
           <td rowspan="2" style="width: 20%;">{{ context.bill.user.profile.department }}</td>
 
@@ -114,7 +114,7 @@
           <td rowspan="2">หมายเลขสิ่งอุปกรณ์</td>
           <td rowspan="2">รายการ</td>
           <td rowspan="2">หน่วยนับ</td>
-          <td rowspan="2">จำนวน</td>
+          <td rowspan="2">จำนวนส่งคืน</td>
           <td colspan="2">ราคา</td>
           <td rowspan="2">รับจริง</td>
         </tr>
@@ -146,9 +146,119 @@
         {% endif %}
 
         {% endfor %}
+
       
       </table>
 
+      <table class="table">
+        <tr>
+          <td 
+            colspan="4" 
+            rowspan="3"
+            align="center"
+            style="width: 100%; border: 1px solid black;"
+          >
+            เหตุที่ส่งคืน
+          </td>
+          <td 
+            colspan="4"
+            align="center"
+            style="width: 100%; border-right: 1px solid black;"
+          >
+            ขอรับรองว่าจำนวนที่แจ้งในช่อง "จำนวนส่งคืน" ได้รับการอนุมัติห้ส่งคืนจริง
+          </td>
+        </tr>
+
+        <tr style="width: 100%; border-right: 1px solid black;">
+          <td 
+            colspan="4"
+            align="center"
+          >
+            เจ้าหน้าที่บัญชีคุม &nbsp; {{ context.bill_detail.controler.profile|default:"__________" }}
+          </td>
+        </tr>
+
+        <tr style="width: 100%; border-right: 1px solid black;">
+          <td
+            colspan="4"
+            align="center"
+          >
+            {{ context.bill_detail.control_date|thaidate_short}}
+          </td>
+        </tr>
+
+      </table>
+
+      <table class="table">
+        <tr>
+          <td colspan="4" style="border: 1px solid black;"></td>
+          <td colspan="4" rowspan="7" style="border: 1px solid black;" align="center">ตรวจสอบแล้วเห็นว่า
+            <table class="table" align="center">
+              <tr></tr>
+              <tr>
+                <td>{{ context.note.note|default:"-"|safe }}</td>
+              </tr>
+              <tr>
+                <td>ผู้ตรวจสอบ &nbsp; {{ context.note.user.profile|default:"-" }}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid black;">
+                <td>{{ context.note.created_at|thaidate_short }}</td>
+              </tr>
+            </table>
+
+            <table class="table" align="center">
+              <tr></tr>
+              <tr>
+                <td>ได้รับสิ่งอุปกรณ์ตามรายการ และจำนวนที่แจ้งในช่อง "รับจริง" แล้ว</td>
+              </tr>
+              <tr>
+                <td>ผู้รับ &nbsp; {{ context.bill_detail.receiver.profile|default:"-" }}</td>
+              </tr>
+              <tr>
+                <td>{{ context.bill_detail.returned_at|thaidate_short }}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        {% for i in context.case %}
+        <tr>
+          <td style="border: 1px solid black;" align="center">
+            {% if context.bill_detail.return_case == i %}
+            /
+            {% else %}
+            [ ]
+            {% endif %}
+            
+          </td>
+          <td colspan="3" style="border: 1px solid black;">&nbsp;&nbsp;{{ i.label }}</td>
+        </tr>
+        
+        {% endfor %}
+
+      </table>
+      <br>
+
+      <table class="table table-bordered">
+        <tr>
+          <td colspan="4">ขอรับรองว่า สิ่งของตามจำนวนและรายการในใบส่งคืนนี้อยู่ในสภาพที่แจ้งในช่อง เหตุที่ส่งคืน</td>
+          <td colspan="4">อนุมัติให้รับคืนได้</td>
+        </tr>
+
+        <tr>
+          <td align="center" colspan="4">ผู้ส่งคืน &nbsp; {{ context.bill.user.profile|default:"-" }}</td>
+          <td align="center" colspan="4">ผู้อนุมัติ &nbsp; {{ context.bill_detail.approver.profile|default:"-" }}</td>
+        </tr>
+        <tr>
+          <td align="center" colspan="4">{{ context.bill.created_at|thaidate_short }}</td>
+          <td align="center" colspan="4">{{ context.bill_detail.approve_date|thaidate_short }}</td>
+        </tr>
+
+        <tr>
+          <td colspan="4"></td>
+          <td colspan="4">ทะเบียนหน่วยรับคืน &nbsp; {{ context.bill_detail.return_no|default:"-" }}</td>
+        </tr>
+
+      </table>
 
       <!-- <div id="footer_content"><pdf:pagenumber>/<pdf:pagecount></div> -->
       <!-- <div>Page <span class="page-number"><pdf:pagenumber> of <pdf:pagecount></span></div> -->

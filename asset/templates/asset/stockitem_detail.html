@@ -103,7 +103,7 @@
 
                 <tr>
                   <th>Location</th>
-                  <td>{{ object.location.name }}</td>
+                  <td>{{ object.location.name|default:'-' }}</td>
                 </tr>
 
                 {% if object.location_install %}
@@ -212,7 +212,11 @@
             <!-- <a href="#" class="btn btn-lg btn-warning">ขอเบิก</a> -->
           {% endif %}
           {% if perms.asset.change_stockitem or request.user.profile.department == object.location %}
-          <a href="{% url 'asset:stockitem_update' pk=object.pk %}" class="btn btn-lg btn-info">แก้ไข</a>
+            {% if object.status == 'AVAILABLE'  %}
+            <a href="{% url 'asset:stockitem_update' pk=object.pk %}" class="btn btn-lg btn-info">แก้ไข</a>
+            {% else %}
+            <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-secondary">ย้อนกลับ</a></a>
+            {% endif %}
           {% endif %}
         </div>
         <br />

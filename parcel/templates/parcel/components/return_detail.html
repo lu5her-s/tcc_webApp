@@ -3,7 +3,7 @@
   <tr>
     <th>สาเหตุที่ส่งคืน</th>
     <td>
-      {{ bill.billdetail.return_case|default:'-' }}
+      {{ bill.billdetail.get_return_case_display|default:'-' }}
     </td>
   </tr>
 
@@ -31,7 +31,7 @@
     <th>เจ้าหน้าที่บัญชีคุม</th>
     <td>
       <!-- FIX: edit condition remove not condition in use -->
-      {% if request.user|has_group:"Manager" and bill.billdetail.controler and request.user.profile.department == bill.stock %}
+      {% if request.user|has_group:"StockManager" and bill.billdetail.controler and request.user.profile.department == bill.stock %}
       <a href="#" data-bs-toggle="modal" data-bs-target="#controlModal" class="btn btn-sm btn-primary">
         รับรองการส่งคืน
       </a>
@@ -46,7 +46,7 @@
     <th>วันที่รับรองการส่งคืน</th>
     <td>
       {% if bill.billdetail.control_date %}
-      {{ bill.billdetail.control_date }} เวลา {{ bill.billdetail.control_date|date:'H:i' }} น.
+      {{ bill.billdetail.control_date|thaidate }} เวลา {{ bill.billdetail.control_date|date:'H:i' }} น.
 
       {% else %}
       -
@@ -63,21 +63,20 @@
         ตรวจสอบการส่งคืน
       </a>
       {% else %}
-      {{ bill.billdetail.checker.profile|default:"-" }}
+      {{ bill.bill_note.user.profile|default:"-" }}
     {% endif %}
 
-    {{ bill.billdetail.checker.profile }}
     </td>
   </tr>
   <tr>
     <th>ตรวจสอบแล้วเห็นว่า</th>
-    <td>{{ bill.bill_note|default:"-" }}</td>
+    <td>{{ bill.bill_note.note|safe|default:"-" }}</td>
   </tr>
   <tr>
     <th>วันที่ตรวจสอบการส่งคืน</th>
     <td>
-      {% if bill.billdetail.checked_date %}
-      {{ bill.billdetail.checked_date }} เวลา {{ bill.billdetail.checked_date|date:'H:i' }} น.
+      {% if bill.bill_note %}
+      {{ bill.bill_note.created_at|thaidate }} เวลา {{ bill.bill_note.created_at|date:'H:i' }} น.
 
       {% else %}
       -

@@ -9,51 +9,62 @@
           ตรวจสอบการส่งคืน ใบส่งคืนที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}
         </h5>
         <button type="button"
-                class="btn-close" 
-                data-bs-dismiss="modal" 
-                aria-label="Close"
-                >
+          class="btn-close" 
+          data-bs-dismiss="modal" 
+          aria-label="Close"
+        >
         </button>
       </div>
       <div class="modal-body">
         <form method="post"
-              action="#"
-              id="confirm_return"
-              class="pin-code"
-              >
-              <div class="modal-body">
+          action="{% url 'parcel:checker_confirm_return' pk=bill.pk %}"
+          id="checker_confirm_return"
+          class="pin-code"
+        >
+          <div class="modal-body">
 
-                <p> ตรวจสอบแล้วเห็นว่า </p>
-                <!-- form to enter pin number to confirm approve -->
-                {% csrf_token %}
+            <p> ตรวจสอบแล้วเห็นว่า </p>
+            <!-- form to enter pin number to confirm approve -->
+            {% csrf_token %}
 
-                <textarea id="note" name="note" rows="3" class="form-control" placeholder="ตรวจสอบแล้วเห็นว่า"></textarea>
-                <br>
+            <textarea id="note" name="note" rows="3" class="form-control" placeholder="ตรวจสอบแล้วเห็นว่า"></textarea>
+            <br>
 
-                <!-- enter password to confirm approve -->
+            <!-- enter password to confirm approve -->
 
-                <input type="password" 
-                       name="pin" 
-                       class="form-control" 
-                       placeholder="กรุณาใส่รหัสผ่านเพื่อยืนยัน" 
-                       required
-                       />
-              </div>
-              <div class="modal-footer">
-                <button type="button" 
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                        >
-                        ยกเลิก
-                </button>
-                <button type="submit"
-                        class="btn btn-primary"
-                        >
-                        ยืนยัน
-                </button>
-              </div>
+            <input type="password" 
+              name="pin" 
+              class="form-control" 
+              placeholder="กรุณาใส่รหัสผ่านเพื่อยืนยัน" 
+              required
+            />
+          </div>
+          <div class="modal-footer">
+            <button type="button" 
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              ยกเลิก
+            </button>
+            <button type="submit"
+              class="btn btn-primary"
+              id="btnCheckerConfirm"
+            >
+              ยืนยัน
+            </button>
+          </div>
         </form>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+$(function(){
+  $('#btnCheckerConfirm').click(function(){
+    $('#btnCheckerConfirm').prop('disabled', true);
+    let form = $('#checker_confirm_return');
+    form.submit();
+    });
+  }
+</script>

@@ -24,7 +24,12 @@
         <!-- Stock asset manager card -->
 
         <!-- if user not stock manager show list asset in department -->
+    <!-- TODO: edit condition for manager, current is error to show list of stock item in department -->
+    {% comment %}
         {% if perms.asset.add_stockitem %}
+    {% endcomment %}
+      {% if request.user.profile.department.name == 'Stock Manager' %}
+    
         <div class="col-xxl-4 col-md-6">
             <div class="card info-card bg-card">
                 <a href="{% url 'asset:manager_home' %}">

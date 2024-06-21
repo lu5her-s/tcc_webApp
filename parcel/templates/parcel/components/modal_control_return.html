@@ -9,17 +9,17 @@
           รับรองการส่งคืน ใบส่งคืนที่ {{ bill.pk }}/{{ bill.created_at.year|thaiyear }}
         </h5>
         <button type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                >
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        >
         </button>
       </div>
       <div class="modal-body">
         <form method="post"
-              action="#"
-              id="confirm_return"
-              class="pin-code">
+          action="{% url 'parcel:return_controler' pk=bill.pk %}"
+          id="control_return"
+          class="pin-code">
           <div class="modal-body">
 
             <p> ขอรับรองว่าจำนวนที่แจ้งในช่อง "จำนวนส่งคืน" ได้รับการอนุมัติให้ส่งคืนจริง </p>
@@ -27,28 +27,39 @@
             {% csrf_token %}
             <!-- enter password to confirm approve -->
             <input
-                type="password"
-                name="pin"
-                class="form-control"
-                placeholder="กรุณาใส่รหัสผ่านเพื่ออนุมัติ"
-                required
-                />
+              type="password"
+              name="pin"
+              class="form-control"
+              placeholder="กรุณาใส่รหัสผ่านเพื่ออนุมัติ"
+              required
+            />
           </div>
           <div class="modal-footer">
             <button type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                    >
-                    ยกเลิก
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              ยกเลิก
             </button>
-              <button type="submit"
-                      class="btn btn-primary"
-                      >
-                      ยืนยัน
-              </button>
+            <button type="submit"
+              class="btn btn-primary"
+              id="btn-confirm-return"
+            >
+              ยืนยัน
+            </button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  $('#btn-confirm-return').click(function() {
+    $('#btn-confirm-return').on('click', function() {
+      this.prop('disabled', true)
+    }
+    let form = $('#control_return')
+    form.submit()
+  }
+</script>
