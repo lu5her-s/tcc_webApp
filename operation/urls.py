@@ -1,5 +1,32 @@
 from django.urls import path
+from . import views
 
 app_name = "operation"
 
-urlpatterns = []
+urlpatterns = [
+    path("", views.OperationHome.as_view(), name="home"),
+    path("create", views.OperationCreateView.as_view(), name="create"),
+    path("<int:pk>", views.OperationDetailView.as_view(), name="detail"),
+    path("leader/<int:pk>/accept", views.accept_leader, name="accept_leader"),
+    path(
+        "team_member_create/<int:pk>",
+        views.team_member_create,
+        name="team_member_create",
+    ),
+    path(
+        "member/delete/<int:pk>",
+        views.delete_team_member,
+        name="member_delete",
+    ),
+    path(
+        "update_date/<int:pk>",
+        views.update_operation_date,
+        name="update_date",
+    ),
+    path(
+        "car_operation_add/<int:pk>",
+        views.car_operation_add,
+        name="car_operation_add",
+    ),
+    path("<int:pk>/change_car", views.change_car, name="change_car"),
+]

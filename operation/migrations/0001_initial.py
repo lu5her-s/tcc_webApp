@@ -8,143 +8,447 @@ import operation.models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('account', '0006_alter_profile_options'),
-        ('parcel', '0052_alter_rejectreturnbillnote_options_and_more'),
-        ('car', '0023_alter_car_car_avatar'),
+        ("account", "0006_alter_profile_options"),
+        ("parcel", "0052_alter_rejectreturnbillnote_options_and_more"),
+        ("car", "0023_alter_car_car_avatar"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Allowance',
+            name="Allowance",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('total_withdraw', models.FloatField(default=0.0)),
-                ('number_of_withdraw', models.IntegerField(default=0)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("total_withdraw", models.FloatField(default=0.0)),
+                ("number_of_withdraw", models.IntegerField(default=0)),
             ],
         ),
         migrations.CreateModel(
-            name='Operation',
+            name="Operation",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('type_of_work', models.CharField(choices=[('BR', 'วิทยุถ่ายทอด'), ('SAT', 'ดาวเทียม'), ('FO', 'ใยแก้วนำแสง'), ('DC', 'สื่อสารข้อมูล'), ('AC', 'เครื่องปรับอากาศ'), ('OT', 'อื่นๆ')], default='OT', max_length=3)),
-                ('job_description', ckeditor.fields.RichTextField()),
-                ('start_date', models.DateField(auto_now_add=True)),
-                ('end_date', models.DateField(blank=True, null=True)),
-                ('approve_status', models.CharField(blank=True, choices=[('AP', 'อนุมัติ'), ('WA', 'รออนุมัติ'), ('RJ', 'ไม่อนุมัติ')], max_length=2, null=True)),
-                ('operation_status', models.CharField(choices=[('WA', 'รอดำเนินการ'), ('IP', 'กำลังดำเนินการ'), ('DO', 'เสร็จสิ้น'), ('DF', 'ร่าง')], default='WA', max_length=2)),
-                ('approve_start_date', models.DateField(blank=True, null=True)),
-                ('approve_close_date', models.DateField(blank=True, null=True)),
-                ('approver_close', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='approverclose', to=settings.AUTH_USER_MODEL)),
-                ('approver_start', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='approverstart', to=settings.AUTH_USER_MODEL)),
-                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='createdby', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "type_of_work",
+                    models.CharField(
+                        choices=[
+                            ("BR", "วิทยุถ่ายทอด"),
+                            ("SAT", "ดาวเทียม"),
+                            ("FO", "ใยแก้วนำแสง"),
+                            ("DC", "สื่อสารข้อมูล"),
+                            ("AC", "เครื่องปรับอากาศ"),
+                            ("OT", "อื่นๆ"),
+                        ],
+                        default="OT",
+                        max_length=3,
+                    ),
+                ),
+                ("job_description", ckeditor.fields.RichTextField()),
+                ("start_date", models.DateField(auto_now_add=True)),
+                ("end_date", models.DateField(blank=True, null=True)),
+                (
+                    "approve_status",
+                    models.CharField(
+                        blank=True,
+                        choices=[("AP", "อนุมัติ"), ("WA", "รออนุมัติ"), ("RJ", "ไม่อนุมัติ")],
+                        max_length=2,
+                        null=True,
+                    ),
+                ),
+                (
+                    "operation_status",
+                    models.CharField(
+                        choices=[
+                            ("WA", "รอดำเนินการ"),
+                            ("IP", "กำลังดำเนินการ"),
+                            ("DO", "เสร็จสิ้น"),
+                            ("DF", "ร่าง"),
+                        ],
+                        default="WA",
+                        max_length=2,
+                    ),
+                ),
+                ("approve_start_date", models.DateField(blank=True, null=True)),
+                ("approve_close_date", models.DateField(blank=True, null=True)),
+                (
+                    "approver_close",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="approverclose",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "approver_start",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="approverstart",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="createdby",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Team',
+            name="Team",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('operation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='team', to='operation.operation')),
-                ('team_leader', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='teamleader', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "operation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="team",
+                        to="operation.operation",
+                    ),
+                ),
+                (
+                    "team_leader",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="teamleader",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='TeamMember',
+            name="TeamMember",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('team', models.ManyToManyField(related_name='members', to='operation.team')),
-                ('user', models.ManyToManyField(related_name='teams', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "team",
+                    models.ForeignKey(
+                        related_name="members",
+                        to="operation.team",
+                        on_delete=django.db.models.deletion.CASCADE,
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        related_name="teams",
+                        to=settings.AUTH_USER_MODEL,
+                        on_delete=django.db.models.deletion.CASCADE,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='OperationParcelReturn',
+            name="OperationParcelReturn",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('operation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='parcelsreturns', to='operation.operation')),
-                ('parcel_return', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='operation_parcel_return', to='parcel.parcelreturn')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "operation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="parcelsreturns",
+                        to="operation.operation",
+                    ),
+                ),
+                (
+                    "parcel_return",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="operation_parcel_return",
+                        to="parcel.parcelreturn",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='OperationParcelRequest',
+            name="OperationParcelRequest",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('operation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='parcelsrequests', to='operation.operation')),
-                ('parcel', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='operation_parcel_request', to='parcel.parcelrequest')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "operation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="parcelsrequests",
+                        to="operation.operation",
+                    ),
+                ),
+                (
+                    "parcel",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="operation_parcel_request",
+                        to="parcel.parcelrequest",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='OperationDocument',
+            name="OperationDocument",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(blank=True, null=True, upload_to=operation.models.operation_file_path)),
-                ('operation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='documents', to='operation.operation')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "file",
+                    models.FileField(
+                        blank=True,
+                        null=True,
+                        upload_to=operation.models.operation_file_path,
+                    ),
+                ),
+                (
+                    "operation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="documents",
+                        to="operation.operation",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Operation Document',
+                "verbose_name": "Operation Document",
             },
         ),
         migrations.CreateModel(
-            name='OperationCar',
+            name="OperationCar",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('car_book', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='operationcar', to='car.carbooking')),
-                ('operation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cars', to='operation.operation')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "car_book",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="operationcar",
+                        to="car.carbooking",
+                    ),
+                ),
+                (
+                    "operation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="cars",
+                        to="operation.operation",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='OilReimburesment',
+            name="OilReimburesment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('oil_type', models.CharField(choices=[('BZ', 'เบนซิน'), ('DS', 'ดีเซล')], max_length=2)),
-                ('liter_request', models.FloatField(default=0.0)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('approve_status', models.CharField(blank=True, choices=[('RJ', 'ไม่อนุมัติ'), ('AP', 'อนุมัติ')], max_length=5, null=True)),
-                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='oilrequest', to=settings.AUTH_USER_MODEL)),
-                ('operaion', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='oilrequest', to='operation.operation')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "oil_type",
+                    models.CharField(
+                        choices=[("BZ", "เบนซิน"), ("DS", "ดีเซล")], max_length=2
+                    ),
+                ),
+                ("liter_request", models.FloatField(default=0.0)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "approve_status",
+                    models.CharField(
+                        blank=True,
+                        choices=[("RJ", "ไม่อนุมัติ"), ("AP", "อนุมัติ")],
+                        max_length=5,
+                        null=True,
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="oilrequest",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "operaion",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="oilrequest",
+                        to="operation.operation",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='AllowanceWithdraw',
+            name="AllowanceWithdraw",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateTimeField(auto_now_add=True)),
-                ('amount', models.DecimalField(decimal_places=2, default=0.0, max_digits=12)),
-                ('allowance', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='withdrawals', to='operation.allowance')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateTimeField(auto_now_add=True)),
+                (
+                    "amount",
+                    models.DecimalField(decimal_places=2, default=0.0, max_digits=12),
+                ),
+                (
+                    "allowance",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="withdrawals",
+                        to="operation.allowance",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='AllowanceRefund',
+            name="AllowanceRefund",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateTimeField(auto_now=True)),
-                ('refund_amount', models.FloatField(default=0.0)),
-                ('allowance', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='refunds', to='operation.allowance')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateTimeField(auto_now=True)),
+                ("refund_amount", models.FloatField(default=0.0)),
+                (
+                    "allowance",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="refunds",
+                        to="operation.allowance",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='allowance',
-            name='operation',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='allowance', to='operation.operation'),
+            model_name="allowance",
+            name="operation",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="allowance",
+                to="operation.operation",
+            ),
         ),
         migrations.AddField(
-            model_name='allowance',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='allowance', to=settings.AUTH_USER_MODEL),
+            model_name="allowance",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="allowance",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.CreateModel(
-            name='WorkPlace',
+            name="WorkPlace",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('operation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workplace', to='operation.operation')),
-                ('workplace', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='workplace', to='account.department')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "operation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workplace",
+                        to="operation.operation",
+                    ),
+                ),
+                (
+                    "workplace",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="workplace",
+                        to="account.department",
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('operation', 'workplace')},
+                "unique_together": {("operation", "workplace")},
             },
         ),
     ]

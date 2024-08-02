@@ -198,8 +198,13 @@ INTERNAL_IPS = [
 JAZZMIN_SETTINGS = {
     "site_title": "TCC Admin",
     "site_header": "TCC Admin",
-    "site_logo": "assets/img/logo.png",
+    "site_logo": "assets/img/tcc_logo_admin.png",
     "copyright": "Telecommunication and Network",
+    "welcome_sign": "Welcome, TCC Admin",
+    #######
+    # css #
+    #######
+    # "custom_css": "assets/css/style.css",
 }
 
 # for use out by ngrok-free

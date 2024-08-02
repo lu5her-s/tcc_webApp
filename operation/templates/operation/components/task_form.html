@@ -1,0 +1,9 @@
+{% load tags %}
+{% for field in task_form %}
+<div class="row mb-3">
+  <label for="{{ field.name }}" class="col-md-4 col-lg-3 col-form-label">{{ field.label }}</label>
+  <div class="col-md-8 col-lg-9">
+    {{ field }}
+  </div>
+</div>
+{% endfor %}

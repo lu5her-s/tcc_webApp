@@ -12,9 +12,9 @@
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="{% static 'assets/img/logo.png' %}" rel="icon">
+    <link href="{% static 'assets/img/tcc_logo.png' %}" rel="icon">
     {% comment %}<link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">{% endcomment %}
-    <link rel="apple-touch-icon" href="{% static 'assets/img/logo.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'assets/img/tcc_logo.png' %}">
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -60,6 +60,9 @@
 
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@2.0.1"></script>
   </head>
 
   <body>
@@ -143,11 +146,11 @@
     <a id="back-to-top" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
     {% endcomment %}
     <button onclick="topFunction()" 
-            id="myBtn" 
-            class="back-to-top d-flex align-items-center justify-content-center" 
-            title="Go to top"
-            >
-            <i class="bi bi-arrow-up-short"></i>
+      id="myBtn" 
+      class="back-to-top d-flex align-items-center justify-content-center" 
+      title="Go to top"
+    >
+      <i class="bi bi-arrow-up-short"></i>
     </button>
 
 
@@ -177,49 +180,49 @@
   </body>
 
   <script>
-    $(document).ready(function () {
-      $('#repairTable').DataTable();
+  $(document).ready(function () {
+    $('#repairTable').DataTable();
+  });
+
+  $(document).ready(function () {
+    $('#testTable').DataTable({
+      order: [[3, 'desc']]
     });
+  });
 
-    $(document).ready(function () {
-      $('#testTable').DataTable({
-        order: [[3, 'desc']]
-      });
-    });
-
-    $(document).ready(function(){
-      $(window).scroll(function () {
-        if ($(this).scrollTop() > 20) {
-          $('#back-to-top').fadeIn();
-        } else {
-          $('#back-to-top').fadeOut();
-        }
-      });
-      // scroll body to 0px on click
-      $('#back-to-top').click(function () {
-        $('body,html').animate({
-          scrollTop: 0
-        }, 400);
-        return false;
-      });
-    });
-
-
-    var myBtn = document.getElementById("myBtn");
-    window.onscroll = function() {scrollFunction()};
-
-    function scrollFunction() {
-      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        myBtn.style.display = "block";
+  $(document).ready(function(){
+    $(window).scroll(function () {
+      if ($(this).scrollTop() > 20) {
+        $('#back-to-top').fadeIn();
       } else {
-        myBtn.style.display = "none";
+        $('#back-to-top').fadeOut();
       }
+    });
+    // scroll body to 0px on click
+    $('#back-to-top').click(function () {
+      $('body,html').animate({
+        scrollTop: 0
+      }, 400);
+      return false;
+    });
+  });
+
+
+  var myBtn = document.getElementById("myBtn");
+  window.onscroll = function() {scrollFunction()};
+
+  function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+      myBtn.style.display = "block";
+    } else {
+      myBtn.style.display = "none";
     }
-    // When the user clicks on the button, scroll to the top of the document
-    function topFunction() {
-      document.body.scrollTop = 0; // For Safari
-      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    }
+  }
+  // When the user clicks on the button, scroll to the top of the document
+  function topFunction() {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+  }
   </script>
 
 </html>

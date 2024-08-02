@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+{% load tags %}
+
+{% block title %}Operation Home{% endblock title %}
+
+
+{% block content %}
+
+<div class="pagetitle">
+  <h1>ใบงาน</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+      <li class="breadcrumb-item active">Operation Home</li>
+    </ol>
+  </nav>
+</div><!-- End Page Title -->
+
+
+<section class="section dashboard">
+  <div class="row">
+    {% if request.user|has_group:"Command" %}
+    Command Page
+    {% elif request.user|has_group:"Manager" %}
+    Manager Page    
+    {% else %}
+    {% include "operation/components/user_home.html" %}
+    {% endif %}
+  </div>
+</section>
+
+<script>
+</script>
+{% endblock content %}

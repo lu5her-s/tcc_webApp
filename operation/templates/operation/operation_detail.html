@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+  {% block title %}Inform{% endblock title %}
+
+  {% block content %}
+  <div class="pagetitle">
+    <h1>{{ title }}เลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'operation:home' %}">Operation Home</a></li>
+        <li class="breadcrumb-item active">ใบงานที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+
+  <section class="section">
+    <!-- TODO: if user == team_leader or user == object.created_by render form instance -->
+    <div class="row">
+
+      <div class="col-xl-12">
+        <div class="card">
+          <div class="card-body pt-3">
+            <ul class="nav nav-tabs nav-tabs-bordered">
+              <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
+                  รายละเอียด
+                </button>
+              </li>
+
+              <!-- TODO: edit to team_leader -->
+              {% if request.user == team.team_leader and not team.accepted %}
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#accept">
+                  หัวหน้าชุด
+                </button>
+              </li>
+
+              {% endif %}
+
+            </ul>
+
+            <div class="tab-content pt-2">
+
+              <div id="detail" class="tab-pane fade show active">
+                <h6 class="card-title"> รายละเอียด | <span>ใบงานเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h6>
+                <table class="table">
+                  <tr>
+                    <th>เลชที่ใบงาน</th>
+                    <td>{{ object.pk }}/{{ object.created_at.year|thaiyear }}</td>
+                  </tr>
+
+                  <tr>
+                    <th>ประเภทงาน</th>
+                    {% if object.type_of_work %}
+                    <td>{{ object.get_type_of_work_display  }}</td>
+
+                    {% else %}
+                    <td>{{ object.other_type }}</td>
+
+                    {% endif %}
+
+                  </tr>
+
+                  <tr>
+                    <th>หัวหน้าชุด</th>
+                    <td>
+                      <a href="{% url 'account:member' pk=team.team_leader.pk %}" target="_blank">
+                        {{ team.team_leader.profile }}
+                      </a>
+                      &nbsp;
+                      {% if team.accepted %}
+                      <span class="badge bg-success">ตอบรับแล้ว</span>
+                      {% else %}
+                      <span class="badge bg-warning">รอตอบรับ</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <th>ลูกชุด</th>
+                    <td>
+                      {% if members %}
+                      <ol>
+                        {% for member in members %}
+                        <li>
+                          {{ member.member.profile }} 
+                          {% if request.user == team.team_leader or request.user == object.created_by %}
+                          <form
+                            id="delete_{{ member.pk }}_form"
+                            method="post"
+                            style="display: inline-block;"
+                            action="{% url 'operation:member_delete' pk=member.pk %}"
+                          >
+                            {% csrf_token %}
+                            <a 
+                              href="javascript:$(delete_{{ member.pk }}_form).submit();"
+                              class="badge badge-sm bg-danger"
+                            >ลบ</a>
+                          </form>
+                          {% endif %}
+                        </li>
+                        {% endfor %}
+                      </ol>
+                      <a href="#"
+                        class="btn btn-sm btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addMember"
+                      >เพิ่มลูกชุด</a>
+                      {% include "operation/components/add_member_modal.html" %}
+                      {% else %}
+                      ยังไม่ได้กำหนดลูกชุด 
+                      <button href="#"
+                        class="btn btn-sm btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addMember"
+                      >กำหนดลูกชุด</button>
+                      {% include "operation/components/add_member_modal.html" %}
+                      {% endif %}
+
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <th>วันปฏิบัติงาน</th>
+                    <td>
+                      วันออก : {{ object.start_date|thaidate }}
+                      <br>
+                      วันกลับ : {{ object.end_date|thaidate }}
+                      <br>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#updateDate"
+                      >แก้ไขวันปฏิบัติงาน</button>
+                      {% include "operation/components/update_date_modal.html" %}
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <th>ยานพาหนะที่ใช้ปฏิบัติงาน</th>
+                    <td>
+                      {% if object.own_car %}
+                      ยานพาหนะส่วนตัว
+                      <br>
+                      <button 
+                        class="btn btn-sm btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addCar"
+                        type="button">ใช้ยานพาหนะของทางราชการ</button>
+                      {% else %}
+                      ยานพาหนะของทางราชการ
+                      {% if cars %}
+                      <ol>
+                      {% for car in cars %}
+                      <li>{{ car }}</li>
+                      {% endfor %}
+                      </ol>
+                      {% else %}
+                      <br>
+                      <i class="bi bi-exclamation-circle text-danger"></i>&nbsp; ยังไม่ได้กำหนด
+                      <br>
+                      {% endif %}
+                      <button 
+                        class="btn btn-sm btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addCar"
+                        type="button">
+                        add car
+                      </button>
+                      <button 
+                        class="btn btn-sm btn-warning"
+                        data-bs-toggle="modal"
+                        data-bs-target="#changeCar"
+                        type="button">change car to own
+                      </button>
+                      {% endif %}
+                      {% include "operation/components/add_car_modal.html" %}
+                      {% include "operation/components/change_car_modal.html" %}
+                    </td>
+                  </tr>
+
+                </table>
+                <br>
+
+                <table class="table table-borderless">
+                  <tr>
+                    <th colspan="2" class="text-center">รายละเอียดงาน</th>
+                  </tr>
+                  {% if tasks %}
+                  <tr>
+                    <td width="80%">Detail Work</td>
+                    <td>Place</td>
+                  </tr>
+                  {% else %}
+                  <tr>
+                    <td colspan="2">ยังไม่ได้กำหนดรายละเอียดงาน</td>
+                  </tr>
+                  {% endif %}
+
+                  <tr>
+                    <td colspan="2" style="float: right;">
+                      <button 
+                        type="button"
+                        class="btn btn-light"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addWork"
+                      >เพิ่มรายละเอียดงาน</button>
+                    </td>
+                  </tr>
+                </table>
+                {% include "operation/components/add_work_modal.html" %}
+
+                <!-- if user is assigned to make button to create stockitem -->
+              </div><!-- end detail -->
+
+              <div id="accept" class='tab-pane fade pt-3'>
+                {% if request.user == team.team_leader %}
+                <h5 class="card-title">หัวหน้าชุดตอบรับ | <span>ใบงาน {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h5>
+                {% if not team.accepted %}
+                <p>
+                  <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
+                  <span>
+                    กรุณาตอบรับการเป็นหัวหน้าชุด ของใบงานที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}
+                    <br>
+                    {% if members %}
+                    ลูกชุด
+                    <ul>
+                      {% for member in members %}
+                      <li>
+                        {{ forloop.counter }}. {{ member.profile }}
+                      </li>
+                      {% endfor %}
+                    </ul>
+
+                    {% else %}
+                    ยังไม่ได้กำหนดลูกทีม กรุณาตอบรับเพื่อกำหนดลูกทีม
+
+                    {% endif %}
+
+                    <center>
+                      <a href="{% url 'operation:accept_leader' pk=team.pk %}" class="btn btn-success">ตอบรับงาน</a>
+                    </center>
+                  </span>
+                </p>
+                {% else %}
+                -
+                {% endif %}
+                {% endif %}
+              </div>
+            </div><!-- end tab-content -->
+          </div><!--end card-->
+        </div><!-- end col -->
+      </div>
+
+      <!-- modal for delete member -->
+
+  </section>
+  {% endblock content %}

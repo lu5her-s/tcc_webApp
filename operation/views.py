@@ -1,3 +1,167 @@
-from django.shortcuts import render
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# File              : views.py
+# Author            : lu5her <lu5her@mail>
+# Date              : Sun Jun, 30 2024, 16:53 182
+# Last Modified Date: Wed Jul, 03 2024, 21:40 185
+# Last Modified By  : lu5her <lu5her@mail>
+# -----
+from django.http.response import re
+from django.shortcuts import HttpResponse, redirect, render, reverse
+from django.utils.safestring import mark_safe
+from django.views.generic import DetailView, TemplateView, UpdateView, View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.contrib.auth.models import User
+
+from .models import Operation, OperationCar, Task, Team, TeamMember
+from .forms import CarAddForm, OperationForm, TaskForm, TeamForm, TeamMemberFormSet
 
 # Create your views here.
+
+
+class OperationHome(LoginRequiredMixin, TemplateView):
+    template_name = "operation/index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["user_operation_all"] = Operation.objects.filter(
+            created_by=self.request.user
+        )
+        return context
+
+
+class OperationCreateView(LoginRequiredMixin, View):
+    template_name = "operation/operation_form.html"
+
+    def get(self, request):
+        context = {
+            "operation_form": OperationForm,
+            "team_form": TeamForm,
+        }
+        return render(request, self.template_name, context=context)
+
+    def post(self, request):
+        operation_form = OperationForm(request.POST)
+        team_form = TeamForm(request.POST)
+        if operation_form.is_valid() and team_form.is_valid():
+            operation_form_data = operation_form.cleaned_data
+            if operation_form_data["type_of_work"] == "OT":
+                other_type = request.POST.get("other_type")
+                self.object = operation_form.save(commit=False)
+                self.object.other_type = other_type
+                self.object.created_by = self.request.user
+                self.object.save()
+            else:
+                self.object = operation_form.save(commit=False)
+                self.object.created_by = self.request.user
+                self.object.save()
+            team = team_form.save(commit=False)
+            team.operation = self.object
+            if self.object.created_by == team.team_leader:
+                team.accept()
+            team.save()
+
+            return redirect(
+                reverse_lazy("operation:detail", kwargs={"pk": self.object.pk})
+            )
+        else:
+            return render(
+                request, self.template_name, context={"operation_form": operation_form}
+            )
+
+
+class OperationDetailView(LoginRequiredMixin, DetailView):
+    model = Operation
+    template_name = "operation/operation_detail.html"
+
+    def get_context_data(self, **kwargs):
+        self.object = self.get_object()
+        team = Team.objects.get(operation=self.object)
+        context = {
+            "object": self.object,
+            "team": team,
+            "tasks": Task.objects.filter(operation=self.object),
+            "task_form": TaskForm,
+            "members": TeamMember.objects.filter(team=team),
+            "team_member_formset": TeamMemberFormSet,
+            "cars": OperationCar.objects.filter(operation=self.object),
+            "operation_form": OperationForm,
+            "car_add_form": CarAddForm,
+        }
+        return context
+
+
+def accept_leader(request, pk):
+    team = Team.objects.get(pk=pk)
+    team.accept()
+    team.save()
+    return redirect(reverse_lazy("operation:detail", kwargs={"pk": team.operation.pk}))
+
+
+# WARN: check user exist
+def team_member_create(request, pk):
+    team = Team.objects.get(pk=pk)
+    form_set = TeamMemberFormSet(request.POST)
+    if form_set.is_valid():
+        for form in form_set:
+            member = form.cleaned_data.get("member")
+            if member.pk not in team.members.values_list("member", flat=True):
+                TeamMember.objects.create(team=team, member=member)
+                # print("Already exist")
+    else:
+        print(form_set.errors)
+    return redirect(reverse_lazy("operation:detail", kwargs={"pk": team.operation.pk}))
+
+
+def delete_team_member(request, pk):
+    if request.method == "POST":
+        team_member = TeamMember.objects.get(pk=pk)
+        team_member.delete()
+        return redirect(
+            reverse_lazy(
+                "operation:detail", kwargs={"pk": team_member.team.operation.pk}
+            )
+        )
+
+
+def update_operation_date(request, pk):
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        # print(operation.start_date)
+        # print("======")
+        # print(request.POST.get("start_date"))
+        operation.start_date = (
+            request.POST.get("start_date")
+            if request.POST.get("start_date")
+            else operation.start_date
+        )
+        operation.end_date = (
+            request.POST.get("end_date")
+            if request.POST.get("end_date")
+            else operation.end_date
+        )
+        operation.save()
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+# car operation
+def car_operation_add(request, pk):
+    # form = CarAddForm(request.POST)
+    if request.method == "POST":
+        form = CarAddForm(request.POST)
+        data = form.data.get("car_booking")
+        operation = Operation.objects.get(pk=pk)
+        operation.own_car = False
+        operation.save()
+        # print(f"{data}  for -- operation no {operation}")
+    return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+def change_car(request, pk):
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        operation.own_car = True
+        operation.cars.all().delete()
+        operation.save()
+    return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))

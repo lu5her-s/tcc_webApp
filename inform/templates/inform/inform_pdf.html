@@ -36,11 +36,11 @@
     <table style="width: 100%;">
       <tr style="width: 100%;">
         <td style="width: 50%;">
-          <label class="thai-font" style="font-size: 30px; font-weight: bold;">INF : {{ context.inform.pk }}/{{ context.inform.created_at.year|thaiyear }}</label><br />
-          <label class="thai-font" style="font-size: 18px;">ความเร่งด่วน - {{ context.inform.get_repair_category_display }}</label>
+          <label class="thai-font" style="font-size: 30px; font-weight: bold;">แจ้งซ่อม : {{ context.inform.pk }}/{{ context.inform.created_at.year|thaiyear }}</label><br />
+          <label class="thai-font" style="font-size: 18px;">ความเร่งด่วน - {{ context.inform.get_urgency_display }}</label>
         </td>
         <td style="text-align: right;">
-          <img style="width: 50px" src="/home/lu5her/source/python/django/tcc_webApp/static/assets/img/favicon.ico" />
+          <img style="width: 50px" src="/home/lu5her/source/python/django/tcc_webApp/static/assets/img/tcc_logo.png" />
         </td>
       </tr>
     </table>

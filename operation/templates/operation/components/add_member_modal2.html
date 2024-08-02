@@ -1,0 +1,57 @@
+{% load tags %}
+
+<!-- modal for review -->
+<div class="modal fade" id="addMember" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">กำหนดลูกชุด</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- form for add member -->
+        <form method="post" name="add_member_form" id="add_member_form" action="{% url 'operation:team_member_create' pk=team.pk %}">
+          {{ team_member_formset.management_form }}
+          {% csrf_token %}
+          {% for field in team_member_formset %}
+          <div class="row mb-3 form-row spacer" name="member_form" id="member_form">
+            <label for="{{ field.member.id_for_label }}" class="col-md-4 col-lg-3 col-form-label">
+              {{ field.member.label }}&nbsp;&nbsp;&nbsp;
+              <span>
+                <button 
+                  type="button" 
+                  class="btn btn-primary"
+                  hx-trigger="click"
+                  hx-get="{% url 'operation:add_formset' team_member_formset.total_form_count %}"
+                  hx-swap="outerHTML">
+                  Add formset
+                </button>
+              </span>
+            </label>
+            <div class="col-md-8 col-lg-9 form-row" name="form-row">
+              {{ field.member }}
+            </div>
+          </div>
+          {% endfor %}
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <a href="#" class="btn btn-primary" id="form_submit">บันทึก</a></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+</script>
+<script>
+$('#form_submit').on('click', function () {
+  let form = $('#add_member_form');
+  form.submit();
+}
+);
+</script>

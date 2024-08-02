@@ -1,0 +1,45 @@
+{% load tags %}
+
+<!-- modal for review -->
+<div class="modal fade" id="updateDate">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">อัพเดทวันปฏิบัติงาน</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- form for add member -->
+        <form method="post" name="update_date_form" id="update_date_form"
+          action="{% url 'operation:update_date' pk=object.pk %}">
+          {% csrf_token %}
+          <div class="row mb-3">
+            <label for="{{ operation_form.start_date.name }}" class="col-md-4 col-lg-3 col-form-label">{{ operation_form.start_date.label }}</label>
+            <div class="col-md-8 col-lg-9">
+              {{ operation_form.start_date }}
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label for="{{ operation_form.end_date.name }}" class="col-md-4 col-lg-3 col-form-label">{{ operation_form.end_date.label }}</label>
+            <div class="col-md-8 col-lg-9">
+              {{ operation_form.end_date }}
+            </div>
+          </div>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <a href="#" class="btn btn-primary" id="updateDateBtn">บันทึก</a></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $("#updateDateBtn").click(function() {
+    let form = $("#update_date_form");
+    form.submit();
+    });
+</script>

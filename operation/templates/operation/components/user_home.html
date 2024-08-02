@@ -1,0 +1,63 @@
+<div class="col-xxl-4 col-md-6">
+  <div class="card info-card bg-card">
+    <a href="#">
+      <div class="card-body">
+        <h5 class="card-title">รายการใบงาน <span>| {{ request.user.profile }}</span></h5>
+        <div class="d-flex align-items-center">
+          <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+            <i class="bi bi-bookmark-plus text-info"></i>
+          </div>
+          <div class="ps-3">
+            <h6>{{ 1 }} ใบงาน</h6>
+            <span class="text-success small pt-1 fw-bold">รออนุมัติ </span> <span class="text-muted small pt-2 ps-1">
+              {{ 1 }} รายการ</span>
+            <span class="text-success small pt-1 fw-bold">ร่าง </span> <span class="text-muted small pt-2 ps-1">
+              {{ 1 }} รายการ</span>
+
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="col-xxl-4 col-md-6">
+  <div class="card info-card bg-card">
+    <a href="#">
+      <div class="card-body">
+        <h5 class="card-title">รายการใบงาน <span>| ที่กำลังดำเนินการ </span></h5>
+        <div class="d-flex align-items-center">
+          <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+            <i class="bi bi-bookmark-dash text-warning"></i>
+          </div>
+          <div class="ps-3">
+            <h6>{{ 1 }} ใบงาน</h6>
+
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="col-xxl-4 col-md-6">
+  <div class="card info-card bg-card">
+    <a href="#">
+      <div class="card-body">
+        <h5 class="card-title">Summary <span>| {{ request.user.profile }}</span></h5>
+        <div class="d-flex align-items-center">
+          <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+            <i class="bi bi-clipboard-data text-success"></i>
+          </div>
+          <div class="ps-3">
+            <h6>สรุปการปฏิบัติงาน</h6>
+            <span class="text-success small pt-1 fw-bold">แล้วเสร็จ </span> <span class="text-muted small pt-2 ps-1">
+              {{ 1 }} รายการ</span>
+            <span class="text-success small pt-1 fw-bold">รอปิดงาน </span> <span class="text-muted small pt-2 ps-1">
+              {{ 1 }} รายการ</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
