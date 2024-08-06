@@ -14,6 +14,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 
+from car.forms import CarReturnForm
+from car.models import CarBooking
+
 from .models import Operation, OperationCar, Task, Team, TeamMember
 from .forms import CarAddForm, OperationForm, TaskForm, TeamForm, TeamMemberFormSet
 
@@ -88,6 +91,7 @@ class OperationDetailView(LoginRequiredMixin, DetailView):
             "cars": OperationCar.objects.filter(operation=self.object),
             "operation_form": OperationForm,
             "car_add_form": CarAddForm,
+            "car_return_form": CarReturnForm,
         }
         return context
 
@@ -149,11 +153,14 @@ def update_operation_date(request, pk):
 def car_operation_add(request, pk):
     # form = CarAddForm(request.POST)
     if request.method == "POST":
-        form = CarAddForm(request.POST)
-        data = form.data.get("car_booking")
+        data = request.POST
         operation = Operation.objects.get(pk=pk)
         operation.own_car = False
         operation.save()
+        OperationCar.objects.create(
+            operation=operation,
+            car_booking=CarBooking.objects.get(pk=data.get("car_booking")),
+        )
         # print(f"{data}  for -- operation no {operation}")
     return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
 
@@ -164,4 +171,19 @@ def change_car(request, pk):
         operation.own_car = True
         operation.cars.all().delete()
         operation.save()
+    return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+# Operation Task save
+def operation_task_add(request, pk):
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        data = request.POST
+        # print(data)
+        Task.objects.create(
+            operation=operation,
+            workplace=data.get("workplace"),
+            priority=data.get("priority"),
+            task=data.get("task"),
+        )
     return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))

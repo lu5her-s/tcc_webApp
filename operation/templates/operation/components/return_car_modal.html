@@ -1,19 +1,18 @@
 {% load tags %}
 
 <!-- modal for review -->
-<div class="modal fade" id="addWork">
+<div class="modal fade" id="returnCar">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">รายละเอียดงานและสถานที่ปฏิบัติงาน</h5>
+        <h5 class="modal-title">คืนยานพาหนะของทางราชการ</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
       </div>
       <div class="modal-body">
         <!-- form for add member -->
-        <form method="post" name="add_task_form" id="add_task_form"
-          action="{% url 'operation:add_task' pk=object.pk %}">
+        <form method="post" name="return_car_form" id="return_car_form" action="#">
           {% csrf_token %}
-          {% for field in task_form %}
+          {% for field in car_return_form %}
           <div class="row mb-3">
             <label for="{{ field.name }}" class="col-md-4 col-lg-3 col-form-label">{{ field.label }}</label>
             <div class="col-md-8 col-lg-9">
@@ -33,18 +32,16 @@
 </div>
 
 <script>
-$(document).ready(function () {
-  $("#id_workplace").select2({
-    width: "100%",
-    dropdownParent: $("#addWork")
+  $(document).ready(function () {
+    $("#id_workplace").select2({
+      width: "100%",
+      dropdownParent: $("#addWork")
+    });
   });
-});
 
-$("#work_submit").click(function () {
-  let form = $("#add_task_form");
-  form.submit();
+  $("#work_submit").click(function () {
+    let form = $("#add_task_form");
+    form.submit();
   });
 
 </script>
-
-

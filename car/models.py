@@ -135,6 +135,7 @@ class CarBooking(models.Model):
     distance = models.FloatField(default=0)
     return_at = models.DateTimeField(null=True, blank=True)
     fuel_use = models.FloatField(default=0.0)
+    # FIX: change choice to class textchoices
     approve_status = models.ForeignKey(
         ApproveStatus, on_delete=models.CASCADE, related_name="use_approve_status"
     )

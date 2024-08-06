@@ -203,7 +203,7 @@ class OperationCar(models.Model):
     operation = models.ForeignKey(
         Operation, on_delete=models.CASCADE, related_name="cars"
     )
-    car_book = models.ForeignKey(
+    car_booking = models.ForeignKey(
         CarBooking, on_delete=models.CASCADE, related_name="operation_car"
     )
 
@@ -251,3 +251,23 @@ class OperationDocument(models.Model):
 
     class Meta:
         verbose_name = "Operation Document"
+
+
+class PlaceOperationNote(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "PD", "รอดำเนินการ"
+        CLOSED = "CL", "ปิด"
+
+    status = models.CharField(
+        max_length=2, choices=Status.choices, default=Status.PENDING
+    )
+    place = models.ForeignKey(
+        Department, on_delete=models.CASCADE, related_name="placenote"
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="placenote")
+    note = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.plcae.name} : {self.user} at {self.created_at}"

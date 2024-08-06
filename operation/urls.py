@@ -29,4 +29,6 @@ urlpatterns = [
         name="car_operation_add",
     ),
     path("<int:pk>/change_car", views.change_car, name="change_car"),
+    # for add task
+    path("add_task/<int:pk>", views.operation_task_add, name="add_task"),
 ]

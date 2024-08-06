@@ -104,9 +104,10 @@ class TeamMemberForm(forms.Form):
 TeamMemberFormSet = formset_factory(TeamMemberForm, extra=1, can_delete=True)
 
 
+# FIX: approve_status__name after fix in car.models
 class CarAddForm(forms.Form):
     car_booking = forms.ModelChoiceField(
-        queryset=CarBooking.objects.all(),
+        queryset=CarBooking.objects.filter(approve_status__name="อนุมัติ"),
         label="การจองรถ",
         widget=forms.Select(attrs={"class": "form-select"}),
     )

@@ -155,12 +155,24 @@
                         data-bs-target="#addCar"
                         type="button">ใช้ยานพาหนะของทางราชการ</button>
                       {% else %}
-                      ยานพาหนะของทางราชการ
+                      ใช้ยานพาหนะของทางราชการ
                       {% if cars %}
                       <ol>
-                      {% for car in cars %}
-                      <li>{{ car }}</li>
-                      {% endfor %}
+                        {% for car in cars %}
+                        <li>
+                          ประเภท&nbsp;&nbsp;{{ car.car_booking.car.type }}&nbsp;&nbsp;
+                          ยี่ห้อ&nbsp;&nbsp;{{ car.car_booking.car.manufacturer }} &nbsp;&nbsp;
+                          ไมล์ออก&nbsp;&nbsp;{{ car.car_booking.car.mile_now }}&nbsp;&nbsp;
+                          ไมล์เข้า&nbsp;&nbsp;{{ car.car_booking.car.mile_in|default:"-" }}&nbsp;&nbsp;
+                          <a href="#" 
+                            data-bs-toggle="modal"
+                            data-bs-target="#returnCar"
+                            class='badge badge-sm bg-danger'>
+                            คืนยานพาหนะ
+                          </a> <!-- TODO: add modal to return car -->
+                          {% include "operation/components/return_car_modal.html" %}
+                        </li>
+                        {% endfor %}
                       </ol>
                       {% else %}
                       <br>
@@ -172,13 +184,14 @@
                         data-bs-toggle="modal"
                         data-bs-target="#addCar"
                         type="button">
-                        add car
+                        เพิ่มยานพาหนะ
                       </button>
                       <button 
                         class="btn btn-sm btn-warning"
                         data-bs-toggle="modal"
                         data-bs-target="#changeCar"
-                        type="button">change car to own
+                        type="button">
+                        ใช้ยานพาหนะส่วนตัว
                       </button>
                       {% endif %}
                       {% include "operation/components/add_car_modal.html" %}
@@ -191,12 +204,28 @@
 
                 <table class="table table-borderless">
                   <tr>
-                    <th colspan="2" class="text-center">รายละเอียดงาน</th>
+                    <th colspan="4" class="text-center">รายละเอียดงาน</th>
                   </tr>
-                  {% if tasks %}
+                  <!-- TODO: add for loop for task and edit condition -->
+                  {% if not tasks %}
                   <tr>
-                    <td width="80%">Detail Work</td>
-                    <td>Place</td>
+                    <td style="width: 50%; text-align: center">
+                      งาน
+                    </td>
+                    <td>สถานที่</td>
+                    <td>ความเร่งด่วน</td>
+                    <td></td>
+                  </tr>
+
+                  <tr>
+                    <td style="width: 50%;">
+                      <ol>
+                        <li>Task in place</li>
+                      </ol>
+                    </td>
+                    <td>MTB 29th</td>
+                    <td>CR</td>
+                    <td><button type="button" class="btn btn-sm btn-success">Done</button></td>
                   </tr>
                   {% else %}
                   <tr>
@@ -205,7 +234,7 @@
                   {% endif %}
 
                   <tr>
-                    <td colspan="2" style="float: right;">
+                    <td colspan="4">
                       <button 
                         type="button"
                         class="btn btn-light"
@@ -262,4 +291,19 @@
       <!-- modal for delete member -->
 
   </section>
+  <script>
+  $(document).ready(() => {
+    $("#dataTable").DataTable({
+      "fnDrawCallback": function (oSettings) {
+        if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+        } else {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+        }
+      },
+      "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+      order: [[0, "desc"]],
+    });
+  });
+  </script>
   {% endblock content %}
