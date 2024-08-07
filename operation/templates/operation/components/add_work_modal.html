@@ -26,7 +26,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-        <a href="#" class="btn btn-primary" id="work_submit">บันทึก</a></a>
+        <a href="#" class="btn btn-primary" id="addTaskBtn">บันทึก</a>
       </div>
     </div>
   </div>
@@ -40,7 +40,7 @@ $(document).ready(function () {
   });
 });
 
-$("#work_submit").click(function () {
+$("#addTaskBtn").click(function () {
   let form = $("#add_task_form");
   form.submit();
   });

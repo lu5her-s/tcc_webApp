@@ -14,6 +14,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 
+from account.models import Department
 from car.forms import CarReturnForm
 from car.models import CarBooking
 
@@ -182,8 +183,9 @@ def operation_task_add(request, pk):
         # print(data)
         Task.objects.create(
             operation=operation,
-            workplace=data.get("workplace"),
+            workplace=Department.objects.get(pk=data.get("workplace")),
             priority=data.get("priority"),
             task=data.get("task"),
+            created_by=request.user,
         )
     return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))

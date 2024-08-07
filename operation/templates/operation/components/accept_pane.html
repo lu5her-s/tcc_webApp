@@ -1,0 +1,34 @@
+              <div id="accept" class='tab-pane fade pt-3'>
+                {% if request.user == team.team_leader %}
+                <h5 class="card-title">หัวหน้าชุดตอบรับ | <span>ใบงาน {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h5>
+                {% if not team.accepted %}
+                <p>
+                  <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
+                  <span>
+                    กรุณาตอบรับการเป็นหัวหน้าชุด ของใบงานที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}
+                    <br>
+                    {% if members %}
+                    ลูกชุด
+                    <ul>
+                      {% for member in members %}
+                      <li>
+                        {{ forloop.counter }}. {{ member.profile }}
+                      </li>
+                      {% endfor %}
+                    </ul>
+
+                    {% else %}
+                    ยังไม่ได้กำหนดลูกทีม กรุณาตอบรับเพื่อกำหนดลูกทีม
+
+                    {% endif %}
+
+                    <center>
+                      <a href="{% url 'operation:accept_leader' pk=team.pk %}" class="btn btn-success">ตอบรับงาน</a>
+                    </center>
+                  </span>
+                </p>
+                {% else %}
+                -
+                {% endif %}
+                {% endif %}
+              </div>

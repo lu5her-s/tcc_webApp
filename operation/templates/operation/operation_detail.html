@@ -202,37 +202,64 @@
                 </table>
                 <br>
 
-                <table class="table table-borderless">
+                <table style="width: 100%; align: center">
                   <tr>
                     <th colspan="4" class="text-center">รายละเอียดงาน</th>
                   </tr>
+
+                </table>
+
+                <table class="table table-borderless" id="taskTable">
                   <!-- TODO: add for loop for task and edit condition -->
-                  {% if not tasks %}
-                  <tr>
-                    <td style="width: 50%; text-align: center">
-                      งาน
-                    </td>
-                    <td>สถานที่</td>
-                    <td>ความเร่งด่วน</td>
-                    <td></td>
-                  </tr>
+                  {% if tasks %}
+                  <thead>
 
-                  <tr>
-                    <td style="width: 50%;">
-                      <ol>
-                        <li>Task in place</li>
-                      </ol>
-                    </td>
-                    <td>MTB 29th</td>
-                    <td>CR</td>
-                    <td><button type="button" class="btn btn-sm btn-success">Done</button></td>
-                  </tr>
-                  {% else %}
-                  <tr>
-                    <td colspan="2">ยังไม่ได้กำหนดรายละเอียดงาน</td>
-                  </tr>
-                  {% endif %}
+                    <tr>
+                      <td style="width: 50%;">
+                        รายการ
+                      </td>
+                      <td>สถานที่</td>
+                      <td>ความเร่งด่วน</td>
+                      <td></td>
+                    </tr>
+                  </thead>
 
+                  <tbody>
+
+                    {% for task in tasks %}
+                    <tr>
+                      <td style="width: 50%;">
+                        {{ forloop.counter }}.&nbsp;{{ task.task|safe }}
+                      </td>
+                      <td>{{ task.workplace }}</td>
+                      <td>{{ task.get_priority_display }}</td>
+                      {% if task.done %}
+                      <td>
+                        <button type="button" class="btn btn-sm btn-success" disabled>
+                          <i class="bi bi-check-circle text-success"></i> ดำเนินการแล้ว
+                        </button>
+                      </td>
+                      {% else %}
+                      <td>
+                        <a 
+                          href="javascript:alert('Task is not finished yet. {{ task.pk }}'); sendData();"
+                          class="btn btn-sm btn-success">เสร็จสิ้น</a>
+                      </td>
+                      {% endif %}
+                    </tr>
+
+                    {% endfor %}
+                  </tbody>
+                </table>
+                {% else %}
+                <table>
+                  <tr>
+                    <td colspan="4">ยังไม่ได้กำหนดรายละเอียดงาน</td>
+                  </tr>
+                </table>
+                {% endif %}
+
+                <table>
                   <tr>
                     <td colspan="4">
                       <button 
@@ -249,6 +276,7 @@
                 <!-- if user is assigned to make button to create stockitem -->
               </div><!-- end detail -->
 
+              <!-- FIX: remove to component -->
               <div id="accept" class='tab-pane fade pt-3'>
                 {% if request.user == team.team_leader %}
                 <h5 class="card-title">หัวหน้าชุดตอบรับ | <span>ใบงาน {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h5>
@@ -293,7 +321,7 @@
   </section>
   <script>
   $(document).ready(() => {
-    $("#dataTable").DataTable({
+    $("#taskTable").DataTable({
       "fnDrawCallback": function (oSettings) {
         if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
           $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
@@ -305,5 +333,9 @@
       order: [[0, "desc"]],
     });
   });
+
+  function sendData() {
+    alert("send data");
+  };
   </script>
   {% endblock content %}
