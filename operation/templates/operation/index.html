@@ -22,8 +22,10 @@
   <div class="row">
     {% if request.user|has_group:"Command" %}
     Command Page
-    {% elif request.user|has_group:"Manager" %}
+    {% elif request.user|has_group:"StockManager" %}
     Manager Page    
+    {% elif request.user|has_group:"TeamLeader" %}
+    TeamLeader Page
     {% else %}
     {% include "operation/components/user_home.html" %}
     {% endif %}

@@ -25,7 +25,9 @@ class OperationHome(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user_all_operation = Operation.objects.filter(created_by=self.request.user)
+        user_all_operation = Operation.objects.filter(
+            team__members__member=self.request.user
+        )
         context["user_operation_all"] = user_all_operation
         context["user_operation_draft"] = user_all_operation.filter(
             operation_status="DF"
