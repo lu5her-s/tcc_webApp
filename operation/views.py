@@ -3,16 +3,12 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Sun Jun, 30 2024, 16:53 182
-# Last Modified Date: Wed Jul, 03 2024, 21:40 185
+# Last Modified Date: Wed Aug, 14 2024, 12:42 227
 # Last Modified By  : lu5her <lu5her@mail>
 # -----
-from django.http.response import re
-from django.shortcuts import HttpResponse, redirect, render, reverse
-from django.utils.safestring import mark_safe
-from django.views.generic import DetailView, TemplateView, UpdateView, View
+from django.views.generic import DetailView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.contrib.auth.models import User
 
 from account.models import Department
 from car.forms import CarReturnForm
@@ -34,7 +30,16 @@ class OperationHome(LoginRequiredMixin, TemplateView):
         context["user_operation_draft"] = user_all_operation.filter(
             operation_status="DF"
         )
-        context["user_wait_approve"] = user_all_operation.filter(approve_status="WA")
+        context["user_wait_approve"] = user_all_operation.filter(approve_status="WO")
+        context["operation_on_progress"] = user_all_operation.filter(
+            operation_status="IP"
+        )
+        context["user_operation_done"] = user_all_operation.filter(
+            operation_status="DO"
+        )
+        context["user_opreation_wait_close"] = user_all_operation.filter(
+            operation_status="WC"
+        )
         return context
 
 

@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Mon Jun, 24 2024, 13:52 176
-# Last Modified Date: Thu Jul, 04 2024, 14:31 186
+# Last Modified Date: Wed Aug, 14 2024, 12:41 227
 # Last Modified By  : lu5her <lu5her@mail>
 # -----
 import os
@@ -28,7 +28,9 @@ class Operation(models.Model):
 
     class ApproveStatus(models.TextChoices):
         APPROVE = "AP", "อนุมัติ"
-        WAIT = "WA", "รออนุมัติ"
+        WAIT_OPEN = "WO", "รออนุมัติเปิดงาน"
+        WAIT_CLOSE = "WC", "รออนุมัติปิดงาน"
+        CLOSED = "CL", "ปิดงาน"
         REJECT = "RJ", "ไม่อนุมัติ"
 
     class OperationStatus(models.TextChoices):
