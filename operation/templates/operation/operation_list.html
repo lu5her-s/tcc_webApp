@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+{% block title %}Journal{% endblock title %}
+
+{% block content %}
+<div class="pagetitle">
+  <h1>บันทึกการปฏิบัติงาน</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+      <li class="breadcrumb-item active">การปฏิบัติงาน</li>
+    </ol>
+  </nav>
+</div><!-- End Page Title -->
+
+<section class="section profile">
+  <div class="row">
+
+    <div class="col-xl-12">
+
+      <!-- Recent Job -->
+      <div class="col-12">
+        <div class="card recent-sales overflow-auto">
+
+
+          <div class="card-body">
+            <h5 class="card-title">{{ title }}
+              <span>| List</span>
+              <span>
+                <a href="{% url 'journal:create' %}" class="align-right btn btn-success" style="float: right">
+                  <i class="bi bi-plus">
+                    บันทึก
+                  </i>
+                </a>
+              </span>
+            </h5>
+            <br>
+
+            <table class="table table-hover" id="dataTable">
+              <thead>
+                <tr>
+                  <th scope="col">ประเภท</th>
+                  <th scope="col">เรื่อง</th>
+                  <th scope="col">รายละเอียด</th>
+                  <th scope="col">เมื่อ</th>
+                  <th scope="col">...</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for object in object_list %}
+                <tr>
+                  <th scope="col">{{ object.category.name }}</th>
+                  <td>{{ object.title }}</td>
+                  <td>{{ object.body|text_wrap:20|safe }}</td>
+                  <td>{{ object.created_at|thaidate }}</td>
+                  <td><a href="{% url 'journal:detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+          </div>
+
+        </div>
+      </div><!-- End Announce List -->
+      {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
+
+    </div>
+
+  </div>
+</section>
+
+<script>
+  $(document).ready(() => {
+    $("#dataTable").DataTable({
+      "fnDrawCallback": function (oSettings) {
+        if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+        } else {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+        }
+      },
+      "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+    });
+  });
+</script>
+{% endblock content %}

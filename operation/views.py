@@ -6,7 +6,7 @@
 # Last Modified Date: Wed Aug, 14 2024, 12:42 227
 # Last Modified By  : lu5her <lu5her@mail>
 # -----
-from django.views.generic import DetailView, TemplateView, View
+from django.views.generic import DetailView, ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 
@@ -105,6 +105,13 @@ class OperationDetailView(LoginRequiredMixin, DetailView):
             "car_return_form": CarReturnForm,
         }
         return context
+
+
+class OperationMemberListView(LoginRequiredMixin, ListView):
+    template_name = "operation/operation_member_list.html"
+
+    def get_queryset(self):
+        pass
 
 
 def accept_leader(request, pk):
