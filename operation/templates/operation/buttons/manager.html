@@ -1,0 +1,14 @@
+{% load tags %}
+
+<a href="{% url 'inform:manager_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+
+{% if customer_review and object.repair_status == 'CLO' and manager_review is None %}
+<button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal"
+  data-bs-target="#reviewModal">Review</button>
+{% endif %}
+
+{% if not object.repair_category %}
+<button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal"
+  data-bs-target="#manager_check">จัดการ</button>
+{% endif %}
+

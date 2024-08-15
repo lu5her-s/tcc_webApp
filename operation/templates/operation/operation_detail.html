@@ -316,23 +316,24 @@
         </div><!-- end col -->
       </div>
 
-      <!-- modal for delete member -->
+      <div class="container float-start text-center">
+        <!-- include template related to user group -->
+        {% if request.user == object.created_by %}
+        {% include "./buttons/creator.html" %}
+        {% elif request.user|has_group:"StockManager" %}
+        {% include "./buttons/manager.html" %}
+        {% elif request.user|has_group:"Command" %}
+        {% include "./buttons/command.html" %}
+        {% elif request.user|has_group:"TeamLeader" %}
+        {% include "./buttons/technical.html" %}         
+        {% else %}
+        {% include "./buttons/user.html" %}
+        {% endif %}
+      </div>
+
 
   </section>
   <script>
-  $(document).ready(() => {
-    $("#taskTable").DataTable({
-      "fnDrawCallback": function (oSettings) {
-        if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
-          $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
-        } else {
-          $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
-        }
-      },
-      "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-      order: [[0, "desc"]],
-    });
-  });
 
   function sendData() {
     alert("send data");
