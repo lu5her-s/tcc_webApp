@@ -20,9 +20,9 @@
 <section class="section dashboard">
   <div class="row">
     {% if request.user|has_group:"Command" %}
-    Command Page
+    {% include "operation/components/command_home.html" %}
     {% elif request.user|has_group:"StockManager" %}
-    Manager Page    
+    {% include "operation/components/manager_home.html" %}
     {% elif request.user|has_group:"TeamLeader" %}
     TeamLeader Page
     {% else %}

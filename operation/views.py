@@ -111,7 +111,8 @@ class OperationMemberListView(LoginRequiredMixin, ListView):
     template_name = "operation/operation_member_list.html"
 
     def get_queryset(self):
-        pass
+        operations = Operation.objects.filter(team__members__member=self.request.user)
+        return operations
 
 
 def accept_leader(request, pk):

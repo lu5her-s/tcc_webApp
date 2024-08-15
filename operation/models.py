@@ -110,7 +110,7 @@ class Task(models.Model):
 
 
 class Team(models.Model):
-    operation = models.ForeignKey(
+    operation = models.OneToOneField(
         Operation, on_delete=models.CASCADE, related_name="team"
     )
     team_leader = models.ForeignKey(

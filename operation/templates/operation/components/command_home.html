@@ -3,17 +3,13 @@
   <div class="card info-card bg-card">
     <a href="{% url 'operation:member_operation_list' %}">
       <div class="card-body">
-        <h5 class="card-title">รายการใบงาน <span>| {{ request.user.profile }}</span></h5>
+        <h5 class="card-title">รออนุมัติเปิดงาน <span>| รายการ</span></h5>
         <div class="d-flex align-items-center">
           <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-            <i class="bi bi-bookmark-plus text-info"></i>
+            <i class="bi bi-bookmark-check text-info"></i>
           </div>
           <div class="ps-3">
             <h6>{{ user_operation_all.count }} ใบงาน</h6>
-            <span class="text-success small pt-1 fw-bold">รออนุมัติ </span> <span class="text-muted small pt-2 ps-1">
-              {{ user_wait_approve.count }} รายการ</span>
-            <span class="text-success small pt-1 fw-bold">ร่าง </span> <span class="text-muted small pt-2 ps-1">
-              {{ user_operation_draft.count }} รายการ</span>
 
           </div>
         </div>
@@ -26,10 +22,10 @@
   <div class="card info-card bg-card">
     <a href="#">
       <div class="card-body">
-        <h5 class="card-title">รายการใบงาน <span>| ที่กำลังดำเนินการ </span></h5>
+        <h5 class="card-title">รออนุมัติปิดงาน <span>| รายการ </span></h5>
         <div class="d-flex align-items-center">
           <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-            <i class="bi bi-bookmark-dash text-warning"></i>
+            <i class="bi bi-bookmark-x text-warning"></i>
           </div>
           <div class="ps-3">
             <h6>{{ operation_on_progress.count }} ใบงาน</h6>
@@ -45,20 +41,18 @@
   <div class="card info-card bg-card">
     <a href="#">
       <div class="card-body">
-        <h5 class="card-title">Summary <span>| {{ request.user.profile }}</span></h5>
+        <h5 class="card-title">สรุปภาพรวม <span>| รายการใบงาน </span></h5>
         <div class="d-flex align-items-center">
           <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
             <i class="bi bi-clipboard-data text-success"></i>
           </div>
           <div class="ps-3">
-            <h6>สรุปการปฏิบัติงาน</h6>
-            <span class="text-success small pt-1 fw-bold">แล้วเสร็จ </span> <span class="text-muted small pt-2 ps-1">
-              {{ user_operation_done.count }} รายการ</span>
-            <span class="text-success small pt-1 fw-bold">รอปิดงาน </span> <span class="text-muted small pt-2 ps-1">
-              {{ user_opreation_wait_close.count }} รายการ</span>
+            <h6>{{ operation_on_progress.count }} ใบงาน</h6>
+
           </div>
         </div>
       </div>
     </a>
   </div>
 </div>
+

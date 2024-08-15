@@ -41,11 +41,14 @@
   </div>
 </div>
 
+<hr>
+<h5><strong>ส่วนของเจ้าหน้าที่พัสดุ</strong></h5>
+
 <div class="col-xxl-4 col-md-6">
   <div class="card info-card bg-card">
     <a href="#">
       <div class="card-body">
-        <h5 class="card-title">Summary <span>| {{ request.user.profile }}</span></h5>
+        <h5 class="card-title">รอตรวจสอบ/ลงนาม <span>| {{ request.user.profile.department }}</span></h5>
         <div class="d-flex align-items-center">
           <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
             <i class="bi bi-clipboard-data text-success"></i>

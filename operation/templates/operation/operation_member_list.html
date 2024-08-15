@@ -8,11 +8,12 @@
 
 {% block content %}
 <div class="pagetitle">
-  <h1>บันทึกการปฏิบัติงาน</h1>
+  <h1>รายการใบงาน</h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-      <li class="breadcrumb-item active">การปฏิบัติงาน</li>
+      <li class="breadcrumb-item"><a href="{% url 'operation:home' %}">Operation</a></li>
+      <li class="breadcrumb-item active">รายการใบงาน</li>
     </ol>
   </nav>
 </div><!-- End Page Title -->
@@ -28,7 +29,7 @@
 
 
           <div class="card-body">
-            <h5 class="card-title">{{ title }}
+            <h5 class="card-title">{{ request.user.profile }}
               <span>| List</span>
               <span>
                 <a href="{% url 'journal:create' %}" class="align-right btn btn-success" style="float: right">
@@ -43,21 +44,28 @@
             <table class="table table-hover" id="dataTable">
               <thead>
                 <tr>
-                  <th scope="col">ประเภท</th>
-                  <th scope="col">เรื่อง</th>
-                  <th scope="col">รายละเอียด</th>
-                  <th scope="col">เมื่อ</th>
+                  <th scope="col">ประเภทงาน</th>
+                  <th scope="col">หัวหน้าชุด</th>
+                  <th scope="col">วันปฏิบัติงาน</th>
+                  <th scope="col">วันสิ้นสุด</th>
+                  <th scope="col">สถานะ</th>
                   <th scope="col">...</th>
                 </tr>
               </thead>
               <tbody>
                 {% for object in object_list %}
                 <tr>
-                  <th scope="col">{{ object.category.name }}</th>
-                  <td>{{ object.title }}</td>
-                  <td>{{ object.body|text_wrap:20|safe }}</td>
-                  <td>{{ object.created_at|thaidate }}</td>
-                  <td><a href="{% url 'journal:detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a></td>
+                  <th scope="col">{{ object.get_type_of_work_display }}</th>
+                  <td>
+                    {{ object.team.team_leader.profile }}
+                    {% if object.team.accepted %}&nbsp;
+                    <i class="bi bi-check text-success"></i>
+                    {% endif %}
+                  </td>
+                  <td>{{ object.start_date|thaidate }}</td>
+                  <td>{{ object.end_date|thaidate }}</td>
+                  <td>{{ object.get_operation_status_display }}</td>
+                  <td><a href="{% url 'operation:detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a></td>
                 </tr>
                 {% endfor %}
               </tbody>
