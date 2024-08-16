@@ -199,6 +199,49 @@
                     </td>
                   </tr>
 
+                  <tr>
+                    <th>
+                      เอกสารการเบิกพัสดุ
+                    </th>
+                    <td>
+                      <a href="#" target="_blank">Document</a>
+                      <form
+                        method="post"
+                            style="display: inline-block;"
+                            action="#"
+                      >
+                        {% csrf_token %}
+                        <a 
+                          href="javascript:$(delete_{{ member.pk }}_form).submit();"
+                          class="badge badge-sm bg-danger"
+                        >ลบ</a>
+                      </form>
+                      <br>
+                      <button type="button" class="btn btn-sm btn-primary">แนบเอกสาร</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>
+                      เอกสารการคืนพัสดุ
+                    </th>
+                    <td>
+                      <a href="#" target="_blank">Document</a>
+                      <form
+                        method="post"
+                        style="display: inline-block;"
+                        action="#"
+                      >
+                        {% csrf_token %}
+                        <a 
+                          href="javascript:$(delete_{{ member.pk }}_form).submit();"
+                          class="badge badge-sm bg-danger"
+                        >ลบ</a>
+                      </form>
+                      <br>
+                      <button type="button" class="btn btn-sm btn-primary">แนบเอกสาร</button>
+                    </td>
+                  </tr>
+
                 </table>
                 <br>
 

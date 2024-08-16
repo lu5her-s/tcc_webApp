@@ -1,14 +1,15 @@
 {% load tags %}
 
-<a href="{% url 'inform:department_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+<a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
 <!-- button to generate pdf -->
-<a href="{% url 'inform:pdf' pk=object.pk %}" target="_blank" class="btn btn-lg btn-primary">พิมพ์</a>
+<a href="#" target="_blank" class="btn btn-lg btn-primary">พิมพ์</a>
 
-{% if customer_review is None and object.repair_status == 'CLO' %}
-<button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal"
-  data-bs-target="#reviewModal">Review</button>
+<!-- TODO: add condition to request open and close operation -->
+{% if object.approve_start_date %}
+<a href="#" class="btn btn-lg btn-success">ขออนุมัติปิดงาน</a>
+
+{% else %}
+<a href="#" class="btn btn-lg btn-warning">ขออนุมัติเปิดงาน</a>
+
 {% endif %}
 
-{% if not object.approve_status %}
-<a href="#" class="btn btn-lg btn-warning">ยกเลิก</a>
-{% endif %}
