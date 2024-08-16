@@ -103,6 +103,10 @@ class OperationDetailView(LoginRequiredMixin, DetailView):
             "operation_form": OperationForm,
             "car_add_form": CarAddForm,
             "car_return_form": CarReturnForm,
+            "oil_request": self.object.oil_request.all()
+            .values("oil_type")
+            .annontate(total_liters=Sum("liter_request"))
+            .order_by("oil_type"),
         }
         return context
 
