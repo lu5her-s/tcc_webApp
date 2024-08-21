@@ -4,7 +4,7 @@
 {% load tags %}
 {% load tz %}
 
-  {% block title %}Inform{% endblock title %}
+  {% block title %}Operation{% endblock title %}
 
   {% block content %}
   <div class="pagetitle">
@@ -162,6 +162,7 @@
                         <li>
                           ประเภท&nbsp;&nbsp;{{ car.car_booking.car.type }}&nbsp;&nbsp;
                           ยี่ห้อ&nbsp;&nbsp;{{ car.car_booking.car.manufacturer }} &nbsp;&nbsp;
+                          ทะเบียน&nbsp;&nbsp;{{ car.car_booking.car.number }} &nbsp;&nbsp;
                           ไมล์ออก&nbsp;&nbsp;{{ car.car_booking.car.mile_now }}&nbsp;&nbsp;
                           ไมล์เข้า&nbsp;&nbsp;{{ car.car_booking.car.mile_in|default:"-" }}&nbsp;&nbsp;
                           <a href="#" 
@@ -206,9 +207,10 @@
                       ดีเซล จำนวน - ลิตร
                       <br>
                       เบนซิน จำนวน - ลิตร
+                      <br>
                       
                       {% else %}
-                      ไม่เบิก 
+                      ไม่เบิก &nbsp; <button type="button" class="btn btn-sm btn-warning">เบิก สป.3</button>
                       {% endif %}
                       
                       <!-- FIX: if not fuel show ไม่เบิก -->
@@ -218,10 +220,14 @@
                   <tr>
                     <th>เบี้ยเลี้ยง</th>
                     <td>
-                      ครั้งที่ 1 จำนวน xxxx บาท (กกกกกบาทถ้วน)
-                      <br>
-                      รวมเป็นเงินทั้งสิ้น กกกกกก บาท (กกกกกบาทถ้วน)
-                      <!-- FIX: if not allowance show ไม่เบิก -->
+                      {% if allowances %}
+                      {% for allowance in allowances %}
+                      ครั้งที่ {{ forloop.counter }} จำนวน {{ allowance.amount }} บาท
+                      {% endfor %}
+                      {% else %}
+                      ไม่เบิกเบี้ยเลี้ยง &nbsp; <button type="button" class="btn btn-sm btn-warning">ขอเบิกเบี้ยเลี้ยง</button>
+                      {% endif %}
+                      
                     </td>
                   </tr>
 

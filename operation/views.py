@@ -6,6 +6,7 @@
 # Last Modified Date: Wed Aug, 14 2024, 12:42 227
 # Last Modified By  : lu5her <lu5her@mail>
 # -----
+from django.db.models import Sum
 from django.views.generic import DetailView, ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -105,7 +106,7 @@ class OperationDetailView(LoginRequiredMixin, DetailView):
             "car_return_form": CarReturnForm,
             "oil_request": self.object.oil_request.all()
             .values("oil_type")
-            .annontate(total_liters=Sum("liter_request"))
+            .annotate(total_liters=Sum("liter_request"))
             .order_by("oil_type"),
         }
         return context

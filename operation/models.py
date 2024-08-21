@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Mon Jun, 24 2024, 13:52 176
-# Last Modified Date: Wed Aug, 14 2024, 12:41 227
+# Last Modified Date: Tue Aug, 20 2024, 17:42 233
 # Last Modified By  : lu5her <lu5her@mail>
 # -----
 import os
@@ -18,7 +18,41 @@ from parcel.models import ParcelRequest, ParcelReturn
 
 
 class Operation(models.Model):
+    """
+    Operation work flow
+
+    Attributes:
+        type_of_work: ประเภทของงาน
+        other_type: อื่น ๆ
+        description: รายละเอียด
+        start_date: วันเริ่ม
+        end_date: วันสิ้นสุด
+        approve_status: สถานะการอนุมัติ
+        operation_status: สถานะของใบงาน
+        created_by: สร้างโดย
+        created_at: สร้างเมื่อ
+        done_date: วันสิ้นสุด
+        approve_start_date: วันอนุมัติเปิดงาน
+        approver_start: ผู้อนุมัติเปิดงาน
+        approve_close_date: วันอนุมัติปิดงาน
+        approver_close: ผุ้อนุมัติปิดงาน
+        own_car: การใช้ยานพาหนะของตนเอง
+        is_deleted: การลบ
+    """
+
     class TypeOfWork(models.TextChoices):
+        """
+        Description for type_of_work
+
+        Attributes:
+            BROADCAST_RADIO:
+            SATTELITE:
+            FIBER_OPTIC:
+            DATA_COMMUNICATION:
+            AIR_CONDITION:
+            OTHER:
+        """
+
         BROADCAST_RADIO = "BR", "วิทยุถ่ายทอด"
         SATTELITE = "SAT", "ดาวเทียม"
         FIBER_OPTIC = "FO", "ใยแก้วนำแสง"
@@ -27,6 +61,17 @@ class Operation(models.Model):
         OTHER = "OT", "อื่นๆ"
 
     class ApproveStatus(models.TextChoices):
+        """
+        Description for approve_status
+
+        Attributes:
+            APPROVE:
+            WAIT_OPEN:
+            WAIT_CLOSE:
+            CLOSED:
+            REJECT:
+        """
+
         APPROVE = "AP", "อนุมัติ"
         WAIT_OPEN = "WO", "รออนุมัติเปิดงาน"
         WAIT_CLOSE = "WC", "รออนุมัติปิดงาน"
@@ -34,6 +79,17 @@ class Operation(models.Model):
         REJECT = "RJ", "ไม่อนุมัติ"
 
     class OperationStatus(models.TextChoices):
+        """
+        Description for operation_status
+
+        Attributes:
+            WAIT:
+            PROGRESS:
+            DONE:
+            LEADER:
+            DRAFT:
+        """
+
         WAIT = "WA", "รอดำเนินการ"
         PROGRESS = "IP", "กำลังดำเนินการ"
         DONE = "DO", "เสร็จสิ้น"
@@ -161,6 +217,17 @@ class OilReimburesment(models.Model):
 
 
 class Allowance(models.Model):
+    """
+    Allowance model for Create Request Allowance
+
+    Attributes:
+        user:
+        operation:
+        created_at:
+        total_withdraw:
+        number_of_withdraw:
+    """
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="allowance")
     operation = models.ForeignKey(
         Operation, on_delete=models.CASCADE, related_name="allowance"
@@ -174,6 +241,15 @@ class Allowance(models.Model):
 
 
 class AllowanceWithdraw(models.Model):
+    """
+    Tracking allowance withdraw, to use
+
+    Attributes:
+        allowance: F.K. to Allowance class
+        date: date to use allowance
+        amount: amount of use
+    """
+
     allowance = models.ForeignKey(
         Allowance, on_delete=models.CASCADE, related_name="withdrawals"
     )
@@ -191,6 +267,15 @@ class AllowanceWithdraw(models.Model):
 
 
 class AllowanceRefund(models.Model):
+    """
+    Return Allowance class
+
+    Attributes:
+        allowance:
+        date:
+        refund_amount:
+    """
+
     allowance = models.ForeignKey(
         Allowance, on_delete=models.CASCADE, related_name="refunds"
     )
@@ -202,6 +287,14 @@ class AllowanceRefund(models.Model):
 
 
 class OperationCar(models.Model):
+    """
+    Reference car from CarBooking models
+
+    Attributes:
+        operation:
+        car_booking:
+    """
+
     operation = models.ForeignKey(
         Operation, on_delete=models.CASCADE, related_name="cars"
     )
