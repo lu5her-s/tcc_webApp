@@ -115,3 +115,18 @@ class CarAddForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["car_booking"].label_from_instance = lambda obj: obj
+
+
+class AddFuelForm(forms.Form):
+    diesel = forms.FloatField(
+            min_value=0.0,
+            max_value=9999.9,
+            label="ดีเซล",
+            widget=forms.NumberInput(attrs={"class": "form-control"}),
+            )
+    benzine = forms.FloatField(
+            min_value=0.0,
+            max_value=9999.9,
+            label="เบนซิน",
+            widget=forms.NumberInput(attrs={"class": "form-control"}),
+            )

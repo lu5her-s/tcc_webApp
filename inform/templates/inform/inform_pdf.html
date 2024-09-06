@@ -1,3 +1,4 @@
+{% load static %}
 {% load tags %}
 <!DOCTYPE html>
 <html lang="en">
@@ -7,28 +8,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>Inline CSS Invoice Template</title>
-  <style>
+      <!-- src: "/home/lu5her/source/python/django/tcc_webApp/static/assets/fonts/TH-Sarabun-New-Bold.ttf", -->
+    <style>
     @font-face {
-      font-family: "TH Sarabun";
-      font-style: normal;
-      font-weight: normal;
-      src: "/home/lu5her/source/python/django/tcc_webApp/static/assets/fonts/TH-Sarabun-New-Bold.ttf",
+    font-family: "TH Sarabun";
+    font-style: normal;
+    font-weight: normal;
+    src: "/home/lu5her/source/python/django/tcc_webApp/static/assets/fonts/TH-Sarabun-New-Bold.ttf",
     }
 
     body {
-      font-size: 16px;
+    font-size: 16px;
     }
 
     .thai-font {
-      font-family: "TH Sarabun";
-      font-size: 20px;
+    font-family: "TH Sarabun";
+    font-size: 20px;
     }
 
     .table-bg {
-      background: #343a40;
-      color: white;
+    background: #343a40;
+    color: white;
     }
-  </style>
+    </style>
 </head>
 
 <body>
@@ -40,7 +42,7 @@
           <label class="thai-font" style="font-size: 18px;">ความเร่งด่วน - {{ context.inform.get_urgency_display }}</label>
         </td>
         <td style="text-align: right;">
-          <img style="width: 50px" src="/home/lu5her/source/python/django/tcc_webApp/static/assets/img/tcc_logo.png" />
+          <img style="width: 150px" src="/home/lu5her/source/python/django/tcc_webApp/static/assets/img/tcc_logo.png" />
         </td>
       </tr>
     </table>

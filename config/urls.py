@@ -34,6 +34,10 @@ from account import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("test/", TemplateView.as_view(template_name="test.html"), name="test"),
+    # url for under development page
+    path(
+        "develop/", TemplateView.as_view(template_name="under_dev.html"), name="develop"
+    ),
     path("", views.HomeView.as_view(), name="home"),
     path("contact/", views.ContactView.as_view(), name="contact"),
     # internal url

@@ -1,0 +1,17 @@
+{% load tags %}
+
+<ol>
+  {% for member in members %}
+  <li>
+    {{ member.member.profile }}
+    {% if request.user == team.team_leader or request.user == object.created_by %}
+    <form id="delete_{{ member.pk }}_form" method="post" style="display: inline-block;"
+      action="{% url 'operation:member_delete' pk=member.pk %}">
+      {% csrf_token %}
+      <a href="javascript:$(delete_{{ member.pk }}_form).submit();" class="badge badge-sm bg-danger">ลบ</a>
+    </form>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ol>
+<a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addMember">เพิ่มลูกชุด</a>

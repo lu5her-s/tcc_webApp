@@ -16,7 +16,14 @@ from car.forms import CarReturnForm
 from car.models import CarBooking
 
 from .models import Operation, OperationCar, Task, Team, TeamMember
-from .forms import CarAddForm, OperationForm, TaskForm, TeamForm, TeamMemberFormSet
+from .forms import (
+    CarAddForm,
+    OperationForm,
+    TaskForm,
+    TeamForm,
+    TeamMemberFormSet,
+    AddFuelForm,
+)
 
 # Create your views here.
 
@@ -108,6 +115,7 @@ class OperationDetailView(LoginRequiredMixin, DetailView):
             .values("oil_type")
             .annotate(total_liters=Sum("liter_request"))
             .order_by("oil_type"),
+            "add_fuel_form": AddFuelForm,
         }
         return context
 

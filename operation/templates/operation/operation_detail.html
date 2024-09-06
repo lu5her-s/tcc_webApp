@@ -86,32 +86,7 @@
                     <th>ลูกชุด</th>
                     <td>
                       {% if members %}
-                      <ol>
-                        {% for member in members %}
-                        <li>
-                          {{ member.member.profile }} 
-                          {% if request.user == team.team_leader or request.user == object.created_by %}
-                          <form
-                            id="delete_{{ member.pk }}_form"
-                            method="post"
-                            style="display: inline-block;"
-                            action="{% url 'operation:member_delete' pk=member.pk %}"
-                          >
-                            {% csrf_token %}
-                            <a 
-                              href="javascript:$(delete_{{ member.pk }}_form).submit();"
-                              class="badge badge-sm bg-danger"
-                            >ลบ</a>
-                          </form>
-                          {% endif %}
-                        </li>
-                        {% endfor %}
-                      </ol>
-                      <a href="#"
-                        class="btn btn-sm btn-primary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#addMember"
-                      >เพิ่มลูกชุด</a>
+                      {% include "operation/components/members_sector.html" %}
                       {% include "operation/components/add_member_modal.html" %}
                       {% else %}
                       ยังไม่ได้กำหนดลูกชุด 
@@ -210,10 +185,17 @@
                       <br>
                       
                       {% else %}
-                      ไม่เบิก &nbsp; <button type="button" class="btn btn-sm btn-warning">เบิก สป.3</button>
+                      ไม่เบิก &nbsp;
+                      <button type="button" 
+                        data-bs-toggle="modal"
+                        data-bs-target="#addFuel"
+                        class="btn btn-sm btn-warning">
+                        เบิก สป.3
+                      </button>
+                      {% include "operation/components/add_fuel_modal.html" %}
                       {% endif %}
                       
-                      <!-- FIX: if not fuel show ไม่เบิก -->
+                      <!-- DONE: if not fuel show ไม่เบิก -->
                     </td>
                   </tr>
 
@@ -357,40 +339,8 @@
               </div><!-- end detail -->
 
               <!-- FIX: remove to component -->
-              <div id="accept" class='tab-pane fade pt-3'>
-                {% if request.user == team.team_leader %}
-                <h5 class="card-title">หัวหน้าชุดตอบรับ | <span>ใบงาน {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h5>
-                {% if not team.accepted %}
-                <p>
-                  <i class="bi bi-x-circle" style="color: red;"></i> ยังไม่ตอบรับ | 
-                  <span>
-                    กรุณาตอบรับการเป็นหัวหน้าชุด ของใบงานที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}
-                    <br>
-                    {% if members %}
-                    ลูกชุด
-                    <ul>
-                      {% for member in members %}
-                      <li>
-                        {{ forloop.counter }}. {{ member.profile }}
-                      </li>
-                      {% endfor %}
-                    </ul>
+              {% include "operation/components/tab_leader.html" %}
 
-                    {% else %}
-                    ยังไม่ได้กำหนดลูกทีม กรุณาตอบรับเพื่อกำหนดลูกทีม
-
-                    {% endif %}
-
-                    <center>
-                      <a href="{% url 'operation:accept_leader' pk=team.pk %}" class="btn btn-success">ตอบรับงาน</a>
-                    </center>
-                  </span>
-                </p>
-                {% else %}
-                -
-                {% endif %}
-                {% endif %}
-              </div>
             </div><!-- end tab-content -->
           </div><!--end card-->
         </div><!-- end col -->
@@ -418,5 +368,6 @@
   function sendData() {
     alert("send data");
   };
+
   </script>
   {% endblock content %}
