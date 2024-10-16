@@ -10,16 +10,25 @@ from django.db.models import Sum
 from django.views.generic import DetailView, ListView, TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, redirect, render
 
 from account.models import Department
 from car.forms import CarReturnForm
 from car.models import CarBooking
 
-from .models import Operation, OperationCar, Task, Team, TeamMember
+from .models import (
+    Operation,
+    OperationCar,
+    Task,
+    Team,
+    TeamMember,
+    Allowance,
+)
 from .forms import (
     CarAddForm,
     OperationForm,
     TaskForm,
+    TaskNoteForm,
     TeamForm,
     TeamMemberFormSet,
     AddFuelForm,
@@ -116,6 +125,11 @@ class OperationDetailView(LoginRequiredMixin, DetailView):
             .annotate(total_liters=Sum("liter_request"))
             .order_by("oil_type"),
             "add_fuel_form": AddFuelForm,
+            # for operation request and retunr parcel
+            "parcel_requests": self.object.parcel_requests.all(),
+            "parcel_returns": self.object.parcel_returns.all(),
+            # for note form
+            "note_form": TaskNoteForm,
         }
         return context
 
@@ -206,6 +220,36 @@ def change_car(request, pk):
     return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
 
 
+# for request fuel
+def request_fuel(request, pk):
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        # operation.oil_request.add(
+        #     OilRequest.objects.get(pk=request.POST.get("oil_request"))
+        # )
+        data = request.POST
+        print("Diesel : ", float(data.get("diesel")))
+        print("Benzine: ", float(data.get("benzine")))
+        # print(type(data.get("diesel")))
+        # print(data)
+        # print(operation)
+        if float(data.get("diesel")) != 0:
+            operation.oil_request.create(
+                oil_type="DIESEL",
+                liter_request=data.get("diesel"),
+                created_by=request.user,
+                operaion=operation,
+            )
+        if float(data.get("benzine")) != 0:
+            operation.oil_request.create(
+                oil_type="BENZINE",
+                liter_request=data.get("benzine"),
+                created_by=request.user,
+                operaion=operation,
+            )
+    return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
 # Operation Task save
 def operation_task_add(request, pk):
     if request.method == "POST":
@@ -220,3 +264,23 @@ def operation_task_add(request, pk):
             created_by=request.user,
         )
     return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+# operation note save
+def operation_note_add(request, pk):
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        data = request.POST
+        task = Task.objects.get(pk=data.get("task"))
+        # Task.objects.create(
+        #     operation=operation,
+        #     note=data.get("note"),
+        #     created_by=request.user,
+        # )
+        # print(data)
+        print(f"Status : {data.get('status')}\nNote : {data.get('note')}")
+        if data.get("status") == "CL":
+            print("Close Operation")
+        print(operation)
+        print(task)
+    return redirect(reverse_lazy("operation:detail", kwargs={"pk": operation.pk}))

@@ -1,6 +1,5 @@
 {% load tags %}
 
-<!-- modal for review -->
 <div class="modal fade" id="addFuel">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -11,7 +10,7 @@
       <div class="modal-body">
         <!-- form for add member -->
         <form method="post" name="add_fuel" id="add_fuel_form"
-          action="{% url 'operation:car_operation_add' pk=object.pk %}">
+          action="{% url 'operation:add_fuel' pk=object.pk %}">
           {% csrf_token %}
           {% for field in add_fuel_form %}
           <div class="row mb-3">
@@ -33,11 +32,45 @@
   </div>
 </div>
 
+<div class="modal fade" id="editFuel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">ขอเบิก สป.3</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- form for add member -->
+        <form method="post" name="add_fuel" id="add_fuel_form"
+          action="#">
+          {% csrf_token %}
+          {% for field in add_fuel_form %}
+          <div class="row mb-3">
+            <label for="{{ field.name }}" class="col-md-4 col-lg-3 col-form-label">{{ field.label }}</label>
+            <div class="col-md-8 col-lg-9">
+              {{ field }}
+            </div>
+          </div>
+          {% endfor %}
+
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <a href="#" class="btn btn-primary" id="addFuelBtn">บันทึก</a></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script>
   $("#addFuelBtn").click(function () {
     let form = $("#add_fuel_form");
     let diesel = form.find("input[name='diesel']").val();
     let benzine = form.find("input[name='benzine']").val();
     alert('Fuel added. diesel: ' + diesel + ' benzine: ' + benzine);
+    form.submit();
   });
 </script>

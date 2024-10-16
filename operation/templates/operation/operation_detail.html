@@ -79,7 +79,6 @@
                       {% else %}
                       <span class="badge bg-warning">รอตอบรับ</span>
                       {% endif %}
-                    </td>
                   </tr>
 
                   <tr>
@@ -183,6 +182,9 @@
                       <br>
                       เบนซิน จำนวน - ลิตร
                       <br>
+                      {% if not object.approve_status == 'AP' %}
+                      <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editFuel"></button>
+                      {% endif %}
                       
                       {% else %}
                       ไม่เบิก &nbsp;
@@ -207,9 +209,14 @@
                       ครั้งที่ {{ forloop.counter }} จำนวน {{ allowance.amount }} บาท
                       {% endfor %}
                       {% else %}
-                      ไม่เบิกเบี้ยเลี้ยง &nbsp; <button type="button" class="btn btn-sm btn-warning">ขอเบิกเบี้ยเลี้ยง</button>
+                      ไม่เบิกเบี้ยเลี้ยง &nbsp;
                       {% endif %}
-                      
+                      <button type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addAllowance"
+                        data-count="{{ object.allowance.count|add:"1" }}"
+                        class="btn btn-sm btn-warning">ขอเบิกเบี้ยเลี้ยง {{ object.allowance.count|add:"1" }}</button>
+                      {% include "operation/components/add_allowance_modal.html" %}
                     </td>
                   </tr>
 
@@ -223,7 +230,9 @@
                       เอกสารการเบิกพัสดุ
                     </th>
                     <td>
-                      <a href="#" target="_blank">Document</a>
+                      {% if parcel_requests %}
+                      {% for parcel in parcel_requests %}
+                      <a href="#" target="_blank">{{ parcel.pk }}/{{ parcel.created_at }}</a>
                       <form
                         method="post"
                             style="display: inline-block;"
@@ -235,6 +244,13 @@
                           class="badge badge-sm bg-danger"
                         >ลบ</a>
                       </form>
+                      {% endfor %}
+                      
+                      {% else %}
+                      ไม่มีเอกสารเบิกพัสดุ
+                      
+                      {% endif %}
+                      
                       <br>
                       <button type="button" class="btn btn-sm btn-primary">แนบเอกสาร</button>
                     </td>
@@ -244,11 +260,13 @@
                       เอกสารการคืนพัสดุ
                     </th>
                     <td>
-                      <a href="#" target="_blank">Document</a>
+                      {% if parcel_returns %}
+                      {% for parcel in parcel_returns %}
+                      <a href="#" target="_blank">{{ parcel.pk }}/{{ parcel.created_at }}</a>
                       <form
                         method="post"
-                        style="display: inline-block;"
-                        action="#"
+                            style="display: inline-block;"
+                            action="#"
                       >
                         {% csrf_token %}
                         <a 
@@ -256,8 +274,16 @@
                           class="badge badge-sm bg-danger"
                         >ลบ</a>
                       </form>
+                      {% endfor %}
+                      
+                      {% else %}
+                      ไม่มีเอกสารคืนพัสดุ
+                      
+                      {% endif %}
+                      
                       <br>
                       <button type="button" class="btn btn-sm btn-primary">แนบเอกสาร</button>
+                    
                     </td>
                   </tr>
 
@@ -303,9 +329,10 @@
                       </td>
                       {% else %}
                       <td>
-                        <a 
-                          href="javascript:alert('Task is not finished yet. {{ task.pk }}'); sendData();"
-                          class="btn btn-sm btn-success">เสร็จสิ้น</a>
+                        <button 
+                          type="button"
+                          onclick="openNoteModal({{ task.pk }});"
+                          class="btn btn-sm btn-warning">อัพเดท</button>
                       </td>
                       {% endif %}
                     </tr>
@@ -334,6 +361,7 @@
                   </tr>
                 </table>
                 {% include "operation/components/add_work_modal.html" %}
+                {% include "operation/components/add_note_modal.html" %}
 
                 <!-- if user is assigned to make button to create stockitem -->
               </div><!-- end detail -->
@@ -362,10 +390,12 @@
       </div>
 
 
+
   </section>
   <script>
 
   function sendData() {
+    // save form operation note for place
     alert("send data");
   };
 

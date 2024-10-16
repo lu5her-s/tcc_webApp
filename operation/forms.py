@@ -119,14 +119,29 @@ class CarAddForm(forms.Form):
 
 class AddFuelForm(forms.Form):
     diesel = forms.FloatField(
-            min_value=0.0,
-            max_value=9999.9,
-            label="ดีเซล",
-            widget=forms.NumberInput(attrs={"class": "form-control"}),
-            )
+        min_value=0.0,
+        max_value=9999.9,
+        label="ดีเซล",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
     benzine = forms.FloatField(
-            min_value=0.0,
-            max_value=9999.9,
-            label="เบนซิน",
-            widget=forms.NumberInput(attrs={"class": "form-control"}),
-            )
+        min_value=0.0,
+        max_value=9999.9,
+        label="เบนซิน",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+
+
+class TaskNoteForm(forms.Form):
+    status = forms.ChoiceField(
+        label="สถานะ",
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+    note = forms.CharField(
+        widget=forms.Textarea(attrs={"class": "form-control", "rows": "3"}),
+        label="บันทึก",
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["status"].choices = models.Task.Status.choices

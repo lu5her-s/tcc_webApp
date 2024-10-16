@@ -36,4 +36,7 @@ urlpatterns = [
         views.OperationMemberListView.as_view(),
         name="member_operation_list",
     ),
+    path("add_note/<int:pk>", views.operation_note_add, name="add_note"),
+    # for oil reimburesment
+    path("add_fuel/<int:pk>", views.request_fuel, name="add_fuel"),
 ]

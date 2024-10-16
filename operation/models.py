@@ -144,6 +144,10 @@ class Task(models.Model):
         NORMAL = "NR", "ปกติ"
         OTHER = "OT", "อื่นๆ"
 
+    class Status(models.TextChoices):
+        PENDING = "PD", "รอดำเนินการ"
+        CLOSED = "CL", "ปิด"
+
     operation = models.ForeignKey(
         Operation, on_delete=models.CASCADE, related_name="task"
     )
@@ -160,6 +164,11 @@ class Task(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     is_done = models.BooleanField(default=False)
+
+    status = models.CharField(
+        max_length=2, choices=Status.choices, default=Status.PENDING
+    )
+    note = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.task} {self.operation}"
@@ -229,7 +238,7 @@ class Allowance(models.Model):
     """
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="allowance")
-    operation = models.ForeignKey(
+    operation = models.OneToOneField(
         Operation, on_delete=models.CASCADE, related_name="allowance"
     )
     created_at = models.DateTimeField(auto_now_add=True)
@@ -348,21 +357,21 @@ class OperationDocument(models.Model):
         verbose_name = "Operation Document"
 
 
-class PlaceOperationNote(models.Model):
-    class Status(models.TextChoices):
-        PENDING = "PD", "รอดำเนินการ"
-        CLOSED = "CL", "ปิด"
-
-    status = models.CharField(
-        max_length=2, choices=Status.choices, default=Status.PENDING
-    )
-    place = models.ForeignKey(
-        Department, on_delete=models.CASCADE, related_name="placenote"
-    )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="placenote")
-    note = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.plcae.name} : {self.user} at {self.created_at}"
+# class PlaceOperationNote(models.Model):
+#     class Status(models.TextChoices):
+#         PENDING = "PD", "รอดำเนินการ"
+#         CLOSED = "CL", "ปิด"
+#
+#     status = models.CharField(
+#         max_length=2, choices=Status.choices, default=Status.PENDING
+#     )
+#     place = models.ForeignKey(
+#         Department, on_delete=models.CASCADE, related_name="placenote"
+#     )
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="placenote")
+#     note = models.TextField()
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+#
+#     def __str__(self):
+#         return f"{self.plcae.name} : {self.user} at {self.created_at}"

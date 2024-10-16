@@ -1,0 +1,48 @@
+{% load tags %}
+
+<!-- modal for review -->
+<div class="modal fade" id="addNote">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">รายละเอียดงานและสถานที่ปฏิบัติงาน</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- form for add member -->
+        <form method="post" name="add_note_form" id="add_note_form"
+          action="{% url 'operation:add_note' object.pk %}">
+          {% csrf_token %}
+          {% for field in note_form %}
+          <div class="row mb-3">
+            <label for="{{ field.name }}" class="col-md-4 col-lg-3 col-form-label">{{ field.label }}</label>
+            <div class="col-md-8 col-lg-9">
+              {{ field }}
+            </div>
+          </div>
+          {% endfor %}
+          <input type="hidden" name="task" id="task">
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <button class="btn btn-primary" id="addNoteBtn">บันทึก</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openNoteModal(task) {
+  $('#task').val(task)
+  $('#addNote').modal('show');
+}
+
+$('#addNoteBtn').click(function () {
+  $('#add_note_form').submit();
+});
+
+</script>
+
+
