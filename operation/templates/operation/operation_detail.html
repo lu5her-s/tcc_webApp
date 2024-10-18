@@ -177,13 +177,18 @@
                   <tr>
                     <th>สป.3</th>
                     <td>
-                      {% if fuel %}
-                      ดีเซล จำนวน - ลิตร
-                      <br>
-                      เบนซิน จำนวน - ลิตร
-                      <br>
+                      {% if oil_request %}
+                      {% for item in oil_request %}
+
+                        {% if item.oil_type == 'DS' %}
+                        ดีเซล จำนวน {{ item.total_liters }} ลิตร
+                        {% else %}
+                        เบนซิน จำนวน {{ item.total_liters }} ลิตร
+                        {% endif %}
+                        <br>
+                      {% endfor %}
                       {% if not object.approve_status == 'AP' %}
-                      <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editFuel"></button>
+                      <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editFuel">แก้ไข</button>
                       {% endif %}
                       
                       {% else %}
@@ -194,8 +199,8 @@
                         class="btn btn-sm btn-warning">
                         เบิก สป.3
                       </button>
-                      {% include "operation/components/add_fuel_modal.html" %}
                       {% endif %}
+                      {% include "operation/components/fuel_modal.html" %}
                       
                       <!-- DONE: if not fuel show ไม่เบิก -->
                     </td>
@@ -321,18 +326,26 @@
                       </td>
                       <td>{{ task.workplace }}</td>
                       <td>{{ task.get_priority_display }}</td>
-                      {% if task.done %}
+                      {% if task.done and object.approve_status == 'AP' %}
                       <td>
                         <button type="button" class="btn btn-sm btn-success" disabled>
                           <i class="bi bi-check-circle text-success"></i> ดำเนินการแล้ว
                         </button>
+                      </td>
+                      {% elif not task.done and not object.approve_status == 'WA' %}
+                      <td>
+                        <button 
+                          type="button"
+                          class="btn btn-sm btn-danger"
+                          onclick="deleteTask({{ task.pk }});" >ลบ</button>
+                        
                       </td>
                       {% else %}
                       <td>
                         <button 
                           type="button"
                           onclick="openNoteModal({{ task.pk }});"
-                          class="btn btn-sm btn-warning">อัพเดท</button>
+                          class="btn btn-sm btn-success">อัพเดท</button>
                       </td>
                       {% endif %}
                     </tr>
@@ -361,7 +374,7 @@
                   </tr>
                 </table>
                 {% include "operation/components/add_work_modal.html" %}
-                {% include "operation/components/add_note_modal.html" %}
+                {% include "operation/components/edit_note_modal.html" %}
 
                 <!-- if user is assigned to make button to create stockitem -->
               </div><!-- end detail -->

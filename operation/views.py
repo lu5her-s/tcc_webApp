@@ -17,6 +17,7 @@ from car.forms import CarReturnForm
 from car.models import CarBooking
 
 from .models import (
+    OilReimburesment,
     Operation,
     OperationCar,
     Task,
@@ -38,6 +39,13 @@ from .forms import (
 
 
 class OperationHome(LoginRequiredMixin, TemplateView):
+    """
+    Home Operation แสดงหน้าหลักของใบงาน
+
+    Attributes:
+        template_name: operation/index.html
+    """
+
     template_name = "operation/index.html"
 
     def get_context_data(self, **kwargs):
@@ -63,6 +71,13 @@ class OperationHome(LoginRequiredMixin, TemplateView):
 
 
 class OperationCreateView(LoginRequiredMixin, View):
+    """
+    Create new Operation
+
+    Attributes:
+        template_name:
+    """
+
     template_name = "operation/operation_form.html"
 
     def get(self, request):
@@ -103,6 +118,15 @@ class OperationCreateView(LoginRequiredMixin, View):
 
 
 class OperationDetailView(LoginRequiredMixin, DetailView):
+    """
+    Detail View for Operation
+
+    Attributes:
+        model: operation and other on this app
+        template_name:
+        object:
+    """
+
     model = Operation
     template_name = "operation/operation_detail.html"
 
@@ -135,6 +159,13 @@ class OperationDetailView(LoginRequiredMixin, DetailView):
 
 
 class OperationMemberListView(LoginRequiredMixin, ListView):
+    """
+    แสดงรายการใบงานตาม User
+
+    Attributes:
+        template_name:
+    """
+
     template_name = "operation/operation_member_list.html"
 
     def get_queryset(self):
@@ -143,6 +174,16 @@ class OperationMemberListView(LoginRequiredMixin, ListView):
 
 
 def accept_leader(request, pk):
+    """
+    Leader Accept Operation
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     team = Team.objects.get(pk=pk)
     team.accept()
     team.save()
@@ -151,6 +192,16 @@ def accept_leader(request, pk):
 
 # WARN: check user exist
 def team_member_create(request, pk):
+    """
+    สร้างสมาชิกของชุด
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     team = Team.objects.get(pk=pk)
     form_set = TeamMemberFormSet(request.POST)
     if form_set.is_valid():
@@ -212,6 +263,16 @@ def car_operation_add(request, pk):
 
 
 def change_car(request, pk):
+    """
+    Change car to own_car
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     if request.method == "POST":
         operation = Operation.objects.get(pk=pk)
         operation.own_car = True
@@ -222,27 +283,37 @@ def change_car(request, pk):
 
 # for request fuel
 def request_fuel(request, pk):
+    """
+    for add fuel to operation
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     if request.method == "POST":
         operation = Operation.objects.get(pk=pk)
         # operation.oil_request.add(
         #     OilRequest.objects.get(pk=request.POST.get("oil_request"))
         # )
         data = request.POST
-        print("Diesel : ", float(data.get("diesel")))
-        print("Benzine: ", float(data.get("benzine")))
+        # print("Diesel : ", float(data.get("diesel")))
+        # print("Benzine: ", float(data.get("benzine")))
         # print(type(data.get("diesel")))
         # print(data)
         # print(operation)
-        if float(data.get("diesel")) != 0:
+        if data.get("diesel") != 0.0:
             operation.oil_request.create(
-                oil_type="DIESEL",
+                oil_type=OilReimburesment.OilType.DIESEL,
                 liter_request=data.get("diesel"),
                 created_by=request.user,
                 operaion=operation,
             )
-        if float(data.get("benzine")) != 0:
+        if data.get("benzine") != 0.0:
             operation.oil_request.create(
-                oil_type="BENZINE",
+                oil_type=OilReimburesment.OilType.BENZENE,
                 liter_request=data.get("benzine"),
                 created_by=request.user,
                 operaion=operation,
@@ -250,8 +321,39 @@ def request_fuel(request, pk):
     return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
 
 
+def edit_fuel(request, pk):
+    """
+    Update requested fuel for an operation.
+
+    Args:
+        request: The HTTP request object.
+        pk: The primary key of the operation.
+
+    Returns:
+        A redirect to the operation detail view.
+    """
+    if request.method == "POST":
+        data = request.POST
+        for oil in data.getlist("oil_request_pk"):
+            oil_request = OilReimburesment.objects.get(pk=oil)
+            oil_edit = data.get(f"oil_{oil}")
+            oil_request.liter_request = float(oil_edit)
+            oil_request.save()
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
 # Operation Task save
 def operation_task_add(request, pk):
+    """
+    Add a task to the given operation.
+
+    Args:
+        request: The HTTP request object.
+        pk: The primary key of the operation to add the task to.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
     if request.method == "POST":
         operation = Operation.objects.get(pk=pk)
         data = request.POST
@@ -266,21 +368,40 @@ def operation_task_add(request, pk):
     return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
 
 
-# operation note save
+def operation_task_delete(request, pk):
+    """
+    Delete a task from the given operation.
+
+    Args:
+        request: The HTTP request object.
+        pk: The primary key of the operation to delete the task from.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        task_id = request.POST.get("task_delete")
+        if task_id:
+            task = get_object_or_404(Task, pk=task_id)
+            task.delete()
+    return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
 def operation_note_add(request, pk):
+    """
+    จัดการการเพิ่มโน้ตไปยังงานและปิดการดำเนินการ
+
+    Args:
+        request: The HTTP request object.
+        pk: The primary key of the operation.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
     if request.method == "POST":
         operation = Operation.objects.get(pk=pk)
         data = request.POST
-        task = Task.objects.get(pk=data.get("task"))
-        # Task.objects.create(
-        #     operation=operation,
-        #     note=data.get("note"),
-        #     created_by=request.user,
-        # )
-        # print(data)
-        print(f"Status : {data.get('status')}\nNote : {data.get('note')}")
+        # task = Task.objects.get(pk=data.get("task"))
         if data.get("status") == "CL":
-            print("Close Operation")
-        print(operation)
-        print(task)
+            operation.close()
     return redirect(reverse_lazy("operation:detail", kwargs={"pk": operation.pk}))

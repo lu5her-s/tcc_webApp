@@ -33,16 +33,49 @@
   </div>
 </div>
 
+<!-- Modal for delete -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmModalLabel">ยืนยันการลบ</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        คุณต้องการลบรายการนี้ใช่หรือไม่?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <!-- <form action="#" method="post" onsubmit="return confirmDelete()"> -->
+        <form action="{% url 'operation:delete_task' object.pk %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="task_delete" id="task_delete" value="{{ task }}">
+          <button type="submit" class="btn btn-danger">ลบ</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 function openNoteModal(task) {
   $('#task').val(task)
   $('#addNote').modal('show');
 }
 
+function deleteTask(task) {
+  console.log(task)
+  $('#task_delete').val(task)
+  $('#deleteConfirmModal').modal('show');
+}
+
 $('#addNoteBtn').click(function () {
   $('#add_note_form').submit();
 });
 
+function confirmDelete() {
+  return confirm("คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?");
+}
 </script>
 
 

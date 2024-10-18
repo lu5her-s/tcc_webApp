@@ -138,6 +138,21 @@ class Operation(models.Model):
 
 
 class Task(models.Model):
+    """
+
+    Attributes:
+        operation:
+        workplace:
+        task:
+        priority:
+        done_date:
+        created_by:
+        created_at:
+        is_done:
+        status:
+        note:
+    """
+
     class Priority(models.TextChoices):
         CRITICAL = "CR", "ด่วนมาก"
         URGENT = "UR", "ด่วน"
@@ -222,7 +237,7 @@ class OilReimburesment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.OilType} {self.liter_request} - {self.operaion}"
+        return f"{self.oil_type} {self.liter_request} - {self.operaion}"
 
 
 class Allowance(models.Model):

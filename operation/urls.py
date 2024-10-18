@@ -31,6 +31,8 @@ urlpatterns = [
     path("<int:pk>/change_car", views.change_car, name="change_car"),
     # for add task
     path("add_task/<int:pk>", views.operation_task_add, name="add_task"),
+    path("delete_task/<int:pk>", views.operation_task_delete, name="delete_task"),
+    # operation list for member
     path(
         "member/operation_list",
         views.OperationMemberListView.as_view(),
@@ -39,4 +41,5 @@ urlpatterns = [
     path("add_note/<int:pk>", views.operation_note_add, name="add_note"),
     # for oil reimburesment
     path("add_fuel/<int:pk>", views.request_fuel, name="add_fuel"),
+    path("update_fuel/<int:pk>", views.edit_fuel, name="edit_fuel"),
 ]

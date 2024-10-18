@@ -123,12 +123,14 @@ class AddFuelForm(forms.Form):
         max_value=9999.9,
         label="ดีเซล",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+        initial=0.0,
     )
     benzine = forms.FloatField(
         min_value=0.0,
         max_value=9999.9,
         label="เบนซิน",
         widget=forms.NumberInput(attrs={"class": "form-control"}),
+        initial=0.0,
     )
 
 
