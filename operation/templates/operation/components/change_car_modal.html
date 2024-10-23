@@ -22,7 +22,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-        <a href="#" class="btn btn-primary" id="changeCarBtn">บันทึก</a></a>
+        <button type="button" class="btn btn-primary" id="changeCarBtn">บันทึก</button>
       </div>
     </div>
   </div>
@@ -30,7 +30,9 @@
 
 <script>
   $("#changeCarBtn").click(function() {
-    let form = $("#car_add_form");
+    let btn = $(this);
+    btn.prop("disabled", true);
+    let form = $("#change_car_form");
     form.submit();
     });
 

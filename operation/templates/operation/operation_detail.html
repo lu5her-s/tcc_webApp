@@ -110,7 +110,7 @@
                       <br>
                       <button
                         type="button"
-                        class="btn btn-sm btn-primary"
+                        class="btn btn-sm btn-warning"
                         data-bs-toggle="modal"
                         data-bs-target="#updateDate"
                       >แก้ไขวันปฏิบัติงาน</button>
@@ -125,7 +125,7 @@
                       ยานพาหนะส่วนตัว
                       <br>
                       <button 
-                        class="btn btn-sm btn-primary"
+                        class="btn btn-sm btn-warning"
                         data-bs-toggle="modal"
                         data-bs-target="#addCar"
                         type="button">ใช้ยานพาหนะของทางราชการ</button>
@@ -189,7 +189,7 @@
                         <br>
                       {% endfor %}
                       {% if not object.approve_status == 'AP' %}
-                      <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editFuel">แก้ไข</button>
+                      <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editFuel">แก้ไข</button>
                       {% endif %}
                       
                       {% else %}
@@ -216,7 +216,16 @@
 
                   <tr>
                     <th>คืนเบี้ยเลี้ยง</th>
-                    <td>จำนวน xxxx บาท (กกกกกกบาทถ้วน)</td>
+                    {# TODO: #}
+                    {# Test list all refund or change to 1-1 related #}
+                    <td>
+                      {% if object.allowance.refund %}
+                      {{ object.allowance.refund }}
+                      {% else %}
+                      No Refund
+                      {% endif %}
+                      
+                    </td>
                   </tr>
 
                   <tr>

@@ -33,7 +33,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-        <a href="#" class="btn btn-primary" id="form_submit">บันทึก</a></a>
+        <button type="button" class="btn btn-primary" id="addMemberBtn">บันทึก</button>
       </div>
     </div>
   </div>
@@ -106,7 +106,9 @@ $(document).ready(function () {
   });
 });
 
-$('#form_submit').on('click', function () {
+$('#addMemberBtn').on('click', function () {
+  let btn = $(this);
+  btn.prop("disabled", true);
   let form = $('#add_member_form');
   form.submit();
 }

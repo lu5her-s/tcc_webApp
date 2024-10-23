@@ -259,10 +259,21 @@ def car_operation_add(request, pk):
         operation = Operation.objects.get(pk=pk)
         operation.own_car = False
         operation.save()
-        OperationCar.objects.create(
-            operation=operation,
-            car_booking=CarBooking.objects.get(pk=data.get("car_booking")),
-        )
+        car_booking = int(data.get("car_booking"))
+        # print(car_booking)
+        # print(operation.cars.values_list("car_booking", flat=True))
+        # print(
+        #     car_booking
+        #     not in list(operation.cars.values_list("car_booking", flat=True))
+        # )
+        if car_booking not in list(
+            operation.cars.values_list("car_booking", flat=True)
+        ):
+            OperationCar.objects.create(
+                operation=operation,
+                car_booking=CarBooking.objects.get(pk=data.get("car_booking")),
+            )
+            # print("in if statement")
         # print(f"{data}  for -- operation no {operation}")
     return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
 
