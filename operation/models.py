@@ -260,6 +260,21 @@ class Allowance(models.Model):
     total_withdraw = models.FloatField(default=0.0)
     number_of_withdraw = models.IntegerField(default=0)
 
+    def add_total_withdraw(self, amount):
+        self.total_withdraw += amount
+
+    def decrease_total_withdraw(self, amount):
+        self.total_withdraw -= amount
+
+    def increase_number_of_withdraw(self):
+        self.number_of_withdraw += 1
+
+    def decrease_number_of_withdraw(self):
+        # update and check if number = 0 delete this Allowance
+        self.number_of_withdraw -= 1
+        if self.number_of_withdraw == 0:
+            self.delete()
+
     def __str__(self):
         return f"{self.user}: {self.total_withdraw} - {self.operation}"
 
@@ -279,15 +294,10 @@ class AllowanceWithdraw(models.Model):
     )
     date = models.DateTimeField(auto_now_add=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.0)
+    note = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.amount} -- {self.date}"
-
-    def add_total_withdraw(self):
-        self.allowance.total_withdraw += self.amount
-
-    def increase_number_of_withdraw(self):
-        self.allowance.number_of_withdraw += 1
 
 
 class AllowanceRefund(models.Model):
@@ -370,23 +380,3 @@ class OperationDocument(models.Model):
 
     class Meta:
         verbose_name = "Operation Document"
-
-
-# class PlaceOperationNote(models.Model):
-#     class Status(models.TextChoices):
-#         PENDING = "PD", "รอดำเนินการ"
-#         CLOSED = "CL", "ปิด"
-#
-#     status = models.CharField(
-#         max_length=2, choices=Status.choices, default=Status.PENDING
-#     )
-#     place = models.ForeignKey(
-#         Department, on_delete=models.CASCADE, related_name="placenote"
-#     )
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="placenote")
-#     note = models.TextField()
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-#
-#     def __str__(self):
-#         return f"{self.plcae.name} : {self.user} at {self.created_at}"

@@ -124,7 +124,7 @@ def number_format(num, places=0):
 # fork by http://justmindthought.blogspot.com/2012/12/code-php.html
 
 
-@register.filter
+@register.filter(name="read_baht")
 def ThaiBahtConversion(amount_number):
     amount_number = number_format(amount_number, 2).replace(" ", "")
     pt = amount_number.find(".")

@@ -42,4 +42,7 @@ urlpatterns = [
     # for oil reimburesment
     path("add_fuel/<int:pk>", views.request_fuel, name="add_fuel"),
     path("update_fuel/<int:pk>", views.edit_fuel, name="edit_fuel"),
+    # for allowance
+    path("allowance_add/<int:pk>", views.allowance_add, name="allowance_add"),
+    path("allowance_delete/<int:pk>", views.allowance_delete, name="allowance_delete"),
 ]

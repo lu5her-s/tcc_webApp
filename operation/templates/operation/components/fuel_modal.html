@@ -26,7 +26,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-        <a href="#" class="btn btn-primary" id="addFuelBtn">บันทึก</a>
+        <button type="button" class="btn btn-primary" id="addFuelBtn">บันทึก</button>
       </div>
     </div>
   </div>
@@ -60,7 +60,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-        <a href="#" class="btn btn-primary" id="editFuelBtn">บันทึก</a></a>
+        <button type="button" class="btn btn-primary" id="editFuelBtn">บันทึก</button>
       </div>
     </div>
   </div>
@@ -78,7 +78,8 @@
 
 
   $("#editFuelBtn").click(function () {
-  let form = $("#edit_fuel_form");
-  form.submit();
+    $(this).prop('disabled', true);
+    let form = $("#edit_fuel_form");
+    form.submit();
   });
 </script>

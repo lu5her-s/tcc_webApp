@@ -1,0 +1,27 @@
+{% load tags %}
+{% load humanize %}
+
+  {% if allowances %}
+    {% for allowance in allowances %}
+    <form method="post" action="{% url 'operation:allowance_delete' pk=allowance.pk %}">
+      {% csrf_token %}
+      ครั้งที่ {{ forloop.counter }} จำนวน {{ allowance.amount|intcomma }} บาท 
+      ({{ allowance.amount|read_baht }}) 
+      {% if allowance.note %} [{{ allowance.note }}] {% endif %}
+      <button type="submit" class="btn btn-sm badge badge-sm bg-danger">ลบ</button>
+    </form>
+
+    {% endfor %}
+    <hr>
+    รวม {{ object.allowance.total_withdraw|intcomma }} บาท ({{ object.allowance.total_withdraw|read_baht }})
+    <br>
+    {% else %}
+    ไม่เบิกเบี้ยเลี้ยง &nbsp;
+    <br>
+    {% endif %}
+    {% include "operation/components/add_allowance_modal.html" %}
+    <button type="button"
+      data-bs-toggle="modal"
+      data-bs-target="#addAllowance"
+      data-count="{{ object.allowance.number_of_withdraw|add:"1" }}"
+      class="btn btn-sm btn-warning">ขอเบิก</button>

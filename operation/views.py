@@ -17,6 +17,7 @@ from car.forms import CarReturnForm
 from car.models import CarBooking
 
 from .models import (
+    AllowanceWithdraw,
     OilReimburesment,
     Operation,
     OperationCar,
@@ -154,6 +155,10 @@ class OperationDetailView(LoginRequiredMixin, DetailView):
             "parcel_returns": self.object.parcel_returns.all(),
             # for note form
             "note_form": TaskNoteForm,
+            # for allowance
+            "allowances": AllowanceWithdraw.objects.filter(
+                allowance__operation=self.object
+            ),
         }
         return context
 
@@ -405,3 +410,39 @@ def operation_note_add(request, pk):
         if data.get("status") == "CL":
             operation.close()
     return redirect(reverse_lazy("operation:detail", kwargs={"pk": operation.pk}))
+
+
+# for allowance handle
+def allowance_add(request, pk):
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        data = request.POST
+        allowance, _ = Allowance.objects.get_or_create(
+            operation=operation, user=request.user
+        )
+        withdraw = AllowanceWithdraw.objects.create(
+            allowance=allowance,
+            amount=float(data.get("amount")),
+            note=data.get("allowance_note"),
+        )
+        allowance.add_total_withdraw(float(data.get("amount")))
+        allowance.increase_number_of_withdraw()
+        allowance.save()
+        withdraw.save()
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+def allowance_delete(request, pk):
+    if request.method == "POST":
+        # get allowance_withdraw pk from POST
+        allowance_withdraw = AllowanceWithdraw.objects.get(pk=pk)
+        operation = allowance_withdraw.allowance.operation
+        allowance = allowance_withdraw.allowance
+        # calculate total withdraw and decrease number of withdraw
+        allowance.decrease_total_withdraw(float(allowance_withdraw.amount))
+        allowance.decrease_number_of_withdraw()
+        allowance_withdraw.delete()
+        # if allowance.number_of_withdraw == 0:
+        #     allowance.delete()
+        allowance.save()
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": operation.pk}))

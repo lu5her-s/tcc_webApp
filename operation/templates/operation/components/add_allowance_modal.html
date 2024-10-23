@@ -11,12 +11,18 @@
       <div class="modal-body">
         <!-- form for add member -->
         <form method="post" name="add_allowance" id="add_allowance_form"
-          action="#">
+          action="{% url 'operation:allowance_add' object.pk %}">
           {% csrf_token %}
           <div class="row mb-3">
             <label for="allowance" class="col-md-4 col-lg-3 col-form-label">ครั้งที่ </label>
             <div class="col-md-8 col-lg-9">
-              <input type="number" name="allowance" class="form-control" id="allowance">
+              <input type="number" name="amount" class="form-control" id="amount">
+            </div>
+            <br>
+
+            <label for="allowance_note" class="col-md-4 col-lg-3 col-form-label">หมายเหตุ</label>
+            <div class="col-md-8 col-lg-9">
+              <textarea rows="2" class="form-control" name="allowance_note" id="allowance_note"></textarea>
             </div>
           </div>
 
@@ -25,7 +31,44 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-        <a href="#" class="btn btn-primary" id="addFuelBtn">บันทึก</a></a>
+        <button type="button" class="btn btn-primary" id="addAllowanceBtn">บันทึก</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal for delete -->
+<div class="modal fade" id="deleteAllowance">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">ขอเบิก เบี้ยเลี้ยง</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- form for add member -->
+        <form method="post" name="add_allowance" id="add_allowance_form"
+          action="{% url 'operation:allowance_add' object.pk %}">
+          {% csrf_token %}
+          <div class="row mb-3">
+            <label for="allowance" class="col-md-4 col-lg-3 col-form-label">ครั้งที่ </label>
+            <div class="col-md-8 col-lg-9">
+              <input type="number" name="amount" class="form-control" id="amount">
+            </div>
+            <br>
+
+            <label for="allowance_note" class="col-md-4 col-lg-3 col-form-label">หมายเหตุ</label>
+            <div class="col-md-8 col-lg-9">
+              <textarea rows="2" class="form-control" name="allowance_note" id="allowance_note"></textarea>
+            </div>
+          </div>
+
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" class="btn btn-primary" id="addAllowanceBtn">บันทึก</button>
       </div>
     </div>
   </div>
@@ -33,9 +76,13 @@
 
 <script>
 $('#addAllowance').on('show.bs.modal', function (event) {
-var text_append = $(event.relatedTarget).data('count')
-console.log(text_append)
-$(this).find("label[for='allowance']").text("ครั้งที่ " + text_append)
-
+  var text_append = $(event.relatedTarget).data('count')
+  console.log(text_append)
+  $(this).find("label[for='allowance']").text("ครั้งที่ " + text_append)
 })
+
+$('#addAllowanceBtn').on('click', function () {
+  $(this).prop('disabled', true);
+  $('#add_allowance_form').submit();
+});
 </script>

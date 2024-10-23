@@ -3,6 +3,7 @@
 {% load crispy_forms_tags %}
 {% load tags %}
 {% load tz %}
+{% load humanize %}
 
   {% block title %}Operation{% endblock title %}
 
@@ -209,19 +210,7 @@
                   <tr>
                     <th>เบี้ยเลี้ยง</th>
                     <td>
-                      {% if allowances %}
-                      {% for allowance in allowances %}
-                      ครั้งที่ {{ forloop.counter }} จำนวน {{ allowance.amount }} บาท
-                      {% endfor %}
-                      {% else %}
-                      ไม่เบิกเบี้ยเลี้ยง &nbsp;
-                      {% endif %}
-                      <button type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#addAllowance"
-                        data-count="{{ object.allowance.count|add:"1" }}"
-                        class="btn btn-sm btn-warning">ขอเบิกเบี้ยเลี้ยง {{ object.allowance.count|add:"1" }}</button>
-                      {% include "operation/components/add_allowance_modal.html" %}
+                      {% include "operation/components/allowance_sector.html" %}
                     </td>
                   </tr>
 
