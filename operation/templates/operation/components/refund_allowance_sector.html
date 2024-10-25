@@ -1,0 +1,97 @@
+{% load tags %}
+{% load humanize %}
+
+  {% if object.allowance.refund %}
+  {{ object.allowance.refund }}
+  <br>
+  <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editRefundModal" id="editRefund">แก้ไข</button>
+  {% else %}
+  ไม่มีรายการคืนเบี้ยเลี้ยง
+  <br>
+  <button type="button"
+    class="btn btn-sm btn-warning"
+    data-bs-toggle="modal"
+    data-bs-target="#refundModal" id="addRefund">
+    <i class="bi bi-plus"></i>
+    คืนเบี้ยเลี้ยง</button>
+  {% endif %}
+
+  <div class="modal fade" id="refundModal" tabindex="-1" role="dialog" aria-labelledby="refundModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">ขอคืนเบี้ยเลี้ยง</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- form for add member -->
+          <form method="post" name="add_allowance" id="add_allowance_form"
+            action="{% url 'operation:allowance_refund' object.pk %}">
+            {% csrf_token %}
+            <div class="row mb-3">
+              <label for="allowance" class="col-md-4 col-lg-3 col-form-label">จำนวน </label>
+              <div class="col-md-8 col-lg-9">
+                <input type="number" name="amount" class="form-control" id="amount">
+              </div>
+              <br>
+
+              <label for="allowance_note" class="col-md-4 col-lg-3 col-form-label">หมายเหตุ</label>
+              <div class="col-md-8 col-lg-9">
+                <textarea rows="2" class="form-control" name="allowance_note" id="allowance_note"></textarea>
+              </div>
+            </div>
+
+          </form>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+          <button type="button" class="btn btn-primary" id="refundBtn">บันทึก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if object.allowance.refund %}
+  <div class="modal fade" id="editRefundModal" tabindex="-1" role="dialog" aria-labelledby="refundModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">แก้ไขการคืนเบี้ยเลี้ยง</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- form for add member -->
+          <form method="post" name="add_allowance" id="add_allowance_form"
+            action="{% url 'operation:allowance_refund_update' object.allowance.refund.pk %}">
+            {% csrf_token %}
+            <div class="row mb-3">
+              <label for="allowance" class="col-md-4 col-lg-3 col-form-label">ครั้งที่ </label>
+              <div class="col-md-8 col-lg-9">
+                <input type="number" name="amount" class="form-control" id="amount" value="{{ object.allowance.refund.amount }}">
+              </div>
+              <br>
+
+              <label for="allowance_note" class="col-md-4 col-lg-3 col-form-label">หมายเหตุ</label>
+              <div class="col-md-8 col-lg-9">
+                <textarea rows="2" class="form-control" name="allowance_note" id="allowance_note" value="{{ object.allowance.refund.note }}"></textarea>
+              </div>
+            </div>
+
+          </form>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+          <button type="button" class="btn btn-primary" id="editRefundBtn">บันทึก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+
+
+  <script>
+
+  </script>

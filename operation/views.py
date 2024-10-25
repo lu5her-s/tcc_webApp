@@ -25,6 +25,7 @@ from .models import (
     Team,
     TeamMember,
     Allowance,
+    AllowanceRefund,
 )
 from .forms import (
     CarAddForm,
@@ -456,4 +457,66 @@ def allowance_delete(request, pk):
         # if allowance.number_of_withdraw == 0:
         #     allowance.delete()
         allowance.save()
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": operation.pk}))
+
+
+def allowance_refund(request, pk):
+    """
+    Create a new allowance refund for the given operation.
+
+    Args:
+        request: The HTTP request object.
+        pk: The primary key of the operation.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        data = request.POST
+        allowance = operation.allowance
+        refund = AllowanceRefund.objects.create(
+                allowance=allowance,
+                amount=float(data.get("refund_amount")),
+                note=data.get("refund_note")
+                )
+        refund.save()
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+def allowance_refund_update(request, pk):
+    """
+    Update an existing allowance refund.
+
+    Args:
+        request: The HTTP request object.
+        pk: The primary key of the allowance refund to update.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        allowance_refund = AllowanceRefund.objects.get(pk=pk)
+        data = request.POST
+        allowance_refund.amount = float(data.get("refund_amount"))
+        allowance_refund.note = data.get("refund_note")
+        allowance_refund.save()
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": allowance_refund.allowance.operation.pk}))
+
+
+def allowance_refund_delete(request, pk):
+    """
+    Delete an existing allowance refund.
+
+    Args:
+        request: The HTTP request object.
+        pk: The primary key of the allowance refund to delete.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        allowance_refund = AllowanceRefund.objects.get(pk=pk)
+        operation = allowance_refund.allowance.operation
+        allowance_refund.delete()
         return redirect(reverse_lazy("operation:detail", kwargs={"pk": operation.pk}))

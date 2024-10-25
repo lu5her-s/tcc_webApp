@@ -45,4 +45,15 @@ urlpatterns = [
     # for allowance
     path("allowance_add/<int:pk>", views.allowance_add, name="allowance_add"),
     path("allowance_delete/<int:pk>", views.allowance_delete, name="allowance_delete"),
+    path("allowance_refund/<int:pk>", views.allowance_refund, name="allowance_refund"),
+    path(
+        "allowance_refund_update/<int:pk>",
+        views.allowance_refund_update,
+        name="allowance_refund_update",
+    ),
+    path(
+        "allowance_refund_delete/<int:pk>",
+        views.allowance_refund_delete,
+        name="allowance_refund_delete",
+    ),
 ]

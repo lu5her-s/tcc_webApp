@@ -310,11 +310,16 @@ class AllowanceRefund(models.Model):
         refund_amount:
     """
 
-    allowance = models.ForeignKey(
-        Allowance, on_delete=models.CASCADE, related_name="refunds"
+    allowance = models.OneToOneField(
+        Allowance, on_delete=models.CASCADE, related_name="refund"
     )
     date = models.DateTimeField(auto_now=True)
     refund_amount = models.FloatField(default=0.0)
+    note = models.TextField(null=True, blank=True)
+
+    def validate_refund_amount(self):
+        if self.refund_amount > self.allowance.total_withdraw:
+            return False
 
     def __str__(self):
         return f"{self.refund_amount} -- {self.date}"

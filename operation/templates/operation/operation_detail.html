@@ -110,10 +110,10 @@
                       <br>
                       <button
                         type="button"
-                        class="btn btn-sm btn-warning"
+                        class="btn btn-sm btn-primary"
                         data-bs-toggle="modal"
                         data-bs-target="#updateDate"
-                      >แก้ไขวันปฏิบัติงาน</button>
+                      ><i class="bi bi-calendar-date"></i>&nbsp;แก้ไขวันปฏิบัติงาน</button>
                       {% include "operation/components/update_date_modal.html" %}
                     </td>
                   </tr>
@@ -125,10 +125,10 @@
                       ยานพาหนะส่วนตัว
                       <br>
                       <button 
-                        class="btn btn-sm btn-warning"
+                        class="btn btn-sm btn-primary"
                         data-bs-toggle="modal"
                         data-bs-target="#addCar"
-                        type="button">ใช้ยานพาหนะของทางราชการ</button>
+                        type="button"><i class="bi bi-car-front"></i>&nbsp;ใช้ยานพาหนะของทางราชการ</button>
                       {% else %}
                       ใช้ยานพาหนะของทางราชการ
                       {% if cars %}
@@ -140,12 +140,12 @@
                           ทะเบียน&nbsp;&nbsp;{{ car.car_booking.car.number }} &nbsp;&nbsp;
                           ไมล์ออก&nbsp;&nbsp;{{ car.car_booking.car.mile_now }}&nbsp;&nbsp;
                           ไมล์เข้า&nbsp;&nbsp;{{ car.car_booking.car.mile_in|default:"-" }}&nbsp;&nbsp;
-                          <a href="#" 
+                          <button
                             data-bs-toggle="modal"
                             data-bs-target="#returnCar"
-                            class='badge badge-sm bg-danger'>
+                            class='btn btn-sm badge badge-sm bg-danger'>
                             คืนยานพาหนะ
-                          </a> <!-- TODO: add modal to return car -->
+                          </button> <!-- TODO: add modal to return car -->
                           {% include "operation/components/return_car_modal.html" %}
                         </li>
                         {% endfor %}
@@ -160,6 +160,7 @@
                         data-bs-toggle="modal"
                         data-bs-target="#addCar"
                         type="button">
+                        <i class="bi bi-truck"></i>&nbsp;
                         เพิ่มยานพาหนะ
                       </button>
                       <button 
@@ -167,6 +168,7 @@
                         data-bs-toggle="modal"
                         data-bs-target="#changeCar"
                         type="button">
+                        <i class="bi bi-car-front"></i>&nbsp;
                         ใช้ยานพาหนะส่วนตัว
                       </button>
                       {% endif %}
@@ -189,7 +191,11 @@
                         <br>
                       {% endfor %}
                       {% if not object.approve_status == 'AP' %}
-                      <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editFuel">แก้ไข</button>
+                      <button class="btn btn-sm btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editFuel">
+                        <i class="bi bi-pen"></i>&nbsp;
+                        แก้ไข</button>
                       {% endif %}
                       
                       {% else %}
@@ -198,6 +204,7 @@
                         data-bs-toggle="modal"
                         data-bs-target="#addFuel"
                         class="btn btn-sm btn-warning">
+                        <i class="bi bi-plus-circle"></i>&nbsp;
                         เบิก สป.3
                       </button>
                       {% endif %}
@@ -219,12 +226,7 @@
                     {# TODO: #}
                     {# Test list all refund or change to 1-1 related #}
                     <td>
-                      {% if object.allowance.refund %}
-                      {{ object.allowance.refund }}
-                      {% else %}
-                      No Refund
-                      {% endif %}
-                      
+                      {% include "operation/components/refund_allowance_sector.html" %}
                     </td>
                   </tr>
 
