@@ -235,29 +235,7 @@
                       เอกสารการเบิกพัสดุ
                     </th>
                     <td>
-                      {% if parcel_requests %}
-                      {% for parcel in parcel_requests %}
-                      <a href="#" target="_blank">{{ parcel.pk }}/{{ parcel.created_at }}</a>
-                      <form
-                        method="post"
-                            style="display: inline-block;"
-                            action="#"
-                      >
-                        {% csrf_token %}
-                        <a 
-                          href="javascript:$(delete_{{ member.pk }}_form).submit();"
-                          class="badge badge-sm bg-danger"
-                        >ลบ</a>
-                      </form>
-                      {% endfor %}
-                      
-                      {% else %}
-                      ไม่มีเอกสารเบิกพัสดุ
-                      
-                      {% endif %}
-                      
-                      <br>
-                      <button type="button" class="btn btn-sm btn-primary">แนบเอกสาร</button>
+                      {% include "operation/components/parcel_sector.html" %}
                     </td>
                   </tr>
                   <tr>

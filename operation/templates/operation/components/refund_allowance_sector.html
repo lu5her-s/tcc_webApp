@@ -2,8 +2,15 @@
 {% load humanize %}
 
   {% if object.allowance.refund %}
-  {{ object.allowance.refund }}
-  <br>
+  <form method="post" action="{% url 'operation:allowance_refund_delete' object.allowance.refund.pk %}" id='delete_refund_form'>
+    {% csrf_token %}
+    คืนเบี้ยเลี้ยง จำนวน {{ object.allowance.refund.refund_amount }} บาท ({{ object.allowance.refund.refund_amount|read_baht }})
+    <button type="submit" id="delete_refund" class="btn btn-sm badge badge-sm bg-danger">ลบ</button>
+    {% if object.allowance.refund.note %}
+    <br>
+    - หมายเหตุ : {{ object.allowance.refund.note|safe }}
+    {% endif %}
+  </form>
   <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editRefundModal" id="editRefund">แก้ไข</button>
   {% else %}
   ไม่มีรายการคืนเบี้ยเลี้ยง
@@ -25,19 +32,19 @@
         </div>
         <div class="modal-body">
           <!-- form for add member -->
-          <form method="post" name="add_allowance" id="add_allowance_form"
+          <form method="post" name="add_refund_form" id="add_refund_form"
             action="{% url 'operation:allowance_refund' object.pk %}">
             {% csrf_token %}
             <div class="row mb-3">
               <label for="allowance" class="col-md-4 col-lg-3 col-form-label">จำนวน </label>
               <div class="col-md-8 col-lg-9">
-                <input type="number" name="amount" class="form-control" id="amount">
+                <input type="number" name="refund_amount" class="form-control" id="refund_amount">
               </div>
               <br>
 
-              <label for="allowance_note" class="col-md-4 col-lg-3 col-form-label">หมายเหตุ</label>
+              <label for="refund_note" class="col-md-4 col-lg-3 col-form-label">หมายเหตุ</label>
               <div class="col-md-8 col-lg-9">
-                <textarea rows="2" class="form-control" name="allowance_note" id="allowance_note"></textarea>
+                <textarea rows="2" class="form-control" name="refund_note" id="refund_note"></textarea>
               </div>
             </div>
 
@@ -62,19 +69,19 @@
         </div>
         <div class="modal-body">
           <!-- form for add member -->
-          <form method="post" name="add_allowance" id="add_allowance_form"
+          <form method="post" name="refund_update_from" id="refund_update_from"
             action="{% url 'operation:allowance_refund_update' object.allowance.refund.pk %}">
             {% csrf_token %}
             <div class="row mb-3">
-              <label for="allowance" class="col-md-4 col-lg-3 col-form-label">ครั้งที่ </label>
+              <label for="refund_amount" class="col-md-4 col-lg-3 col-form-label">ครั้งที่ </label>
               <div class="col-md-8 col-lg-9">
-                <input type="number" name="amount" class="form-control" id="amount" value="{{ object.allowance.refund.amount }}">
+                <input type="number" name="refund_amount" class="form-control" id="refund_amount" value="{{ object.allowance.refund.refund_amount }}">
               </div>
               <br>
 
-              <label for="allowance_note" class="col-md-4 col-lg-3 col-form-label">หมายเหตุ</label>
+              <label for="refund_note" class="col-md-4 col-lg-3 col-form-label">หมายเหตุ</label>
               <div class="col-md-8 col-lg-9">
-                <textarea rows="2" class="form-control" name="allowance_note" id="allowance_note" value="{{ object.allowance.refund.note }}"></textarea>
+                <textarea rows="2" class="form-control" name="refund_note" id="refund_note" >{{ object.allowance.refund.note|safe }}</textarea>
               </div>
             </div>
 
@@ -90,8 +97,20 @@
   </div>
   {% endif %}
 
-
-
   <script>
+  $('#refundBtn').on('click', function () {
+    let btn = $(this)
+    btn.prop('disabled', true);
+    $('#add_refund_form').submit();
+  });
 
+  $('#editRefundBtn').on('click', function () {
+    let btn = $(this)
+    btn.prop('disabled', true);
+    $('#refund_update_from').submit();
+  });
+
+  $('delete_refund').on('click', () => {
+    $('#delete_refund_form').submit();
+  });
   </script>

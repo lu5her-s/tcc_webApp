@@ -1,0 +1,61 @@
+{% load tags %}
+{% load humanize %}
+
+  {% if parcel_requests %}
+  {# for loop list of parcel_request bill #}
+  {% for parcel_request in parcel_requests %}
+  <form method="post" action="{% url 'operation:parcel_request_delete' pk=parcel_request.pk %}">
+    {% csrf_token %}
+    เลขที่ใบเบิก {{ parcel_request.pk }}/{{ parcel_request.created_at|date:"Y" }} ({{ parcel_request.stock.name }})
+    <button type="submit" class="btn btn-sm badge badge-sm bg-danger">ลบ</button>
+  </form>
+  {% endfor %}
+
+  {% else %}
+  ไม่มีรายการใบเบิก
+  {% endif %}
+  <br>
+  <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#parcelRequestModal" id="addParcelRequest"><i class="bi bi-plus"></i> แนบใบเบิก</button>
+
+  <div class="modal fade" id="parcelRequestModal" tabindex="-1" role="dialog" aria-labelledby="parcelRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">แนบใบเบิก</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- form for add member -->
+          <form method="post" name="parcel_request_form" id="parcel_request_form"
+            action="{% url 'operation:parcel_request_add' pk=object.pk %}">
+            {% csrf_token %}
+            <div class="row mb-3">
+              {% for field in parcel_request_form %}
+              <label for="{{ field.name }}" class="col-md-4 col-lg-3 col-form-label">{{ field.label }}</label>
+              <div class="col-md-8 col-lg-9">
+                {{ field }}
+              </div>
+
+              {% endfor %}
+            </div>
+
+          </form>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+          <button type="button" class="btn btn-primary" id="addParcelRequestBtn">บันทึก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+  $('#addParcelRequestBtn').on('click', function () {
+    let btn = $(this)
+    btn.prop('disabled', true);
+    $('#parcel_request_form').submit();
+  });
+
+  </script>

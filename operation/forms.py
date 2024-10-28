@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms import formset_factory, widgets
 from car.models import CarBooking
+from operation.models import ParcelRequest
+
 from . import models
 
 
@@ -147,3 +149,11 @@ class TaskNoteForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["status"].choices = models.Task.Status.choices
+
+
+class OperationParcelRequestForm(forms.Form):
+    parcel_request = forms.ModelChoiceField(
+        queryset=ParcelRequest.objects.filter(billdetail__approve_status="APPROVED"),
+        label="ใบเบิก",
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )

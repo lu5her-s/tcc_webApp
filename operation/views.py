@@ -15,6 +15,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from account.models import Department
 from car.forms import CarReturnForm
 from car.models import CarBooking
+from parcel.models import ParcelRequest
 
 from .models import (
     AllowanceWithdraw,
@@ -35,6 +36,7 @@ from .forms import (
     TeamForm,
     TeamMemberFormSet,
     AddFuelForm,
+    OperationParcelRequestForm,
 )
 
 # Create your views here.
@@ -154,6 +156,8 @@ class OperationDetailView(LoginRequiredMixin, DetailView):
             # for operation request and retunr parcel
             "parcel_requests": self.object.parcel_requests.all(),
             "parcel_returns": self.object.parcel_returns.all(),
+            "parcel_request_form": OperationParcelRequestForm,
+            # "parcel_return_form": ParcelReturnForm,
             # for note form
             "note_form": TaskNoteForm,
             # for allowance
@@ -476,10 +480,10 @@ def allowance_refund(request, pk):
         data = request.POST
         allowance = operation.allowance
         refund = AllowanceRefund.objects.create(
-                allowance=allowance,
-                amount=float(data.get("refund_amount")),
-                note=data.get("refund_note")
-                )
+            allowance=allowance,
+            refund_amount=float(data.get("refund_amount")),
+            note=data.get("refund_note"),
+        )
         refund.save()
         return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
 
@@ -501,7 +505,12 @@ def allowance_refund_update(request, pk):
         allowance_refund.amount = float(data.get("refund_amount"))
         allowance_refund.note = data.get("refund_note")
         allowance_refund.save()
-        return redirect(reverse_lazy("operation:detail", kwargs={"pk": allowance_refund.allowance.operation.pk}))
+        return redirect(
+            reverse_lazy(
+                "operation:detail",
+                kwargs={"pk": allowance_refund.allowance.operation.pk},
+            )
+        )
 
 
 def allowance_refund_delete(request, pk):
@@ -520,3 +529,25 @@ def allowance_refund_delete(request, pk):
         operation = allowance_refund.allowance.operation
         allowance_refund.delete()
         return redirect(reverse_lazy("operation:detail", kwargs={"pk": operation.pk}))
+
+
+def parcel_requests_add(request, pk):
+    """
+    Add parcel requests to the operation.
+
+    Args:
+        request (): The HTTP request object.
+        pk (): The primary key of the operation.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    # TODO: edit save parcel request
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        data = request.POST
+        parcel_request = ParcelRequest.objects.get(pk=data.get("parcel_request"))
+        print(parcel_request)
+        print(data)
+        print(operation)
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))

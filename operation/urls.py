@@ -56,4 +56,10 @@ urlpatterns = [
         views.allowance_refund_delete,
         name="allowance_refund_delete",
     ),
+    # for parcel document
+    path(
+        "parcel_request_add/<int:pk>",
+        views.parcel_requests_add,
+        name="parcel_request_add",
+    ),
 ]

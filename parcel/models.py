@@ -54,7 +54,7 @@ class ParcelRequest(models.Model):
         self.save()
 
     def __str__(self):
-        return f"Bill no : {self.pk}"
+        return f"ใบเบิกเลขที่ : {self.pk}/{self.created_at.year+543} - {self.stock.name}"
 
 
 class RequestItem(models.Model):

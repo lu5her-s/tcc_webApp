@@ -346,10 +346,18 @@ class OperationCar(models.Model):
 
 
 class OperationParcelRequest(models.Model):
+    """
+    สำหรับแสดงรายการใบขอรับพัสดุไปยังใบงาน
+
+    Attributes:
+        operation:
+        parcel:
+    """
+
     operation = models.ForeignKey(
         Operation, on_delete=models.CASCADE, related_name="parcel_requests"
     )
-    parcel = models.ForeignKey(
+    parcel_request = models.ForeignKey(
         ParcelRequest,
         on_delete=models.CASCADE,
         related_name="parcel_request",
@@ -360,6 +368,14 @@ class OperationParcelRequest(models.Model):
 
 
 class OperationParcelReturn(models.Model):
+    """
+    สำหรับแสดงรายการใบส่งคืนพัสดุไปยังใบงาน
+
+    Attributes:
+        operation:
+        parcel_return:
+    """
+
     operation = models.ForeignKey(
         Operation, on_delete=models.CASCADE, related_name="parcel_returns"
     )
@@ -378,6 +394,14 @@ def operation_file_path(instance, filename):
 
 
 class OperationDocument(models.Model):
+    """
+    for detail operation
+
+    Attributes:
+        operation:
+        file:
+    """
+
     operation = models.ForeignKey(
         "Operation", on_delete=models.CASCADE, related_name="documents"
     )
@@ -385,3 +409,6 @@ class OperationDocument(models.Model):
 
     class Meta:
         verbose_name = "Operation Document"
+
+    def __str__(self):
+        return f"File for operation no.{operation.pk}"
