@@ -6,7 +6,7 @@
   {% for parcel_request in parcel_requests %}
   <form method="post" action="{% url 'operation:parcel_request_delete' pk=parcel_request.pk %}">
     {% csrf_token %}
-    เลขที่ใบเบิก {{ parcel_request.pk }}/{{ parcel_request.created_at|date:"Y" }} ({{ parcel_request.stock.name }})
+    {{ forloop.counter }}.&nbsp;เลขที่ใบเบิก {{ parcel_request.pk }}/{{ parcel_request.parcel_request.created_at.year|thaiyear }} ({{ parcel_request.parcel_request.stock.name }})
     <button type="submit" class="btn btn-sm badge badge-sm bg-danger">ลบ</button>
   </form>
   {% endfor %}

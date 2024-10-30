@@ -389,7 +389,9 @@ class RejectReturnBillNote(models.Model):
         verbose_name_plural = "Reject Return Bill Notes"
 
     def __str__(self):
-        return f"{self.bill.pk}/{self.created_at.year+543} - {self.user}"
+        return (
+            f"ใบส่งคืนเลขที่ : {self.bill.pk}/{self.bill.created_at.year+543} - {self.user}"
+        )
 
 
 class ParcelReturnBillNote(models.Model):

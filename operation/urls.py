@@ -62,4 +62,9 @@ urlpatterns = [
         views.parcel_requests_add,
         name="parcel_request_add",
     ),
+    path(
+        "parcel_request_delete/<int:pk>",
+        views.parcel_requests_delete,
+        name="parcel_request_delete",
+    ),
 ]

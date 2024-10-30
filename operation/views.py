@@ -22,6 +22,7 @@ from .models import (
     OilReimburesment,
     Operation,
     OperationCar,
+    OperationParcelRequest,
     Task,
     Team,
     TeamMember,
@@ -546,8 +547,32 @@ def parcel_requests_add(request, pk):
     if request.method == "POST":
         operation = Operation.objects.get(pk=pk)
         data = request.POST
-        parcel_request = ParcelRequest.objects.get(pk=data.get("parcel_request"))
-        print(parcel_request)
-        print(data)
-        print(operation)
-        return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+        parcel_request = int(data.get("parcel_request"))
+        if parcel_request not in list(
+            operation.parcel_requests.values_list("parcel_request", flat=True)
+        ):
+            operation.parcel_requests.create(
+                parcel_request=ParcelRequest.objects.get(pk=parcel_request)
+            )
+            return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+        else:
+            return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+def parcel_requests_delete(request, pk):
+    """
+    Delete a parcel request from the operation.
+
+    Args:
+        request (): The HTTP request object.
+        pk (): The primary key of the operation.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        parcel_request = OperationParcelRequest.objects.get(pk=pk)
+        parcel_request.delete()
+        return redirect(
+            reverse_lazy("operation:detail", kwargs={"pk": parcel_request.operation.pk})
+        )
