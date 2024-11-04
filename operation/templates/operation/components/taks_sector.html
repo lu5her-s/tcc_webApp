@@ -1,0 +1,58 @@
+{% load tags %}
+
+{% if tasks %}
+<thead>
+
+  <tr>
+    <td style="width: 50%;">
+      รายการ
+    </td>
+    <td>สถานที่</td>
+    <td>ความเร่งด่วน</td>
+    <td></td>
+  </tr>
+</thead>
+
+<tbody>
+
+  {% for task in tasks %}
+  <tr>
+    <td style="width: 50%;">
+      {{ forloop.counter }}.&nbsp;{{ task.task|safe }}
+    </td>
+    <td>{{ task.workplace }}</td>
+    <td>{{ task.get_priority_display }}</td>
+    {% if task.done and object.approve_status == 'AP' %}
+    <td>
+      <button type="button" class="btn btn-sm btn-success" disabled>
+        <i class="bi bi-check-circle text-success"></i> ดำเนินการแล้ว
+      </button>
+    </td>
+    {% elif not task.done and not object.approve_status == 'WA' %}
+    <td>
+      {% if request.user == object.created_by or request.user == team.team_leader %}
+      
+      <button type="button" class="btn btn-sm btn-danger" onclick="deleteTask({{ task.pk }});">ลบ</button>
+      {% endif %}
+
+    </td>
+    {% else %}
+    <td>
+      {% if request.user == object.created_by or request.user == team.team_leader %}
+      
+      <button type="button" onclick="openNoteModal({{ task.pk }});" class="btn btn-sm btn-success">อัพเดท</button>
+      {% endif %}
+    </td>
+    {% endif %}
+  </tr>
+
+  {% endfor %}
+</tbody>
+</table>
+{% else %}
+<table>
+  <tr>
+    <td colspan="4">ยังไม่ได้กำหนดรายละเอียดงาน</td>
+  </tr>
+</table>
+{% endif %}

@@ -2,7 +2,7 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}Journal{% endblock title %}
+{% block title %}Operation{% endblock title %}
 
 {% block content %}
 <div class="pagetitle">
@@ -89,6 +89,9 @@ element[0].addEventListener('change', (event) => {
 <script>
 $(document).ready(function () {
   $("#id_team_leader").select2({
+    width: "100%",
+  });
+  $("#id_inform").select2({
     width: "100%",
   });
 });

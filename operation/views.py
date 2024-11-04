@@ -23,6 +23,7 @@ from .models import (
     Operation,
     OperationCar,
     OperationParcelRequest,
+    OperationParcelReturn,
     Task,
     Team,
     TeamMember,
@@ -32,6 +33,7 @@ from .models import (
 from .forms import (
     CarAddForm,
     OperationForm,
+    OperationParcelReturnForm,
     TaskForm,
     TaskNoteForm,
     TeamForm,
@@ -158,7 +160,7 @@ class OperationDetailView(LoginRequiredMixin, DetailView):
             "parcel_requests": self.object.parcel_requests.all(),
             "parcel_returns": self.object.parcel_returns.all(),
             "parcel_request_form": OperationParcelRequestForm,
-            # "parcel_return_form": ParcelReturnForm,
+            "parcel_return_form": OperationParcelReturnForm,
             # for note form
             "note_form": TaskNoteForm,
             # for allowance
@@ -195,10 +197,13 @@ def accept_leader(request, pk):
     Returns:
 
     """
-    team = Team.objects.get(pk=pk)
-    team.accept()
-    team.save()
-    return redirect(reverse_lazy("operation:detail", kwargs={"pk": team.operation.pk}))
+    if request.method == "POST":
+        team = Team.objects.get(pk=pk)
+        team.accept()
+        team.save()
+        return redirect(
+            reverse_lazy("operation:detail", kwargs={"pk": team.operation.pk})
+        )
 
 
 # WARN: check user exist
@@ -576,3 +581,65 @@ def parcel_requests_delete(request, pk):
         return redirect(
             reverse_lazy("operation:detail", kwargs={"pk": parcel_request.operation.pk})
         )
+
+
+def parcel_return_add(request, pk):
+    """
+    Add parcel returns to the operation.
+
+    Args:
+        request (): The HTTP request object.
+        pk (): The primary key of the operation.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        data = request.POST
+        parcel_return = int(data.get("parcel_return"))
+        if parcel_return not in list(
+            operation.parcel_returns.values_list("parcel_return", flat=True)
+        ):
+            operation.parcel_returns.create(parcel_return=parcel_return)
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+def parcel_return_delete(request, pk):
+    """
+    Delete a parcel return from the operation.
+
+    Args:
+        request (): The HTTP request object.
+        pk (): The primary key of the operation.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        parcel_return = OperationParcelReturn.objects.get(pk=pk)
+        parcel_return.delete()
+        return redirect(
+            reverse_lazy("operation:detail", kwargs={"pk": parcel_return.operation.pk})
+        )
+
+
+# function to request approve
+def request_approve(request, pk):
+    """
+    Request approve for the operation.
+
+    Args:
+        request (): The HTTP request object.
+        pk (): The primary key of the operation.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        print(operation)
+        operation.operation_status = Operation.OperationStatus.PROGRESS
+        operation.approve_status = Operation.ApproveStatus.WAIT_OPEN
+        operation.save()
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))

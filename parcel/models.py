@@ -114,7 +114,34 @@ class RequestItem(models.Model):
 
 class RequestBillDetail(models.Model):
     """
-    Model representing the details of a request bill.
+    Model representing a detail of a bill request.
+
+    Attributes:
+        approve_date:
+        approve_status:
+        approver:
+        receiver:
+        received_at:
+        paid_status:
+        paider:
+        paid_at:
+        request_case:
+        item_type:
+        item_control:
+        money_type:
+        job_no:
+        request_reference:
+        updated_at:
+        agent:
+        request_approve_date:
+        paid_no:
+        bill:
+        paid_status:
+        paid_at:
+        paider:
+        request_approve_date:
+        received_at:
+        paid_status:
     """
 
     class ApproveStatus(models.TextChoices):
@@ -227,6 +254,16 @@ class ParcelRequestNote(models.Model):
 
 
 class RejectBillNote(models.Model):
+    """
+    Model for Reject Bill Note.
+
+    Attributes:
+        bill:
+        note:
+        created_at:
+        user:
+    """
+
     bill = models.OneToOneField(ParcelRequest, on_delete=models.CASCADE)
     note = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -241,6 +278,20 @@ class RejectBillNote(models.Model):
 
 # For Return Parcel
 class ParcelReturn(models.Model):
+    """
+    Model for Return Parcel.
+
+    Attributes:
+        status:
+        user:
+        created_at:
+        stock:
+        department_return:
+        is_done:
+        date_done:
+        deleted:
+    """
+
     class Status(models.TextChoices):
         DRAFT = "DRAFT", "ร่าง"
         REQUEST = "REQUEST", "ขอคืน"
@@ -275,10 +326,44 @@ class ParcelReturn(models.Model):
         verbose_name_plural = "Parcel Return Bills"
 
     def __str__(self):
-        return f"{self.pk}/{self.created_at.year+543} - {self.user}"
+        return f"ใบส่งคืนเลขที่ : {self.pk}/{self.created_at.year+543} - {self.stock.name}"
 
 
 class ParcelReturnDetail(models.Model):
+    """
+    Model for Return Parcel Detail.
+
+    Attributes:
+        approve_date:
+        approve_status:
+        approver:
+        returned_at:
+        return_status:
+        receiver:
+        return_case:
+        item_type:
+        item_control:
+        money_type:
+        job_no:
+        updated_at:
+        return_approve_date:
+        return_no:
+        controler:
+        control_date:
+        bill:
+        returned_at:
+        receiver:
+        returned_at:
+        controler:
+        control_date:
+        return_status:
+        status:
+        is_done:
+        date_done:
+        returned_at:
+        receiver:
+    """
+
     class ApproveStatus(models.TextChoices):
         APPROVED = "APPROVED", "อนุมัติ"
         WAIT = "WAIT", "รออนุมัติ"
@@ -343,7 +428,7 @@ class ParcelReturnDetail(models.Model):
         verbose_name_plural = "Parcel Return Bill Details"
 
     def __str__(self):
-        return f"Bill no: {self.bill.pk}/{self.bill.created_at.year+543} - Request User: {self.bill.user}"
+        return f"ใบส่งคืนเลขที่ {self.bill.pk}/{self.bill.created_at.year+543} - {self.stock.name}"
 
     def mark_as_approved(self):
         """
@@ -380,6 +465,16 @@ class ParcelReturnDetail(models.Model):
 
 
 class RejectReturnBillNote(models.Model):
+    """
+    Model for reject return bill note.
+
+    Attributes:
+        bill:
+        note:
+        created_at:
+        user:
+    """
+
     bill = models.OneToOneField(ParcelReturn, on_delete=models.CASCADE)
     note = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -395,6 +490,16 @@ class RejectReturnBillNote(models.Model):
 
 
 class ParcelReturnBillNote(models.Model):
+    """
+    Model for parcel return bill note.
+
+    Attributes:
+        bill:
+        note:
+        created_at:
+        user:
+    """
+
     bill = models.OneToOneField(
         ParcelReturn, on_delete=models.CASCADE, related_name="bill_note"
     )
@@ -407,6 +512,17 @@ class ParcelReturnBillNote(models.Model):
 
 
 class ParcelReturnItem(models.Model):
+    """
+    Model for parcel return item.
+
+    Attributes:
+        bill:
+        item:
+        created_at:
+        updated_at:
+        quantity:
+    """
+
     bill = models.ForeignKey(
         ParcelReturn, on_delete=models.CASCADE, related_name="return_bill"
     )
@@ -424,7 +540,6 @@ class ParcelReturnItem(models.Model):
         return f"{self.bill.pk}/{self.created_at.year+543} - {self.item}"
 
     def total_price(self):
-        if self.item.price and self.quantity:
-            return self.item.price * self.quantity
-        else:
+        if self.item.price is None or self.quantity is None:
             return None
+        return self.item.price * self.quantity

@@ -25,8 +25,12 @@
       {% endif %}
 
       <center>
-        <a href="{% url 'operation:accept_leader' pk=team.pk %}" class="btn btn-success">ตอบรับงาน</a>
+        <form method="POST" action="{% url 'operation:accept_leader' pk=team.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success">ตอบรับงาน</button>
+        </form>
       </center>
+
     </span>
   </p>
   {% else %}

@@ -14,122 +14,120 @@ from car.models import CarBooking
 def inform_image(instance, filename):
     """inform_image.
 
-        :param instance: instance inform class
-        :param filename: get filename for set path
-        """
+    :param instance: instance inform class
+    :param filename: get filename for set path
+    """
     return f"Inform/{instance.inform.pk}/{filename}"
 
 
 class Inform(models.Model):
-    """Inform."""
+    """
+
+    Attributes:
+        customer:
+        stockitem:
+        issue_category:
+        issue:
+        urgency:
+        inform_status:
+        approve_status:
+        repair_category:
+        assigned_to:
+        accepted:
+        repair_status:
+        created_at:
+        deleted:
+        closed:
+    """
 
     class IssueCategory(models.TextChoices):
-        HARDWARE = 'HW', 'อุปกรณ์'
-        SOFTWARE = 'SW', 'ระบบ'
-        OTHER = 'OT', 'อื่น ๆ'
+        HARDWARE = "HW", "อุปกรณ์"
+        SOFTWARE = "SW", "ระบบ"
+        OTHER = "OT", "อื่น ๆ"
 
     class InformStatus(models.TextChoices):
-        INFORM = 'INF', 'แจ้งซ่อม'
-        WAIT = 'WAT', 'รออนุมัติ'
-        REJECT = 'REJ', 'ยกเลิก'
+        INFORM = "INF", "แจ้งซ่อม"
+        WAIT = "WAT", "รออนุมัติ"
+        REJECT = "REJ", "ยกเลิก"
 
     class RepairStatus(models.TextChoices):
         # INFORM = 'INF', 'แจ้งซ่อม'
         # CHECKED = 'CHECKED', 'ตรวจสอบ'
         # WAIT = 'WAT', 'รออนุมัติ'
-        ACCEPT = 'ACC', 'ตอบรับ'
-        REPAIR = 'RPR', 'ซ่อม'
-        COMPLETE = 'CMP', 'ดำเนินการแล้ว'
-        REJECT = 'REJ', 'ยกเลิก'
-        CLOSE = 'CLO', 'ปิดงาน'
+        ACCEPT = "ACC", "ตอบรับ"
+        REPAIR = "RPR", "ซ่อม"
+        COMPLETE = "CMP", "ดำเนินการแล้ว"
+        REJECT = "REJ", "ยกเลิก"
+        CLOSE = "CLO", "ปิดงาน"
         # WAIT = 'WAT', 'รอวงรอบ'
         # URGENCY = 'URG', 'ซ่อมด่วน'
         # AGENT = 'AGT', 'ซ่อมโดย จนท.ประจำสถานี'
 
     class ApproveStatus(models.TextChoices):
-        APPROVE = 'APR', 'อนุมัติ'
-        REJECT = 'RJT', 'ไม่อนุมัติ'
-        RECHECK = 'RCK', 'ตรวจสอบใหม่'
+        APPROVE = "APR", "อนุมัติ"
+        REJECT = "RJT", "ไม่อนุมัติ"
+        RECHECK = "RCK", "ตรวจสอบใหม่"
 
     class Urgency(models.TextChoices):
-        HIGHT = 'HIG', 'สูงสุด'
-        MEDIUM = 'MED', 'ปานกลาง'
-        LOW = 'LOW', 'ทั่วไป'
+        HIGHT = "HIG", "สูงสุด"
+        MEDIUM = "MED", "ปานกลาง"
+        LOW = "LOW", "ทั่วไป"
 
     class RepairCategory(models.TextChoices):
-        WAIT = 'WAT', 'วงรอบ'
-        URGENCY = 'URG', 'ซ่อมด่วน'
-        AGENT = 'AGN', 'ซ่อมโดย จนท.ประจำสถานี'
+        WAIT = "WAT", "วงรอบ"
+        URGENCY = "URG", "ซ่อมด่วน"
+        AGENT = "AGN", "ซ่อมโดย จนท.ประจำสถานี"
 
     customer = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="customer"
+        User, on_delete=models.CASCADE, related_name="customer"
     )
     stockitem = models.ForeignKey(
-        StockItem,
-        on_delete=models.CASCADE,
-        related_name="stockitem"
+        StockItem, on_delete=models.CASCADE, related_name="stockitem"
     )
-    issue_category = models.CharField(
-        max_length=8,
-        choices=IssueCategory.choices
-    )
+    issue_category = models.CharField(max_length=8, choices=IssueCategory.choices)
     issue = RichTextField()
     urgency = models.CharField(
-        max_length=8,
-        choices=Urgency.choices,
-        default=Urgency.LOW
+        max_length=8, choices=Urgency.choices, default=Urgency.LOW
     )
     inform_status = models.CharField(
         max_length=8,
         choices=InformStatus.choices,
         default=InformStatus.INFORM,
-        null=True, blank=True
+        null=True,
+        blank=True,
     )
     approve_status = models.CharField(
-        max_length=8,
-        choices=ApproveStatus.choices,
-        null=True, blank=True
+        max_length=8, choices=ApproveStatus.choices, null=True, blank=True
     )
     repair_category = models.CharField(
-        max_length=8,
-        choices=RepairCategory.choices,
-        null=True,
-        blank=True
+        max_length=8, choices=RepairCategory.choices, null=True, blank=True
     )
     assigned_to = models.ForeignKey(
-        Profile,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
+        Profile, on_delete=models.CASCADE, null=True, blank=True
     )
     accepted = models.BooleanField(default=False)
     repair_status = models.CharField(
-        max_length=8,
-        choices=RepairStatus.choices,
-        null=True, blank=True
+        max_length=8, choices=RepairStatus.choices, null=True, blank=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
     deleted = models.BooleanField(default=False)
     closed = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.stockitem.item_name}-{self.created_at}"
+        return f"แจ้งซ่อมเลขที่ {self.pk}/{self.created_at.year + 543} : {self.get_urgency_display()} - {self.get_issue_category_display()} - {self.customer.profile.department.name}"
 
     def absolute_url(self):
         return reverse("repair:detail", args=self.pk)
 
 
 class InformImage(models.Model):
-    """ Images Inform """
+    """Images Inform"""
+
     inform = models.ForeignKey(
-        Inform,
-        on_delete=models.CASCADE,
-        related_name="inform_image"
+        Inform, on_delete=models.CASCADE, related_name="inform_image"
     )
     images = models.ImageField(upload_to=inform_image)
 
@@ -139,10 +137,9 @@ class InformImage(models.Model):
 
 class InformProgress(models.Model):
     """Progress Inform"""
+
     inform = models.ForeignKey(
-        Inform,
-        on_delete=models.CASCADE,
-        related_name="inform_progress"
+        Inform, on_delete=models.CASCADE, related_name="inform_progress"
     )
     created_at = models.DateTimeField(auto_now_add=True)
     note = models.TextField(null=True, blank=True)
@@ -150,7 +147,8 @@ class InformProgress(models.Model):
         max_length=8,
         choices=Inform.RepairStatus.choices,
         default=Inform.RepairStatus.REPAIR,
-        null=True, blank=True
+        null=True,
+        blank=True,
     )
 
     def __str__(self):
@@ -160,10 +158,9 @@ class InformProgress(models.Model):
 # class form reject inform reason
 class InformReject(models.Model):
     """Reject Inform"""
+
     inform = models.ForeignKey(
-        Inform,
-        on_delete=models.CASCADE,
-        related_name="inform_reject"
+        Inform, on_delete=models.CASCADE, related_name="inform_reject"
     )
     created_at = models.DateTimeField(auto_now_add=True)
     reason = models.TextField(null=True, blank=True)
@@ -188,15 +185,19 @@ class CustomerReview(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
     description = models.TextField()
-    reviewer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviewer")
-    inform = models.ForeignKey(Inform, on_delete=models.CASCADE, related_name="customer_review")
+    reviewer = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="reviewer"
+    )
+    inform = models.ForeignKey(
+        Inform, on_delete=models.CASCADE, related_name="customer_review"
+    )
 
     class Meta:
-        verbose_name = 'Customer Review'
-        verbose_name_plural = 'Customer Reviews'
+        verbose_name = "Customer Review"
+        verbose_name_plural = "Customer Reviews"
 
     def __str__(self):
-        return f'Repair Review: {self.reviewer} - {self.inform.pk}'
+        return f"Repair Review: {self.reviewer} - {self.inform.pk}"
 
 
 class ManagerReview(models.Model):
@@ -219,11 +220,11 @@ class ManagerReview(models.Model):
     inform = models.ForeignKey(Inform, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = 'Manager Review'
-        verbose_name_plural = 'Manager Reviews'
+        verbose_name = "Manager Review"
+        verbose_name_plural = "Manager Reviews"
 
     def __str__(self):
-        return f'Manager Review: {self.reviewer} - {self.inform.pk}'
+        return f"Manager Review: {self.reviewer} - {self.inform.pk}"
 
 
 class CommandReview(models.Model):
@@ -246,11 +247,11 @@ class CommandReview(models.Model):
     inform = models.ForeignKey(Inform, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = 'Command Review'
-        verbose_name_plural = 'Command Reviews'
+        verbose_name = "Command Review"
+        verbose_name_plural = "Command Reviews"
 
     def __str__(self):
-        return f'Command Review: {self.reviewer} - {self.inform.pk}'
+        return f"Command Review: {self.reviewer} - {self.inform.pk}"
 
 
 # mkae models for manage option for inform : car, job, stockitem

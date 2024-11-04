@@ -8,7 +8,10 @@
       ครั้งที่ {{ forloop.counter }} จำนวน {{ allowance.amount|intcomma }} บาท 
       ({{ allowance.amount|read_baht }}) 
       {% if allowance.note %} [{{ allowance.note }}] {% endif %}
+      {% if request.user == object.created_by or request.user == team.team_leader %}
       <button type="submit" class="btn btn-sm badge badge-sm bg-danger">ลบ</button>
+      
+      {% endif %}
     </form>
 
     {% endfor %}
@@ -19,9 +22,12 @@
     ไม่เบิกเบี้ยเลี้ยง &nbsp;
     <br>
     {% endif %}
+
+    {% if request.user == team.team_leader or request.user == object.created_by %}
     {% include "operation/components/add_allowance_modal.html" %}
     <button type="button"
       data-bs-toggle="modal"
       data-bs-target="#addAllowance"
       data-count="{{ object.allowance.number_of_withdraw|add:"1" }}"
       class="btn btn-sm btn-warning"><i class="bi bi-plus"></i>ขอเบิก</button>
+    {% endif %}

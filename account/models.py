@@ -12,11 +12,14 @@ from django.dispatch import receiver
 
 # Create your models here.
 
+
 def user_directory_path(instance, filename):
-    return 'user_{0}/{1}'.format(instance.user.id, filename)
+    return "user_{0}/{1}".format(instance.user.id, filename)
+
 
 class Sector(models.Model):
-    ''' This class for sector '''
+    """This class for create sector for department"""
+
     name = models.CharField(max_length=200)
 
     def __str__(self) -> str:
@@ -24,10 +27,11 @@ class Sector(models.Model):
 
 
 class Department(models.Model):
-    '''
-    This class for department
+    """
+    This class for create department
     ex: name = "มทบ.29", sector="ปก.ทภ.2"
-    '''
+    """
+
     name = models.CharField(max_length=200)
     sector = models.ForeignKey(Sector, on_delete=models.CASCADE)
 
@@ -37,38 +41,47 @@ class Department(models.Model):
 
 # NOTE : class for rank
 class Rank(models.Model):
-    ''' This class for create rank for user '''
+    """This class for create rank for user"""
+
     name = models.CharField(max_length=200)
 
     def __str__(self) -> str:
         return f"{self.name}"
+
 
 # NOTE : class for position  ตำแหน่งของ user
 class Position(models.Model):
-    ''' for position of user'''
+    """for position of user"""
+
     name = models.CharField(max_length=200)
 
     def __str__(self) -> str:
         return f"{self.name}"
 
+
 # NOTE : class for create new profile
 class Profile(models.Model):
-    ''' create user profile '''
-    user       = models.OneToOneField(User, on_delete=models.CASCADE)
-    rank       = models.ForeignKey(Rank, on_delete=models.CASCADE, blank=True, null=True)
-    position   = models.ForeignKey(Position, on_delete=models.CASCADE, blank=True, null=True)
-    sector     = models.ForeignKey(Sector, on_delete=models.CASCADE, blank=True, null=True)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True)
-    place      = models.CharField(max_length=200, blank=True, null=True)
-    phone      = models.CharField(max_length=10, blank=True, null=True)
-    image      = models.ImageField(upload_to='Profile/', blank=True, null=True)
-    about      = models.TextField(blank=True, null=True)
-    address    = models.TextField(blank=True, null=True)
-    twitter    = models.CharField(max_length=200, default='https://twitter.com/#')
-    facebook   = models.CharField(max_length=200, default='https://facebook.com/#')
-    instagram  = models.CharField(max_length=200, default='https://instagram.com/#')
-    line_id    = models.CharField(max_length=200, default='line_id')
-    line_token = models.CharField(max_length=200, default='line_token')
+    """create user profile"""
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    rank = models.ForeignKey(Rank, on_delete=models.CASCADE, blank=True, null=True)
+    position = models.ForeignKey(
+        Position, on_delete=models.CASCADE, blank=True, null=True
+    )
+    sector = models.ForeignKey(Sector, on_delete=models.CASCADE, blank=True, null=True)
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, blank=True, null=True
+    )
+    place = models.CharField(max_length=200, blank=True, null=True)
+    phone = models.CharField(max_length=10, blank=True, null=True)
+    image = models.ImageField(upload_to="Profile/", blank=True, null=True)
+    about = models.TextField(blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    twitter = models.CharField(max_length=200, default="https://twitter.com/#")
+    facebook = models.CharField(max_length=200, default="https://facebook.com/#")
+    instagram = models.CharField(max_length=200, default="https://instagram.com/#")
+    line_id = models.CharField(max_length=200, default="line_id")
+    line_token = models.CharField(max_length=200, default="line_token")
 
     class Meta:
         verbose_name_plural = "Profiles"
@@ -107,12 +120,14 @@ def save_user_profile(sender, instance, **kwargs):
     """
     instance.profile.save()
 
+
 # REVIEW: update for token line
 class LineToken(models.Model):
-    ''' add Line token for send line notify '''
-    name  = models.CharField(max_length=200)
+    """add Line token for send line notify"""
+
+    name = models.CharField(max_length=200)
     token = models.CharField(max_length=200)
-    note  = models.TextField(blank=True, null=True)
+    note = models.TextField(blank=True, null=True)
 
     def __str__(self) -> str:
         return f"{self.name}"

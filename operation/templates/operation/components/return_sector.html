@@ -1,40 +1,42 @@
 {% load tags %}
 {% load humanize %}
 
-  {% if parcel_requests %}
-  {# for loop list of parcel_request bill #}
-  {% for parcel_request in parcel_requests %}
-  <form method="post" action="{% url 'operation:parcel_request_delete' pk=parcel_request.pk %}">
+  {% if parcel_returns %}
+  {# for loop list of parcel_return bill #}
+  {% for parcel_return in parcel_returns %}
+  <form method="post" action="{% url 'operation:parcel_return_delete' pk=parcel_return.pk %}">
     {% csrf_token %}
-    {{ forloop.counter }}.&nbsp;เลขที่ใบเบิก {{ parcel_request.pk }}/{{ parcel_request.parcel_request.created_at.year|thaiyear }} ({{ parcel_request.parcel_request.stock.name }})
+    {{ forloop.counter }}.&nbsp;เลขที่ใบเบิก {{ parcel_return.pk }}/{{ parcel_return.parcel_return.created_at.year|thaiyear }} ({{ parcel_return.parcel_return.stock.name }})
     {% if request.user == object.created_by or request.user == team.team_leader %}
+    
     <button type="submit" class="btn btn-sm badge badge-sm bg-danger">ลบ</button>
     {% endif %}
   </form>
   {% endfor %}
 
   {% else %}
-  ไม่มีรายการใบเบิก
+  ไม่มีรายการใบส่งคืน
   {% endif %}
   <br>
   {% if request.user == team.team_leader or request.user == object.created_by %}
-  <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#parcelRequestModal" id="addParcelRequest"><i class="bi bi-plus"></i> แนบใบเบิก</button>
+  
+  <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#parcelReturnModal" id="addParcelReturn"><i class="bi bi-plus"></i> แนบใบส่งคืน</button>
   {% endif %}
 
-  <div class="modal fade" id="parcelRequestModal" tabindex="-1" role="dialog" aria-labelledby="parcelRequestModalLabel" aria-hidden="true">
+  <div class="modal fade" id="parcelReturnModal" tabindex="-1" role="dialog" aria-labelledby="parcelReturnModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">แนบใบเบิก</h5>
+          <h5 class="modal-title">แนบใบส่งคืน</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
         </div>
         <div class="modal-body">
           <!-- form for add member -->
-          <form method="post" name="parcel_request_form" id="parcel_request_form"
-            action="{% url 'operation:parcel_request_add' pk=object.pk %}">
+          <form method="post" name="parcel_return_form" id="parcel_return_form"
+            action="{% url 'operation:parcel_return_add' pk=object.pk %}">
             {% csrf_token %}
             <div class="row mb-3">
-              {% for field in parcel_request_form %}
+              {% for field in parcel_return_form %}
               <label for="{{ field.name }}" class="col-md-4 col-lg-3 col-form-label">{{ field.label }}</label>
               <div class="col-md-8 col-lg-9">
                 {{ field }}
@@ -48,7 +50,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-          <button type="button" class="btn btn-primary" id="addParcelRequestBtn">บันทึก</button>
+          <button type="button" class="btn btn-primary" id="addParcelReturnBtn">บันทึก</button>
         </div>
       </div>
     </div>
@@ -59,7 +61,7 @@
   $('#addParcelRequestBtn').on('click', function () {
     let btn = $(this)
     btn.prop('disabled', true);
-    $('#parcel_request_form').submit();
+    $('#parcel_return_form').submit();
   });
 
   </script>

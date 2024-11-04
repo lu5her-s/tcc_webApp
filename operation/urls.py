@@ -67,4 +67,16 @@ urlpatterns = [
         views.parcel_requests_delete,
         name="parcel_request_delete",
     ),
+    path(
+        "parcel_return_add/<int:pk>",
+        views.parcel_return_add,
+        name="parcel_return_add",
+    ),
+    path(
+        "parcel_return_delete/<int:pk>",
+        views.parcel_return_delete,
+        name="parcel_return_delete",
+    ),
+    # for request_approve
+    path("request_approve/<int:pk>", views.request_approve, name="request_approve"),
 ]

@@ -5,13 +5,17 @@
   <form method="post" action="{% url 'operation:allowance_refund_delete' object.allowance.refund.pk %}" id='delete_refund_form'>
     {% csrf_token %}
     คืนเบี้ยเลี้ยง จำนวน {{ object.allowance.refund.refund_amount }} บาท ({{ object.allowance.refund.refund_amount|read_baht }})
+    {% if request.user == object.created_by or request.user == team.team_leader %}
     <button type="submit" id="delete_refund" class="btn btn-sm badge badge-sm bg-danger">ลบ</button>
+    {% endif %}
     {% if object.allowance.refund.note %}
     <br>
     - หมายเหตุ : {{ object.allowance.refund.note|safe }}
     {% endif %}
   </form>
-  <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editRefundModal" id="editRefund">แก้ไข</button>
+  {% if request.user == object.created_by or request.user == team.team_leader %}
+  <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editRefundModal" id="editRefund"><i class="bi bi-pencil"></i> แก้ไข</button>
+  {% endif %}
   {% else %}
   ไม่มีรายการคืนเบี้ยเลี้ยง
   <br>

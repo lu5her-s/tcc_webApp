@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms import formset_factory, widgets
 from car.models import CarBooking
-from operation.models import ParcelRequest
+from operation.models import Inform, ParcelRequest, ParcelReturn
 
 from . import models
 
@@ -15,6 +15,7 @@ class OperationForm(forms.ModelForm):
             "start_date",
             "end_date",
             "description",
+            "inform",
         )
         widgets = {
             "type_of_work": widgets.Select(attrs={"class": "form-select"}),
@@ -39,6 +40,14 @@ class OperationForm(forms.ModelForm):
             "end_date": "วันที่สิ้นสุดงาน",
             "description": "รายละเอียดงาน",
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["inform"] = forms.ModelChoiceField(
+            queryset=Inform.objects.filter(approve_status="APR"),
+            widget=forms.Select(attrs={"class": "form-select"}),
+            label="อ้างถึงแจ้งซ่อม",
+        )
 
 
 class TaskForm(forms.ModelForm):
@@ -155,5 +164,13 @@ class OperationParcelRequestForm(forms.Form):
     parcel_request = forms.ModelChoiceField(
         queryset=ParcelRequest.objects.filter(billdetail__approve_status="APPROVED"),
         label="ใบเบิก",
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+
+
+class OperationParcelReturnForm(forms.Form):
+    parcel_return = forms.ModelChoiceField(
+        queryset=ParcelReturn.objects.filter(billdetail__approve_status="APPROVED"),
+        label="ใบส่งคืน",
         widget=forms.Select(attrs={"class": "form-select"}),
     )

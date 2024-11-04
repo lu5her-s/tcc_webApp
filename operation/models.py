@@ -13,31 +13,32 @@ from django.db import models
 from account.models import Department
 from car.models import CarBooking
 from parcel.models import ParcelRequest, ParcelReturn
+from inform.models import Inform
 
 # Create your models here.
 
 
 class Operation(models.Model):
     """
-    Operation work flow
-
+    Operation model
     Attributes:
-        type_of_work: ประเภทของงาน
-        other_type: อื่น ๆ
-        description: รายละเอียด
-        start_date: วันเริ่ม
-        end_date: วันสิ้นสุด
-        approve_status: สถานะการอนุมัติ
-        operation_status: สถานะของใบงาน
-        created_by: สร้างโดย
-        created_at: สร้างเมื่อ
-        done_date: วันสิ้นสุด
-        approve_start_date: วันอนุมัติเปิดงาน
-        approver_start: ผู้อนุมัติเปิดงาน
-        approve_close_date: วันอนุมัติปิดงาน
-        approver_close: ผุ้อนุมัติปิดงาน
-        own_car: การใช้ยานพาหนะของตนเอง
-        is_deleted: การลบ
+        type_of_work:
+        other_type:
+        description:
+        start_date:
+        end_date:
+        approve_status:
+        operation_status:
+        created_by:
+        created_at:
+        done_date:
+        approve_start_date:
+        approver_start:
+        approve_close_date:
+        approver_close:
+        own_car:
+        is_deleted:
+        inform:
     """
 
     class TypeOfWork(models.TextChoices):
@@ -132,6 +133,9 @@ class Operation(models.Model):
     )
     own_car = models.BooleanField(default=True)
     is_deleted = models.BooleanField(default=False)
+    inform = models.ForeignKey(
+        Inform, on_delete=models.CASCADE, null=True, blank=True, related_name="inform"
+    )
 
     def __str__(self):
         return f"{self.pk} {self.type_of_work} at {self.created_at} ({self.operation_status})"

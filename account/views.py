@@ -12,7 +12,7 @@ from django.contrib.contenttypes.models import Q
 from django.http import JsonResponse, Http404
 from django.shortcuts import HttpResponseRedirect, get_object_or_404, redirect, render
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import PasswordChangeForm,   UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -51,95 +51,96 @@ from asset.models import StockItem, ItemOnHand
 
 # Create your views here.
 
-class HomeView(LoginRequiredMixin, TemplateView):
-    template_name = 'base.html'
 
-    # TODO : make context
+class HomeView(LoginRequiredMixin, TemplateView):
+    template_name = "base.html"
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['announce'] = Announce.objects.all()
-        context['recent_comment'] = Comment.objects.all().order_by(
-            '-created_at')[:5]
+        context["announce"] = Announce.objects.all()
+        context["recent_comment"] = Comment.objects.all().order_by("-created_at")[:5]
         all_inbox = Document.objects.filter(
-            assigned_sector=self.request.user.profile.sector).count()
-        context['all_inbox'] = all_inbox
+            assigned_sector=self.request.user.profile.sector
+        ).count()
+        context["all_inbox"] = all_inbox
         all_department = Department.objects.filter(
-            reciever__profile__sector=self.request.user.profile.sector).count()
-        context['new_inbox'] = str(abs(all_inbox - all_department))
-        context['journal'] = Journal.objects.filter(author=self.request.user)
-        today_min = datetime.datetime.combine(
-            datetime.date.today(), datetime.time.min)
-        today_max = datetime.datetime.combine(
-            datetime.date.today(), datetime.time.max)
-        context['today_journal'] = Journal.objects.filter(
+            reciever__profile__sector=self.request.user.profile.sector
+        ).count()
+        context["new_inbox"] = str(abs(all_inbox - all_department))
+        context["journal"] = Journal.objects.filter(author=self.request.user)
+        today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
+        today_max = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
+        context["today_journal"] = Journal.objects.filter(
             author__profile__sector=self.request.user.profile.sector,
-            created_at__range=(today_min, today_max)
+            created_at__range=(today_min, today_max),
         )
         try:
-            context['not_read'] = Announce.objects.filter(
-                ~Q(author=self.request.user) & ~Q(
-                    reads__id=self.request.user.id)
+            context["not_read"] = Announce.objects.filter(
+                ~Q(author=self.request.user) & ~Q(reads__id=self.request.user.id)
             )
         except:
             pass
         if self.request.user.groups.filter(name="Staff"):
-            context['assign'] = Assign.objects.filter(author=self.request.user)
-            context['wait_assign'] = Assign.objects.filter(
-                author=self.request.user, accepted=False)
+            context["assign"] = Assign.objects.filter(author=self.request.user)
+            context["wait_assign"] = Assign.objects.filter(
+                author=self.request.user, accepted=False
+            )
         else:
-            context['assign'] = Assign.objects.filter(
-                assigned_to__user=self.request.user)
-            context['wait_assign'] = Assign.objects.filter(
-                assigned_to__user=self.request.user, accepted=False)
+            context["assign"] = Assign.objects.filter(
+                assigned_to__user=self.request.user
+            )
+            context["wait_assign"] = Assign.objects.filter(
+                assigned_to__user=self.request.user, accepted=False
+            )
 
         if not self.request.user.groups.filter(name="StaffRepair"):
-            context['inform_department'] = Inform.objects.filter(
+            context["inform_department"] = Inform.objects.filter(
                 customer__profile__department=self.request.user.profile.department
             )
-        context['informs'] = Inform.objects.filter(
+        context["informs"] = Inform.objects.filter(
             created_at__range=(today_min, today_max)
         )
-        context['wait_approve'] = Inform.objects.filter(
-            Q(inform_status = Inform.InformStatus.WAIT) &
-            Q(approve_status = None)
+        context["wait_approve"] = Inform.objects.filter(
+            Q(inform_status=Inform.InformStatus.WAIT) & Q(approve_status=None)
         )
         bills = ParcelRequest.objects.filter(user=self.request.user)
         bill_manager = ParcelRequest.objects.filter(
-            Q(stock=self.request.user.profile.department) &
-            ~Q(status=ParcelRequest.RequestStatus.DRAFT)
+            Q(stock=self.request.user.profile.department)
+            & ~Q(status=ParcelRequest.RequestStatus.DRAFT)
         )
-        context['bill_manager'] = bill_manager
-        context['request_bills'] = bills
+        context["bill_manager"] = bill_manager
+        context["request_bills"] = bills
         # context['bill_wait_approve'] = bills.filter(
         #     status=RequestBill.BillStatus.REQUEST,
         #     billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED
         # ).exclude(
         #     billdetail__approve_status=RequestBillDetail.ApproveStatus.APPROVED
         # )
-        context['bill_wait_approve'] = bills.filter(billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT)
+        context["bill_wait_approve"] = bills.filter(
+            billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT
+        )
 
         return context
 
 
 class RegisterView(CreateView):
+    """Docstring for RegisterView."""
 
-    """Docstring for RegisterView. """
     form_class = UserCreationForm
     model = User
-    template_name = 'account/register1.html'
-    success_url = reverse_lazy('login')
+    template_name = "account/register1.html"
+    success_url = reverse_lazy("login")
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):
     model = User
-    template_name = 'account/profile.html'
+    template_name = "account/profile.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_form'] = UserForm(instance=self.request.user)
-        context['profile_form'] = ProfileForm(
-            instance=self.request.user.profile)
-        context['password_form'] = PasswordChangeForm(self.request.user)
+        context["user_form"] = UserForm(instance=self.request.user)
+        context["profile_form"] = ProfileForm(instance=self.request.user.profile)
+        context["password_form"] = PasswordChangeForm(self.request.user)
         return context
 
 
@@ -147,105 +148,92 @@ def update_profile(request):
     user = get_object_or_404(User, pk=request.user.pk)
     profile = get_object_or_404(Profile, user=user)
 
-    if request.method == 'POST':
-        user.first_name = request.POST['first_name']
-        user.last_name = request.POST['last_name']
-        user.email = request.POST['email']
+    if request.method == "POST":
+        user.first_name = request.POST["first_name"]
+        user.last_name = request.POST["last_name"]
+        user.email = request.POST["email"]
 
         user.save()
 
         if request.FILES:
-            profile.image = request.FILES.get('image')
+            profile.image = request.FILES.get("image")
 
-        if request.POST['rank']:
-            rank = request.POST['rank']
+        if request.POST["rank"]:
+            rank = request.POST["rank"]
             profile.rank = Rank.objects.get(pk=rank)
 
-        if request.POST['position']:
-            profile.position = Position.objects.get(
-                pk=request.POST['position'])
+        if request.POST["position"]:
+            profile.position = Position.objects.get(pk=request.POST["position"])
 
-        if request.POST['sector']:
-            profile.sector = Sector.objects.get(pk=request.POST['sector'])
+        if request.POST["sector"]:
+            profile.sector = Sector.objects.get(pk=request.POST["sector"])
 
         # profile.place      = request.POST['place']
-        if request.POST['department']:
-            profile.department = DP.objects.get(pk=request.POST['department'])
+        if request.POST["department"]:
+            profile.department = DP.objects.get(pk=request.POST["department"])
 
-        profile.address = request.POST['address']
-        profile.phone = request.POST['phone']
-        profile.twitter = request.POST['twitter']
-        profile.facebook = request.POST['facebook']
-        profile.instagram = request.POST['instagram']
-        profile.line_id = request.POST['line_id']
-        profile.line_token = request.POST['line_token']
-        profile.about = request.POST['about']
+        profile.address = request.POST["address"]
+        profile.phone = request.POST["phone"]
+        profile.twitter = request.POST["twitter"]
+        profile.facebook = request.POST["facebook"]
+        profile.instagram = request.POST["instagram"]
+        profile.line_id = request.POST["line_id"]
+        profile.line_token = request.POST["line_token"]
+        profile.about = request.POST["about"]
 
         profile.save()
-        return HttpResponseRedirect(reverse_lazy('account:profile'))
+        return HttpResponseRedirect(reverse_lazy("account:profile"))
 
 
 class ChangePassword(LoginRequiredMixin, PasswordChangeView):
     model = User
     form_class = PasswordChangeForm
-    template_name = 'account/change_password.html'
-    success_url = reverse_lazy('login')
+    template_name = "account/change_password.html"
+    success_url = reverse_lazy("login")
 
 
 class MembersListView(LoginRequiredMixin, ListView):
     model = Profile
-    template_name = 'account/members.html'
-    
+    template_name = "account/members.html"
+
     def get_queryset(self):
         # all profile exclude is_superuser
-        return Profile.objects.exclude(
-            user__is_superuser=True
-        )
+        return Profile.objects.exclude(user__is_superuser=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Members'
+        context["title"] = "Members"
         return context
 
 
 class MembersDetailView(LoginRequiredMixin, DetailView):
     model = User
-    template_name = 'account/profile.html'
+    template_name = "account/profile.html"
 
 
 def sector_list(request, pk):
     """
     Return list of profile belonging to a sector
     """
-    profiles = Profile.objects.filter(sector__pk=pk).exclude(
-        user__is_superuser=True
-    )
+    profiles = Profile.objects.filter(sector__pk=pk).exclude(user__is_superuser=True)
     sector = get_object_or_404(Sector, pk=pk)
     # sector_name = profiles.first().sector.name
     sector_name = sector.name
-    context = {
-        'object_list': profiles,
-        'bc_title': sector_name
-    }
-    return render(request, 'account/other_list.html', context)
+    context = {"object_list": profiles, "bc_title": sector_name}
+    return render(request, "account/other_list.html", context)
 
 
 def position_list(request, pk):
     qs = Profile.objects.filter(position__pk=pk)
-    context = {
-        'object_list': qs,
-        'bc_title': Position.objects.get(pk=pk).name
-    }
-    return render(request, 'account/other_list.html', context)
+    context = {"object_list": qs, "bc_title": Position.objects.get(pk=pk).name}
+    return render(request, "account/other_list.html", context)
 
 
 class ContactView(LoginRequiredMixin, TemplateView):
-    template_name = 'account/contact.html'
+    template_name = "account/contact.html"
 
 
 def check_username(request):
-    username = request.GET.get('username')
-    data = {
-        'username_exists': User.objects.filter(username__iexact=username).exists()
-    }
+    username = request.GET.get("username")
+    data = {"username_exists": User.objects.filter(username__iexact=username).exists()}
     return JsonResponse(data)
