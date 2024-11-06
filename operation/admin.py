@@ -28,9 +28,7 @@ from .models import (
 @admin.register(Operation)
 class OperationAdmin(admin.ModelAdmin):
     def team_leader(self, obj):
-        return (
-            obj.team.first().team_leader.profile if obj.team.get(operation=obj) else "-"
-        )
+        return obj.team.team_leader.first_name + " " + obj.team.team_leader.last_name
 
     def operation_no(self, obj):
         return f"{obj.pk}/{obj.created_at.year+543}"

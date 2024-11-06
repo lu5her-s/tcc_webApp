@@ -8,23 +8,24 @@
 
 <!-- TODO: add condition to request open and close operation -->
 {% if object.approve_status == "AP" %}
-<a href="#" class="btn btn-lg btn-success">ขออนุมัติปิดงาน</a>
+<button type="button" class="btn btn-lg btn-success" id="request_close">ขออนุมัติปิดงาน</button>
 
-{% else %}
+{% elif object.approve_status == 'DF' %}
   
-<button type="button" class="btn btn-lg btn-warning" id="request_approve">ขออนุมัติเปิดงาน</button>
-</form>
+<button type="button" class="btn btn-lg btn-warning" id="request_open">ขออนุมัติเปิดงาน</button>
 
 {% endif %}
+</form>
 
 <script>
-  // on ready
-  $(document).ready(function () {
-    $("#request_approve").click(function () {
-      var url = `{% url 'operation:request_approve' pk=object.pk %}`;
-      $("#form_approve").attr("action", url);
-      $("#form_approve").submit();
-    });
+// on ready
+$(document).ready(function () {
+  $("#request_open, #request_close").click(function () {
+    const url = $(this).attr('id') === 'request_open'
+      ? `{% url 'operation:request_open' pk=object.pk %}`
+      : `{% url 'operation:request_close' pk=object.pk %}`;
+    $("#form_approve").attr("action", url).submit();
   });
+});
 
 </script>

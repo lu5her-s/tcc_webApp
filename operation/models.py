@@ -94,7 +94,6 @@ class Operation(models.Model):
         WAIT = "WA", "รอดำเนินการ"
         PROGRESS = "IP", "กำลังดำเนินการ"
         DONE = "DO", "เสร็จสิ้น"
-        LEADER = "LD", "หัวหน้าชุดตรวจสอบ"
         DRAFT = "DF", "ร่าง"
 
     type_of_work = models.CharField(

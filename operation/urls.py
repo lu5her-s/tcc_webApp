@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 app_name = "operation"
@@ -9,74 +9,143 @@ urlpatterns = [
     path("<int:pk>", views.OperationDetailView.as_view(), name="detail"),
     path("leader/<int:pk>/accept", views.accept_leader, name="accept_leader"),
     path(
-        "team_member_create/<int:pk>",
-        views.team_member_create,
-        name="team_member_create",
+        "team/",
+        include(
+            [
+                path(
+                    "member/create/<int:pk>",
+                    views.team_member_create,
+                    name="team_member_create",
+                ),
+                path(
+                    "member/delete/<int:pk>",
+                    views.delete_team_member,
+                    name="member_delete",
+                ),
+            ]
+        ),
     ),
+    # for operation car
     path(
-        "member/delete/<int:pk>",
-        views.delete_team_member,
-        name="member_delete",
+        "car/",
+        include(
+            [
+                path(
+                    "add/<int:pk>",
+                    views.car_operation_add,
+                    name="car_operation_add",
+                ),
+                path("change/", views.change_car, name="change_car"),
+                path("delete/<int:pk>", views.delete_car, name="delete_car"),
+            ]
+        ),
+    ),
+    # for operation task
+    path(
+        "task/",
+        include(
+            [
+                path("add/<int:pk>", views.operation_task_add, name="add_task"),
+                path(
+                    "delete/<int:pk>",
+                    views.operation_task_delete,
+                    name="delete_task",
+                ),
+                path("add_note/<int:pk>", views.operation_note_add, name="add_note"),
+            ]
+        ),
+    ),
+    # for oil reimburesment
+    path(
+        "fuel/",
+        include(
+            [
+                path("add/<int:pk>", views.request_fuel, name="add_fuel"),
+                path("update/<int:pk>", views.edit_fuel, name="edit_fuel"),
+                path("delete/<int:pk>", views.delete_fuel_request, name="delete_fuel"),
+            ]
+        ),
+    ),
+    # for allowance
+    path(
+        "allowance/",
+        include(
+            [
+                path("add/<int:pk>", views.allowance_add, name="allowance_add"),
+                path(
+                    "delete/<int:pk>",
+                    views.allowance_delete,
+                    name="allowance_delete",
+                ),
+                path(
+                    "refund/<int:pk>",
+                    views.allowance_refund,
+                    name="allowance_refund",
+                ),
+                path(
+                    "refund/update/<int:pk>",
+                    views.allowance_refund_update,
+                    name="allowance_refund_update",
+                ),
+                path(
+                    "refund/delete/<int:pk>",
+                    views.allowance_refund_delete,
+                    name="allowance_refund_delete",
+                ),
+            ]
+        ),
+    ),
+    # for parcel document
+    path(
+        "parcel/",
+        include(
+            [
+                path(
+                    "request/add/<int:pk>",
+                    views.parcel_requests_add,
+                    name="parcel_request_add",
+                ),
+                path(
+                    "request/delete/<int:pk>",
+                    views.parcel_requests_delete,
+                    name="parcel_request_delete",
+                ),
+                path(
+                    "return/add/<int:pk>",
+                    views.parcel_return_add,
+                    name="parcel_return_add",
+                ),
+                path(
+                    "return/delete/<int:pk>",
+                    views.parcel_return_delete,
+                    name="parcel_return_delete",
+                ),
+            ]
+        ),
+    ),
+    # for request open/close and approve that
+    path(
+        "approve/",
+        include(
+            [
+                path("request/open/<int:pk>", views.request_open, name="request_open"),
+                path("open/<int:pk>", views.approve_open, name="approve_open"),
+                path(
+                    "request/close/<int:pk>", views.request_close, name="request_close"
+                ),
+                path("close/<int:pk>", views.approve_close, name="approve_close"),
+            ]
+        ),
     ),
     path(
         "update_date/<int:pk>",
         views.update_operation_date,
         name="update_date",
     ),
-    path(
-        "car_operation_add/<int:pk>",
-        views.car_operation_add,
-        name="car_operation_add",
-    ),
-    path("<int:pk>/change_car", views.change_car, name="change_car"),
-    # for add task
-    path("add_task/<int:pk>", views.operation_task_add, name="add_task"),
-    path("delete_task/<int:pk>", views.operation_task_delete, name="delete_task"),
     # operation list for member
     path(
         "member/operation_list",
         views.OperationMemberListView.as_view(),
         name="member_operation_list",
     ),
-    path("add_note/<int:pk>", views.operation_note_add, name="add_note"),
-    # for oil reimburesment
-    path("add_fuel/<int:pk>", views.request_fuel, name="add_fuel"),
-    path("update_fuel/<int:pk>", views.edit_fuel, name="edit_fuel"),
-    # for allowance
-    path("allowance_add/<int:pk>", views.allowance_add, name="allowance_add"),
-    path("allowance_delete/<int:pk>", views.allowance_delete, name="allowance_delete"),
-    path("allowance_refund/<int:pk>", views.allowance_refund, name="allowance_refund"),
-    path(
-        "allowance_refund_update/<int:pk>",
-        views.allowance_refund_update,
-        name="allowance_refund_update",
-    ),
-    path(
-        "allowance_refund_delete/<int:pk>",
-        views.allowance_refund_delete,
-        name="allowance_refund_delete",
-    ),
-    # for parcel document
-    path(
-        "parcel_request_add/<int:pk>",
-        views.parcel_requests_add,
-        name="parcel_request_add",
-    ),
-    path(
-        "parcel_request_delete/<int:pk>",
-        views.parcel_requests_delete,
-        name="parcel_request_delete",
-    ),
-    path(
-        "parcel_return_add/<int:pk>",
-        views.parcel_return_add,
-        name="parcel_return_add",
-    ),
-    path(
-        "parcel_return_delete/<int:pk>",
-        views.parcel_return_delete,
-        name="parcel_return_delete",
-    ),
-    # for request_approve
-    path("request_approve/<int:pk>", views.request_approve, name="request_approve"),
 ]

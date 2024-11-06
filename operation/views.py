@@ -308,6 +308,29 @@ def change_car(request, pk):
     return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
 
 
+def delete_car(request, pk):
+    """
+    Delete car from operation.
+
+    Args:
+        request (): The HTTP request object.
+        pk (): The primary key of the operation car to delete.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        car = OperationCar.objects.get(pk=pk)
+        operation = car.operation
+        car.delete()
+        # check if operation has no car change to own_car
+        if not OperationCar.objects.filter(operation=operation).exists():
+            operation.own_car = True
+            operation.save()
+
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
 # for request fuel
 def request_fuel(request, pk):
     """
@@ -367,6 +390,24 @@ def edit_fuel(request, pk):
             oil_request.liter_request = float(oil_edit)
             oil_request.save()
         return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+def delete_fuel_request(request, pk):
+    """
+    Delete a fuel request from an operation.
+
+    Args:
+        request: The HTTP request object.
+        pk: The primary key of the operation.
+
+    Returns:
+        A redirect to the operation detail view.
+    """
+    if request.method == "POST":
+        oil_request = OilReimburesment.objects.get(pk=pk)
+        operation = oil_request.operaion
+        oil_request.delete()
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": operation.pk}))
 
 
 # Operation Task save
@@ -625,7 +666,7 @@ def parcel_return_delete(request, pk):
 
 
 # function to request approve
-def request_approve(request, pk):
+def request_open(request, pk):
     """
     Request approve for the operation.
 
@@ -639,7 +680,64 @@ def request_approve(request, pk):
     if request.method == "POST":
         operation = Operation.objects.get(pk=pk)
         print(operation)
-        operation.operation_status = Operation.OperationStatus.PROGRESS
+        operation.operation_status = Operation.OperationStatus.WAIT
         operation.approve_status = Operation.ApproveStatus.WAIT_OPEN
+        operation.save()
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+def approve_open(request, pk):
+    """
+    Approve the operation.
+
+    Args:
+        request (): The HTTP request object.
+        pk (): The primary key of the operation.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        operation.operation_status = Operation.OperationStatus.PROGRESS
+        operation.approve_status = Operation.ApproveStatus.APPROVE
+        operation.save()
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+def request_close(request, pk):
+    """
+    Request approve for the operation.
+
+    Args:
+        request (): The HTTP request object.
+        pk (): The primary key of the operation.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        # operation.operation_status = Operation.OperationStatus.DONE
+        operation.approve_status = Operation.ApproveStatus.WAIT_CLOSE
+        operation.save()
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+def approve_close(request, pk):
+    """
+    Approve the operation.
+
+    Args:
+        request (): The HTTP request object.
+        pk (): The primary key of the operation.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        operation.operation_status = Operation.OperationStatus.DONE
+        operation.approve_status = Operation.ApproveStatus.APPROVE
         operation.save()
         return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
