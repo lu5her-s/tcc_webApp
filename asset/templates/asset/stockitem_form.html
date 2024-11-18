@@ -125,6 +125,13 @@
                             </div>
 
                             <div class="row mb-3">
+                                <label for="{{ form.installed.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.installed.label }}</label>
+                                <div class="col-md-8 col-lg-9">
+                                    {{ form.installed }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
                                 <label for="{{ form.images.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.images.label }}</label>
                                 <div class="col-md-8 col-lg-9">
                                     {{ form.images }}

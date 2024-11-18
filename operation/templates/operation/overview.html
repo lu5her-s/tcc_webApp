@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}Operation Overview{% endblock title %}
+
+  {% block content %}
+    <style>
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+        .stat {
+            text-align: center;
+            border: 1px solid #ddd;
+            padding: 15px;
+            width: 200px;
+        }
+        .stat h3 {
+            margin-top: 0;
+        }
+        .filter-buttons {
+            margin-bottom: 20px;
+        }
+        .filter-button {
+            padding: 8px 15px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+        .filter-button.active {
+            background-color: #ddd;
+        }
+    </style>
+  
+  <div class="container">
+    <h1>Operation Overview</h1>
+
+
+    <div class="stats-container">
+      <div class="stat">
+        <h3><strong>Total</strong></h3>
+        <h1>{{ operations.count }}</h1>
+      </div>
+      <div class="stat">
+        <h3><strong>Pending</strong></h3>
+        <h1>{{ pendings.count }}</h1>
+      </div>
+      <div class="stat">
+        <h3><strong>Open</strong></h3>
+        <h1>{{ opens.count }}</h1>
+      </div>
+      <div class="stat">
+        <h3><strong>Closed</strong></h3>
+        <h1>{{ closes.count }}</h1>
+      </div>
+    </div>
+
+  <br>
+  <hr>
+
+    <table class="table" id="operation-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Created Date</th>
+          <th>Approve</th>
+          <th>Header</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for operation in operations %}
+        <tr>
+          <td>{{ operation.id }}</td>
+          <td>{{ operation.get_type_of_work_display }}</td>
+          <td>{{ operation.get_operation_status_display }}</td>
+          <td>{{ operation.created_at|thaidate }}</td>
+          <td>{{ operation.get_approve_status_display }}</td>
+          <td>{{ operation.team.team_leader.profile }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <script></script>
+  {% endblock content %}

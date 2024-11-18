@@ -3,43 +3,52 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Sun Jun, 30 2024, 16:53 182
-# Last Modified Date: Wed Aug, 14 2024, 12:42 227
+# Last Modified Date: Fri Nov, 08 2024, 21:03 313
 # Last Modified By  : lu5her <lu5her@mail>
 # -----
-from django.db.models import Sum
-from django.views.generic import DetailView, ListView, TemplateView, View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
-from django.shortcuts import get_object_or_404, redirect, render
+import os
 
 from account.models import Department
 from car.forms import CarReturnForm
 from car.models import CarBooking
+from config.utils import generate_pdf
+
+# for  get media path
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Sum, Q
+from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.urls import reverse_lazy
+from django.views.generic import DetailView, ListView, TemplateView, View
+from inform.models import Inform
 from parcel.models import ParcelRequest
 
-from .models import (
-    AllowanceWithdraw,
-    OilReimburesment,
-    Operation,
-    OperationCar,
-    OperationParcelRequest,
-    OperationParcelReturn,
-    Task,
-    Team,
-    TeamMember,
-    Allowance,
-    AllowanceRefund,
-)
 from .forms import (
+    AddFuelForm,
+    AddInformForm,
     CarAddForm,
     OperationForm,
+    OperationParcelRequestForm,
     OperationParcelReturnForm,
     TaskForm,
     TaskNoteForm,
     TeamForm,
     TeamMemberFormSet,
-    AddFuelForm,
-    OperationParcelRequestForm,
+)
+from .models import (
+    Allowance,
+    AllowanceRefund,
+    AllowanceWithdraw,
+    OilReimburesment,
+    Operation,
+    OperationCar,
+    OperationInform,
+    OperationParcelRequest,
+    OperationParcelReturn,
+    Task,
+    Team,
+    TeamMember,
 )
 
 # Create your views here.
@@ -57,6 +66,7 @@ class OperationHome(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        all_operation = Operation.objects.filter(~Q(operation_status="DF"))
         user_all_operation = Operation.objects.filter(
             team__members__member=self.request.user
         )
@@ -71,9 +81,11 @@ class OperationHome(LoginRequiredMixin, TemplateView):
         context["user_operation_done"] = user_all_operation.filter(
             operation_status="DO"
         )
-        context["user_opreation_wait_close"] = user_all_operation.filter(
-            operation_status="WC"
-        )
+        context["user_wait_close"] = user_all_operation.filter(operation_status="WC")
+        # For command Home
+        context["command_overview"] = all_operation
+        context["wait_approve_open"] = all_operation.filter(approve_status="WO")
+        context["wait_approve_close"] = all_operation.filter(approve_status="WC")
         return context
 
 
@@ -167,6 +179,7 @@ class OperationDetailView(LoginRequiredMixin, DetailView):
             "allowances": AllowanceWithdraw.objects.filter(
                 allowance__operation=self.object
             ),
+            "inform_add_form": AddInformForm,
         }
         return context
 
@@ -184,6 +197,97 @@ class OperationMemberListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         operations = Operation.objects.filter(team__members__member=self.request.user)
         return operations
+
+
+class OperationCommandWaitOpenListView(LoginRequiredMixin, ListView):
+    """
+    List all Operation for command
+
+    Attributes:
+        template_name:
+    """
+
+    template_name = "operation/operation_list.html"
+
+    def get_queryset(self):
+        operations = Operation.objects.filter(~Q(operation_status="DF"))
+        return operations
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        object_list = self.get_queryset()
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        context["object_list"] = object_list.filter(approve_status="WO")
+        context["title"] = "รายการรออนุมัติเปิดงาน"
+        return context
+
+
+class OperationCommandWaitCloseListView(LoginRequiredMixin, ListView):
+    """
+    List all Operation for command
+
+    Attributes:
+        template_name:
+    """
+
+    template_name = "operation/operation_list.html"
+
+    def get_queryset(self):
+        operations = Operation.objects.filter(~Q(operation_status="DF"))
+        return operations
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        object_list = self.get_queryset()
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        context["object_list"] = object_list.filter(approve_status="WC")
+        context["title"] = "รายการรออนุมัติปิดงาน"
+        return context
+
+
+class OperationCommandOverviewListView(LoginRequiredMixin, ListView):
+    """
+    List all Operation for command_overview
+
+    Attributes:
+        template_name:
+    """
+
+    template_name = "operation/operation_list.html"
+
+    def get_queryset(self):
+        operations = Operation.objects.filter(~Q(operation_status="DF"))
+        return operations
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        object_list = self.get_queryset()
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        context["object_list"] = object_list
+        context["title"] = "รายการงานทั้งหมด"
+        return context
+
+
+class OperationOverviewTemplateView(LoginRequiredMixin, TemplateView):
+    """
+    แสดงรายการใบงานทั้งหมด
+
+    Attributes:
+        template_name:
+    """
+
+    template_name = "operation/overview.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        operations = Operation.objects.filter(~Q(operation_status="DF"))
+        context["operations"] = operations
+        context["pendings"] = operations.filter(
+            Q(approve_status="WO") | Q(approve_status="WC")
+        )
+        context["opens"] = operations.filter(approve_status="AP")
+        context["closes"] = operations.filter(approve_status="CL")
+        context["relay_stock"] = operation.filter(
+            parcel_requests__stock_control="คลังวิทยุถ่ายทอด"
+        )
+        return context
 
 
 def accept_leader(request, pk):
@@ -741,3 +845,67 @@ def approve_close(request, pk):
         operation.approve_status = Operation.ApproveStatus.APPROVE
         operation.save()
         return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+def add_inform(request, pk):
+    """
+    Add inform to the operation.
+
+    Args:
+        request (): The HTTP request object.
+        pk (): The primary key of the operation.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        operation = Operation.objects.get(pk=pk)
+        data = request.POST
+        inform_id = int(data.get("inform"))
+        if inform_id not in operation.informs.all().values_list("inform", flat=True):
+            inform = Inform.objects.get(pk=inform_id)
+            operation.informs.create(inform=inform)
+        return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
+
+
+def delete_inform(request, pk):
+    """
+    Delete an inform from the operation.
+
+    Args:
+        request (): The HTTP request object.
+        pk (): The primary key of the inform.
+
+    Returns:
+        A redirect to the operation detail page.
+    """
+    if request.method == "POST":
+        inform = OperationInform.objects.get(pk=pk)
+        inform.delete()
+        return redirect(
+            reverse_lazy("operation:detail", kwargs={"pk": inform.operation.pk})
+        )
+
+
+# FIX: set media path save or delete pdf file after render
+def operation_to_pdf(request: HttpResponse, pk: int):
+    media = settings.MEDIA_ROOT
+    operation = get_object_or_404(Operation, pk=pk)
+    operation_media = os.path.join(media, str(operation.id))
+    if not os.path.exists(operation_media):
+        os.makedirs(operation_media)
+
+    context = {
+        "operation": operation,
+    }
+    temp_html = "inform/temp.html"
+    with open(temp_html, "w") as f:
+        f.write(render_to_string("inform/inform_pdf.html", {"context": context}))
+    pdf = generate_pdf(
+        data={"context": context}, template_path="inform/inform_pdf.html"
+    )
+    os.remove(temp_html)
+
+    response = HttpResponse(pdf, content_type="application/pdf")
+    # response["Content-Disposition"] = "attachment; filename=inform.pdf"
+    return response

@@ -1,13 +1,23 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.forms import formset_factory, widgets
 from car.models import CarBooking
-from operation.models import Inform, ParcelRequest, ParcelReturn
+from operation.models import ParcelRequest, ParcelReturn
+from inform.models import Inform
 
 from . import models
 
 
 class OperationForm(forms.ModelForm):
+    # inform = forms.ModelChoiceField(
+    #     queryset=Inform.objects.filter(
+    #         Q(approve_status="APR") & ~Q(repair_status="CLO")
+    #     ),
+    #     label="อ้างถึงแจ้งซ่อม",
+    #     widget=forms.Select(attrs={"class": "form-select"}),
+    # )
+
     class Meta:
         model = models.Operation
         fields = (
@@ -15,7 +25,6 @@ class OperationForm(forms.ModelForm):
             "start_date",
             "end_date",
             "description",
-            "inform",
         )
         widgets = {
             "type_of_work": widgets.Select(attrs={"class": "form-select"}),
@@ -41,13 +50,13 @@ class OperationForm(forms.ModelForm):
             "description": "รายละเอียดงาน",
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["inform"] = forms.ModelChoiceField(
-            queryset=Inform.objects.filter(approve_status="APR"),
-            widget=forms.Select(attrs={"class": "form-select"}),
-            label="อ้างถึงแจ้งซ่อม",
-        )
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields["inform"] = forms.ModelChoiceField(
+    #         queryset=Inform.objects.filter(approve_status="APR"),
+    #         widget=forms.Select(attrs={"class": "form-select"}),
+    #         label="อ้างถึงแจ้งซ่อม",
+    #     )
 
 
 class TaskForm(forms.ModelForm):
@@ -172,5 +181,15 @@ class OperationParcelReturnForm(forms.Form):
     parcel_return = forms.ModelChoiceField(
         queryset=ParcelReturn.objects.filter(billdetail__approve_status="APPROVED"),
         label="ใบส่งคืน",
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+
+
+class AddInformForm(forms.Form):
+    inform = forms.ModelChoiceField(
+        queryset=Inform.objects.filter(
+            Q(approve_status="APR") & ~Q(repair_status="CLO")
+        ),
+        label="อ้างถึงแจ้งซ่อม",
         widget=forms.Select(attrs={"class": "form-select"}),
     )

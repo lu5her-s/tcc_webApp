@@ -38,7 +38,6 @@ class Operation(models.Model):
         approver_close:
         own_car:
         is_deleted:
-        inform:
     """
 
     class TypeOfWork(models.TextChoices):
@@ -132,9 +131,6 @@ class Operation(models.Model):
     )
     own_car = models.BooleanField(default=True)
     is_deleted = models.BooleanField(default=False)
-    inform = models.ForeignKey(
-        Inform, on_delete=models.CASCADE, null=True, blank=True, related_name="inform"
-    )
 
     def __str__(self):
         return f"{self.pk} {self.type_of_work} at {self.created_at} ({self.operation_status})"
@@ -406,7 +402,7 @@ class OperationDocument(models.Model):
     """
 
     operation = models.ForeignKey(
-        "Operation", on_delete=models.CASCADE, related_name="documents"
+        Operation, on_delete=models.CASCADE, related_name="documents"
     )
     file = models.FileField(upload_to=operation_file_path, null=True, blank=True)
 
@@ -414,4 +410,17 @@ class OperationDocument(models.Model):
         verbose_name = "Operation Document"
 
     def __str__(self):
-        return f"File for operation no.{operation.pk}"
+        return f"File for operation no.{self.operation.pk}"
+
+
+class OperationInform(models.Model):
+    operation = models.ForeignKey(
+        Operation, on_delete=models.CASCADE, related_name="informs"
+    )
+    inform = models.ForeignKey(Inform, on_delete=models.CASCADE, related_name="informs")
+
+    class Meta:
+        verbose_name = "Operation Inform"
+
+    def __str__(self):
+        return f"Operation no.{self.operation.pk}"

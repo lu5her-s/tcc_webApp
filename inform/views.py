@@ -6,33 +6,32 @@
 # Last Modified Date: Wed Sep, 20 2023, 10:33 263
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
-import re
 import os
+import re
+
+from account.models import LineToken
+from config.sendline import Sendline
+from config.utils import generate_pdf
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from tempfile import NamedTemporaryFile
-from django.http import response
-from django.shortcuts import HttpResponse, redirect, render, get_object_or_404
+from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
-from account.models import LineToken
 from django.views.generic import (
     CreateView,
     DetailView,
     ListView,
     TemplateView,
 )
-from config.sendline import Sendline
-from config.utils import generate_pdf
+from repair.forms import Repair
 
 from inform.forms import (
     InformForm,
     InformProgress,
-    ProgressForm,
     ManagerCheckForm,
+    ProgressForm,
     ReviewForm,
 )
-from repair.forms import Repair
 
 from .models import (
     CommandReview,

@@ -35,7 +35,7 @@ urlpatterns = [
                     views.car_operation_add,
                     name="car_operation_add",
                 ),
-                path("change/", views.change_car, name="change_car"),
+                path("change/<int:pk>", views.change_car, name="change_car"),
                 path("delete/<int:pk>", views.delete_car, name="delete_car"),
             ]
         ),
@@ -137,6 +137,16 @@ urlpatterns = [
             ]
         ),
     ),
+    # for inform
+    path(
+        "inform/",
+        include(
+            [
+                path("add/<int:pk>", views.add_inform, name="add_inform"),
+                path("delete/<int:pk>", views.delete_inform, name="delete_inform"),
+            ]
+        ),
+    ),
     path(
         "update_date/<int:pk>",
         views.update_operation_date,
@@ -148,4 +158,36 @@ urlpatterns = [
         views.OperationMemberListView.as_view(),
         name="member_operation_list",
     ),
+    # for command
+    path(
+        "command/",
+        include(
+            [
+                path(
+                    "wait/open/",
+                    views.OperationCommandWaitOpenListView.as_view(),
+                    name="command_wait_open",
+                ),
+                path(
+                    "wait/close/",
+                    views.OperationCommandWaitCloseListView.as_view(),
+                    name="command_wait_close",
+                ),
+                path("open/<int:pk>", views.approve_open, name="approve_open"),
+                path("close/<int:pk>", views.approve_close, name="approve_close"),
+                path(
+                    "overview/",
+                    views.OperationCommandOverviewListView.as_view(),
+                    name="command_overview",
+                ),
+                path(
+                    "overview/stats/",
+                    views.OperationOverviewTemplateView.as_view(),
+                    name="overview",
+                ),
+            ]
+        ),
+    ),
+    # for render pdf
+    # path("pdf/<int:pk>", views.render_pdf, name="pdf"),
 ]

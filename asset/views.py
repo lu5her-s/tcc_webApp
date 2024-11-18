@@ -6,6 +6,8 @@
 # Last Modified Date: Fri Apr, 19 2024, 16:36 110
 # Last Modified By  : lu5her <lu5her@mail>
 # -----
+from account.models import Department
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import reverse_lazy
 from django.shortcuts import (
     HttpResponse,
@@ -15,18 +17,16 @@ from django.shortcuts import (
     render,
     reverse,
 )
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import (
     CreateView,
     DeleteView,
-    ListView,
     DetailView,
+    ListView,
     TemplateView,
     UpdateView,
 )
-from account.models import Department
-from asset.forms import StockItemForm
 
+from asset.forms import StockItemForm
 from asset.models import (
     Category,
     Manufacturer,
@@ -125,8 +125,7 @@ class StockItemHomeView(LoginRequiredMixin, TemplateView):
 
 class StockItemCreateView(LoginRequiredMixin, CreateView):
     """
-    StockItemCreateView.
-    add item to stock
+    Create a new StockItem.
     """
 
     model = StockItem
@@ -148,7 +147,8 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        """post.
+        """
+        Handle POST request to create a new StockItem.
 
         :param request:
         :param args:
@@ -161,8 +161,15 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
             stockitem = form.save(commit=False)
             stockitem.save()
 
-            if not self.request.user.groups.filter(name="StockManager").exists():
+            if stockitem.installed:
                 stockitem.status = StockItem.Status.IN_USE
+                stockitem.location_install = self.request.user.profile.department
+                stockitem.location_item = self.request.user.profile.department
+                stockitem.save()
+            else:
+                stockitem.status = StockItem.Status.AVAILABLE
+                stockitem.location_install = None
+                stockitem.location_item = self.request.user.profile.department
                 stockitem.save()
 
             for image in images:
@@ -280,10 +287,18 @@ class StockManagerListView(LoginRequiredMixin, ListView):
     #     )
     def get_queryset(self):
         # return stock item filter by department = user profile department
-        return StockItem.objects.filter(
-            stock_control=self.request.user.profile.department,
-            status=StockItem.Status.AVAILABLE,
-        )
+        if "RELAY" in self.request.user.groups.values_list("name", flat=True):
+            return StockItem.objects.filter(stock_control=StockItem.StockControl.RELAY)
+        elif "SATT" in self.request.user.groups.values_list("name", flat=True):
+            return StockItem.objects.filter(stock_control=StockItem.StockControl.SATT)
+        elif "FO" in self.request.user.groups.values_list("name", flat=True):
+            return StockItem.objects.filter(stock_control=StockItem.StockControl.FO)
+        elif "DATA" in self.request.user.groups.values_list("name", flat=True):
+            return StockItem.objects.filter(stock_control=StockItem.StockControl.DATA)
+        elif "AIR" in self.request.user.groups.values_list("name", flat=True):
+            return StockItem.objects.filter(stock_control=StockItem.StockControl.AIR)
+        else:
+            return StockItem.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

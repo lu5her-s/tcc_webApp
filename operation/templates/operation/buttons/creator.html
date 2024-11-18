@@ -2,7 +2,7 @@
 
 <form method="POST" action="" id="form_approve">
   {% csrf_token %}
-<a href="{{ request.META.HTTP_REFERER }}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+<button class="btn btn-lg btn-secondary back">ย้อนกลับ</button>
 <!-- button to generate pdf -->
 <a href="#" target="_blank" class="btn btn-lg btn-primary">พิมพ์</a>
 
@@ -27,5 +27,4 @@ $(document).ready(function () {
     $("#form_approve").attr("action", url).submit();
   });
 });
-
 </script>

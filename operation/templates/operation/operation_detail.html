@@ -73,9 +73,9 @@
                   <tr>
                     <th>อ้างถึงแจ้งซ่อม</th>
                     <td>
-                      {% if object.inform %}
-                      {% for inform in object.inform.all %}
-                      {{ forloop.counter }}. ใบแจ้งซ่อมที่ {{ inform.pk }}/{{ inform.created_at.year|thaiyear }} สถานที่ {{ inform.stockitem.location_install }}
+                      {% if object.informs %}
+                      {% for inform in object.informs.all %}
+                      {{ forloop.counter }}. ใบแจ้งซ่อมที่ {{ inform.inform.pk }}/{{ inform.inform.created_at.year|thaiyear }} สถานที่ {{ inform.inform.stockitem.location_install }}
                       <br>
                       {% endfor %}
                       {% else %}
@@ -83,6 +83,7 @@
                       <br>
                       {% endif %}
                       <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addInform"><i class="bi bi-plus"></i> เพิ่ม</button>
+                      {% include "operation/components/add_inform_modal.html" %}
                     </td>
                   </tr>
 
@@ -399,6 +400,20 @@
                   </tr>
 
                   <tr>
+                    <th>สถานะ</th>
+                    <td>
+                      {% if object.approve_status %}
+                      
+                      {{ object.get_approve_status_display }}
+                      {% else %}
+
+                      {{ object.get_operation_status_display }}
+                      {% endif %}
+                      
+                    </td>
+                  </tr>
+
+                  <tr>
                     <th>หัวหน้าชุด</th>
                     <td>
                       <a href="{% url 'account:member' pk=team.team_leader.pk %}" target="_blank">
@@ -586,6 +601,11 @@
     // save form operation note for place
     alert("send data");
   };
+
+
+  $(".back").click(function () {
+    window.history.back();
+  });
 
   </script>
   {% endblock content %}

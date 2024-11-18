@@ -28,7 +28,7 @@
     {% comment %}
         {% if perms.asset.add_stockitem %}
     {% endcomment %}
-      {% if request.user.profile.department.name == 'Stock Manager' %}
+      {% if request.user|has_group:'StockManager' %}
     
         <div class="col-xxl-4 col-md-6">
             <div class="card info-card bg-card">

@@ -8,10 +8,9 @@
 import os
 from io import BytesIO
 from typing import Any, Dict, List
+
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-
-from inform.views import response
 
 
 def link_callback(uri, rel):
@@ -35,9 +34,7 @@ def link_callback(uri, rel):
 
     # make sure that file exists
     if not os.path.isfile(path):
-        raise Exception(
-            "media URI must start with %s or %s" % (sUrl, mUrl)
-        )
+        raise Exception("media URI must start with %s or %s" % (sUrl, mUrl))
     return path
 
 
@@ -48,6 +45,6 @@ def generate_pdf(data: Dict[str, Any], template_path: str) -> bytes:
     pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result, encoding="utf-8")
     if not pdf.err:
         return result.getvalue()
-    
+
     result.close()
     return None

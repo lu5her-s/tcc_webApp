@@ -1,24 +1,100 @@
 {% load tags %}
 
-<a href="{% url 'inform:home' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-{% if object.repair_status == 'CLO' %}
-<form action="{% url 'inform:close_approve' pk=object.pk %}" method="POST" style="display: inline;">
+<form method="POST" action="" id="form_approve_command">
   {% csrf_token %}
-  <button type="submit" class="btn btn-lg btn-success">อนุมัติปิดงาน</button>
+<button class="btn btn-lg btn-secondary back">ย้อนกลับ</button>
+<!-- button to generate pdf -->
+<!-- <a href="#" target="_blank" class="btn btn-lg btn-primary" id="inform_pdf">พิมพ์</a> -->
+  <button type="button" data-bs-toggle="modal" data-bs-target="#informPdfModal" class="btn btn-lg btn-primary" id="inform_pdf">พิมพ์</button>
+
+{% if object.approve_status == 'WO' %}
+
+<button type="button" data-bs-toggle="modal" data-bs-target="#approveOpenModal" class="btn btn-lg btn-success" id="approve_open">อนุมัติเปิดงาน</button>
+
+{% elif object.approve_status == 'WC' %}
+
+<button type="button" class="btn btn-lg btn-warning" id="approve_close">อนุมัติปิดงาน</button>
+
+{% endif %}
 </form>
-{% endif %}
 
-{% if not object.approve_status %}
+<!-- modal for approve_open -->
+<div class="modal fade" id="approveOpenModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">อนุมัติเปิดงาน</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>คุณต้องการอนุมัติเปิดงานหรือไม่?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" class="btn btn-primary" id="approve_open_confirm">อนุมัติเปิดงาน</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- modal for approve_close -->
+<div class="modal fade" id="approveCloseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">อนุมัติปิดงาน</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>คุณต้องการอนุมัติปิดงานหรือไม่?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" class="btn btn-primary" id="approve_close_confirm">อนุมัติปิดงาน</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-<button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal"
-                                                     data-bs-target="#confirm_approve">อนุมัติ</button>
-<button type="button" class="btn btn-lg btn-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#confirm_reject">ไม่อนุมัติ</button>
-{% endif %}
+<!-- modal for inform_pdf -->
+<div class="modal fade" id="informPdfModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">พิมพ์รายละเอียดงาน</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>คุณต้องการพิมพ์รายละเอียดงานหรือไม่?</p>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="informRadio" id="informRadio1" value="yes">
+          <label class="form-check-label" for="informRadio1">
+            พิมพ์รายละเอียดงาน
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="informRadio" id="informRadio2" value="no">
+          <label class="form-check-label" for="informRadio2">
+            ไม่พิมพ์รายละเอียดงาน
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" class="btn btn-primary" id="inform_pdf_confirm">พิมพ์</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-{% if object.repair_status == 'CLO' %}
-{% if command_review is None  %}
-<button type="button" class="btn btn-lg btn-success" data-bs-toggle="modal"
-                                                     data-bs-target="#reviewModal">Review</button>
-{% endif %}
-{% endif %}
+
+
+<script>
+$(document).ready(function () {
+  $("#approve_open, #approve_close").click(function () {
+    const url = $(this).attr('id') === 'approve_open'
+      ? `{% url 'operation:approve_open' pk=object.pk %}`
+      : `{% url 'operation:approve_close' pk=object.pk %}`;
+    $("#form_approve_command").attr("action", url).submit();
+  });
+});
+</script>

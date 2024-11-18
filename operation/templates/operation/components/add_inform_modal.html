@@ -1,0 +1,49 @@
+{% load tags %}
+
+<!-- modal for review -->
+<div class="modal fade" id="addInform">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">อ้างถึงแจ้งซ่อม</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- form for add member -->
+        <form method="post" name="inform_add_form" id="inform_add_form"
+          action="{% url 'operation:add_inform' pk=object.pk %}">
+          {% csrf_token %}
+          <div class="row mb-3">
+            <label for="{{ inform_add_form.inform.name }}" class="col-md-4 col-lg-3 col-form-label">{{ inform_add_form.inform.label }}</label>
+            <div class="col-md-8 col-lg-9">
+              {{ inform_add_form.inform }}
+            </div>
+          </div>
+
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" class="btn btn-primary" id="addInformBtn">บันทึก</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $("#addInformBtn").click(function() {
+    let btn = $(this);
+    btn.prop("disabled", true);
+    let form = $("#inform_add_form");
+    form.submit();
+    });
+
+  // $(document).ready(function () {
+  //   $("#id_car_booking").select2({
+  //     width: "100%",
+  //     dropdownParent: $("#addCar"),
+  //   });
+  // });
+
+</script>
