@@ -570,9 +570,16 @@ def operation_note_add(request, pk):
     if request.method == "POST":
         operation = Operation.objects.get(pk=pk)
         data = request.POST
-        # task = Task.objects.get(pk=data.get("task"))
+        print(data)
+        task = Task.objects.get(pk=data.get("task"))
         if data.get("status") == "CL":
-            operation.close()
+            task.note = data.get("note")
+            task.save(update_fields=["note"])
+            task.make_done()
+        else:
+            task.note = data.get("note")
+            task.status = Task.Status.PENDING
+            task.save(update_fields=["note", "status"])
     return redirect(reverse_lazy("operation:detail", kwargs={"pk": operation.pk}))
 
 

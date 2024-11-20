@@ -184,6 +184,12 @@ class Task(models.Model):
     )
     note = models.TextField(null=True, blank=True)
 
+    def make_done(self):
+        self.status = Task.Status.CLOSED
+        self.is_done = True
+        self.done_date = datetime.now()
+        self.save()
+
     def __str__(self):
         return f"{self.task} {self.operation}"
 

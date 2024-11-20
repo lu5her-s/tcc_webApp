@@ -22,21 +22,24 @@
     </td>
     <td>{{ task.workplace }}</td>
     <td>{{ task.get_priority_display }}</td>
-    {% if task.done and object.approve_status == 'AP' %}
-      <td>
-        <button type="button" class="btn btn-sm btn-success" disabled>
-          <i class="bi bi-check-circle text-success"></i> ดำเนินการแล้ว
-        </button>
-      </td>
-    {% elif not task.done %}
-      <td>
-        {% if request.user == object.created_by or request.user == team.team_leader %}
-        <button type="button" class="btn btn-sm btn-success" onclick="openNoteModal({{ task.pk }});">อัพเดท</button>
+    {% if task.is_done and not object.operation_status == 'DF' %}
+    <td>
+      <button type="button" class="btn btn-sm btn-success" disabled>
+        <i class="bi bi-check-circle text-success"></i> ดำเนินการแล้ว
+      </button>
+      <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#taskDetailModal" data-task="{{ task.task }}" data-note="{{ task.note }}">
+        <i class="bi bi-info-circle"></i>
+      </button>
+    </td>
+    {% elif not task.is_done %}
+    <td>
+      {% if request.user == object.created_by or request.user == team.team_leader %}
+      <button type="button" class="btn btn-sm btn-success" onclick="openNoteModal({{ task.pk }});">อัพเดท</button>
 
-        <button type="button" class="btn btn-sm btn-danger" onclick="deleteTask({{ task.pk }});">ลบ</button>
-        {% endif %}
+      <button type="button" class="btn btn-sm btn-danger" onclick="deleteTask({{ task.pk }});">ลบ</button>
+      {% endif %}
 
-      </td>
+    </td>
     {% else %}
     <td>
       {% if request.user == object.created_by or request.user == team.team_leader %}
@@ -55,3 +58,60 @@
   </tr>
 </table>
 {% endif %}
+
+
+<!-- modal to show detail of task -->
+<div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="taskDetailModalLabel">รายละเอียดงาน</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <!-- <div class="card-header"> -->
+                <!--   <h5 class="card-title">รายละเอียดงาน</h5> -->
+                <!-- </div> -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="task">รายการ</label>  
+                        <h5 id="task_detail"></h5>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">  
+                      <div class="form-group">
+                        <label for="task">หมายเหตุ</label>  
+                        <h5 id="note_detail"></h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// show detail of task in modal
+$('#taskDetailModal').on('show.bs.modal', function (event) {
+  var task = $(event.relatedTarget).data('task')
+  var note = $(event.relatedTarget).data('note')
+  $('#task_detail').text(task)
+  $('#note_detail').text(note)
+  console.log(note)
+})
+</script>
