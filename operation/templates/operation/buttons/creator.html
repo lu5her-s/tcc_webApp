@@ -2,19 +2,19 @@
 
 <form method="POST" action="" id="form_approve">
   {% csrf_token %}
-<button class="btn btn-lg btn-secondary back">ย้อนกลับ</button>
-<!-- button to generate pdf -->
-<a href="#" target="_blank" class="btn btn-lg btn-primary">พิมพ์</a>
+  <button class="btn btn-lg btn-secondary back">ย้อนกลับ</button>
+  <!-- button to generate pdf -->
+  <a href="{% url 'operation:operation_to_pdf' pk=object.pk %}" target="_blank" class="btn btn-lg btn-primary" id="inform_pdf">พิมพ์</a>
 
-<!-- TODO: add condition to request open and close operation -->
-{% if object.approve_status == "AP" %}
-<button type="button" class="btn btn-lg btn-success" id="request_close">ขออนุมัติปิดงาน</button>
+  <!-- TODO: add condition to request open and close operation -->
+  {% if object.approve_status == "AP" %}
+  <button type="button" class="btn btn-lg btn-success" id="request_close">ขออนุมัติปิดงาน</button>
 
-{% elif object.approve_status == 'DF' %}
-  
-<button type="button" class="btn btn-lg btn-warning" id="request_open">ขออนุมัติเปิดงาน</button>
+  {% elif object.approve_status == 'DF' %}
 
-{% endif %}
+  <button type="button" class="btn btn-lg btn-warning" id="request_open">ขออนุมัติเปิดงาน</button>
+
+  {% endif %}
 </form>
 
 <script>

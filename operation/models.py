@@ -160,7 +160,7 @@ class Task(models.Model):
 
     class Status(models.TextChoices):
         PENDING = "PD", "รอดำเนินการ"
-        CLOSED = "CL", "ปิด"
+        CLOSED = "CL", "ปิดงาน"
 
     operation = models.ForeignKey(
         Operation, on_delete=models.CASCADE, related_name="task"
