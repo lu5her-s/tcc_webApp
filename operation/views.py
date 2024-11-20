@@ -7,7 +7,7 @@
 # Last Modified By  : lu5her <lu5her@mail>
 # -----
 import os
-
+from django.utils import timezone
 from account.models import Department
 from car.forms import CarReturnForm
 from car.models import CarBooking
@@ -16,7 +16,7 @@ from config.utils import generate_pdf
 # for  get media path
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Sum, Q
+from django.db.models import Prefetch, Q, Sum
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -284,9 +284,6 @@ class OperationOverviewTemplateView(LoginRequiredMixin, TemplateView):
         )
         context["opens"] = operations.filter(approve_status="AP")
         context["closes"] = operations.filter(approve_status="CL")
-        context["relay_stock"] = operation.filter(
-            parcel_requests__stock_control="คลังวิทยุถ่ายทอด"
-        )
         return context
 
 
@@ -897,12 +894,17 @@ def operation_to_pdf(request: HttpResponse, pk: int):
 
     context = {
         "operation": operation,
+        "oil_request": operation.oil_request.all()
+        .values("oil_type")
+        .annotate(total_liters=Sum("liter_request"))
+        .order_by("oil_type"),
+        "date_print": timezone.now(),
     }
-    temp_html = "inform/temp.html"
+    temp_html = "operation/temp.html"
     with open(temp_html, "w") as f:
-        f.write(render_to_string("inform/inform_pdf.html", {"context": context}))
+        f.write(render_to_string("operation/operation_pdf.html", context))
     pdf = generate_pdf(
-        data={"context": context}, template_path="inform/inform_pdf.html"
+        data={"context": context}, template_path="operation/operation_pdf.html"
     )
     os.remove(temp_html)
 

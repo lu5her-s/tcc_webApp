@@ -1,6 +1,6 @@
 {% load tags %}
 
-{% if tasks %}
+  {% if tasks %}
 <thead>
 
   <tr>
@@ -31,7 +31,7 @@
     {% elif not task.done and not object.approve_status == 'WA' %}
     <td>
       {% if request.user == object.created_by or request.user == team.team_leader %}
-      
+
       <button type="button" class="btn btn-sm btn-danger" onclick="deleteTask({{ task.pk }});">ลบ</button>
       {% endif %}
 
@@ -39,7 +39,7 @@
     {% else %}
     <td>
       {% if request.user == object.created_by or request.user == team.team_leader %}
-      
+
       <button type="button" onclick="openNoteModal({{ task.pk }});" class="btn btn-sm btn-success">อัพเดท</button>
       {% endif %}
     </td>
@@ -48,7 +48,6 @@
 
   {% endfor %}
 </tbody>
-</table>
 {% else %}
 <table>
   <tr>

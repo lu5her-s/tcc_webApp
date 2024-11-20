@@ -1,0 +1,369 @@
+{% load static %}
+{% load humanize %}
+{% load tags %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operation Report</title>
+    <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .report-header {
+      /* background-color: #4CAF50; */
+      /* color: white; */
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .report-header h1 {
+      margin: 0 20px 0 0; /* Add margin to the right of the logo */
+    }
+
+    .report-header img {
+      height: 50px; /* Adjust as needed */
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px 0px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    h3 {
+      margin-top: 5px; /* Reduced margin from 20px to 10px */
+    }
+
+    .report-footer {
+      text-align: center;
+      padding: 10px;
+      margin-top: 20px;
+      border-top: 1px solid #ddd;
+    }
+
+    @media print {
+      body {
+        font-size: 10pt; /* Adjust font size as needed */
+      }
+
+      .report-header {
+        page-break-after: always; /* Force page break after header */
+      }
+
+      /* .report-footer { */
+      /* page-break-before: always; /* Force page break before footer */
+      /* } */
+    }
+    @font-face {
+      font-family: "TH Sarabun";
+      font-style: normal;
+      font-weight: normal;
+      src: "/home/lu5her/source/python/django/tcc_webApp/static/assets/fonts/TH-Sarabun-New-Bold.ttf",
+    }
+
+    body {
+      font-size: 16px;
+    }
+
+    .thai-font {
+      font-family: "TH Sarabun";
+      font-size: 20px;
+    }
+
+    </style>
+  </head>
+  <body class="thai-font">
+    <div class="report-header">
+      <img src="path/to/your/logo.png" alt="Company Logo"> 
+      <h1>ใบงาน กทข.ศทส.สส.</h1> 
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ใบงาน</th>
+          <th>ประเภท</th>
+          <th>สถานะ</th>
+          <th>วันที่ออก</th>
+          <th>วันที่กลับ</th>
+          <th>อ้างถึงแจ้งซ่อม</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ context.operation.id }}/{{ context.operation.created_at.year|thaiyear }}</td>
+          <td>{{ context.operation.get_type_of_work_display }}</td>
+          <td>{{ context.operation.get_approve_status_display }}</td>
+          <td>{{ context.operation.start_date|thaidate_short }}</td>
+          <td>{{ context.operation.end_date|thaidate_short }}</td>
+          <td>
+            {% if context.operation.informs.exists %}
+            {% for inform in context.operation.informs.all %}
+            {{ inform.inform.pk }}/{{ inform.inform.created_at.year|thaiyear }}<br />
+            {% endfor %}
+            {% else %}
+            -
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    ชุดปฏิบัติงาน
+    <table>
+      <thead>
+        <tr>
+          <th>หัวหน้าชุด</th>
+          <th>ลูกชุด</th>
+        </tr>
+      </thead>
+      <tbody style="max-height: 200px; overflow-y: scroll;">
+        <tr>
+          <td>{{ context.operation.team.team_leader.profile }}</td>
+          <td>
+            <ul>
+              {% for member in context.operation.team.members.all %}
+              <li>
+                {{ member.member.profile }}
+              </li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ยานพาหนะ</th>
+        </tr>
+      </thead>
+      <tbody style="max-height: 200px; overflow-y: scroll;">
+        <tr>
+          <td>
+            {% if context.operation.own_car %}
+            ยานพาหนะส่วนตัว
+            <br>
+            <button 
+              class="btn btn-sm btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#addCar"
+              type="button"><i class="bi bi-car-front"></i>&nbsp;ใช้ยานพาหนะของทางราชการ</button>
+            {% else %}
+            ใช้ยานพาหนะของทางราชการ
+            {% if context.operation.cars.exists %}
+            <ul>
+              {% for car in context.operation.cars.all %}
+              <li>
+                ประเภท&nbsp;&nbsp;{{ car.car_booking.car.type }}&nbsp;&nbsp;
+                ยี่ห้อ&nbsp;&nbsp;{{ car.car_booking.car.manufacturer }} &nbsp;&nbsp;
+                ทะเบียน&nbsp;&nbsp;{{ car.car_booking.car.number }} &nbsp;&nbsp;
+                ไมล์ออก&nbsp;&nbsp;{{ car.car_booking.car.mile_now }}&nbsp;&nbsp;
+                ไมล์เข้า&nbsp;&nbsp;{{ car.car_booking.car.mile_in|default:"-" }}&nbsp;&nbsp;
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <br>
+            <i class="bi bi-exclamation-circle text-danger"></i>&nbsp; ยังไม่ได้กำหนด
+            <br>
+            {% endif %}
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <table>
+      <thead>
+        <tr>
+          <th>เชื้อเพลิง</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            {% if context.oil_request %}
+            {% for item in context.oil_request %}
+
+            <ul>
+              {% if item.oil_type == 'DS' %}
+              <li>
+                ดีเซล จำนวน {{ item.total_liters }} ลิตร
+              </li>
+              {% else %}
+              <li>
+                เบนซิน จำนวน {{ item.total_liters }} ลิตร
+              </li>
+              {% endif %}
+            </ul>
+            {% endfor %}
+
+            {% else %}
+            ไม่เบิก &nbsp;
+            {% endif %}
+          </td>
+      </tbody>
+    </table>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ใบเบิก</th>
+          <th>ใบส่งคืน</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            {% if context.operation.parcel_requests.exists %}
+            {# for loop list of parcel_request bill #}
+            <ul>
+              {% for parcel_request in context.operation.parcel_requests.all %}
+              <li>
+                เลขที่ใบเบิก {{ parcel_request.pk }}/{{ parcel_request.parcel_request.created_at.year|thaiyear }} ({{ parcel_request.parcel_request.stock.name }})
+              </li>
+              {% endfor %}
+            </ul>
+
+            {% else %}
+            ไม่มีรายการใบเบิก
+            {% endif %}
+          </td>
+
+          <td>
+            {% if context.operation.parcel_returns.exists %}
+            {# for loop list of parcel_request bill #}
+            <ul>
+              {% for parcel_return in context.operation.parcel_returns.all %}
+              <li>
+                เลขที่คืนใบเบิก {{ parcel_return.pk }}/{{ parcel_return.parcel_return.created_at.year|thaiyear }} ({{ parcel_return.parcel_return.stock.name }})
+              </li>
+              {% endfor %}
+            </ul>
+
+            {% else %}
+            ไม่มีรายการคืนใบส่งคืน
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="page-break-before: always;">
+      <table>
+        <thead>
+          <tr>
+            <th>เบิกเบี้ยเลี้ยง</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              {% if context.operation.allowance.withdrawals.exists %}
+              <ul>
+                {% for allowance in context.operation.allowance.withdrawals.all %}
+                <li>
+                  ครั้งที่ {{ forloop.counter }} จำนวน {{ allowance.amount|intcomma }} บาท 
+                  ({{ allowance.amount|read_baht }}) 
+                  {% if allowance.note %} [{{ allowance.note }}] <br> {% endif %}
+                </li>
+                {% endfor %}
+              </ul>
+              <hr>
+              รวม {{ context.operation.allowance.total_withdraw|intcomma }} บาท ({{ context.operation.allowance.total_withdraw|read_baht }})
+              <br>
+              {% else %}
+              ไม่เบิกเบี้ยเลี้ยง &nbsp;
+              <br>
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <thead>
+          <tr>
+            <th>ส่งคืนเบี้ยเลี้ยง</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              {% if context.operation.allowance.number_of_withdraw %}
+              <ul>
+                <li>
+                  คืนเบี้ยเลี้ยง จำนวน {{ context.operation.allowance.refund.refund_amount|intcomma }} บาท ({{ context.operation.allowance.refund.refund_amount|read_baht }})
+                  {% if context.operation.allowance.refund.note %}
+                  <br>
+                  - หมายเหตุ : {{ context.operation.allowance.refund.note|safe }}
+                  {% endif %}
+                </li>
+              </ul>
+              <hr>
+              {% else %}
+              ไม่มีรายการคืนเบี้ยเลี้ยง
+              <br>
+              <button type="button"
+                class="btn btn-sm btn-warning"
+                data-bs-toggle="modal"
+                data-bs-target="#refundModal" id="addRefund">
+                <i class="bi bi-plus"></i>
+                คืนเบี้ยเลี้ยง</button>
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="text-align: center; display: flex; justify-content: center;">รายละเอียดการปฏิบัติงาน</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>รายการ</th>
+            <th>สถานที่</th>
+            <th>ความเร่งด่วน</th>
+          </tr>
+        </thead>
+        <tbody>
+
+
+          {% for task in context.operation.task.all %}
+          <tr>
+            <td style="width: 50%;">
+              {{ forloop.counter }}.&nbsp;{{ task.task|safe }}
+            </td>
+            <td>{{ task.workplace }}</td>
+            <td>{{ task.get_priority_display }}</td>
+          </tr>
+          {% endfor %}
+
+        </tbody>
+      </table>
+
+      <div class="report-footer">
+        <p>Generated on: {{ context.date_print|thaidate_short }}</p>
+      </div>
+    </div>
+  </body>
+</html>

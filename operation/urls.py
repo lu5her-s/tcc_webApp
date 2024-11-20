@@ -189,5 +189,5 @@ urlpatterns = [
         ),
     ),
     # for render pdf
-    # path("pdf/<int:pk>", views.render_pdf, name="pdf"),
+    path("operation/<int:pk>/pdf/", views.operation_to_pdf, name="operation_to_pdf"),
 ]

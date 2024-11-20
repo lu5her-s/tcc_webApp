@@ -23,7 +23,7 @@
   <section class="section">
     <!-- TODO: if user == team_leader or user == object.created_by render form instance -->
     {% if request.user == team.team_leader or request.user == object.created_by %}
-    
+
     <div class="row">
 
       <div class="col-xl-12">
@@ -48,7 +48,7 @@
 
             </ul>
 
-            <div class="tab-content pt-2">
+            <div class="tab-content pt-2 printable">
 
               <div id="detail" class="tab-pane fade show active">
                 <h6 class="card-title"> รายละเอียด | <span>ใบงานเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h6>
@@ -91,13 +91,13 @@
                     <th>สถานะ</th>
                     <td>
                       {% if object.approve_status %}
-                      
-                      {{ object.get_approve_status_display }}
-                      {% else %}
 
-                      {{ object.get_operation_status_display }}
-                      {% endif %}
-                      
+        {{ object.get_approve_status_display }}
+        {% else %}
+
+        {{ object.get_operation_status_display }}
+        {% endif %}
+
                     </td>
                   </tr>
 
@@ -152,7 +152,7 @@
                   </tr>
 
                   <tr>
-                    <th>ยานพาหนะที่ใช้ปฏิบัติงาน</th>
+                    <th>ยานพาหนะ</th>
                     <td>
                       {% if object.own_car %}
                       ยานพาหนะส่วนตัว
@@ -295,22 +295,22 @@
                   <!-- TODO: add for loop for task and edit condition -->
 
                   {% include "operation/components/taks_sector.html" %}
-                <table>
-                  <tr>
-                    <td colspan="4">
-                      <button 
-                        type="button"
-                        class="btn btn-info"
-                        data-bs-toggle="modal"
-                        data-bs-target="#addWork"
-                      ><i class="bi bi-plus-circle"></i>&nbsp;เพิ่มรายละเอียดงาน</button>
-                    </td>
-                  </tr>
-                </table>
-                {% include "operation/components/add_work_modal.html" %}
-                {% include "operation/components/edit_note_modal.html" %}
+                  <table>
+                    <tr>
+                      <td colspan="4">
+                        <button 
+                          type="button"
+                          class="btn btn-info"
+                          data-bs-toggle="modal"
+                          data-bs-target="#addWork"
+                        ><i class="bi bi-plus-circle"></i>&nbsp;เพิ่มรายละเอียดงาน</button>
+                      </td>
+                    </tr>
+                  </table>
+                  {% include "operation/components/add_work_modal.html" %}
+                  {% include "operation/components/edit_note_modal.html" %}
 
-                <!-- if user is assigned to make button to create stockitem -->
+                  <!-- if user is assigned to make button to create stockitem -->
               </div><!-- end detail -->
 
               <!-- FIX: remove to component -->
@@ -337,262 +337,262 @@
       </div>
 
 
-    {% else %}
-    <div class="row">
+      {% else %}
+      <div class="row">
 
-      <div class="col-xl-12">
-        <div class="card">
-          <div class="card-body pt-3">
-            <ul class="nav nav-tabs nav-tabs-bordered">
-              <li class="nav-item">
-                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
-                  รายละเอียด
-                </button>
-              </li>
+        <div class="col-xl-12">
+          <div class="card">
+            <div class="card-body pt-3">
+              <ul class="nav nav-tabs nav-tabs-bordered">
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
+                    รายละเอียด
+                  </button>
+                </li>
 
-              <!-- TODO: edit to team_leader -->
-              {% if request.user == team.team_leader and not team.accepted %}
-              <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#accept">
-                  หัวหน้าชุด
-                </button>
-              </li>
+                <!-- TODO: edit to team_leader -->
+                {% if request.user == team.team_leader and not team.accepted %}
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#accept">
+                    หัวหน้าชุด
+                  </button>
+                </li>
 
-              {% endif %}
+                {% endif %}
 
-            </ul>
+              </ul>
 
-            <div class="tab-content pt-2">
+              <div class="tab-content pt-2">
 
-              <div id="detail" class="tab-pane fade show active">
-                <h6 class="card-title"> รายละเอียด | <span>ใบงานเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h6>
-                <table class="table">
-                  <tr>
-                    <th>เลชที่ใบงาน</th>
-                    <td>{{ object.pk }}/{{ object.created_at.year|thaiyear }}</td>
-                  </tr>
+                <div id="detail" class="tab-pane fade show active">
+                  <h6 class="card-title"> รายละเอียด | <span>ใบงานเลขที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h6>
+                  <table class="table">
+                    <tr>
+                      <th>เลชที่ใบงาน</th>
+                      <td>{{ object.pk }}/{{ object.created_at.year|thaiyear }}</td>
+                    </tr>
 
-                  <tr>
-                    <th>ประเภทงาน</th>
-                    {% if object.type_of_work %}
-                    <td>{{ object.get_type_of_work_display  }}</td>
+                    <tr>
+                      <th>ประเภทงาน</th>
+                      {% if object.type_of_work %}
+                      <td>{{ object.get_type_of_work_display  }}</td>
 
-                    {% else %}
-                    <td>{{ object.other_type }}</td>
-
-                    {% endif %}
-
-                  </tr>
-
-                  <tr>
-                    <th>อ้างถึงแจ้งซ่อม</th>
-                    <td>
-                      {% if object.inform %}
-                      {% for inform in object.inform.all %}
-                      {{ forloop.counter }}. ใบแจ้งซ่อมที่ {{ inform.pk }}/{{ inform.created_at.year|thaiyear }} สถานที่ {{ inform.stockitem.location_install }}
-                      <br>
-                      {% endfor %}
                       {% else %}
-                      -
-                      <br>
-                      {% endif %}
-                    </td>
-                  </tr>
+                      <td>{{ object.other_type }}</td>
 
-                  <tr>
-                    <th>สถานะ</th>
-                    <td>
-                      {% if object.approve_status %}
-                      
-                      {{ object.get_approve_status_display }}
-                      {% else %}
-
-                      {{ object.get_operation_status_display }}
-                      {% endif %}
-                      
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <th>หัวหน้าชุด</th>
-                    <td>
-                      <a href="{% url 'account:member' pk=team.team_leader.pk %}" target="_blank">
-                        {{ team.team_leader.profile }}
-                      </a>
-                      &nbsp;
-                      {% if team.accepted %}
-                      <span class="badge bg-success">ตอบรับแล้ว</span>
-                      {% else %}
-                      <span class="badge bg-warning">รอตอบรับ</span>
-                      {% endif %}
-                  </tr>
-
-                  <tr>
-                    <th>ลูกชุด</th>
-                    <td>
-                      {% if members %}
-                      {% include "operation/components/members_sector.html" %}
-                      {% include "operation/components/add_member_modal.html" %}
-                      {% else %}
-                      ยังไม่ได้กำหนดลูกชุด 
-                      <button href="#"
-                        class="btn btn-sm btn-primary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#addMember"
-                      >กำหนดลูกชุด</button>
-                      {% include "operation/components/add_member_modal.html" %}
                       {% endif %}
 
-                    </td>
-                  </tr>
+                    </tr>
 
-                  <tr>
-                    <th>วันปฏิบัติงาน</th>
-                    <td>
-                      วันออก : {{ object.start_date|thaidate }}
-                      <br>
-                      วันกลับ : {{ object.end_date|thaidate }}
-                      <br>
-                      {% include "operation/components/update_date_modal.html" %}
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <th>ยานพาหนะที่ใช้ปฏิบัติงาน</th>
-                    <td>
-                      {% if object.own_car %}
-                      ยานพาหนะส่วนตัว
-                      <br>
-                      {% else %}
-                      ใช้ยานพาหนะของทางราชการ
-                      {% if cars %}
-                      <ol>
-                        {% for car in cars %}
-                        <li>
-                          ประเภท&nbsp;&nbsp;{{ car.car_booking.car.type }}&nbsp;&nbsp;
-                          ยี่ห้อ&nbsp;&nbsp;{{ car.car_booking.car.manufacturer }} &nbsp;&nbsp;
-                          ทะเบียน&nbsp;&nbsp;{{ car.car_booking.car.number }} &nbsp;&nbsp;
-                          ไมล์ออก&nbsp;&nbsp;{{ car.car_booking.car.mile_now }}&nbsp;&nbsp;
-                          ไมล์เข้า&nbsp;&nbsp;{{ car.car_booking.car.mile_in|default:"-" }}&nbsp;&nbsp;
-                        </li>
+                    <tr>
+                      <th>อ้างถึงแจ้งซ่อม</th>
+                      <td>
+                        {% if object.inform %}
+                        {% for inform in object.inform.all %}
+                        {{ forloop.counter }}. ใบแจ้งซ่อมที่ {{ inform.pk }}/{{ inform.created_at.year|thaiyear }} สถานที่ {{ inform.stockitem.location_install }}
+                        <br>
                         {% endfor %}
-                      </ol>
-                      {% else %}
-                      <br>
-                      <i class="bi bi-exclamation-circle text-danger"></i>&nbsp; ยังไม่ได้กำหนด
-                      <br>
-                      {% endif %}
+                        {% else %}
                         -
-                      {% endif %}
-                    </td>
-                  </tr>
+                        <br>
+                        {% endif %}
+                      </td>
+                    </tr>
 
-                  <tr>
-                    <th>สป.3</th>
-                    <td>
-                      {% if oil_request %}
-                      {% for item in oil_request %}
+                    <tr>
+                      <th>สถานะ</th>
+                      <td>
+                        {% if object.approve_status %}
 
-                      {% if item.oil_type == 'DS' %}
-                      ดีเซล จำนวน {{ item.total_liters }} ลิตร
-                      {% else %}
-                      เบนซิน จำนวน {{ item.total_liters }} ลิตร
-                      {% endif %}
-                      <br>
-                      {% endfor %}
+                        {{ object.get_approve_status_display }}
+                        {% else %}
 
-                      {% else %}
-                      ไม่เบิก &nbsp;
-                      {% endif %}
+                        {{ object.get_operation_status_display }}
+                        {% endif %}
 
-                      <!-- DONE: if not fuel show ไม่เบิก -->
-                    </td>
-                  </tr>
+                      </td>
+                    </tr>
 
-                  <tr>
-                    <th>เบี้ยเลี้ยง</th>
-                    <td>
-                      {% include "operation/components/allowance_sector.html" %}
-                    </td>
-                  </tr>
+                    <tr>
+                      <th>หัวหน้าชุด</th>
+                      <td>
+                        <a href="{% url 'account:member' pk=team.team_leader.pk %}" target="_blank">
+                          {{ team.team_leader.profile }}
+                        </a>
+                        &nbsp;
+                        {% if team.accepted %}
+                        <span class="badge bg-success">ตอบรับแล้ว</span>
+                        {% else %}
+                        <span class="badge bg-warning">รอตอบรับ</span>
+                        {% endif %}
+                    </tr>
 
-                  <tr>
-                    <th>คืนเบี้ยเลี้ยง</th>
-                    {# TODO: #}
-                    {# Test list all refund or change to 1-1 related #}
-                    <td>
-                      {% include "operation/components/refund_allowance_sector.html" %}
-                    </td>
-                  </tr>
+                    <tr>
+                      <th>ลูกชุด</th>
+                      <td>
+                        {% if members %}
+                        {% include "operation/components/members_sector.html" %}
+                        {% include "operation/components/add_member_modal.html" %}
+                        {% else %}
+                        ยังไม่ได้กำหนดลูกชุด 
+                        <button href="#"
+                          class="btn btn-sm btn-primary"
+                          data-bs-toggle="modal"
+                          data-bs-target="#addMember"
+                        >กำหนดลูกชุด</button>
+                        {% include "operation/components/add_member_modal.html" %}
+                        {% endif %}
 
-                  <tr>
-                    <th>
-                      เอกสารการเบิกพัสดุ
-                    </th>
-                    <td>
-                      {% include "operation/components/parcel_sector.html" %}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>
-                      เอกสารการคืนพัสดุ
-                    </th>
-                    <td>
-                      {% include "operation/components/return_sector.html" %}
+                      </td>
+                    </tr>
 
-                    </td>
-                  </tr>
+                    <tr>
+                      <th>วันปฏิบัติงาน</th>
+                      <td>
+                        วันออก : {{ object.start_date|thaidate }}
+                        <br>
+                        วันกลับ : {{ object.end_date|thaidate }}
+                        <br>
+                        {% include "operation/components/update_date_modal.html" %}
+                      </td>
+                    </tr>
 
-                </table>
-                <br>
+                    <tr>
+                      <th>ยานพาหนะที่ใช้ปฏิบัติงาน</th>
+                      <td>
+                        {% if object.own_car %}
+                        ยานพาหนะส่วนตัว
+                        <br>
+                        {% else %}
+                        ใช้ยานพาหนะของทางราชการ
+                        {% if cars %}
+                        <ol>
+                          {% for car in cars %}
+                          <li>
+                            ประเภท&nbsp;&nbsp;{{ car.car_booking.car.type }}&nbsp;&nbsp;
+                            ยี่ห้อ&nbsp;&nbsp;{{ car.car_booking.car.manufacturer }} &nbsp;&nbsp;
+                            ทะเบียน&nbsp;&nbsp;{{ car.car_booking.car.number }} &nbsp;&nbsp;
+                            ไมล์ออก&nbsp;&nbsp;{{ car.car_booking.car.mile_now }}&nbsp;&nbsp;
+                            ไมล์เข้า&nbsp;&nbsp;{{ car.car_booking.car.mile_in|default:"-" }}&nbsp;&nbsp;
+                          </li>
+                          {% endfor %}
+                        </ol>
+                        {% else %}
+                        <br>
+                        <i class="bi bi-exclamation-circle text-danger"></i>&nbsp; ยังไม่ได้กำหนด
+                        <br>
+                        {% endif %}
+                        -
+                        {% endif %}
+                      </td>
+                    </tr>
 
-                <table style="width: 100%; align: center">
-                  <tr>
-                    <th colspan="4" class="text-center">รายละเอียดงาน</th>
-                  </tr>
+                    <tr>
+                      <th>สป.3</th>
+                      <td>
+                        {% if oil_request %}
+                        {% for item in oil_request %}
 
-                </table>
+                        {% if item.oil_type == 'DS' %}
+                        ดีเซล จำนวน {{ item.total_liters }} ลิตร
+                        {% else %}
+                        เบนซิน จำนวน {{ item.total_liters }} ลิตร
+                        {% endif %}
+                        <br>
+                        {% endfor %}
 
-                <table class="table table-borderless" id="taskTable">
-                  <!-- TODO: add for loop for task and edit condition -->
+                        {% else %}
+                        ไม่เบิก &nbsp;
+                        {% endif %}
 
-                  {% include "operation/components/taks_sector.html" %}
-                <table>
-                  <tr>
-                    <td colspan="4">
-                    </td>
-                  </tr>
-                </table>
-                {% include "operation/components/add_work_modal.html" %}
-                {% include "operation/components/edit_note_modal.html" %}
+                        <!-- DONE: if not fuel show ไม่เบิก -->
+                      </td>
+                    </tr>
 
-                <!-- if user is assigned to make button to create stockitem -->
-              </div><!-- end detail -->
+                    <tr>
+                      <th>เบี้ยเลี้ยง</th>
+                      <td>
+                        {% include "operation/components/allowance_sector.html" %}
+                      </td>
+                    </tr>
 
-              <!-- FIX: remove to component -->
-              {% include "operation/components/tab_leader.html" %}
+                    <tr>
+                      <th>คืนเบี้ยเลี้ยง</th>
+                      {# TODO: #}
+                      {# Test list all refund or change to 1-1 related #}
+                      <td>
+                        {% include "operation/components/refund_allowance_sector.html" %}
+                      </td>
+                    </tr>
 
-            </div><!-- end tab-content -->
-          </div><!--end card-->
-        </div><!-- end col -->
-      </div>
+                    <tr>
+                      <th>
+                        เอกสารการเบิกพัสดุ
+                      </th>
+                      <td>
+                        {% include "operation/components/parcel_sector.html" %}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>
+                        เอกสารการคืนพัสดุ
+                      </th>
+                      <td>
+                        {% include "operation/components/return_sector.html" %}
 
-      <div class="container float-start text-center">
-        <!-- include template related to user group -->
-        {% if request.user == object.created_by %}
-        {% include "./buttons/creator.html" %}
-        {% elif request.user|has_group:"StockManager" %}
-        {% include "./buttons/manager.html" %}
-        {% elif request.user|has_group:"Command" %}
-        {% include "./buttons/command.html" %}
-        {% elif request.user|has_group:"TeamLeader" %}
-        {% include "./buttons/technical.html" %}         
-        {% else %}
-        {% include "./buttons/user.html" %}
+                      </td>
+                    </tr>
+
+                  </table>
+                  <br>
+
+                  <table style="width: 100%; align: center">
+                    <tr>
+                      <th colspan="4" class="text-center">รายละเอียดงาน</th>
+                    </tr>
+
+                  </table>
+
+                  <table class="table table-borderless" id="taskTable">
+                    <!-- TODO: add for loop for task and edit condition -->
+
+                    {% include "operation/components/taks_sector.html" %}
+                    <table>
+                      <tr>
+                        <td colspan="4">
+                        </td>
+                      </tr>
+                    </table>
+                    {% include "operation/components/add_work_modal.html" %}
+                    {% include "operation/components/edit_note_modal.html" %}
+
+                    <!-- if user is assigned to make button to create stockitem -->
+                </div><!-- end detail -->
+
+                <!-- FIX: remove to component -->
+                {% include "operation/components/tab_leader.html" %}
+
+              </div><!-- end tab-content -->
+            </div><!--end card-->
+          </div><!-- end col -->
+        </div>
+
+        <div class="container float-start text-center">
+          <!-- include template related to user group -->
+          {% if request.user == object.created_by %}
+          {% include "./buttons/creator.html" %}
+          {% elif request.user|has_group:"StockManager" %}
+          {% include "./buttons/manager.html" %}
+          {% elif request.user|has_group:"Command" %}
+          {% include "./buttons/command.html" %}
+          {% elif request.user|has_group:"TeamLeader" %}
+          {% include "./buttons/technical.html" %}         
+          {% else %}
+          {% include "./buttons/user.html" %}
+          {% endif %}
+        </div>
+
         {% endif %}
-      </div>
-
-    {% endif %}
 
   </section>
   <script>

@@ -2,20 +2,20 @@
 
 <form method="POST" action="" id="form_approve_command">
   {% csrf_token %}
-<button class="btn btn-lg btn-secondary back">ย้อนกลับ</button>
-<!-- button to generate pdf -->
-<!-- <a href="#" target="_blank" class="btn btn-lg btn-primary" id="inform_pdf">พิมพ์</a> -->
-  <button type="button" data-bs-toggle="modal" data-bs-target="#informPdfModal" class="btn btn-lg btn-primary" id="inform_pdf">พิมพ์</button>
+  <button class="btn btn-lg btn-secondary back">ย้อนกลับ</button>
+  <!-- button to generate pdf -->
+  <a href="{% url 'operation:operation_to_pdf' pk=object.pk %}" target="_blank" class="btn btn-lg btn-primary" id="inform_pdf">พิมพ์</a>
+  <!-- <button type="button" data-bs-toggle="modal" data-bs-target="#informPdfModal" class="btn btn-lg btn-primary" id="inform_pdf">พิมพ์</button> -->
 
-{% if object.approve_status == 'WO' %}
+  {% if object.approve_status == 'WO' %}
 
-<button type="button" data-bs-toggle="modal" data-bs-target="#approveOpenModal" class="btn btn-lg btn-success" id="approve_open">อนุมัติเปิดงาน</button>
+  <button type="button" data-bs-toggle="modal" data-bs-target="#approveOpenModal" class="btn btn-lg btn-success" id="approve_open">อนุมัติเปิดงาน</button>
 
-{% elif object.approve_status == 'WC' %}
+  {% elif object.approve_status == 'WC' %}
 
-<button type="button" class="btn btn-lg btn-warning" id="approve_close">อนุมัติปิดงาน</button>
+  <button type="button" class="btn btn-lg btn-warning" id="approve_close">อนุมัติปิดงาน</button>
 
-{% endif %}
+  {% endif %}
 </form>
 
 <!-- modal for approve_open -->

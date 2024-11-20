@@ -1,0 +1,303 @@
+{% load static %}
+{% load tags %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title></title>
+  <meta name="generator" content="LibreOffice 24.8.1.2 (Linux)" />
+  <meta name="created" content="2024-11-18T18:18:30.935006979" />
+  <meta name="changed" content="2024-11-18T19:50:50.719243475" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <style type="text/css">
+    @page {
+      size: 8.5in 11in;
+      margin: 0.79in
+    }
+    @font-face {
+    font-family: "TH Sarabun";
+    font-style: normal;
+    font-weight: normal;
+    src: "/home/lu5her/source/python/django/tcc_webApp/static/assets/fonts/TH-Sarabun-New-Bold.ttf",
+    }
+    .thai-font {
+    font-family: "TH Sarabun";
+    font-size: 20px;
+    }
+
+    p {
+      line-height: 115%;
+      margin-bottom: 0.1in;
+      background: transparent
+    }
+
+    td p {
+      orphans: 0;
+      widows: 0;
+      background: transparent
+    }
+  </style>
+</head>
+
+<body class="thai-font" lang="en-US" link="#000080" vlink="#800000" dir="ltr">
+  <h1 align="center" style="line-height: 100%; margin-bottom: 0in">ใบงานที่ {{ context.operation.pk }}/{{ context.operation.created_at.year|thaiyear }}</h1>
+  <h1 align="center" style="line-height: 100%; margin-bottom: 0in">ประเภทงาน {{ context.operation.operation_type }}</h1>
+  <p align="left" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">อ้างถึงแจ้งซ่อม</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> {{
+        object }}</font>
+    </font>
+  </p>
+  <p align="left" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">หัวหน้าชุด</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> {{
+        object }}</font>
+    </font>
+  </p>
+  <p align="left" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">ลูกชุด</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> {{
+        object }}</font>
+    </font>
+  </p>
+  <p align="left" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">วันปฏิบัติงาน</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> </font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">ออก</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> {{
+        object }}</font>
+    </font>
+  </p>
+  <p align="left" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> </font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">กลับ</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> {{
+        object }}</font>
+    </font>
+  </p>
+  <p align="left" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">ยานพาหนะที่ใช้ปฏิบัติงาน</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> </font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">ใช้ยานพาหนะของทางราชการ</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> || </font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">ใช้ยานพาหนะส่วนตัว</span></font>
+    </font>
+  </p>
+  <p align="left" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> {{
+        object }}</font>
+    </font>
+  </p>
+  <p align="left" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">สป</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt">.3
+      </font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">เบนซิน</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> </font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">จำนวน</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> {{
+        object }} </font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">ลิตร</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> || </font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">ไม่เบิก</span></font>
+    </font>
+  </p>
+  <p align="left" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> </font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">ดีเซล
+        </span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> </font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">จำนวน</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> {{
+        object }} </font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">ลิตร</span></font>
+    </font>
+  </p>
+  <p align="left" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">เบี้ยเลี้ยง</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> </font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">ครั้งที่
+        </span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt">{{
+        object }} || </font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">ไม่เบิก</span></font>
+    </font>
+  </p>
+  <p align="left" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">คืนเบ้ียเลี้ยง</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> {{
+        object }}</font>
+    </font>
+  </p>
+  <p align="left" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">เอกสารการเบิกพัสดุ</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> {{
+        object }}</font>
+    </font>
+  </p>
+  <p align="left" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">เอกสารการคืนพัสดุ</span></font>
+    </font>
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"> {{
+        object }}</font>
+    </font>
+  </p>
+  <p align="center" style="line-height: 100%; margin-bottom: 0in">
+    <font face="TH SarabunPSK">
+      <font size="4" style="font-size: 14pt"><span lang="hi-IN">รายละเอียดงาน</span></font>
+    </font>
+  </p>
+  <table width="100%" cellpadding="4" cellspacing="0">
+    <col width="85*" />
+    <col width="85*" />
+    <col width="85*" />
+    <tr valign="top">
+      <td width="33%"
+        style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+        <p align="center">
+          <font face="TH SarabunPSK">
+            <font size="4" style="font-size: 14pt"><span lang="hi-IN">รายการ</span></font>
+          </font>
+        </p>
+      </td>
+      <td width="33%"
+        style="border-top: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+        <p align="center">
+          <font face="TH SarabunPSK">
+            <font size="4" style="font-size: 14pt"><span lang="hi-IN">สถานที่</span></font>
+          </font>
+        </p>
+      </td>
+      <td width="33%" style="border: 1px solid #000000; padding: 0.04in">
+        <p align="center">
+          <font face="TH SarabunPSK">
+            <font size="4" style="font-size: 14pt"><span lang="hi-IN">ความเร่งด่วน</span></font>
+          </font>
+        </p>
+      </td>
+    </tr>
+    <tr valign="top">
+      <td width="33%"
+        style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+        <p align="center">
+          <font face="TH SarabunPSK">
+            <font size="4" style="font-size: 14pt">{{
+              object }}</font>
+          </font>
+        </p>
+      </td>
+      <td width="33%"
+        style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: none; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+        <p align="center">
+          <font face="TH SarabunPSK">
+            <font size="4" style="font-size: 14pt">{{
+              object }}</font>
+          </font>
+        </p>
+      </td>
+      <td width="33%"
+        style="border-top: none; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0.04in">
+        <p align="center">
+          <font face="TH SarabunPSK">
+            <font size="4" style="font-size: 14pt">{{
+              object }}</font>
+          </font>
+        </p>
+      </td>
+    </tr>
+  </table>
+  <p align="center" style="line-height: 100%; margin-bottom: 0in"><br />
+
+  </p>
+  <p align="right" style="line-height: 100%; margin-bottom: 0in; text-decoration: none">
+    <img src="operation_tpl_html_4af7f3a5.gif" name="Text Frame 1" alt="Text Frame 1" align="left" width="291"
+      height="129" />
+    <img src="operation_tpl_html_f17eeae8.gif" name="Text Frame 2" alt="Text Frame 2" align="left" width="291"
+      height="129" />
+    <img src="operation_tpl_html_43cfc620.gif" name="Text Frame 3" alt="Text Frame 3" align="left" width="291"
+      height="129" />
+    <br />
+
+  </p>
+</body>
+
+</html>

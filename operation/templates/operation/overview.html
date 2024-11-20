@@ -34,57 +34,82 @@
         }
     </style>
   
-  <div class="container">
-    <h1>Operation Overview</h1>
+<div class="container">
+  <h1>Operation Overview</h1>
+  <div class="pagetitle">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'operation:home' %}">Operation Home</a></li>
+        <li class="breadcrumb-item active">Operation Overview</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
 
 
-    <div class="stats-container">
-      <div class="stat">
-        <h3><strong>Total</strong></h3>
-        <h1>{{ operations.count }}</h1>
-      </div>
-      <div class="stat">
-        <h3><strong>Pending</strong></h3>
-        <h1>{{ pendings.count }}</h1>
-      </div>
-      <div class="stat">
-        <h3><strong>Open</strong></h3>
-        <h1>{{ opens.count }}</h1>
-      </div>
-      <div class="stat">
-        <h3><strong>Closed</strong></h3>
-        <h1>{{ closes.count }}</h1>
-      </div>
+  <div class="stats-container">
+    <div class="stat">
+      <h3><strong>Total</strong></h3>
+      <h1>{{ operations.count }}</h1>
     </div>
+    <div class="stat">
+      <h3><strong>Pending</strong></h3>
+      <h1>{{ pendings.count }}</h1>
+    </div>
+    <div class="stat">
+      <h3><strong>Open</strong></h3>
+      <h1>{{ opens.count }}</h1>
+    </div>
+    <div class="stat">
+      <h3><strong>Closed</strong></h3>
+      <h1>{{ closes.count }}</h1>
+    </div>
+  </div>
 
   <br>
   <hr>
 
-    <table class="table" id="operation-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Type</th>
-          <th>Status</th>
-          <th>Created Date</th>
-          <th>Approve</th>
-          <th>Header</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for operation in operations %}
-        <tr>
-          <td>{{ operation.id }}</td>
-          <td>{{ operation.get_type_of_work_display }}</td>
-          <td>{{ operation.get_operation_status_display }}</td>
-          <td>{{ operation.created_at|thaidate }}</td>
-          <td>{{ operation.get_approve_status_display }}</td>
-          <td>{{ operation.team.team_leader.profile }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+  <table class="table" id="operation-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>ประเภทงาน</th>
+        <th>สถานะ</th>
+        <th>วันที่สร้าง</th>
+        <th>การอนุมัติ</th>
+        <th>หัวหน้าชุด</th>
+        <th>...</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for operation in operations %}
+      <tr>
+        <td>{{ operation.id }}/{{ operation.created_at.year|thaiyear }}</td>
+        <td>{{ operation.get_type_of_work_display }}</td>
+        <td>{{ operation.get_operation_status_display }}</td>
+        <td>{{ operation.created_at|thaidate }}</td>
+        <td>{{ operation.get_approve_status_display }}</td>
+        <td>{{ operation.team.team_leader.profile }}</td>
+        <td>
+          <a href="{% url 'operation:detail' operation.id %}" class="btn badge btn-sm btn-info">รายละเอียด</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
-  <script></script>
-  {% endblock content %}
+<script>
+// datatable
+$(document).ready(function() {
+  $('#operation-table').DataTable({
+    "pageLength": 10,
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "order": [[0, "desc"]],
+    "columnDefs": [
+      { "orderable": false, "targets": 0 }
+    ]
+  });
+});
+</script>
+{% endblock content %}
