@@ -1,0 +1,62 @@
+{% load tags %}
+{% load tz %}
+
+<div class="card-body">
+  <h5 class="card-title">จำนวนผู้อ่าน| <span> ทั้งหมด {{ number_of_reader }} คน</span></h5>
+  {% comment %}<h6 class="card-subtitle mb-2 text-muted">อ่านแล้วจำนวน {{ number_of_reader }} คน</h6>{% endcomment %}
+  {% if not request.user == object.author %}
+  <form method="post" action="{% url 'announce:read' pk=object.pk %}">
+    {% csrf_token %}
+    {% if is_read %}
+    <p class="card-text"><button type="submit" name="announce_id" value="{{ object.pk }}" class="btn btn-success">
+      <i class="bi bi-check-circle"></i> อ่านแล้ว
+    </button>
+    </p>
+    {% else %}
+    <p class="card-text"><button type="submit" name="announce_id" value="{{ object.pk }}" class="btn btn-warning">
+      <i class="bi bi-exclamation-circle"></i> ยังไม่อ่าน
+    </button>
+    </p>
+    {% endif %}
+  </form>
+  {% endif %}
+
+  {% if request.user == object.author %}
+  <p class="card-text">รายชื่อกำลังพลที่อ่านแล้ว</p>
+  <!-- data table for reader -->
+  {% if number_of_reader %}
+  <table class="table table-hover" id="dataTable">
+    <thead>
+      <tr>
+        <th>ยศ ชื่อ</th>
+        <th>หน่วย/สังกัด</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for reader in object.reads.all %}
+      <tr>
+        <td>{{ reader.profile.rank }} {{ reader.get_full_name }}</td>
+        <td>
+          {{ reader.profile.sector }} ({{ reader.profile.department }})
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="card-text">ไม่มีผู้อ่าน</p>
+  {% endif %}
+
+  {% comment %}
+
+  <ol>
+  {% for reader in object.reads.all %}
+  <li>{{ reader.profile.rank }} {{ reader.get_full_name }} -
+  {{ reader.profile.sector }} ({{ reader.profile.place }})
+  </li>
+  {% endfor %}
+  </ol>
+  {% endcomment %}
+  {% endif %}
+</div>

@@ -1,0 +1,51 @@
+{% load tags %}
+{% load tz %}
+
+<div class="card">
+  <div class="card-body">
+    {% if comments %}
+    <h5 class="card-title">ความคิดเห็น <span>| {{ comments_count }} ความคิดเห็น</span></h5>
+    <div class="container">
+      {% for comment in comments %}
+      <div class="row">
+        <div class="col-sm-8 m2">
+          <img src="{{ comment.author.profile.image.url }}" class="img-thumbnail rounded-circle float-start"
+            style="margin-right: 12px;" width="15%" alt="">
+          <p class="mute">
+            จาก <b>{{ comment.author.profile.rank.name }} {{ comment.author.get_full_name }}</b> เมื่อ
+            <span class="small">{{ comment.created_at|timezone:"Asia/Bangkok"|thaidate }} ({{
+              comment.created_at|timezone:"Asia/Bangkok"|timesince }})</span>
+          </p>
+          <p>
+            {{ comment.comment }}
+          </p>
+        </div>
+      </div>
+      <hr>
+
+      {% endfor %}
+    </div>
+    {% else %}
+    <h5 class="card-title">ความคิดเห็น <span>| {{ comments_count }} ยังไม่มีความคิดเห็น</span></h5>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">ความคิดเห็น <span>| แสดงความคิดเห็น</span></h5>
+    <div class="container">
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="announce_id" value="{{ object.pk }}">
+        <div class="row mb-3">
+          {% comment %}<label for="comment" class="col-sm-2 col-form-label">แสดงความคิดเห็น</label>{% endcomment %}
+          <div class="col-sm-12">
+            <textarea class="form-control" name="comment" id="comment" style="height: 100px; width: 100%;"></textarea>
+          </div>
+        </div>
+        <p class="card-text float-end"><button type="submit" class="btn btn-primary">แสดงความคิดเห็น</button></p>
+      </form>
+    </div>
+  </div>
+</div>

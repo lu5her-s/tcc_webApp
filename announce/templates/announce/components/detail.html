@@ -1,0 +1,35 @@
+{% load tags %}
+{% load tz %}
+<h6 class="card-title"> รายละเอียด | <span> {{ object.title }}</span></h6>
+<table class="table">
+  <tr>
+    <th>ประเภท</th>
+    <td>{{ object.is_type }}</td>
+  </tr>
+
+  <tr>
+    <th>สถานะ</th>
+    <td>{{ object.status }}</td>
+  </tr>
+
+  <tr>
+    <th>ผู้เขียน</th>
+    <td>{{ object.author.profile.rank }} {{ object.author.get_full_name }}</td>
+  </tr>
+
+  <tr>
+    <th>เมื่อ</th>
+    <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }}
+      เวลา {{ object.created_at|timezone:"Asia/Bangkok"|date:"H:i" }} น.
+    </td>
+  </tr>
+</table>
+
+<table class="table table-borderless">
+  <tr>
+    <th class="text-center">รายละเอียด</th>
+  </tr>
+  <tr>
+    <td>{{ object.detail|safe|linebreaks }}</td>
+  </tr>
+</table>

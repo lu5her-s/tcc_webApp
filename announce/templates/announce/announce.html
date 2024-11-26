@@ -4,95 +4,97 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Announce{% endblock title %}
+  {% block title %}Announce{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>ประชาสัมพันธ์/สั่งการ</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item active">Announce</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active">Announce</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
-<section class="section profile">
+  <section class="section profile">
     <div class="row">
 
-        <div class="col-xl-12">
+      <div class="col-xl-12">
 
-            <!-- Recent Job -->
-            <div class="col-12">
-                <div class="card recent-sales overflow-auto">
+        <!-- Recent Job -->
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
 
 
-                    <div class="card-body">
-                        <h5 class="card-title">{{ title }} 
-                            <span>| ทั้งหมด {{ object_list|length }} เรื่อง</span>
-                            <span>
-                                <a href="{% url 'announce:create' %}" class="align-right btn btn-success" style="float: right">
-                                    <i class="bi bi-plus">
-                                        สร้าง
-                                    </i>
-                                </a>
-                            </span>
-                        </h5>
-                        <br>
+            <div class="card-body">
+              <h5 class="card-title">{{ title }} 
+                <span>| ทั้งหมด {{ object_list|length }} เรื่อง</span>
+                <span>
+                  <a href="{% url 'announce:create' %}" class="align-right btn btn-success" style="float: right">
+                    <i class="bi bi-plus">
+                      สร้าง
+                    </i>
+                  </a>
+                </span>
+              </h5>
+              <br>
 
-                        <table class="table table-hover" id="dataTable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">ประเภท</th>
-                                    <th scope="col">สถานะ</th>
-                                    <th scope="col">เรื่อง</th>
-                                    <th scope="col">สร้างเมื่อ</th>
-                                    <th scope="col">การดำเนินการ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for object in object_list %}
-                                <tr>
-                                    <th scope="row">{{ object.is_type.name }}</th>
-                                    <td><a href="#">{{ object.status.name }}</a></td>
-                                    <td><a href="{% url 'announce:detail' pk=object.pk %}" class="text-primary">{{ object.title }}</a></td>
-                                    <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }}</td>
-                                    {% if not object in read and not object.author == request.user %}
-                                    <td><a href="{% url 'announce:detail' pk=object.pk %}"><span  class="badge bg-warning text-black"><i class="bi bi-exclamation-circle"></i>&nbsp;ยังไม่อ่าน</span></a></td>
-                                    {% elif object.author == request.user %}
-                                    <td><a href="{% url 'announce:detail' pk=object.pk %}"><span href="#" class="badge bg-secondary">เจ้าของเรื่อง</span></a></td>
-                                    {% else %}
-                                    <td><a href="{% url 'announce:detail' pk=object.pk %}"><span href="#" class="badge bg-success">ตอบรับแล้ว</span></a></td>
-                                    {% endif %}
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+              <table class="table table-hover" id="dataTable">
+                <thead>
+                  <tr>
+                    <th scope="col">ประเภท</th>
+                    <th scope="col">สถานะ</th>
+                    <th scope="col">เรื่อง</th>
+                    <th scope="col">สร้างเมื่อ</th>
+                    <th scope="col">การดำเนินการ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for object in object_list %}
+                  <tr>
+                    <th scope="row">{{ object.is_type.name }}</th>
+                    <td><a href="#">{{ object.status.name }}</a></td>
+                    <td><a href="{% url 'announce:detail' pk=object.pk %}" class="text-primary">{{ object.title }}</a></td>
+                    <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }}</td>
+                    <td>
+                      {% if not object in read and not object.author == request.user %}
+                      <a href="{% url 'announce:detail' pk=object.pk %}"><span  class="badge bg-warning text-black"><i class="bi bi-exclamation-circle"></i>&nbsp;ยังไม่อ่าน</span></a>
+                      {% elif object.author == request.user %}
+                      <a href="{% url 'announce:detail' pk=object.pk %}"><span class="badge bg-secondary">เจ้าของเรื่อง</span></a>
+                      {% else %}
+                      <a href="{% url 'announce:detail' pk=object.pk %}"><span class="badge bg-success">ตอบรับแล้ว</span></a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
 
-                    </div>
+            </div>
 
-                </div>
-            </div><!-- End Announce List -->
-            {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
+          </div>
+        </div><!-- End Announce List -->
+        {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
 
-        </div>
+      </div>
 
     </div>
-</section>
+  </section>
 
-<script>
-    $(document).ready(() => {
-        $("#dataTable").DataTable({
-            "fnDrawCallback" : function(oSettings) {
-                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
-                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
-                } else {
-                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
-                }
-            },
-            "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
-          order: [[3, "asc"]],
-        });
+  <script>
+  $(document).ready(() => {
+    $("#dataTable").DataTable({
+      "fnDrawCallback" : function(oSettings) {
+        if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+        } else {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+        }
+      },
+      "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+      order: [[3, "asc"]],
     });
-</script>
-{% endblock content %}
+  });
+  </script>
+  {% endblock content %}
