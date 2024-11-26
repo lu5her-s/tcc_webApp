@@ -308,6 +308,16 @@ class StockManagerListView(LoginRequiredMixin, ListView):
 
 
 class StockItemUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Update stock item view
+
+    Attributes:
+        template_name:
+        model:
+        form_class:
+        object:
+    """
+
     template_name = "asset/stockitem_form.html"
     model = StockItem
     form_class = StockItemForm
@@ -344,6 +354,17 @@ class StockItemUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class StockItemDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    Delete stock item view
+
+    Attributes:
+        template_name:
+        model:
+        success_url:
+        object:
+        is_delete:
+    """
+
     template_name = "asset/stockitem_confirm_delete.html"
     model = StockItem
     success_url = reverse_lazy("asset:stockitem_list")
@@ -362,7 +383,7 @@ class StockItemDeleteView(LoginRequiredMixin, DeleteView):
 
 
 def set_item(request, pk):
-    """set_item.
+    """set_item. set item to in use and set location
 
     :param request:
     :param pk:
@@ -378,6 +399,7 @@ def set_item(request, pk):
 
 def remove_item(request, pk):
     """remove_item.
+    remove item from in use and set location_install to None
 
     :param request:
     :param pk:

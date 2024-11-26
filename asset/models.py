@@ -26,7 +26,16 @@ def stock_image(instance, filename: str) -> str:
 
 # class categories for stock
 class Category(models.Model):
-    """Category."""
+    """
+    Category model
+
+    Attributes:
+        name:
+        description:
+        created_at:
+        updated_at:
+        image:
+    """
 
     name = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)
@@ -40,7 +49,16 @@ class Category(models.Model):
 
 # class for supplier for stock
 class Supplier(models.Model):
-    """Supplier."""
+    """
+    Supplier model
+
+    Attributes:
+        name:
+        address:
+        contact_no:
+        created_at:
+        updated_at:
+    """
 
     name = models.CharField(max_length=50)
     address = models.TextField()
@@ -67,7 +85,13 @@ class Network(models.Model):
 
 class Manufacturer(models.Model):
     """
-    Manufacturer. for item description
+    Manufacturer model
+
+    Attributes:
+        name:
+        description:
+        created_at:
+        updated_at:
     """
 
     name = models.CharField(max_length=100)
@@ -80,8 +104,6 @@ class Manufacturer(models.Model):
 
 
 class StockItemManager(models.Manager):
-    """StockItemManager."""
-
     def get_queryset(self):
         return super().get_queryset().filter(status=StockItem.Status.AVAILABLE)
 
@@ -202,14 +224,28 @@ class StockItemImage(models.Model):
 
 
 class ItemLocation(models.Model):
-    """ItemLocation."""
+    """
+    ItemLocation model for mapping item and location
+
+    Attributes:
+        item:
+        location:
+    """
 
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
     location = models.ForeignKey(Department, on_delete=models.CASCADE)
 
 
 class ItemOnHand(models.Model):
-    """ItemOnHand."""
+    """
+    ItemOnHand model for tracking item on hand
+
+    Attributes:
+        item:
+        user:
+        created_at:
+        is_done:
+    """
 
     item = models.ForeignKey(StockItem, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)

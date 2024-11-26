@@ -17,7 +17,7 @@ from asset.models import (
 
 # ModelForm for categorie
 class CategoryForm(forms.ModelForm):
-    """CategoryForm."""
+    """ModelForm for categorie"""
 
     class Meta:
         model = Category
@@ -41,7 +41,7 @@ class CategoryForm(forms.ModelForm):
 
 # ModelForm for supplier
 class SupplierForm(forms.ModelForm):
-    """SupplierForm."""
+    """SupplierForm. ModelForm for supplier"""
 
     class Meta:
         model = Supplier
@@ -67,6 +67,8 @@ class SupplierForm(forms.ModelForm):
 
 # ModelForm For Network
 class NetworkForm(forms.ModelForm):
+    """NetworkForm. ModelForm for network"""
+
     class Meta:
         model = Network
         fields = (
@@ -89,6 +91,14 @@ class NetworkForm(forms.ModelForm):
 
 # ModelForm for StockItem
 class StockItemForm(forms.ModelForm):
+    """
+    ModelForm for StockItem
+
+    Attributes:
+        images:
+        installed:
+    """
+
     images = forms.ImageField(
         widget=forms.ClearableFileInput(
             attrs={
