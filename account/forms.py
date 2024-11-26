@@ -6,14 +6,17 @@
 # Last Modified Date: Thu Dec, 22 2022, 00:16 356
 # Last Modified By  : lu5her <lu5her@mail>
 from django import forms
-from django.forms import widgets
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
+from django.forms import widgets
 
-from account.models import Sector, Rank, Position, Profile, LineToken
+from account.models import LineToken, Position, Profile, Rank, Sector
 
 
 class UserForm(forms.ModelForm):
+    """
+    Form for creating and updating user information.
+    """
+
     class Meta:
         model = User
         fields = ("first_name", "last_name", "email")
@@ -26,6 +29,10 @@ class UserForm(forms.ModelForm):
 
 
 class ProfileForm(forms.ModelForm):
+    """
+    Form for creating and updating profile information.
+    """
+
     class Meta:
         model = Profile
         fields = (
@@ -83,6 +90,10 @@ class ProfileForm(forms.ModelForm):
 
 
 class RankForm(forms.ModelForm):
+    """
+    Form for creating and updating rank information.
+    """
+
     class Meta:
         model = Rank
         fields = ("name",)

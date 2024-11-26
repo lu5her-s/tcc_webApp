@@ -1,3 +1,6 @@
+{% load tags %}
+<!-- ======= Messages Dropdown Items ======= -->
+
 <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
   <i class="bi bi-bell"></i>
   <span class="badge bg-warning badge-number">{{ count_total }}</span>
@@ -81,6 +84,42 @@
     {% endif %}
     <hr class="dropdown-divider">
   </li>
+
+  {% if request.user|has_group:"Command" %}
+  {% if operation_wait_open.count %}
+  <li>
+    <hr class="dropdown-divider">
+  </li>
+  <a href="{% url 'operation:home' %}">
+    <li class="notification-item">
+      <i class="bi bi-file-earmark-check text-success"></i>
+      <div>
+        <h4>การปฏิบัติงาน</h4>
+        <p>รอตรวจสอบ</p>
+        <p>จำนวน {{ operation_wait_open.count }} การปฏิบัติ</p>
+      </div>
+    </li>
+  </a>
+  {% endif %}
+
+  <li>
+    <hr class="dropdown-divider">
+  </li>
+
+  {% if operation_wait_close %}
+  <a href="{% url 'operation:home' %}">
+    <li class="notification-item">
+      <i class="bi bi-file-earmark-check text-success"></i>
+      <div>
+        <h4>การปฏิบัติงาน</h4>
+        <p>รอตรวจสอบ</p>
+        <p>จำนวน {{ operation_wait_close.count }} การปฏิบัติ</p>
+      </div>
+    </li>
+  </a>
+
+  {% endif %}
+  {% endif %}
 
 </ul>
 <!-- End Messages Dropdown Items -->

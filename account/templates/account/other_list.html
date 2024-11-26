@@ -3,64 +3,74 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}Members{% endblock title %}
+  {% block title %}Members{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>All Members In {{ bc_title|title }}</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'account:members' %}">Members</a></li>
-            <li class="breadcrumb-item active">{{ bc_title|title }}</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'account:members' %}">Members</a></li>
+        <li class="breadcrumb-item active">{{ bc_title|title }}</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
-<section class="section profile">
+  <section class="section profile">
     <div class="row">
 
-        <div class="col-xl-12">
+      <div class="col-xl-12">
 
-            <!-- Recent Job -->
-            <div class="col-12">
-                <div class="card recent-sales overflow-auto">
+        <!-- Recent Job -->
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
 
 
-                    <div class="card-body">
-                        <h5 class="card-title">{{ bc_title|capfirst }} <span>| List</span></h5>
+            <div class="card-body">
+              <h5 class="card-title">{{ bc_title|capfirst }} <span>| List</span></h5>
 
-                        <table class="table table-hover datatable" id="dataTable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Sector</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Position</th>
-                                    <th scope="col">Place</th>
-                                    <th scope="col">Phone</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for member in object_list %}
-                                <tr>
-                                    <th scope="row"><a href="#">{{ member.sector.name }}</a></th>
-                                    <td><a href="{% url 'account:member' pk=member.pk %}">{{ member.rank.name }} {{ member.user.get_full_name }}</a></td>
-                                    <td><a href="#" class="text-primary">{{ member.position.name }}</a></td>
-                                    <td>{{ member.place }}</td>
-                                    <td>{{ member.phone }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+              <table class="table table-hover datatable" id="dataTable">
+                <thead>
+                  <tr>
+                    <th scope="col">Sector</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Place</th>
+                    <th scope="col">Phone</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for member in object_list %}
+                  <tr>
+                    <th scope="row"><a href="#">
+                      {% if member.sector %}
+                      <a href="{% url 'account:sectors' sector_pk=member.sector.pk %}">{{ member.sector.name }}</a>
+                      {% else %}
+                      <a href="#">{{ member.sector.name|default:'-' }}</a>
+                      {% endif %}
+                    </a></th>
+                    <td><a href="{% url 'account:member' pk=member.pk %}">{{ member.rank.name }} {{ member.user.get_full_name }}</a></td>
+                    {% if member.position %}
+                    <td><a href="{% url 'account:positions' position_pk=member.position.pk %}" class="text-primary">{{ member.position.name }}</a></td>
+                    {% else %}
+                    <td>-</td>
+                    {% endif %}
+                    <td>{{ member.place }}</td>
+                    <td>{{ member.phone }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
 
-                    </div>
+            </div>
 
-                </div>
-            </div><!-- End Recent Sales -->
+          </div>
+        </div><!-- End Recent Sales -->
 
-        </div>
+      </div>
 
     </div>
     </div>
-</section>
-{% endblock content %}
+  </section>
+  {% endblock content %}

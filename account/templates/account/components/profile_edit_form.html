@@ -1,0 +1,146 @@
+{% load tags %}
+{% load static %}
+
+<form method="post" enctype="multipart/form-data" action="{% url 'account:profile-update' %}">
+  {% csrf_token %}
+  {% comment %}{{ user_form }}{% endcomment %}
+  {% comment %}{{ profile_form }}{% endcomment %}
+  <div class="row mb-3">
+    <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
+    <div class="col-md-8 col-lg-9">
+      {% if request.user.profile.image %}
+      <img src="{{ request.user.profile.image.url }}" alt="Profile_form">
+      {% else %}
+      <img src="{% static 'assets/img/profile.png' %}" alt="Profile">
+      {% endif %}
+      <div class="pt-2">
+        {{ profile_form.image }}
+        {% comment %}<a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>{% endcomment %}
+        {% comment %}<a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>{% endcomment %}
+      </div>
+    </div>
+  </div>
+
+  {% comment %}{{ request.path }}{% endcomment %}
+  <div class="row mb-3">
+    <label for="{{ profile_form.rank.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.rank.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      {% comment %}<input name="{{ profile_form.first_name.name }}" type="text" class="form-control" id="{{ profile_form.rank.name }}" value="{{ profile_form.instance.rank }}">{% endcomment %}
+      {{ profile_form.rank }}
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label for="{{ user_form.first_name.name }}" class="col-md-4 col-lg-3 col-form-label">{{ user_form.first_name.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      <input name="{{ user_form.first_name.name }}" type="text" class="form-control" id="{{ user_form.first_name.name }}" value="{{ user_form.instance.first_name }}">
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label for="{{ user_form.last_name.name }}" class="col-md-4 col-lg-3 col-form-label">{{ user_form.last_name.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      <input name="{{ user_form.last_name.name }}" type="text" class="form-control" id="{{ user_form.last_name.name }}" value="{{ user_form.instance.last_name }}">
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label for="{{ profile_form.position.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.position.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      {% comment %}<textarea name="about" class="form-control" id="about" style="height: 100px">Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Tempora libero non est unde veniam est qui dolor. Ut sunt iure rerum quae quisquam autem eveniet perspiciatis odit. Fuga sequi sed ea saepe at unde.</textarea>{% endcomment %}
+      {{ profile_form.position }}
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label for="{{ profile_form.sector.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.sector.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      {% comment %}<input name="company" type="text" class="form-control" id="company" value="Lueilwitz, Wisoky and Leuschke">{% endcomment %}
+      {{ profile_form.sector }}
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label for="{{ profile_form.department.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.department.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      {% comment %}<input name="country" type="text" class="form-control" id="Country" value="USA">{% endcomment %}
+      {{ profile_form.department }}
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label for="{{ profile_form.address.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.address.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      {% comment %}<input name="address" type="text" class="form-control" id="Address" value="A108 Adam Street, New York, NY 535022">{% endcomment %}
+      {{ profile_form.address }}
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label for="{{ profile_form.phone.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.phone.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      {% comment %}<input name="phone" type="text" class="form-control" id="Phone" value="(436) 486-3538 x29071">{% endcomment %}
+      {{ profile_form.phone }}
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label for="{{ user_form.email.name }}" class="col-md-4 col-lg-3 col-form-label">{{ user_form.email.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      {% comment %}<input name="email" type="email" class="form-control" id="Email" value="k.anderson@example.com">{% endcomment %}
+      {{ user_form.email }}
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label for="{{ profile_form.twitter.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.twitter.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      {% comment %}<input name="twitter" type="text" class="form-control" id="Twitter" value="https://twitter.com/#">{% endcomment %}
+      {{ profile_form.twitter }}
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label for="{{ profile_form.facebook.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.facebook.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      {% comment %}<input name="facebook" type="text" class="form-control" id="Facebook" value="https://facebook.com/#">{% endcomment %}
+      {{ profile_form.facebook }}
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label for="{{ profile_form.instagram.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.instagram.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      {% comment %}<input name="instagram" type="text" class="form-control" id="Instagram" value="https://instagram.com/#">{% endcomment %}
+      {{ profile_form.instagram }}
+    </div>
+  </div>
+
+  <div class="row mb-3">
+  <label for="{{ profile_form.line_id.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.line_id.label }}</label>
+  <div class="col-md-8 col-lg-9">
+    {% comment %}<input name="linkedin" type="text" class="form-control" id="Linkedin" value="https://linkedin.com/#">{% endcomment %}
+    {{ profile_form.line_id }}
+  </div>
+</div>
+
+  <div class="row mb-3">
+    <label for="{{ profile_form.line_token.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.line_token.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      {% comment %}<input name="linkedin" type="text" class="form-control" id="Linkedin" value="https://linkedin.com/#">{% endcomment %}
+      {{ profile_form.line_token }}
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label for="{{ profile_form.about.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.about.label }}</label>
+    <div class="col-md-8 col-lg-9">
+      {% comment %}<input name="linkedin" type="text" class="form-control" id="Linkedin" value="https://linkedin.com/#">{% endcomment %}
+      {{ profile_form.about }}
+    </div>
+  </div>
+
+  <div class="text-center">
+    <button type="submit" class="btn btn-primary">บันทึก</button>
+  </div>
+</form><!-- End Profile Edit Form -->

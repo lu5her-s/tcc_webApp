@@ -2,50 +2,50 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}
-    Register
-{% endblock title %}
+  {% block title %}
+  Register
+  {% endblock title %}
 
-{% block content %}
+  {% block content %}
 
-<div class="container">
+  <div class="container">
 
     <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="logo d-flex justify-content-center py-4">
-                    <a href="{% url 'home' %}" class="d-flex align-items-center w-auto">
-                        <img src="{% static 'assets/img/logo.png' %}">
-                        <span class="d-none d-lg-block">TCC Portal</span>
-                    </a>
-                </div><!-- end logo -->
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="logo d-flex justify-content-center py-4">
+            <a href="{% url 'home' %}" class="d-flex align-items-center w-auto">
+              <img src="{% static 'assets/img/logo.png' %}">
+              <span class="d-none d-lg-block">TCC Portal</span>
+            </a>
+          </div><!-- end logo -->
 
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="pt-4 pb-2">
-                            <h5 class="card-title text-center pb-0 fs-4">ลงทะเบียนบัญชีเข้าใช้งาน</h5>
-                            <p class="text-center small">Enter your personal details to create account</p>
-                        </div>
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">ลงทะเบียนบัญชีเข้าใช้งาน</h5>
+                <p class="text-center small">Enter your personal details to create account</p>
+              </div>
 
-                        <form class="row g-3" method="post">
-                            <label class="form-label" for="{{ form.username.name }}">Username</label>
-                            <input type="text" name="{{ form.username.name }}" class="form-control">
-                            
-                            <label class="form-la" for="{{ form.password1.name }}">Password</label>
-                            <input type="password" name="{{ form.password1.name }}" class="form-control">
+              <form class="row g-3" method="post">
+                <label class="form-label" for="{{ form.username.name }}">Username</label>
+                <input type="text" name="{{ form.username.name }}" class="form-control">
+
+                <label class="form-la" for="{{ form.password1.name }}">Password</label>
+                <input type="password" name="{{ form.password1.name }}" class="form-control">
 
 
-                            <label class="form-la" for="{{ form.password2.name }}">Re-Password</label>
-                            <input type="password" name="{{ form.password2.name }}" class="form-control">
-                        </form>
-                    </div>
-                </div>
+                <label class="form-la" for="{{ form.password2.name }}">Re-Password</label>
+                <input type="password" name="{{ form.password2.name }}" class="form-control">
+              </form>
             </div>
+          </div>
         </div>
+      </div>
     </section>
-</div>
+  </div>
 
-<br><br><br>
+  <br><br><br>
 
-{% endblock content %}
+  {% endblock content %}
 

@@ -3,63 +3,63 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}Members{% endblock title %}
+  {% block title %}Members{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>All Members List</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item active">Members</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active">Members</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
-<section class="section profile">
+  <section class="section profile">
     <div class="row">
 
-        <div class="col-xl-12">
+      <div class="col-xl-12">
 
-            <!-- Recent Job -->
-            <div class="col-12">
-                <div class="card recent-sales overflow-auto">
+        <!-- Recent Job -->
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
 
 
-                    <div class="card-body">
-                        <h5 class="card-title">{{ title }} <span>| List</span></h5>
+            <div class="card-body">
+              <h5 class="card-title">{{ title }} <span>| List</span></h5>
 
-                        <table class="table table-hover table-borderless datatable" id="dataTable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Sector</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Position</th>
-                                    <th scope="col">Place</th>
-                                    <th scope="col">Phone</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for member in object_list %}
-                                <tr>
-                                    <th scope="row"><a href="{% url 'account:sector' pk=member.profile.sector.pk %}">{{ member.sector.name }}</a></th>
-                                    <td><a href="{% url 'account:member' pk=member.pk %}">{{ member.profile.rank.name }} {{ member.get_full_name }}</a></td>
-                                    <td><a href="#" class="text-primary">{{ member.profile.position.name }}</a></td>
-                                    <td>{{ member.profile.place }}</td>
-                                    <td>{{ member.profile.phone }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+              <table class="table table-hover table-borderless datatable" id="dataTable">
+                <thead>
+                  <tr>
+                    <th scope="col">Sector</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Place</th>
+                    <th scope="col">Phone</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for member in object_list %}
+                  <tr>
+                    <th scope="row"><a href="{% url 'account:sector' pk=member.profile.sector.pk %}">{{ member.sector.name }}</a></th>
+                    <td><a href="{% url 'account:member' pk=member.pk %}">{{ member.profile.rank.name }} {{ member.get_full_name }}</a></td>
+                    <td><a href="#" class="text-primary">{{ member.profile.position.name }}</a></td>
+                    <td>{{ member.profile.place }}</td>
+                    <td>{{ member.profile.phone }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
 
-                    </div>
+            </div>
 
-                </div>
-            </div><!-- End Recent Sales -->
+          </div>
+        </div><!-- End Recent Sales -->
 
-        </div>
+      </div>
 
     </div>
     </div>
-</section>
-{% endblock content %}
+  </section>
+  {% endblock content %}

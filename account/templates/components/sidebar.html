@@ -2,141 +2,146 @@
 {% load tags %}
 
 <!-- ======= Sidebar ======= -->
-  <aside id="sidebar" class="sidebar">
+<aside id="sidebar" class="sidebar">
 
-    <ul class="sidebar-nav" id="sidebar-nav">
+  <ul class="sidebar-nav" id="sidebar-nav">
 
-      <li class="nav-item">
-        <a class="nav-link " href="{% url 'home' %}">
-          <i class="bi bi-grid"></i>
-          <span>หน้าหลัก</span>
-        </a>
-      </li><!-- End Dashboard Nav -->
+    <li class="nav-item">
+      <a class="nav-link " href="{% url 'home' %}">
+        <i class="bi bi-grid"></i>
+        <span>หน้าหลัก</span>
+      </a>
+    </li><!-- End Dashboard Nav -->
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-menu-button-wide"></i><span>การจัดการ</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="{% url 'announce:list' %}">
-              <i class="bi bi-circle"></i><span>ประชาสัมพันธ์/สั่งการ</span>
-            </a>
-          </li>
+    <li class="nav-item">
+      <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-menu-button-wide"></i><span>การจัดการ</span><i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li>
+          <a href="{% url 'announce:list' %}">
+            <i class="bi bi-circle"></i><span>ประชาสัมพันธ์/สั่งการ</span>
+          </a>
+        </li>
 
-          <li>
-            <a href="{% url 'document:home' %}">
-              <i class="bi bi-circle"></i><span>สารบรรณ</span>
-            </a>
-          </li>
+        <li>
+          <a href="{% url 'document:home' %}">
+            <i class="bi bi-circle"></i><span>สารบรรณ</span>
+          </a>
+        </li>
 
-          <li>
-            {% if request.user|has_group:"Staff" %}
-            <a href="{% url 'assign:staff-list' %}">
-              <i class="bi bi-circle"></i><span>การมอบหมายงาน</span>
-            </a>
-            {% else %}
-            <a href="{% url 'assign:list' %}">
-              <i class="bi bi-circle"></i><span>การมอบหมายงาน</span>
-            </a>
-            {% endif %}
-          </li>
+        <li>
+          {% if request.user|has_group:"Staff" %}
+          <a href="{% url 'assign:staff-list' %}">
+            <i class="bi bi-circle"></i><span>การมอบหมายงาน</span>
+          </a>
+          {% else %}
+          <a href="{% url 'assign:list' %}">
+            <i class="bi bi-circle"></i><span>การมอบหมายงาน</span>
+          </a>
+          {% endif %}
+        </li>
 
-          <li>
-            <a href="{% url 'journal:list' %}">
-              <i class="bi bi-circle"></i><span>การปฏิบัติงาน</span>
-            </a>
-          </li>
+        <li>
+          <a href="{% url 'journal:list' %}">
+            <i class="bi bi-circle"></i><span>การปฏิบัติงาน</span>
+          </a>
+        </li>
 
-          <li>
-            <a href="{% url 'car:list' %}">
-              <i class="bi bi-circle"></i><span>ยานพาหนะ</span>
-            </a>
-          </li>
+        <li>
+          <a href="{% url 'car:list' %}">
+            <i class="bi bi-circle"></i><span>ยานพาหนะ</span>
+          </a>
+        </li>
 
-          <li>
-            <a href="{% url 'asset:stockitem_home' %}">
-              <i class="bi bi-circle"></i><span>พัสดุ</span>
-            </a>
-          </li>
+        <li>
+          <a href="{% url 'asset:stockitem_home' %}">
+            <i class="bi bi-circle"></i><span>พัสดุ</span>
+          </a>
+        </li>
 
-          <li>
-            <a href="{% url 'parcel:home' %}">
-              <i class="bi bi-circle"></i><span>เบิก/คืน พัสดุ</span>
-            </a>
-          </li>
+        <li>
+          <a href="{% url 'parcel:home' %}">
+            <i class="bi bi-circle"></i><span>เบิก/คืน พัสดุ</span>
+          </a>
+        </li>
 
-          <li>
-            <a href="{% url 'inform:home' %}">
-              <i class="bi bi-circle"></i><span>แจ้งซ่อม</span>
-            </a>
-          </li>
+        <li>
+          <a href="{% url 'inform:home' %}">
+            <i class="bi bi-circle"></i><span>แจ้งซ่อม</span>
+          </a>
+        </li>
 
-          <li>
-            <a href="{% url 'operation:home' %}">
-              <i class="bi bi-circle"></i><span>ใบงาน</span>
-            </a>
-          </li>
+        <li>
+          <a href="{% url 'operation:home' %}">
+            <i class="bi bi-circle"></i><span>ใบงาน</span>
+          </a>
+        </li>
 
-       </ul>
-      </li><!-- End Components Nav -->
+      </ul>
+    </li><!-- End Components Nav -->
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-journal-text"></i><span>สถานภาพ</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="{% url 'develop' %}">
-              <i class="bi bi-circle"></i><span>Sector 1</span>
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'develop' %}">
-              <i class="bi bi-circle"></i><span>Sector 2</span>
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'develop' %}">
-              <i class="bi bi-circle"></i><span>Sector 3</span>
-            </a>
-          </li>
-          <li>
-            <a href="{% url 'develop' %}">
-              <i class="bi bi-circle"></i><span>Sector 4</span>
-            </a>
-          </li>
-        </ul>
-      </li><!-- End Forms Nav -->
+    <li class="nav-item">
+      <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-journal-text"></i><span>สถานภาพ</span><i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <li>
+          <a href="{% url 'develop' %}">
+            <i class="bi bi-circle"></i><span>ส่วนกลาง</span>
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'develop' %}">
+            <i class="bi bi-circle"></i><span>ปก.ทภ.1</span>
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'develop' %}">
+            <i class="bi bi-circle"></i><span>ปก.ทภ.2</span>
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'develop' %}">
+            <i class="bi bi-circle"></i><span>ปก.ทภ.3</span>
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'develop' %}">
+            <i class="bi bi-circle"></i><span>ปก.ทภ.4</span>
+          </a>
+        </li>
+      </ul>
+    </li><!-- End Forms Nav -->
 
 
 
 
-      <li class="nav-heading">Information</li>
+    <li class="nav-heading">Information</li>
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'account:members' %}">
-          <i class="bi bi-person"></i>
-          <span>กำลังพล</span>
-        </a>
-      </li><!-- End Profile List Page Nav -->
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="{% url 'account:members' %}">
+        <i class="bi bi-person"></i>
+        <span>กำลังพล</span>
+      </a>
+    </li><!-- End Profile List Page Nav -->
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'contact' %}">
-          <i class="bi bi-envelope"></i>
-          <span>ติดต่อ</span>
-        </a>
-      </li><!-- End Profile List Page Nav -->
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="{% url 'contact' %}">
+        <i class="bi bi-envelope"></i>
+        <span>ติดต่อ</span>
+      </a>
+    </li><!-- End Profile List Page Nav -->
 
-      {% if request.user.is_superuser %}
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'admin:index' %}">
-          <i class="bi bi-at"></i>
-          <span>Admin Page</span>
-        </a>
-      </li><!-- End Admin Page -->
-      {% endif %}
+    {% if request.user.is_superuser %}
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="{% url 'admin:index' %}">
+        <i class="bi bi-at"></i>
+        <span>Admin Page</span>
+      </a>
+    </li><!-- End Admin Page -->
+    {% endif %}
 
-    </ul>
+  </ul>
 
-  </aside><!-- End Sidebar-->
+</aside><!-- End Sidebar-->

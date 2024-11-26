@@ -11,23 +11,44 @@ from account.models import Department, LineToken, Profile, Rank, Sector, Positio
 
 # Register your models here.
 
+
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'rank', 'full_name', 'sector', 'position', 'department')
-    list_filter = ('rank', 'sector', 'position')
-    search_fields = ('sector', 'position')
+    """
+    ProfileAdmin แสดงรายการผู้ใช้งาน
+
+    Attributes:
+        list_display:
+        list_filter:
+        search_fields:
+        full_name.short_description:
+    """
+
+    list_display = ("user", "rank", "full_name", "sector", "position", "department")
+    list_filter = ("rank", "sector", "position")
+    search_fields = ("sector", "position")
 
     def full_name(self, obj):
+        """
+        get full name of user
+
+        Args:
+            obj ():
+
+        Returns:
+
+        """
         return obj.user.get_full_name()
-    full_name.short_description = 'Full Name'
+
+    full_name.short_description = "Full Name"
 
 
 @admin.register(LineToken)
 class LineTokenAdmin(admin.ModelAdmin):
-    list_display = ('name', 'token')
-    list_filter = ('name',)
-    search_fields = ('name', 'token')
-    list_editable = ('token',)
+    list_display = ("name", "token")
+    list_filter = ("name",)
+    search_fields = ("name", "token")
+    list_editable = ("token",)
 
 
 # admin.site.register(Profile)

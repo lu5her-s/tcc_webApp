@@ -1,392 +1,120 @@
 {% extends "base.html" %}
 {%load static%}
 
-{% block title %}Profile{% endblock title %}
+  {% block title %}Profile{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>Profile</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'account:members' %}">Members</a></li>
-            <li class="breadcrumb-item active">Profile</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'account:members' %}">Members</a></li>
+        <li class="breadcrumb-item active">Profile</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
-<section class="section profile">
+  <section class="section profile">
     <div class="row">
-        <div class="col-xl-4">
+      <div class="col-xl-4">
+        {% include "account/components/card_profile_avatar.html" %}
 
-            <div class="card">
-                <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+      </div>
 
-                    {% if user.profile.image %}
-                    <img src="{{ user.profile.image.url }}" alt="Profile" class="rounded-circle">
-                    {% else %}
-                    <img src="{% static 'assets/img/profile.png' %}" alt="Profile" class="rounded-circle">
-                    {% endif %}
-                    {% if user.first_name and user.last_name %}
-                    <h2>{{ user.get_full_name }}</h2>
-                        {% if user.profile.position %} 
-                        <h3>{{ user.profile.position.name }}</h3>
-                        {% endif %}
-                    {% else %}
-                        <h3>รอการอัพเดท Profile</h3>
-                    {% endif %}
-                    <div class="social-links mt-2">
-                        <a href="{{ user.profile.twitter }}" class="twitter" target="_blank"><i class="bi bi-twitter"></i></a>
-                        <a href="{{ user.profile.facebook }}" class="facebook" target="_blank"><i class="bi bi-facebook"></i></a>
-                        <a href="{{ user.profile.instagram }}" class="instagram" target="_blank"><i class="bi bi-instagram"></i></a>
-                        {% comment %}<a href="{{ request.user.profile.line_id }}" class="linkedin"><i class="bi bi-line"></i></a>{% endcomment %}
+      <div class="col-xl-8">
+
+        <div class="card">
+          <div class="card-body pt-3">
+            <!-- Bordered Tabs -->
+            <ul class="nav nav-tabs nav-tabs-bordered">
+
+              <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+              </li>
+
+              {% comment %}{% if request.user == user %}{% endcomment %}
+              {% if request.path == '/account/profile/' %}
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+              </li>
+
+              {% comment %}<li class="nav-item">{% endcomment %}
+              {% comment %}<button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">Settings</button>{% endcomment %}
+              {% comment %}</li>{% endcomment %}
+
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+              </li>
+
+              {% endif %}
+
+            </ul>
+            <div class="tab-content pt-2">
+
+              <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                {% include "account/components/overview.html" %}
+
+              </div>
+
+              <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                <!-- Profile Edit Form -->
+                {% include "account/components/profile_edit_form.html" %}
+
+              </div>
+
+              <div class="tab-pane fade pt-3" id="profile-settings">
+
+                <!-- Settings Form -->
+                <form>
+
+                  <div class="row mb-3">
+                    <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
+                    <div class="col-md-8 col-lg-9">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="changesMade" checked>
+                        <label class="form-check-label" for="changesMade">
+                          Changes made to your account
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="newProducts" checked>
+                        <label class="form-check-label" for="newProducts">
+                          Information on new products and services
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="proOffers">
+                        <label class="form-check-label" for="proOffers">
+                          Marketing and promo offers
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="securityNotify" checked disabled>
+                        <label class="form-check-label" for="securityNotify">
+                          Security alerts
+                        </label>
+                      </div>
                     </div>
-                    <div class="social-links mt-2">
-                        <i class="bi bi-line">{{ user.profile.line_id }}</i>
-                    </div>
-                </div>
-            </div>
+                  </div>
 
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                  </div>
+                </form><!-- End settings Form -->
+
+              </div>
+
+              <div class="tab-pane fade pt-3" id="profile-change-password">
+                <p>Change Password<a href="{% url 'account:change-password' %}">&nbsp;Here</a></p>
+              </div>
+
+            </div><!-- End Bordered Tabs -->
+
+          </div>
         </div>
 
-        <div class="col-xl-8">
-
-            <div class="card">
-                <div class="card-body pt-3">
-                    <!-- Bordered Tabs -->
-                    <ul class="nav nav-tabs nav-tabs-bordered">
-
-                        <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
-                        </li>
-
-                        {% comment %}{% if request.user == user %}{% endcomment %}
-                        {% if request.path == '/account/profile/' %}
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
-                        </li>
-
-                        {% comment %}<li class="nav-item">{% endcomment %}
-                            {% comment %}<button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">Settings</button>{% endcomment %}
-                            {% comment %}</li>{% endcomment %}
-
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
-                        </li>
-
-                        {% endif %}
-                       
-                    </ul>
-                    <div class="tab-content pt-2">
-
-                        <div class="tab-pane fade show active profile-overview" id="profile-overview">
-                            <h5 class="card-title">About</h5>
-                            {% if user.profile.about %}
-                            <p class="small fst-italic">{{ user.profile.about }}</p>
-                            {% endif %}
-
-                            <h5 class="card-title">Profile Details</h5>
-
-                            <div class="row">
-                                <div class="col-lg-3 col-md-4 label ">ยศ ชื่อ-สกุล</div>
-                                {% if user.get_full_name %}
-                                <div class="col-lg-9 col-md-8">{{ user.profile.rank.name }} {{ user.get_full_name }}</div>
-                                {% else %}
-                                <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
-                                {% endif %}
-                            </div>
-
-                            <div class="row">
-                                <div class="col-lg-3 col-md-4 label">สังกัด</div>
-                                {% if user.profile.sector %}
-                                <div class="col-lg-9 col-md-8">{{ user.profile.sector }}</div>
-                                {% else %}
-                                <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
-                                {% endif %}
-                            </div>
-
-                            <div class="row">
-                                <div class="col-lg-3 col-md-4 label">ตำแหน่ง</div>
-                                {% if user.profile.position %}
-                                <div class="col-lg-9 col-md-8">{{ user.profile.position }}</div>
-                                {% else %}
-                                <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
-                                {% endif %}
-                            </div>
-
-                            <div class="row">
-                                <div class="col-lg-3 col-md-4 label">สถานที่ทำงาน</div>
-                                {% if user.profile.department %}
-                                <div class="col-lg-9 col-md-8">{{ user.profile.department }}</div>
-                                {% else %}
-                                <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
-                                {% endif %}
-                            </div>
-
-                            <div class="row">
-                                <div class="col-lg-3 col-md-4 label">ที่อยู่</div>
-                                {% if user.profile.address %}
-                                <div class="col-lg-9 col-md-8">{{ user.profile.address }}</div>
-                                {% else %}
-                                <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
-                                {% endif %}
-                            </div>
-
-                            <div class="row">
-                                <div class="col-lg-3 col-md-4 label">โทรศัพท์</div>
-                                {% if user.profile.phone %}
-                                <div class="col-lg-9 col-md-8">{{ user.profile.phone }}</div>
-                                {% else %}
-                                <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
-                                {% endif %}
-                            </div>
-
-                            <div class="row">
-                                <div class="col-lg-3 col-md-4 label">Email</div>
-                                {% if user.email %}
-                                <div class="col-lg-9 col-md-8">{{ user.email }}</div>
-                                {% else %}
-                                <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
-                                {% endif %}
-                            </div>
-
-                        </div>
-
-                        <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
-
-                            <!-- Profile Edit Form -->
-                            <form method="post" enctype="multipart/form-data" action="{% url 'account:profile-update' %}">
-                                {% csrf_token %}
-                                {% comment %}{{ user_form }}{% endcomment %}
-                                {% comment %}{{ profile_form }}{% endcomment %}
-                                <div class="row mb-3">
-                                    <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% if request.user.profile.image %}
-                                        <img src="{{ request.user.profile.image.url }}" alt="Profile_form">
-                                        {% else %}
-                                        <img src="{% static 'assets/img/profile.png' %}" alt="Profile">
-                                        {% endif %}
-                                        <div class="pt-2">
-                                            {{ profile_form.image }}
-                                            {% comment %}<a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>{% endcomment %}
-                                            {% comment %}<a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>{% endcomment %}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {% comment %}{{ request.path }}{% endcomment %}
-                                <div class="row mb-3">
-                                    <label for="{{ profile_form.rank.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.rank.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% comment %}<input name="{{ profile_form.first_name.name }}" type="text" class="form-control" id="{{ profile_form.rank.name }}" value="{{ profile_form.instance.rank }}">{% endcomment %}
-                                        {{ profile_form.rank }}
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ user_form.first_name.name }}" class="col-md-4 col-lg-3 col-form-label">{{ user_form.first_name.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        <input name="{{ user_form.first_name.name }}" type="text" class="form-control" id="{{ user_form.first_name.name }}" value="{{ user_form.instance.first_name }}">
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ user_form.last_name.name }}" class="col-md-4 col-lg-3 col-form-label">{{ user_form.last_name.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        <input name="{{ user_form.last_name.name }}" type="text" class="form-control" id="{{ user_form.last_name.name }}" value="{{ user_form.instance.last_name }}">
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ profile_form.position.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.position.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% comment %}<textarea name="about" class="form-control" id="about" style="height: 100px">Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Tempora libero non est unde veniam est qui dolor. Ut sunt iure rerum quae quisquam autem eveniet perspiciatis odit. Fuga sequi sed ea saepe at unde.</textarea>{% endcomment %}
-                                        {{ profile_form.position }}
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ profile_form.sector.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.sector.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% comment %}<input name="company" type="text" class="form-control" id="company" value="Lueilwitz, Wisoky and Leuschke">{% endcomment %}
-                                        {{ profile_form.sector }}
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ profile_form.department.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.department.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% comment %}<input name="country" type="text" class="form-control" id="Country" value="USA">{% endcomment %}
-                                        {{ profile_form.department }}
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ profile_form.address.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.address.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% comment %}<input name="address" type="text" class="form-control" id="Address" value="A108 Adam Street, New York, NY 535022">{% endcomment %}
-                                        {{ profile_form.address }}
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ profile_form.phone.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.phone.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% comment %}<input name="phone" type="text" class="form-control" id="Phone" value="(436) 486-3538 x29071">{% endcomment %}
-                                        {{ profile_form.phone }}
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ user_form.email.name }}" class="col-md-4 col-lg-3 col-form-label">{{ user_form.email.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% comment %}<input name="email" type="email" class="form-control" id="Email" value="k.anderson@example.com">{% endcomment %}
-                                        {{ user_form.email }}
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ profile_form.twitter.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.twitter.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% comment %}<input name="twitter" type="text" class="form-control" id="Twitter" value="https://twitter.com/#">{% endcomment %}
-                                        {{ profile_form.twitter }}
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ profile_form.facebook.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.facebook.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% comment %}<input name="facebook" type="text" class="form-control" id="Facebook" value="https://facebook.com/#">{% endcomment %}
-                                        {{ profile_form.facebook }}
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ profile_form.instagram.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.instagram.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% comment %}<input name="instagram" type="text" class="form-control" id="Instagram" value="https://instagram.com/#">{% endcomment %}
-                                        {{ profile_form.instagram }}
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ profile_form.line_id.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.line_id.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% comment %}<input name="linkedin" type="text" class="form-control" id="Linkedin" value="https://linkedin.com/#">{% endcomment %}
-                                        {{ profile_form.line_id }}
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ profile_form.line_token.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.line_token.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% comment %}<input name="linkedin" type="text" class="form-control" id="Linkedin" value="https://linkedin.com/#">{% endcomment %}
-                                        {{ profile_form.line_token }}
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ profile_form.about.name }}" class="col-md-4 col-lg-3 col-form-label">{{ profile_form.about.label }}</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        {% comment %}<input name="linkedin" type="text" class="form-control" id="Linkedin" value="https://linkedin.com/#">{% endcomment %}
-                                        {{ profile_form.about }}
-                                    </div>
-                                </div>
-
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary">บันทึก</button>
-                                </div>
-                            </form><!-- End Profile Edit Form -->
-
-                        </div>
-
-                        <div class="tab-pane fade pt-3" id="profile-settings">
-
-                            <!-- Settings Form -->
-                            <form>
-
-                                <div class="row mb-3">
-                                    <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="changesMade" checked>
-                                            <label class="form-check-label" for="changesMade">
-                                                Changes made to your account
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="newProducts" checked>
-                                            <label class="form-check-label" for="newProducts">
-                                                Information on new products and services
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="proOffers">
-                                            <label class="form-check-label" for="proOffers">
-                                                Marketing and promo offers
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="securityNotify" checked disabled>
-                                            <label class="form-check-label" for="securityNotify">
-                                                Security alerts
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                                </div>
-                            </form><!-- End settings Form -->
-
-                        </div>
-
-                        <div class="tab-pane fade pt-3" id="profile-change-password">
-                            <!-- Change Password Form -->
-
-                            {% comment %} 
-                            <form method="post" action="{% url 'account:change-password' %}">
-                                {% csrf_token %}
-                                {{ password_form }}
-
-                                <div class="row mb-3">
-                                    <label for="{{ password_form.old_password.name }}" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        <input name="password" type="password" class="form-control" id="{{ password_form.old_password.name }}">
-                                        {{ password_form.old_password }}
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ password_form.new_password1.name }}" class="col-md-4 col-lg-3 col-form-label">New Password</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        <input name="{{ password_form.new_password1.name }}" type="password" class="form-control" id="{{ password_form.new_password1.name }}">
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label for="{{ password_form.new_password2.name }}" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
-                                    <div class="col-md-8 col-lg-9">
-                                        <input name="{{ password_form.new_password2.name }}" type="password" class="form-control" id="{{ password_form.new_password2.name }}">
-                                    </div>
-                                </div>
-
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary">Change Password</button>
-                                </div>
-                            </form><!-- End Change Password Form -->
-                            {% endcomment %}
-                            <p>Change Password<a href="{% url 'account:change-password' %}">&nbsp;Here</a></p>
-                        </div>
-
-                    </div><!-- End Bordered Tabs -->
-
-                </div>
-            </div>
-
-        </div>
+      </div>
     </div>
-</section>
-{% endblock content %}
+  </section>
+  {% endblock content %}

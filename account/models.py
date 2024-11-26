@@ -5,8 +5,8 @@
 # Date              : Wed Sep, 28 2022, 22:02 271
 # Last Modified Date: Tue Dec, 20 2022, 20:46 354
 # Last Modified By  : lu5her <lu5her@mail>
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -14,11 +14,26 @@ from django.dispatch import receiver
 
 
 def user_directory_path(instance, filename):
+    """
+    for user profile image
+
+    Args:
+        instance ():
+        filename ():
+
+    Returns:
+
+    """
     return "user_{0}/{1}".format(instance.user.id, filename)
 
 
 class Sector(models.Model):
-    """This class for create sector for department"""
+    """
+    Secotr สำหรับหน่วนงาน หรือสังกัดของ user
+
+    Attributes:
+        name:
+    """
 
     name = models.CharField(max_length=200)
 
@@ -33,7 +48,7 @@ class Department(models.Model):
     """
 
     name = models.CharField(max_length=200)
-    sector = models.ForeignKey(Sector, on_delete=models.CASCADE)
+    sector = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name="sector")
 
     def __str__(self) -> str:
         return f"{self.name}"
@@ -61,7 +76,29 @@ class Position(models.Model):
 
 # NOTE : class for create new profile
 class Profile(models.Model):
-    """create user profile"""
+    """
+        This class for create new profile for use```pythonr
+    # Please provide the code you would like me to edit.
+    ```
+
+
+        Attributes:
+            user:
+            rank:
+            position:
+            sector:
+            department:
+            place:
+            phone:
+            image:
+            about:
+            address:
+            twitter:
+            facebook:
+            instagram:
+            line_id:
+            line_token:
+    """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     rank = models.ForeignKey(Rank, on_delete=models.CASCADE, blank=True, null=True)

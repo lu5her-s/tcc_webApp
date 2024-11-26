@@ -32,13 +32,13 @@ config = dotenv_values(".env")
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-61v=ike9p3)ol&xa33bkw=&ogpw^&*jnh+0zt3afnoq8u5q7)3'
+SECRET_KEY = "django-insecure-61v=ike9p3)ol&xa33bkw=&ogpw^&*jnh+0zt3afnoq8u5q7)3"
 # SECRET_KEY = os.environ['SECRET_KEY']
-SECRET_KEY = config["SECRET_KEY"]
+# SECRET_KEY = config["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = config["DEBUG"]
+DEBUG = True
+# DEBUG = config["DEBUG"]
 
 ALLOWED_HOSTS = ["*"]
 

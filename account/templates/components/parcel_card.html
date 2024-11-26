@@ -2,12 +2,9 @@
 <div class="col-xxl-4 col-xl-12">
 
   <div class="card info-card bg-card">
-
-
     <a href="{% url 'parcel:home' %}">
       <div class="card-body">
         <h5 class="card-title">ใบเบิก <span>| {{ request.user.profile }}</span></h5>
-
         <div class="d-flex align-items-center">
           <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
             <i class="bi bi-clipboard-plus" style="color: green"></i>
@@ -21,10 +18,8 @@
               {% endif %}
               ใบเบิก</h6>
             <span class="text-danger small pt-1 fw-bold">รออนุมัติ {{ bill_wait_approve.count }}</span> <span class="text-muted small pt-2 ps-1">ใบเบิก</span>
-
           </div>
         </div>
-
       </div>
     </a>
   </div>

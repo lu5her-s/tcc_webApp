@@ -10,20 +10,25 @@ from django.contrib import admin
 from document.models import (
     Category,
     Document,
-    Department,
+    Depart,
     Operator,
 )
 
 # Register your models here.
 
+
 # admin.site.register(Document)
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
-    list_display  = ('recieve_number', 'urgency', 'doc_number', 'doc_date', 'created_at')
-    list_filter   = ('urgency', 'doc_number', 'doc_date',)
-    search_fields = ('doc_number', 'title')
+    list_display = ("recieve_number", "urgency", "doc_number", "doc_date", "created_at")
+    list_filter = (
+        "urgency",
+        "doc_number",
+        "doc_date",
+    )
+    search_fields = ("doc_number", "title")
 
 
-admin.site.register(Department)
+admin.site.register(Depart)
 admin.site.register(Operator)
 admin.site.register(Category)

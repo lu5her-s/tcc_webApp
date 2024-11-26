@@ -1,0 +1,29 @@
+{% load tags %}
+{% load static %}
+
+<div class="card">
+  <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+    {% if user.profile.image %}
+    <img src="{{ user.profile.image.url }}" alt="Profile" class="rounded-circle">
+    {% else %}
+    <img src="{% static 'assets/img/profile.png' %}" alt="Profile" class="rounded-circle">
+    {% endif %}
+    {% if user.first_name and user.last_name %}
+    <h2>{{ user.get_full_name }}</h2>
+    {% if user.profile.position %}
+    <h3>{{ user.profile.position.name }}</h3>
+    {% endif %}
+    {% else %}
+    <h3>รอการอัพเดท Profile</h3>
+    {% endif %}
+    <div class="social-links mt-2">
+      <a href="{{ user.profile.twitter }}" class="twitter" target="_blank"><i class="bi bi-twitter"></i></a>
+      <a href="{{ user.profile.facebook }}" class="facebook" target="_blank"><i class="bi bi-facebook"></i></a>
+      <a href="{{ user.profile.instagram }}" class="instagram" target="_blank"><i class="bi bi-instagram"></i></a>
+    </div>
+    <div class="social-links mt-2">
+      <i class="bi bi-line">{{ user.profile.line_id }}</i>
+    </div>
+  </div>
+</div>

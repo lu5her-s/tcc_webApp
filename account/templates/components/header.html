@@ -57,8 +57,20 @@
       <div class="modal-body">ยืนยันการออกจากระบบ</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-        <a href="{% url 'logout' %}" type="button" class="btn btn-danger">ออกจากกระบบ</a>
+        <a href="{% url 'logout' %}" type="button" class="btn btn-danger" id="logout-btn">ออกจากระบบ</a>
       </div>
     </div>
   </div>
 </div>
+
+
+<script>
+document.getElementById("logout-btn").addEventListener("click", function() {
+  let a_tag = document.getElementById("logout-btn");
+  a_tag.disabled = true;
+
+  // go to href
+  window.location.href = "{% url 'logout' %}";
+
+});
+</script>

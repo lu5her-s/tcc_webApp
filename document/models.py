@@ -25,8 +25,8 @@ class Category(models.Model):
     name = models.CharField(max_length=200)
 
     class Meta:
-        verbose_name = 'Category'
-        verbose_name_plural = 'Categories'
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
 
     def __str__(self):
         return f"{self.name}"
@@ -36,21 +36,21 @@ class Document(models.Model):
     """Document. for set document"""
 
     URGENCY = [
-        ('ปกติ',    'ปกติ'),
-        ('ด่วน',    'ด่วน'),
-        ('ด่วนมาก', 'ด่วนมาก'),
-        ('ด่วนที่สุด', 'ด่วนที่สุด'),
+        ("ปกติ", "ปกติ"),
+        ("ด่วน", "ด่วน"),
+        ("ด่วนมาก", "ด่วนมาก"),
+        ("ด่วนที่สุด", "ด่วนที่สุด"),
     ]
     TYPE = [
-        ('ปฏิบัติ',    'ปฏิบัติ'),
-        ('เพื่อทราบ', 'เพื่อทราบ'),
+        ("ปฏิบัติ", "ปฏิบัติ"),
+        ("เพื่อทราบ", "เพื่อทราบ"),
     ]
     STATUS = [
-        ('รอการปฏิบัติ',        'รอการปฏิบัติ'),
-        ('แผนกรับแล้ว',        'แผนกรับแล้ว'),
-        ('จนท.กำลังดำเนินการ', 'จนท.กำลังดำเนินการ'),
-        ('ดำเนินการแล้ว',      'ดำเนินการแล้ว'),
-        ('เสร็จสิ้น',           'เสร็จสิ้น'),
+        ("รอการปฏิบัติ", "รอการปฏิบัติ"),
+        ("แผนกรับแล้ว", "แผนกรับแล้ว"),
+        ("จนท.กำลังดำเนินการ", "จนท.กำลังดำเนินการ"),
+        ("ดำเนินการแล้ว", "ดำเนินการแล้ว"),
+        ("เสร็จสิ้น", "เสร็จสิ้น"),
     ]
     # Document Detail
     recieve_number = models.CharField(max_length=200)
@@ -58,20 +58,20 @@ class Document(models.Model):
     doc_number = models.CharField(max_length=200)
     doc_date = models.DateField()
     category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, null=True, blank=True)
-    urgency = models.CharField(max_length=200, choices=URGENCY, default='ปกติ')
+        Category, on_delete=models.CASCADE, null=True, blank=True
+    )
+    urgency = models.CharField(max_length=200, choices=URGENCY, default="ปกติ")
     title = models.TextField()
     detail = models.TextField()
     report_to = models.CharField(max_length=200, null=True, blank=True)
-    operation = models.CharField(
-        max_length=200, choices=TYPE, default='เพื่อทราบ')
+    operation = models.CharField(max_length=200, choices=TYPE, default="เพื่อทราบ")
     # status          = models.CharField(max_length=200, choices=STATUS, default='รอการปฏิบัติ')
-    file = models.FileField(upload_to='Document/%Y/%B/%d/')
+    file = models.FileField(upload_to="Document/%Y/%B/%d/")
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='document_author')
+        User, on_delete=models.CASCADE, related_name="document_author"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
-    assigned_sector = models.ManyToManyField(
-        Sector, related_name='assigned_sector')
+    assigned_sector = models.ManyToManyField(Sector, related_name="assigned_sector")
     # assigned_user   = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="user_operator")
     is_deleted = models.BooleanField(default=False)
 
@@ -80,7 +80,7 @@ class Document(models.Model):
 
 
 # TODO : make document, inbox, sector, to_me model
-class Department(models.Model):
+class Depart(models.Model):
     """Department.
     for accepted document from header
     """

@@ -17,63 +17,62 @@
   </div><!-- End Page Title -->
 
   <section class="section profile">
-    <div class="row">
 
-      <div class="col-xl-12">
+    <div class="col-xl-12">
 
-        <!-- Recent Job -->
-        <div class="col-12">
-          <div class="card recent-sales overflow-auto">
+      <!-- Recent Job -->
+      <div class="col-12">
+        <div class="card recent-sales overflow-auto">
 
 
-            <div class="card-body">
-              <h5 class="card-title">{{ title }} <span>| List</span></h5>
+          <div class="card-body">
+            <h5 class="card-title">{{ title }} <span>| List</span></h5>
 
-              <table class="table table-hover datatable" id="dataTable">
-                <thead>
-                  <tr>
-                    <th scope="col">สังกัด</th>
-                    <th scope="col">...</th>
-                    <th scope="col">ชื่อ สกุล</th>
-                    <th scope="col">ตำแหน่ง</th>
-                    <th scope="col">ที่ทำงาน</th>
-                    <th scope="col">โทรศัพท์</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for member in object_list %}
-                  <tr>
-                    <th scope="row">
-                      {% if member.sector %}
-                      <a href="{% url 'account:sectors' pk=member.sector.pk %}">{{ member.sector.name }}</a>
-                      {% else %}
-                      <a href="#">{{ member.sector.name|default:'-' }}</a>
-                      {% endif %}
-                    </th>
-                    {% if member.image %}
-                    <td><img src="{{ member.image.url }}" style="width: 100px; height: 100px;" alt=""></td>
+            <table class="table table-hover datatable" id="dataTable">
+              <thead>
+                <tr>
+                  <th scope="col">สังกัด</th>
+                  <th scope="col">...</th>
+                  <th scope="col">ชื่อ สกุล</th>
+                  <th scope="col">ตำแหน่ง</th>
+                  <th scope="col">ที่ทำงาน</th>
+                  <th scope="col">โทรศัพท์</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for member in object_list %}
+                <tr>
+                  <th scope="row">
+                    {% if member.sector %}
+                    <a href="{% url 'account:sectors' sector_pk=member.sector.pk %}">{{ member.sector.name }}</a>
                     {% else %}
-                    <td><img src="{% static 'assets/img/profile.png' %}" style="width: 100px; height: 100px;" alt=""></td>
+                    <a href="#">{{ member.sector.name|default:'-' }}</a>
                     {% endif %}
-                    <td><a href="{% url 'account:member' pk=member.user.pk %}">{{ member.rank.name }} {{ member.user.get_full_name }}</a></td>
-                    {% if member.position %}
-                    <td><a href="{% url 'account:positions' pk=member.position.pk %}" class="text-primary">{{ member.position.name }}</a></td>
-                    {% else %}
-                    <td>-</td>
-                    {% endif %}
-                    <td>{{ member.department.name }}</td>
-                    <td>{{ member.phone }}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-
-            </div>
+                  </th>
+                  {% if member.image %}
+                  <td><img src="{{ member.image.url }}" style="width: 100px; height: 100px;" alt=""></td>
+                  {% else %}
+                  <td><img src="{% static 'assets/img/profile.png' %}" style="width: 100px; height: 100px;" alt=""></td>
+                  {% endif %}
+                  <td><a href="{% url 'account:member' pk=member.user.pk %}">{{ member.rank.name }} {{ member.user.get_full_name }}</a></td>
+                  {% if member.position %}
+                  <td><a href="{% url 'account:positions' position_pk=member.position.pk %}" class="text-primary">{{ member.position.name }}</a></td>
+                  {% else %}
+                  <td>-</td>
+                  {% endif %}
+                  <td>{{ member.department.name }}</td>
+                  <td>{{ member.phone }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
 
           </div>
-        </div><!-- End Recent Sales -->
 
-      </div>
+        </div>
+      </div><!-- End Recent Sales -->
+
+    </div>
 
     </div>
   </section>

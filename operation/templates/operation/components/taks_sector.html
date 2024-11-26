@@ -22,7 +22,7 @@
     </td>
     <td>{{ task.workplace }}</td>
     <td>{{ task.get_priority_display }}</td>
-    {% if task.is_done and not object.operation_status == 'DF' %}
+    {% if task.is_done and not object.operation_status == 'DF' or task.note %}
     <td>
       <button type="button" class="btn btn-sm btn-success" disabled>
         <i class="bi bi-check-circle text-success"></i> ดำเนินการแล้ว

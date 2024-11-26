@@ -1,0 +1,72 @@
+{% load static %}
+
+
+<h5 class="card-title">About</h5>
+{% if user.profile.about %}
+<p class="small fst-italic">{{ user.profile.about }}</p>
+{% endif %}
+
+<h5 class="card-title">Profile Details</h5>
+
+<div class="row">
+  <div class="col-lg-3 col-md-4 label ">ยศ ชื่อ-สกุล</div>
+  {% if user.get_full_name %}
+  <div class="col-lg-9 col-md-8">{{ user.profile.rank.name }} {{ user.get_full_name }}</div>
+  {% else %}
+  <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
+  {% endif %}
+</div>
+
+<div class="row">
+  <div class="col-lg-3 col-md-4 label">สังกัด</div>
+  {% if user.profile.sector %}
+  <div class="col-lg-9 col-md-8">{{ user.profile.sector }}</div>
+  {% else %}
+  <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
+  {% endif %}
+</div>
+
+<div class="row">
+  <div class="col-lg-3 col-md-4 label">ตำแหน่ง</div>
+  {% if user.profile.position %}
+  <div class="col-lg-9 col-md-8">{{ user.profile.position }}</div>
+  {% else %}
+  <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
+  {% endif %}
+</div>
+
+<div class="row">
+  <div class="col-lg-3 col-md-4 label">สถานที่ทำงาน</div>
+  {% if user.profile.department %}
+  <div class="col-lg-9 col-md-8">{{ user.profile.department }}</div>
+  {% else %}
+  <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
+  {% endif %}
+</div>
+
+<div class="row">
+  <div class="col-lg-3 col-md-4 label">ที่อยู่</div>
+  {% if user.profile.address %}
+  <div class="col-lg-9 col-md-8">{{ user.profile.address }}</div>
+  {% else %}
+  <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
+  {% endif %}
+</div>
+
+<div class="row">
+  <div class="col-lg-3 col-md-4 label">โทรศัพท์</div>
+  {% if user.profile.phone %}
+  <div class="col-lg-9 col-md-8">{{ user.profile.phone }}</div>
+  {% else %}
+  <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
+  {% endif %}
+</div>
+
+<div class="row">
+  <div class="col-lg-3 col-md-4 label">Email</div>
+  {% if user.email %}
+  <div class="col-lg-9 col-md-8">{{ user.email }}</div>
+  {% else %}
+  <div class="col-lg-9 col-md-8">รอการอัพเดท...</div>
+  {% endif %}
+</div>

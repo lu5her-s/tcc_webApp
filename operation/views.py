@@ -91,10 +91,10 @@ class OperationHome(LoginRequiredMixin, TemplateView):
 
 class OperationCreateView(LoginRequiredMixin, View):
     """
-    Create new Operation
+    สร้างใบงานใหม่
 
     Attributes:
-        template_name:
+        template_name (str): ชื่อ Template ที่ใช้ในการแสดงผล
     """
 
     template_name = "operation/operation_form.html"
@@ -846,7 +846,7 @@ def approve_close(request, pk):
     if request.method == "POST":
         operation = Operation.objects.get(pk=pk)
         operation.operation_status = Operation.OperationStatus.DONE
-        operation.approve_status = Operation.ApproveStatus.APPROVE
+        operation.approve_status = Operation.ApproveStatus.CLOSED
         operation.save()
         return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
 

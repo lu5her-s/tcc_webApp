@@ -1,25 +1,27 @@
-              <div class="col-xxl-4 col-md-6">
-                <div class="card info-card bg-card">
+{% load tags %}
+<div class="col-xxl-4 col-md-6">
+  <div class="card info-card bg-card">
 
 
-                  <a href="{% url 'announce:list' %}">
-                    <div class="card-body">
-                      <h5 class="card-title">ประชาสัมพันธ์/สั่งการ <span>| All</span></h5>
+    <a href="{% url 'announce:list' %}">
+      <div class="card-body">
+        <h5 class="card-title">ประชาสัมพันธ์/สั่งการ <span>| All</span></h5>
 
-                      <div class="d-flex align-items-center">
-                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                          <i class="bi bi-bell text-danger"></i>
-                        </div>
-                        <div class="ps-3">
-                          <h6>{{ announce.count }} เรื่อง</h6>
-                          {% if user.is_authenticated %}
-                          <span class="text-success small pt-1 fw-bold">{{ not_read.count }}</span> <span class="text-muted small pt-2 ps-1">ยังไม่อ่าน</span>
-                          {% endif %}
+        <div class="d-flex align-items-center">
+          <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+            <i class="bi bi-bell text-danger"></i>
+          </div>
+          <div class="ps-3">
+            <h6>{{ announce.count }} เรื่อง</h6>
+            {% if user.is_authenticated %}
+            <span class="text-success small pt-1 fw-bold">{{ not_read.count }}</span> <span
+              class="text-muted small pt-2 ps-1">ยังไม่อ่าน</span>
+            {% endif %}
 
-                        </div>
-                      </div>
-                    </div>
-                  </a>
+          </div>
+        </div>
+      </div>
+    </a>
 
-                </div>
-              </div><!-- End Announce Card -->
+  </div>
+</div><!-- End Announce Card -->
