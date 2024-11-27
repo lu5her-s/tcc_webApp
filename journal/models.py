@@ -1,8 +1,8 @@
-from django.db import models
-from django.contrib.auth.models import User
-from ckeditor.fields import RichTextField
-from django.shortcuts import reverse
 from account.models import Profile
+from ckeditor.fields import RichTextField
+from django.contrib.auth.models import User
+from django.db import models
+from django.shortcuts import reverse
 
 # Create your models here.
 
@@ -33,7 +33,19 @@ class JournalStatus(models.Model):
 
 
 class Journal(models.Model):
-    """Journal."""
+    """
+    Journal model for journal app
+
+    Attributes:
+        author:
+        category:
+        title:
+        body:
+        status:
+        created_at:
+        updated_at:
+        header:
+    """
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(JournalType, on_delete=models.CASCADE)
@@ -42,21 +54,27 @@ class Journal(models.Model):
     status = models.ForeignKey(JournalStatus, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    header = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True, related_name='header_journal')
+    header = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="header_journal",
+    )
 
     def __str__(self):
         return f"{self.title} ({self.status})"
 
     def get_absolute_url(self):
         """get_absolute_url."""
-        return reverse('journal:detail', kwargs={'pk': self.pk})
+        return reverse("journal:detail", kwargs={"pk": self.pk})
 
 
 class JournalImage(models.Model):
     """JournalImage."""
 
     journal = models.ForeignKey(Journal, on_delete=models.CASCADE)
-    images = models.ImageField(upload_to='get_image_name', blank=True, null=True)
+    images = models.ImageField(upload_to="get_image_name", blank=True, null=True)
 
     class Meta:
         verbose_name = "JournalImage"

@@ -1,8 +1,8 @@
+from ckeditor.fields import RichTextField
 from django import forms
 from django.forms import widgets
-from ckeditor.fields import RichTextField
-# from django.contrib.auth.models import User
 
+# from django.contrib.auth.models import User
 from journal.models import Journal
 
 
