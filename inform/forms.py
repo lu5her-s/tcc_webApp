@@ -1,7 +1,8 @@
 from asset.models import StockItem
 from ckeditor.fields import RichTextFormField
 from django import forms
-from repair.forms import widgets
+from django.forms import widgets
+from repair.forms import RepairForm
 
 from .models import Inform, InformProgress
 
