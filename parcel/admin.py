@@ -7,17 +7,18 @@
 # Last Modified By  : lu5her <lu5her@mail>
 # -----
 from django.contrib import admin
+
 from .models import (
     ParcelRequest,
-    RequestItem,
-    RequestBillDetail,
     ParcelRequestNote,
-    RejectBillNote,
     ParcelReturn,
-    ParcelReturnItem,
-    ParcelReturnDetail,
     ParcelReturnBillNote,
+    ParcelReturnDetail,
+    ParcelReturnItem,
+    RejectBillNote,
     RejectReturnBillNote,
+    RequestBillDetail,
+    RequestItem,
 )
 
 # Register your models here.

@@ -1,5 +1,6 @@
-from django import forms
 from account.models import Department, Profile
+from django import forms
+
 from .models import (
     ParcelReturnDetail,
     RequestBillDetail,
@@ -7,6 +8,14 @@ from .models import (
 
 
 class SelectStockForm(forms.Form):
+    """
+    SelectStockForm for create new SelectStock
+
+    Attributes:
+        department:
+        queryset:
+    """
+
     department = forms.ModelChoiceField(queryset=None, required=True)
 
     class Meta:
@@ -35,6 +44,14 @@ class SelectStockForm(forms.Form):
 
 
 class RequestBillDetailForm(forms.ModelForm):
+    """
+    RequestBillDetailForm for create new RequestBillDetail
+
+    Attributes:
+        queryset:
+        queryset:
+    """
+
     class Meta:
         model = RequestBillDetail
         fields = (
@@ -73,6 +90,10 @@ class RequestBillDetailForm(forms.ModelForm):
 
 
 class ReturnBillDetailForm(forms.ModelForm):
+    """
+    ReturnBillDetailForm for create new ReturnBillDetail
+    """
+
     class Meta:
         model = ParcelReturnDetail
         fields = (

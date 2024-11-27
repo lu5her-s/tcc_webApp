@@ -8,16 +8,19 @@
 # -----
 import os
 from itertools import chain
-from django.template.loader import render_to_string
+
+from account.models import Department, Profile
+from asset.models import Category, ItemHistory, ItemOnHand, StockItem
+from cart.cart import Cart
+from config.utils import generate_pdf
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView, View
 
-from asset.models import ItemHistory, ItemOnHand, StockItem, Category
-from account.models import Department, Profile
-
+from .forms import RequestBillDetailForm, ReturnBillDetailForm, SelectStockForm
 from .models import (
     ParcelRequest,
     ParcelReturn,
@@ -28,9 +31,6 @@ from .models import (
     RequestBillDetail,
     RequestItem,
 )
-from .forms import RequestBillDetailForm, SelectStockForm, ReturnBillDetailForm
-from cart.cart import Cart
-from config.utils import generate_pdf
 
 # Create your views here.
 
@@ -109,6 +109,14 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
 
 
 class BillListView(LoginRequiredMixin, ListView):
+    """
+    BillListView for list all bill
+
+    Attributes:
+        template_name:
+        model:
+    """
+
     template_name = "parcel/bill_list.html"
     model = ParcelRequest
 
@@ -122,6 +130,15 @@ class BillListView(LoginRequiredMixin, ListView):
 
 
 class BillManagerListView(LoginRequiredMixin, ListView):
+    """
+    BillManagerListView for list all bill
+
+    Attributes:
+        template_name:
+        model:
+
+    """
+
     template_name = "parcel/bill_list.html"
     model = ParcelRequest
 
@@ -138,6 +155,14 @@ class BillManagerListView(LoginRequiredMixin, ListView):
 
 
 class BillWaitApproveListView(LoginRequiredMixin, ListView):
+    """
+    BillWaitApproveListView for list all bill
+
+    Attributes:
+        template_name:
+        model:
+    """
+
     template_name = "parcel/bill_list.html"
     model = ParcelRequest
 
@@ -155,6 +180,14 @@ class BillWaitApproveListView(LoginRequiredMixin, ListView):
 
 
 class BillWaitPaidListView(LoginRequiredMixin, ListView):
+    """
+    BillWaitPaidListView for list all bill
+
+    Attributes:
+        template_name:
+        model:
+    """
+
     template_name = "parcel/bill_list.html"
     model = ParcelRequest
 
@@ -173,6 +206,14 @@ class BillWaitPaidListView(LoginRequiredMixin, ListView):
 
 
 class ManagerAllBillListView(LoginRequiredMixin, ListView):
+    """
+    ManagerAllBillListView for list all bill
+
+    Attributes:
+        template_name:
+        model:
+    """
+
     template_name = "parcel/bill_list.html"
     model = ParcelRequest
 
@@ -189,6 +230,14 @@ class ManagerAllBillListView(LoginRequiredMixin, ListView):
 
 
 class SelectStockView(LoginRequiredMixin, View):
+    """
+    SelectStockView for select stock
+
+    Attributes:
+        template_name:
+        form_class:
+    """
+
     template_name = "parcel/select_stock.html"
     form_class = SelectStockForm
 
@@ -208,6 +257,13 @@ class SelectStockView(LoginRequiredMixin, View):
 # TODO: review/edit this to create bill for store item category.
 # prepare to manager set serail number of item in detail bill page
 class SelecItemView(LoginRequiredMixin, View):
+    """
+    SelecItemView for select item
+
+    Attributes:
+        template_name:
+    """
+
     template_name = "parcel/select_item.html"
 
     def get(self, request, pk):
@@ -225,6 +281,13 @@ class SelecItemView(LoginRequiredMixin, View):
 
 
 class BillCreateView(LoginRequiredMixin, View):
+    """
+    BillCreateView for create new bill
+
+    Attributes:
+        template_name:
+    """
+
     def post(self, request):
         cart = Cart(request)
         stock = request.POST.get("stock")
@@ -251,6 +314,14 @@ class BillCreateView(LoginRequiredMixin, View):
 
 
 class BillDetailView(LoginRequiredMixin, DetailView):
+    """
+    BillDetailView for detail bill
+
+    Attributes:
+        template_name:
+        model:
+    """
+
     template_name = "parcel/bill_detail2.html"
     # template_name = 'parcel/detail.html'
     model = ParcelRequest
@@ -302,6 +373,15 @@ class BillDetailView(LoginRequiredMixin, DetailView):
 
 
 class ParcelListView(ListView):
+    """
+    ParcelListView for list all parcel
+
+    Attributes:
+        model:
+        template_name:
+        context_object_name:
+    """
+
     model = RequestItem
     template_name = "parcel/parcel_list.html"
     context_object_name = "object_list"
@@ -324,6 +404,16 @@ class ParcelListView(ListView):
 
 # TODO: refactor and make set item to form submit all in form save all[template]
 def set_serial_item(request, pk):
+    """
+    set_serial_item for set serial number to item
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     bill = get_object_or_404(ParcelRequest, pk=pk)
     items = RequestItem.objects.filter(bill=bill)
     if request.method == "POST":
@@ -361,6 +451,16 @@ def set_serial_item(request, pk):
 
 
 def bill_to_pdf(request: HttpResponse, pk: int):
+    """
+    bill_to_pdf for render bill to pdf
+
+    Args:
+        request:
+        pk:
+
+    Returns:
+
+    """
     bill = ParcelRequest.objects.get(pk=pk)
     items = RequestItem.objects.filter(bill=bill)
     bill_detail = RequestBillDetail.objects.get(bill=bill)
@@ -378,6 +478,16 @@ def bill_to_pdf(request: HttpResponse, pk: int):
 
 
 def save_draft(request, pk):
+    """
+    save_draft for save draft bill
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     bill = get_object_or_404(ParcelRequest, pk=pk)
     data = request.POST
     bill_detail = RequestBillDetail.objects.get(bill=bill)
@@ -396,6 +506,16 @@ def save_draft(request, pk):
 
 
 def request_bill(request, pk):
+    """
+    request_bill for request bill
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     ParcelRequest.objects.filter(pk=pk).update(
         status=ParcelRequest.RequestStatus.REQUEST
     )
@@ -403,6 +523,16 @@ def request_bill(request, pk):
 
 
 def request_approve(request, pk):
+    """
+    request_approve for approve bill
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     if request.method == "POST":
         bill = get_object_or_404(ParcelRequest, pk=pk)
         entered_pin = request.POST.get("pin")
@@ -437,6 +567,16 @@ def approve_bill(request, pk):
 
 
 def reject_bill(request, pk):
+    """
+    reject_bill for reject bill
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     if request.method == "POST":
         bill = get_object_or_404(ParcelRequest, pk=pk)
         note = request.POST.get("note")
@@ -448,6 +588,14 @@ def reject_bill(request, pk):
 
 
 class CommandWaitApproveListView(LoginRequiredMixin, ListView):
+    """
+    CommandWaitApproveListView for list all bill
+
+    Attributes:
+        model:
+        template_name:
+    """
+
     model = ParcelRequest
     template_name = "parcel/bill_list.html"
     # context_object_name = 'bills'
@@ -460,6 +608,14 @@ class CommandWaitApproveListView(LoginRequiredMixin, ListView):
 
 
 class PaidItemView(LoginRequiredMixin, DetailView):
+    """
+    PaidItemView for detail bill
+
+    Attributes:
+        model:
+        template_name:
+    """
+
     model = ParcelRequest
     template_name = "parcel/bill_detail.html"
 
@@ -487,6 +643,14 @@ class PaidItemView(LoginRequiredMixin, DetailView):
 
 
 class RecieveItemsView(LoginRequiredMixin, DetailView):
+    """
+    RecieveItemsView for detail bill
+
+    Attributes:
+        model:
+        template_name:
+    """
+
     model = ParcelRequest
     template_name = "parcel/bill_detail.html"
 
@@ -515,6 +679,15 @@ class RecieveItemsView(LoginRequiredMixin, DetailView):
 
 
 class ParcelDetailView(LoginRequiredMixin, DetailView):
+    """
+    ParcelDetailView for detail bill
+
+    Attributes:
+        model:
+        template_name:
+        context_object_name:
+    """
+
     model = RequestItem
     template_name = "parcel/parcel_detail.html"
     context_object_name = "parcel"
@@ -532,6 +705,10 @@ class ParcelDetailView(LoginRequiredMixin, DetailView):
 
 
 class SetItemLocationView(LoginRequiredMixin, View):
+    """
+    SetItemLocationView for set item location
+    """
+
     def post(self, request):
         pin = request.POST.get("pin-set-item")
         user = request.user
@@ -561,6 +738,10 @@ class SetItemLocationView(LoginRequiredMixin, View):
 
 
 class ReplaceItemLocationView(LoginRequiredMixin, View):
+    """
+    ReplaceItemLocationView for replace item location
+    """
+
     def post(self, request):
         pin = request.POST.get("pin-replace-item")
         user = request.user
@@ -601,6 +782,13 @@ class ReplaceItemLocationView(LoginRequiredMixin, View):
 
 
 class ItemOnHandListView(LoginRequiredMixin, ListView):
+    """
+    ItemOnHandListView for list all item on hand
+
+    Attributes:
+        template_name:
+    """
+
     template_name = "parcel/item_on_hand_list.html"
 
     def get_queryset(self):
@@ -621,6 +809,13 @@ class ItemOnHandListView(LoginRequiredMixin, ListView):
 
 
 class ReturnParcelCreateView(LoginRequiredMixin, View):
+    """
+    ReturnParcelCreateView for create new return parcel
+
+    Attributes:
+        template_name:
+    """
+
     def post(self, request):
         # items = request.POST.getlist('return_item')
         items = StockItem.objects.filter(pk__in=request.POST.getlist("return_item"))
@@ -658,6 +853,14 @@ class ReturnParcelCreateView(LoginRequiredMixin, View):
 
 
 class ParcelReturnListView(LoginRequiredMixin, ListView):
+    """
+    ParcelReturnListView for list all return parcel
+
+    Attributes:
+        model:
+        template_name:
+    """
+
     model = ParcelReturn
     template_name = "parcel/parcel_return_list.html"
 
@@ -666,6 +869,14 @@ class ParcelReturnListView(LoginRequiredMixin, ListView):
 
 
 class ParcelReturnDraftListView(LoginRequiredMixin, ListView):
+    """
+    ParcelReturnDraftListView for list all return parcel
+
+    Attributes:
+        model:
+        template_name:
+    """
+
     model = ParcelReturn
     template_name = "parcel/parcel_return_draft_list.html"
 
@@ -722,6 +933,16 @@ def save_return_draft(request, pk):
 
 
 def return_item(request, pk):
+    """
+    return_item for return item
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     if request.method == "POST":
         data = request.POST
         bill = ParcelReturn.objects.get(pk=pk)
@@ -759,6 +980,14 @@ class AllDraftListView(LoginRequiredMixin, View):
 
 
 class ReturnManagerListView(LoginRequiredMixin, ListView):
+    """
+    ReturnManagerListView for list all return parcel
+
+    Attributes:
+        template_name:
+        model:
+    """
+
     template_name = "parcel/parcel_return_list.html"
     model = ParcelReturn
 
@@ -770,6 +999,14 @@ class ReturnManagerListView(LoginRequiredMixin, ListView):
 
 
 class ReturnCommandListView(LoginRequiredMixin, ListView):
+    """
+    ReturnCommandListView for list all return parcel
+
+    Attributes:
+        template_name:
+        model:
+    """
+
     template_name = "parcel/parcel_return_list.html"
     model = ParcelReturn
 
@@ -782,11 +1019,26 @@ class ReturnCommandListView(LoginRequiredMixin, ListView):
 
 # for render location list for select to get item remove from this
 class LocationListView(LoginRequiredMixin, ListView):
+    """
+    LocationListView for list all location
+
+    Attributes:
+        model:
+        template_name:
+    """
+
     model = Department
     template_name = "parcel/location_list.html"
 
 
 class ItemOnLocationView(LoginRequiredMixin, View):
+    """
+    ItemOnLocationView for list all item on location
+
+    Attributes:
+        template_name:
+    """
+
     template_name = "parcel/remove_item.html"
 
     def get(self, pk):
@@ -798,6 +1050,10 @@ class ItemOnLocationView(LoginRequiredMixin, View):
 
 
 class RemoveItemView(LoginRequiredMixin, View):
+    """
+    RemoveItemView for remove item from location
+    """
+
     def post(self, request):
         remove_items = request.POST.getlist("remove_item")
         items_to_create = []
@@ -814,6 +1070,16 @@ class RemoveItemView(LoginRequiredMixin, View):
 
 
 def return_pdf(request: HttpResponse, pk: int):
+    """
+    return_pdf for render return parcel to pdf
+
+    Args:
+        request:
+        pk:
+
+    Returns:
+
+    """
     bill = ParcelReturn.objects.get(pk=pk)
     items = ParcelReturnItem.objects.filter(bill=bill)
     bill_detail = bill.billdetail
@@ -843,6 +1109,16 @@ def return_pdf(request: HttpResponse, pk: int):
 
 
 def checker_confirm_return(request, pk: int):
+    """
+    checker_confirm_return for confirm return parcel
+
+    Args:
+        request ():
+        pk:
+
+    Returns:
+
+    """
     bill = get_object_or_404(ParcelReturn, pk=pk)
     data = request.POST
     user = request.user
@@ -858,6 +1134,16 @@ def checker_confirm_return(request, pk: int):
 
 
 def return_approve(request, pk):
+    """
+    return_approve for approve return parcel
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     bill = get_object_or_404(ParcelReturn, pk=pk)
     user = request.user
     if user.check_password(request.POST.get("pin")):
@@ -871,6 +1157,16 @@ def return_approve(request, pk):
 
 
 def return_controler(request, pk):
+    """
+    return_controler for controler return parcel
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     bill = get_object_or_404(ParcelReturn, pk=pk)
     user = request.user
     if user.check_password(request.POST.get("pin")):
@@ -882,6 +1178,16 @@ def return_controler(request, pk):
 
 
 def return_done(request, pk):
+    """
+    return_done for done return parcel
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     bill = get_object_or_404(ParcelReturn, pk=pk)
     user = request.user
     if user.check_password(request.POST.get("pin")):

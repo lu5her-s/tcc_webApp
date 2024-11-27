@@ -5,11 +5,12 @@
 # Date              : Wed Sep, 27 2023, 14:11 270
 # Last Modified Date: Thu Jun, 20 2024, 17:17 172
 # Last Modified By  : lu5her <lu5her@mail>
-from django.db import models
 from datetime import datetime
-from django.contrib.auth.models import User
+
 from account.models import Department, Profile
-from asset.models import StockItem, Category
+from asset.models import Category, StockItem
+from django.contrib.auth.models import User
+from django.db import models
 
 # Create your models here.
 
