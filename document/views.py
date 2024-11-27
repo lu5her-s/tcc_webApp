@@ -6,21 +6,22 @@
 # Last Modified Date: Mon Oct, 31 2022, 22:19 304
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
+
+from account.models import Sector
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.contenttypes.models import Q
 from django.shortcuts import HttpResponseRedirect, redirect, render, reverse
 from django.urls import reverse_lazy
 from django.views.generic import (
+    CreateView,
     DeleteView,
     DetailView,
     ListView,
     TemplateView,
-    CreateView,
     UpdateView,
 )
-from account.models import Sector
-from document.models import Document, Depart
+
 from document.forms import DocumentForm
+from document.models import Depart, Document
 
 # Create your views here.
 
@@ -58,6 +59,16 @@ class DocumentHomeView(LoginRequiredMixin, TemplateView):
 
 
 class DocumentCreateView(LoginRequiredMixin, CreateView):
+    """
+    DocumentCreateView for create new Document
+
+    Attributes:
+        model:
+        form_class:
+        template_name:
+        success_url:
+    """
+
     model = Document
     form_class = DocumentForm
     template_name = "document/create_form.html"
@@ -90,6 +101,14 @@ class DocumentCreateView(LoginRequiredMixin, CreateView):
 
 
 class InboxListView(LoginRequiredMixin, ListView):
+    """
+    InboxListView for Document app
+
+    Attributes:
+        model:
+        template_name:
+    """
+
     model = Document
     template_name = "document/inbox.html"
 
@@ -138,6 +157,14 @@ class InboxDetailView(LoginRequiredMixin, DetailView):
 
 
 class OutboxListView(LoginRequiredMixin, ListView):
+    """
+    OutboxListView for Document appOutboxListView for Document app
+
+    Attributes:
+        model:
+        template_name:
+    """
+
     model = Document
     template_name = "document/outbox.html"
 
@@ -154,8 +181,15 @@ class OutboxListView(LoginRequiredMixin, ListView):
 
 
 class OutboxDetailView(LoginRequiredMixin, DetailView):
+    """
+    OutboxDetailView for detail Document
+
+    Attributes:
+        model:
+        template_name:
+    """
+
     model = Document
-    # TODO : add html file
     template_name = "document/outbox_detail.html"
 
     def get_context_data(self, **kwargs):
@@ -178,7 +212,18 @@ class OutboxDetailView(LoginRequiredMixin, DetailView):
 
 
 class DocumentUpdateView(LoginRequiredMixin, UpdateView):
-    # TODO : add html file
+    """
+    DocumentUpdateView for update Document
+
+    Attributes:
+        template_name:
+        model:
+        form_class:
+        success_url:
+        object:
+        object:
+    """
+
     template_name = "document/update_form.html"
     model = Document
     form_class = DocumentForm
@@ -216,8 +261,18 @@ class DocumentUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class DocumentDelete(LoginRequiredMixin, DeleteView):
+    """
+    DocumentDelete for delete Document
+
+    Attributes:
+        login_url:
+        template_name:
+        model:
+        success_url:
+        object:
+    """
+
     login_url = reverse_lazy("login")
-    # TODO : add html file
     template_name = "document/delete.html"
     model = Document
     success_url = reverse_lazy("document:outbox")
@@ -243,6 +298,16 @@ class DocumentDelete(LoginRequiredMixin, DeleteView):
 
 
 def accept_document(request, pk):
+    """
+    accept_document for accept document
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     document = Document.objects.get(pk=pk)
     # reciever = request.user
     department = Depart.objects.create(

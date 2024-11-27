@@ -5,11 +5,11 @@
 # Date              : Tue Oct, 18 2022, 16:49 291
 # Last Modified Date: Tue Nov, 01 2022, 15:00 305
 # Last Modified By  : lu5her <lu5her@mail>
+from account.models import Profile, Sector
 from django import forms
 from django.forms import widgets
 
-from account.models import Profile, Sector
-from document.models import Document, Depart, Operator
+from document.models import Depart, Document, Operator
 
 
 class DateInput(widgets.DateTimeBaseInput):
