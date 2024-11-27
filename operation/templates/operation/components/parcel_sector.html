@@ -1,13 +1,17 @@
 {% load tags %}
 {% load humanize %}
 
-  {% if parcel_requests %}
-  {# for loop list of parcel_request bill #}
-  {% for parcel_request in parcel_requests %}
-  <form method="post" action="{% url 'operation:parcel_request_delete' pk=parcel_request.pk %}">
+  {% if parcel_returns %}
+  {# for loop list of parcel_return bill #}
+  {% for parcel_return in parcel_returns %}
+  <form method="post" action="{% url 'operation:parcel_return_delete' pk=parcel_return.pk %}">
     {% csrf_token %}
+<<<<<<< Updated upstream
     {{ forloop.counter }}.&nbsp;เลขที่ใบเบิก {{ parcel_request.pk }}/{{ parcel_request.parcel_request.created_at.year|thaiyear }} ({{ parcel_request.parcel_request.stock.name }})
     {% if request.user == object.created_by or request.user == team.team_leader %}
+=======
+    {{ forloop.counter }}.&nbsp;เลขที่ใบเบิก {{ parcel_return.pk }}/{{ parcel_return.parcel_return.created_at.year|thaiyear }} ({{ parcel_return.parcel_return.stock.name }})
+>>>>>>> Stashed changes
     <button type="submit" class="btn btn-sm badge badge-sm bg-danger">ลบ</button>
     {% endif %}
   </form>
@@ -30,11 +34,11 @@
         </div>
         <div class="modal-body">
           <!-- form for add member -->
-          <form method="post" name="parcel_request_form" id="parcel_request_form"
-            action="{% url 'operation:parcel_request_add' pk=object.pk %}">
+          <form method="post" name="parcel_return_form" id="parcel_return_form"
+            action="{% url 'operation:parcel_return_add' pk=object.pk %}">
             {% csrf_token %}
             <div class="row mb-3">
-              {% for field in parcel_request_form %}
+              {% for field in parcel_return_form %}
               <label for="{{ field.name }}" class="col-md-4 col-lg-3 col-form-label">{{ field.label }}</label>
               <div class="col-md-8 col-lg-9">
                 {{ field }}
@@ -59,7 +63,7 @@
   $('#addParcelRequestBtn').on('click', function () {
     let btn = $(this)
     btn.prop('disabled', true);
-    $('#parcel_request_form').submit();
+    $('#parcel_return_form').submit();
   });
 
   </script>
