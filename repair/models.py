@@ -1,19 +1,13 @@
-from django.db import models
-# from django.urls import reverse
-from account.models import Profile
-# from django.contrib.auth.models import User
-# from asset.models import Category, StockItem
-from inform.models import Inform
 from ckeditor.fields import RichTextField
+from django.db import models
+from inform.models import Inform
 
 # Create your models here.
 
 
 class Repair(models.Model):
     inform = models.ForeignKey(
-        Inform,
-        on_delete=models.CASCADE,
-        related_name='inform_repair'
+        Inform, on_delete=models.CASCADE, related_name="inform_repair"
     )
     comment = RichTextField(null=True, blank=True)
     cost = models.IntegerField(null=True, blank=True)
