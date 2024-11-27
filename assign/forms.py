@@ -5,19 +5,12 @@
 # Date              : Fri Oct, 28 2022, 21:13 301
 # Last Modified Date: Fri Nov, 11 2022, 22:58 315
 # Last Modified By  : lu5her <lu5her@mail>
+from account.models import Profile
 from django import forms
 from django.forms import widgets
-# from ckeditor.fields import RichTextField
-from django.contrib.auth.models import User
-from account.models import Profile
-
-from account.models import LineToken
 
 from assign.models import Assign, AssignImage, AssignProgress
 
-#class LineTokenMultiple(forms.ModelMultipleChoiceField):
-    #def label_form_instance(self, obj: LineToken) -> str:
-        #return obj.name
 
 class AssignModelChoice(forms.ModelChoiceField):
     def label_form_instance(self, obj):
@@ -26,77 +19,102 @@ class AssignModelChoice(forms.ModelChoiceField):
         else:
             return obj.user.username
 
+
 class AssignForm(forms.ModelForm):
-    #images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'class': 'w3-input', 'multiple': True}), label="รูปภาพ", required=False)
-    #tokens = LineTokenMultiple(
-        #queryset=LineToken.objects.all(),
-        #label="การแจ้งเตือน",
-        #widget=widgets.CheckboxSelectMultiple(),
-        #required=False
-    #)
-    # assigned_to = AssignModelChoice(
-            # queryset=Profile.objects.all(),
-            # label='มอบงานหมายให้',
-            # #widget=widgets.Select(attrs={'class': 'form-control'})
-            # )
+    """
+    Form for assign model
+
+    Attributes:
+        queryset:
+    """
 
     def __init__(self, current_user, *args, **kwargs):
         super(AssignForm, self).__init__(*args, **kwargs)
         # user = User.objects.get(user=current_user)
-        self.fields['assigned_to'].queryset = Profile.objects.exclude(pk=current_user)
+        self.fields["assigned_to"].queryset = Profile.objects.exclude(pk=current_user)
 
-    class Meta:
-        model   = Assign
-        fields  = ('title', 'body', 'author', 'assigned_to',)
-        widgets = {
-                'title'       : widgets.TextInput(attrs   = {'class': 'form-control'}),
-                'body'        : widgets.Textarea(attrs    = {'class': 'form-control'}),
-                # 'body'        : RichTextField(),
-                # 'detail' : CKEditorWidget(attrs={'class': 'w3-input'}),
-                'assigned_to' : widgets.Select(attrs      = {'class': 'form-select', 'placeholder': 'เลือกผู้ปฏิบัติงาน'}),
-                'author'      : widgets.HiddenInput(attrs = {'class': 'form-control', 'id': 'author'}),
-                }
-        labels = {
-            'title':       'ชื่อเรื่อง',
-            'body':        'รายละเอียด',
-            'author':      'ผู้เขียน',
-            'assigned_to': 'มอบงานหมายให้',
-        }
-
-class ProgressForm(forms.ModelForm):
     class Meta:
         model = Assign
-        fields = ('status',)
+        fields = (
+            "title",
+            "body",
+            "author",
+            "assigned_to",
+        )
+        widgets = {
+            "title": widgets.TextInput(attrs={"class": "form-control"}),
+            "body": widgets.Textarea(attrs={"class": "form-control"}),
+            "assigned_to": widgets.Select(
+                attrs={"class": "form-select", "placeholder": "เลือกผู้ปฏิบัติงาน"}
+            ),
+            "author": widgets.HiddenInput(
+                attrs={"class": "form-control", "id": "author"}
+            ),
+        }
+        labels = {
+            "title": "ชื่อเรื่อง",
+            "body": "รายละเอียด",
+            "author": "ผู้เขียน",
+            "assigned_to": "มอบงานหมายให้",
+        }
+
+
+class ProgressForm(forms.ModelForm):
+    """
+    Form for update progress
+
+    Attributes:
+        queryset:
+    """
+
+    class Meta:
+        model = Assign
+        fields = ("status",)
 
         widgets = {
-                'status' : widgets.Select(attrs={'class': 'form-select'}),
-                #'note': widgets.Textarea(attrs={'class': 'form-control'}),
-                }
+            "status": widgets.Select(attrs={"class": "form-select"}),
+            #'note': widgets.Textarea(attrs={'class': 'form-control'}),
+        }
         labels = {
-                'status' : 'สถานะการดำเนินการ',
-                }
+            "status": "สถานะการดำเนินการ",
+        }
+
 
 class NoteForm(forms.ModelForm):
+    """
+    Form for update note
+
+    Attributes:
+        queryset:
+    """
+
     class Meta:
         model = AssignProgress
-        fields = ('note',)
+        fields = ("note",)
 
         widgets = {
-            'note': widgets.Textarea(attrs={'class': 'form-control', 'rows':3}),
+            "note": widgets.Textarea(attrs={"class": "form-control", "rows": 3}),
         }
 
         labels = {
-            'note': 'บันทึก',
+            "note": "บันทึก",
         }
+
 
 class CloseAssignForm(forms.ModelForm):
+    """
+    Form for close assign
+    """
+
     class Meta:
         model = AssignImage
-        fields = ('images',)
+        fields = ("images",)
 
         widgets = {
-            'images': widgets.FileInput(attrs={'class': 'form-control', 'required': False}),
+            "images": widgets.FileInput(
+                attrs={"class": "form-control", "required": False}
+            ),
         }
         labels = {
-            'images': 'ภาพการทำงาน',
+            "images": "ภาพการทำงาน",
         }

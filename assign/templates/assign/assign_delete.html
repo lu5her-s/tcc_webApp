@@ -4,82 +4,82 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Assign-Delete{% endblock title %}
+  {% block title %}Assign-Delete{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>Delete - {{ object.title }}</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'assign:list' %}">Assign List</a></li>
-            <li class="breadcrumb-item active">Delete</li>
-            <li class="breadcrumb-item active">{{ object.title }}</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'assign:list' %}">Assign List</a></li>
+        <li class="breadcrumb-item active">Delete</li>
+        <li class="breadcrumb-item active">{{ object.title }}</li>
+      </ol>
     </nav>
-    </div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
 
-    <section class="section">
-        <div class="row">
+  <section class="section">
+    <div class="row">
 
-            <div class="col-xl-12">
+      <div class="col-xl-12">
 
-                <!-- Recent Job -->
-                <div class="col-12">
-                    <div class="card overflow-auto">
+        <!-- Recent Job -->
+        <div class="col-12">
+          <div class="card overflow-auto">
 
 
-                        <div class="card-body">
-                            <h6 class="card-title"> Delete | <span> {{ object.title }}</span></h6>
-                            <table class="table">
-                                <tr>
-                                    <th>เรื่อง</th>
-                                    <td>{{ object.title }}</td>
-                                </tr>
+            <div class="card-body">
+              <h6 class="card-title"> Delete | <span> {{ object.title }}</span></h6>
+              <table class="table">
+                <tr>
+                  <th>เรื่อง</th>
+                  <td>{{ object.title }}</td>
+                </tr>
 
-                                <tr>
-                                    <th>สถานะ</th>
-                                    <td>{{ object.status }}</td>
-                                </tr>
+                <tr>
+                  <th>สถานะ</th>
+                  <td>{{ object.status }}</td>
+                </tr>
 
-                                <tr>
-                                    <th>สร้างเมื่อ</th>
-                                    <td>{{ object.created_at|thaidate }} 
-                                        เวลา {{ object.created_at|date:"H:i" }} น.
-                                    </td>
-                                </tr>
+                <tr>
+                  <th>สร้างเมื่อ</th>
+                  <td>{{ object.created_at|thaidate }} 
+                    เวลา {{ object.created_at|date:"H:i" }} น.
+                  </td>
+                </tr>
 
-                                <tr>
-                                    <th>มอบหมายให้</th>
-                                    <td>{{ object.assigned_to.rank }}{{ object.assigned_to.user.get_full_name }} 
-                                    </td>
-                                </tr>
+                <tr>
+                  <th>มอบหมายให้</th>
+                  <td>{{ object.assigned_to.rank }}{{ object.assigned_to.user.get_full_name }} 
+                  </td>
+                </tr>
 
-                                {% comment %}<tr>{% endcomment %}
-                                    {% comment %}<th>Images</th>{% endcomment %}
-                                    {% comment %}<td>{% endcomment %}
-                                        {% comment %}{{ images.count }} ภาพ{% endcomment %}
-                                    {% comment %}</td>{% endcomment %}
-                                {% comment %}</tr>{% endcomment %}
+                {% comment %}<tr>{% endcomment %}
+                {% comment %}<th>Images</th>{% endcomment %}
+                {% comment %}<td>{% endcomment %}
+                {% comment %}{{ images.count }} ภาพ{% endcomment %}
+                {% comment %}</td>{% endcomment %}
+                {% comment %}</tr>{% endcomment %}
 
-                            </table>
-
-                        </div>
-                    </div>
-
-                    <div class="container float-start text-center">
-                        <form method="post">
-                            {% csrf_token %}
-                            <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">ยกเลิก</a>
-                            <button type="submit" class="btn btn-lg btn-danger">ยืนยันการลบ</button>
-                        </form>
-                    </div>
-
-                </div>
+              </table>
 
             </div>
+          </div>
+
+          <div class="container float-start text-center">
+            <form method="post">
+              {% csrf_token %}
+              <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">ยกเลิก</a>
+              <button type="submit" class="btn btn-lg btn-danger">ยืนยันการลบ</button>
+            </form>
+          </div>
+
         </div>
-    </section>
-    {% include 'components/photoswipe.html' %}
-    {% endblock content %}
+
+      </div>
+    </div>
+  </section>
+  {% include 'components/photoswipe.html' %}
+  {% endblock content %}

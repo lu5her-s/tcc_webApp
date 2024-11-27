@@ -6,11 +6,11 @@
 # Last Modified Date: Mon Jun, 24 2024, 15:39 176
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
-from django.db import models
-from django.contrib.auth.models import User
-from ckeditor.fields import RichTextField
 
 from account.models import Profile
+from ckeditor.fields import RichTextField
+from django.contrib.auth.models import User
+from django.db import models
 
 # Create your models here.
 
@@ -212,6 +212,18 @@ class CarFix(models.Model):
 
 
 class Refuel(models.Model):
+    """
+    Refuel for refuel car
+
+    Attributes:
+        car:
+        refuel:
+        mile_refuel:
+        refueler:
+        refueled_at:
+        note:
+    """
+
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="car_refuel")
     refuel = models.FloatField(default=0.0)
     mile_refuel = models.FloatField(null=True, blank=True)

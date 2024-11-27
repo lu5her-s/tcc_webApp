@@ -6,32 +6,27 @@
 # Last Modified Date: Fri Dec, 30 2022, 00:57 364
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
-from django.contrib.auth.models import User
-from django.db.models import Q
 from itertools import chain
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.shortcuts import (
-    HttpResponse,
     HttpResponseRedirect,
     get_object_or_404,
     redirect,
     render,
 )
 from django.urls import reverse, reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
-
 from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
     ListView,
-    TemplateView,
     UpdateView,
-    View,
 )
-from account.models import Profile
+
 from car.forms import (
     ApproveForm,
-    ApproverForm,
     BookingForm,
     CarAfterFixForm,
     CarForm,
@@ -39,16 +34,15 @@ from car.forms import (
     CarRequestFixForm,
     CarReturnForm,
 )
-
 from car.models import (
     ApproveStatus,
     Car,
     CarAfterFixImage,
+    CarBooking,
     CarFix,
     CarFixImage,
     CarFixStatus,
     CarImage,
-    CarBooking,
     CarStatus,
     Refuel,
 )
@@ -57,6 +51,14 @@ from car.models import (
 
 
 class CarListView(LoginRequiredMixin, ListView):
+    """
+    CarListView for Car app
+
+    Attributes:
+        model:
+        template_name:
+    """
+
     model = Car
     template_name = "car/car.html"
 
@@ -67,6 +69,16 @@ class CarListView(LoginRequiredMixin, ListView):
 
 
 class CarCreateView(LoginRequiredMixin, CreateView):
+    """
+    for create new Car
+
+    Attributes:
+        model:
+        form_class:
+        template_name:
+        success_url:
+    """
+
     model = Car
     form_class = CarForm
     template_name = "car/create.html"
@@ -104,6 +116,15 @@ class CarCreateView(LoginRequiredMixin, CreateView):
 
 
 class CarUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    for update Car
+
+    Attributes:
+        template_name:
+        form_class:
+        model:
+    """
+
     template_name = "car/create.html"
     form_class = CarForm
     model = Car
@@ -114,6 +135,15 @@ class CarUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class CarDetailView(LoginRequiredMixin, DetailView):
+    """
+    DetailView for Car
+
+    Attributes:
+        template_name:
+        model:
+        object:
+    """
+
     template_name = "car/detail.html"
     model = Car
 
@@ -136,7 +166,14 @@ class CarDetailView(LoginRequiredMixin, DetailView):
 
 # DONE: make booking list views
 class CarBookingListView(LoginRequiredMixin, ListView):
-    """Docstring for CarBookingListView."""
+    """
+    CarBookingListView for CarBooking app
+    list all booking
+
+    Attributes:
+        template_name:
+        model:
+    """
 
     template_name = "car/booking.html"
     model = CarBooking
@@ -163,6 +200,16 @@ class CarBookingListView(LoginRequiredMixin, ListView):
 
 # DONE: make booking create view
 class CarBookingCreateView(LoginRequiredMixin, CreateView):
+    """
+    CarBookingCreateView for create new CarBooking
+
+    Attributes:
+        template_name:
+        model:
+        form_class:
+        success_url:
+    """
+
     template_name = "car/booking_form.html"
     model = CarBooking
     form_class = BookingForm
@@ -196,6 +243,14 @@ class CarBookingCreateView(LoginRequiredMixin, CreateView):
 
 
 class CarBookingDetailView(LoginRequiredMixin, DetailView):
+    """
+    CarBookingDetailView for CarBooking app
+
+    Attributes:
+        model:
+        template_name:
+    """
+
     model = CarBooking
     template_name = "car/booking_detail.html"
 
@@ -225,6 +280,17 @@ def update_approve(request, pk):
 
 
 class CarBookingUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Update CarBooking
+
+    Attributes:
+        template_name:
+        model:
+        form_class:
+        object:
+        object:
+    """
+
     template_name = "car/booking_form.html"
     model = CarBooking
     form_class = BookingForm
@@ -264,6 +330,14 @@ class CarBookingUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class WaitApproveListView(LoginRequiredMixin, ListView):
+    """
+    WaitApproveListView for CarBooking app
+
+    Attributes:
+        template_name:
+        model:
+    """
+
     template_name = "car/wait_approve.html"
     model = CarBooking
 
@@ -273,6 +347,16 @@ class WaitApproveListView(LoginRequiredMixin, ListView):
 
 
 def ReturnCar(request, pk):
+    """
+    ReturnCar for return mile
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     form = CarReturnForm()
     booking = CarBooking.objects.get(pk=pk)
     car = Car.objects.get(pk=booking.car.pk)
@@ -316,6 +400,16 @@ def ReturnCar(request, pk):
 
 # FIX: add mile_out in this
 def UseCar(request, pk):
+    """
+    UseCar for use car
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     car = Car.objects.get(pk=pk)
     car_status = CarStatus.objects.get(name="กำลังใช้งาน")
     car.status = car_status
@@ -324,6 +418,16 @@ def UseCar(request, pk):
 
 
 def RefuelCar(request, pk):
+    """
+    RefuelCar for refuel car
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     car = Car.objects.get(pk=pk)
     form = CarRefuelForm()
     if request.method == "POST":
@@ -359,6 +463,14 @@ def RefuelCar(request, pk):
 
 
 class CarFixCreateView(LoginRequiredMixin, CreateView):
+    """
+    CarFixCreateView for create new CarFix
+
+    Attributes:
+        model:
+        template_name:
+    """
+
     model = CarFix
     template_name = "car/fix_form.html"
     # form_class = CarRequestFixForm
@@ -401,6 +513,14 @@ class CarFixCreateView(LoginRequiredMixin, CreateView):
 
 
 class CarRequestFixListView(LoginRequiredMixin, ListView):
+    """
+    CarRequestFixListView for CarFix app
+
+    Attributes:
+        template_name:
+        model:
+    """
+
     template_name = "car/request_fix.html"
     model = CarFix
 
@@ -411,6 +531,15 @@ class CarRequestFixListView(LoginRequiredMixin, ListView):
 
 
 class CarRequestFixDetailView(LoginRequiredMixin, DetailView):
+    """
+    CarRequestFixDetailView for CarFix app
+
+    Attributes:
+        template_name:
+        model:
+        object:
+    """
+
     template_name = "car/fix_detail.html"
     model = CarFix
 
@@ -427,6 +556,16 @@ class CarRequestFixDetailView(LoginRequiredMixin, DetailView):
 
 
 def CarAfterFixView(request, pk):
+    """
+    CarAfterFixView for CarFix app
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     fix = CarFix.objects.get(pk=pk)
     car = Car.objects.get(pk=fix.car.pk)
     form = CarAfterFixForm(instance=fix)
@@ -455,6 +594,16 @@ def CarAfterFixView(request, pk):
 
 
 class CarFixUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    CarFixUpdateView for update CarFix
+
+    Attributes:
+        model:
+        form_class:
+        template_name:
+        object:
+    """
+
     model = CarFix
     form_class = CarRequestFixForm
     template_name = "car/fix_form.html"
@@ -491,12 +640,29 @@ class CarFixUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class CarFixDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    CarFixDeleteView for delete CarFix
+
+    Attributes:
+        model:
+        template_name:
+        success_url:
+    """
+
     model = CarFix
     template_name = "car/fix_confirm_delete.html"
     success_url = reverse_lazy("car:fix")
 
 
 class ResponsibleListView(LoginRequiredMixin, ListView):
+    """
+    ResponsibleListView for CarFix app
+
+    Attributes:
+        template_name:
+        model:
+    """
+
     template_name = "car/fix_list.html"
     model = CarFix
 

@@ -5,31 +5,31 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Assign{% endblock title %}
+  {% block title %}Assign{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>การมอบหมายงาน</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item active">Assign Home</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active">Assign Home</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
-<!-- Staff -->
-{% if request.user|has_group:"Staff" %}
-{% include "assign/components/staff_dashboard.html" %}
+  <!-- Staff -->
+  {% if request.user|has_group:"Staff" %}
+  {% include "assign/components/staff_dashboard.html" %}
 
-<!-- Command -->
-{% elif request.user|has_group:"Command" %}
-Command
+  <!-- Command -->
+  {% elif request.user|has_group:"Command" %}
+  Command
 
-<!-- User -->
-{% else %}
-{% include "assign/components/user_dashboard.html" %}
+  <!-- User -->
+  {% else %}
+  {% include "assign/components/user_dashboard.html" %}
 
-{% endif %}
+  {% endif %}
 
-{% endblock content %}
+  {% endblock content %}

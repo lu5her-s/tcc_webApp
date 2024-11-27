@@ -1,16 +1,17 @@
 from django.contrib import admin
+
 from car.models import (
     ApproveStatus,
     Car,
     CarAfterFixImage,
+    CarBooking,
+    CarFix,
     CarFixImage,
     CarFixStatus,
-    CarStatus,
-    CarFix,
-    CarType,
-    CarBooking,
-    Refuel,
     CarImage,
+    CarStatus,
+    CarType,
+    Refuel,
 )
 
 # Register your models here.
@@ -29,11 +30,23 @@ admin.site.register(CarAfterFixImage)
 # register CarFixStatus
 admin.site.register(CarFixStatus)
 
+
 @admin.register(Car)
 class CarAdmin(admin.ModelAdmin):
     """CarAdmin. general car detail"""
 
-    list_display = ('number', 'fuel_now', 'responsible_man', 'mile_now', 'status',)
-    list_filter = ('responsible_man', 'status',)
-    search_fields = ('status', 'number',)
-
+    list_display = (
+        "number",
+        "fuel_now",
+        "responsible_man",
+        "mile_now",
+        "status",
+    )
+    list_filter = (
+        "responsible_man",
+        "status",
+    )
+    search_fields = (
+        "status",
+        "number",
+    )

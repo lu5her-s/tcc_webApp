@@ -178,7 +178,7 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
         else:
             print(form.errors)
             context = {
-                "errors": form.errors.as_text(),
+                "errors": form.errors,
                 "form": self.form_class,
             }
             return render(request, self.template_name, context)
