@@ -7,7 +7,7 @@
 # Last Modified By  : lu5her <lu5her@mail>
 # -----
 import os
-from django.utils import timezone
+
 from account.models import Department
 from car.forms import CarReturnForm
 from car.models import CarBooking
@@ -16,10 +16,11 @@ from config.utils import generate_pdf
 # for  get media path
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Prefetch, Q, Sum
+from django.db.models import Q, Sum
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic import DetailView, ListView, TemplateView, View
 from inform.models import Inform
 from parcel.models import ParcelRequest

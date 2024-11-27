@@ -7,19 +7,20 @@
 # Last Modified By  : lu5her <lu5her@mail>
 # -----
 from django.contrib import admin
+
 from .models import (
-    Operation,
-    Team,
-    TeamMember,
-    OilReimburesment,
     Allowance,
-    AllowanceWithdraw,
     AllowanceRefund,
+    AllowanceWithdraw,
+    OilReimburesment,
+    Operation,
     OperationCar,
+    OperationDocument,
     OperationParcelRequest,
     OperationParcelReturn,
-    OperationDocument,
     Task,
+    Team,
+    TeamMember,
 )
 
 # Register your models here.

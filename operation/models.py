@@ -8,12 +8,13 @@
 # -----
 import os
 from datetime import datetime
-from django.contrib.auth.models import User
-from django.db import models
+
 from account.models import Department
 from car.models import CarBooking
-from parcel.models import ParcelRequest, ParcelReturn
+from django.contrib.auth.models import User
+from django.db import models
 from inform.models import Inform
+from parcel.models import ParcelRequest, ParcelReturn
 
 # Create your models here.
 
@@ -195,6 +196,18 @@ class Task(models.Model):
 
 
 class Team(models.Model):
+    """
+    Team model for operation
+
+    Attributes:
+        operation:
+        team_leader:
+        accepted:
+        accepted_date:
+        accepted:
+        accepted_date:
+    """
+
     operation = models.OneToOneField(
         Operation, on_delete=models.CASCADE, related_name="team"
     )

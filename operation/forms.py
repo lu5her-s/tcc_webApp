@@ -1,22 +1,19 @@
+from car.models import CarBooking
 from django import forms
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.forms import formset_factory, widgets
-from car.models import CarBooking
-from operation.models import ParcelRequest, ParcelReturn
 from inform.models import Inform
+
+from operation.models import ParcelRequest, ParcelReturn
 
 from . import models
 
 
 class OperationForm(forms.ModelForm):
-    # inform = forms.ModelChoiceField(
-    #     queryset=Inform.objects.filter(
-    #         Q(approve_status="APR") & ~Q(repair_status="CLO")
-    #     ),
-    #     label="อ้างถึงแจ้งซ่อม",
-    #     widget=forms.Select(attrs={"class": "form-select"}),
-    # )
+    """
+    OperationForm for create new Operation
+    """
 
     class Meta:
         model = models.Operation
@@ -60,6 +57,10 @@ class OperationForm(forms.ModelForm):
 
 
 class TaskForm(forms.ModelForm):
+    """
+    TaskForm for create new Task
+    """
+
     class Meta:
         model = models.Task
         fields = (
@@ -80,6 +81,14 @@ class TaskForm(forms.ModelForm):
 
 
 class TeamForm(forms.ModelForm):
+    """
+    TeamForm for create new Team
+
+    Attributes:
+        queryset:
+        label_from_instance:
+    """
+
     class Meta:
         model = models.Team
         fields = ("team_leader",)
@@ -106,6 +115,14 @@ class TeamForm(forms.ModelForm):
 #         ).exclude(team_leader__isnull=False)
 #         self.fields["member"].label_from_instance = lambda obj: obj.profile
 class TeamMemberForm(forms.Form):
+    """
+    TeamMemberForm for create new TeamMember
+
+    Attributes:
+        member:
+        label_from_instance:
+    """
+
     member = forms.ModelChoiceField(
         queryset=User.objects.filter(
             profile__isnull=False, profile__department__name="ส่วนกลาง"
@@ -126,6 +143,14 @@ TeamMemberFormSet = formset_factory(TeamMemberForm, extra=1, can_delete=True)
 
 # FIX: approve_status__name after fix in car.models
 class CarAddForm(forms.Form):
+    """
+    CarAddForm for create new CarAdd
+
+    Attributes:
+        car_booking:
+        label_from_instance:
+    """
+
     car_booking = forms.ModelChoiceField(
         queryset=CarBooking.objects.filter(approve_status__name="อนุมัติ"),
         label="การจองรถ",
@@ -138,6 +163,14 @@ class CarAddForm(forms.Form):
 
 
 class AddFuelForm(forms.Form):
+    """
+    AddFuelForm for create new AddFuel
+
+    Attributes:
+        diesel:
+        benzine:
+    """
+
     diesel = forms.FloatField(
         min_value=0.0,
         max_value=9999.9,
@@ -155,6 +188,15 @@ class AddFuelForm(forms.Form):
 
 
 class TaskNoteForm(forms.Form):
+    """
+    TaskNoteForm for create new TaskNote
+
+    Attributes:
+        status:
+        note:
+        choices:
+    """
+
     status = forms.ChoiceField(
         label="สถานะ",
         widget=forms.Select(attrs={"class": "form-select"}),
@@ -170,6 +212,13 @@ class TaskNoteForm(forms.Form):
 
 
 class OperationParcelRequestForm(forms.Form):
+    """
+    OperationParcelRequestForm for create new OperationParcelRequest
+
+    Attributes:
+        parcel_request:
+    """
+
     parcel_request = forms.ModelChoiceField(
         queryset=ParcelRequest.objects.filter(billdetail__approve_status="APPROVED"),
         label="ใบเบิก",
@@ -178,6 +227,13 @@ class OperationParcelRequestForm(forms.Form):
 
 
 class OperationParcelReturnForm(forms.Form):
+    """
+    OperationParcelReturnForm for create new OperationParcelReturn
+
+    Attributes:
+        parcel_return:
+    """
+
     parcel_return = forms.ModelChoiceField(
         queryset=ParcelReturn.objects.filter(billdetail__approve_status="APPROVED"),
         label="ใบส่งคืน",
@@ -186,6 +242,13 @@ class OperationParcelReturnForm(forms.Form):
 
 
 class AddInformForm(forms.Form):
+    """
+    AddInformForm for create new AddInform
+
+    Attributes:
+        inform:
+    """
+
     inform = forms.ModelChoiceField(
         queryset=Inform.objects.filter(
             Q(approve_status="APR") & ~Q(repair_status="CLO")
