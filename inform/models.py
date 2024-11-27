@@ -1,12 +1,10 @@
-from assign.views import accepted
-from django.db import models
-from django.contrib.auth.models import User
-from django.urls import reverse
-from ckeditor.fields import RichTextField
-
-from asset.models import StockItem
 from account.models import Profile
+from asset.models import StockItem
 from car.models import CarBooking
+from ckeditor.fields import RichTextField
+from django.contrib.auth.models import User
+from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 
@@ -22,6 +20,7 @@ def inform_image(instance, filename):
 
 class Inform(models.Model):
     """
+    Model to represent a Repair Issue.
 
     Attributes:
         customer:

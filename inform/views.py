@@ -663,6 +663,14 @@ class InformCancelListView(LoginRequiredMixin, ListView):
 
 # Technical sector
 class InformTechnicalListView(LoginRequiredMixin, ListView):
+    """
+    InformTechnicalListView for Inform app
+
+    Attributes:
+        template_name:
+        model:
+    """
+
     template_name = "inform/inform_list.html"
     model = Inform
 
@@ -684,6 +692,14 @@ class InformTechnicalListView(LoginRequiredMixin, ListView):
 
 
 class InformInProgressListView(LoginRequiredMixin, ListView):
+    """
+    InformInProgressListView for Inform app
+
+    Attributes:
+        template_name:
+        model:
+    """
+
     template_name = "inform/inform_list.html"
     model = Inform
 
@@ -700,11 +716,30 @@ class InformInProgressListView(LoginRequiredMixin, ListView):
 
 
 def staff_wait_close(request):
+    """
+    staff_wait_close list of inform wait to close
+
+    Args:
+        request ():
+
+    Returns:
+
+    """
     inform = Inform.objects.filter(repair_status=Inform.RepairStatus.CLOSE)
     return render(request, "inform/inform_list.html", {"object_list": inform})
 
 
 def accept_inform(request, pk):
+    """
+    accept_inform for accept inform
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     inform = get_object_or_404(Inform, pk=pk)
     inform.accepted = True
     inform.repair_status = Inform.RepairStatus.REPAIR
@@ -716,6 +751,16 @@ def accept_inform(request, pk):
 
 
 def repair_note(request, pk):
+    """
+    repair_note for create repair note
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     inform = get_object_or_404(Inform, pk=pk)
 
     if request.method == "POST":
@@ -733,6 +778,16 @@ def repair_note(request, pk):
 
 # Command sector
 def inform_approve(request, pk):
+    """
+    inform_approve for approve inform
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     inform = get_object_or_404(Inform, pk=pk)
     inform.approve_status = Inform.ApproveStatus.APPROVE
     inform.inform_status = None
@@ -745,6 +800,16 @@ def inform_approve(request, pk):
 
 
 def inform_reject(request, pk):
+    """
+    inform_reject for reject inform
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
     inform = get_object_or_404(Inform, pk=pk)
     inform.approve_status = Inform.ApproveStatus.REJECT
     inform.save(update_fields=["approve_status"])
@@ -784,6 +849,16 @@ def inform_reject(request, pk):
 
 
 def review_save(request: HttpResponse, pk: int):
+    """
+    review_save for save review
+
+    Args:
+        request:
+        pk:
+
+    Returns:
+
+    """
     inform = get_object_or_404(Inform, pk=pk)
 
     if request.method == "POST":
@@ -814,6 +889,15 @@ def review_save(request: HttpResponse, pk: int):
 
 
 def customer_wait_to_review(request: HttpResponse):
+    """
+    customer_wait_to_review list of inform wait to review
+
+    Args:
+        request:
+
+    Returns:
+
+    """
     inform = Inform.objects.filter(
         approve_status=Inform.ApproveStatus.APPROVE,
         repair_status=Inform.RepairStatus.CLOSE,
@@ -827,6 +911,15 @@ def customer_wait_to_review(request: HttpResponse):
 
 
 def wait_close_approve(request: HttpResponse):
+    """
+    wait_close_approve list of inform wait to close
+
+    Args:
+        request:
+
+    Returns:
+
+    """
     object_list = Inform.objects.filter(
         Q(repair_status=Inform.RepairStatus.CLOSE)
         & Q(approve_status=Inform.ApproveStatus.APPROVE)
@@ -840,6 +933,15 @@ def wait_close_approve(request: HttpResponse):
 
 
 def command_wait_approve(request: HttpResponse):
+    """
+    command_wait_approve list of inform wait to approve
+
+    Args:
+        request:
+
+    Returns:
+
+    """
     object_list = Inform.objects.filter(
         inform_status=Inform.InformStatus.WAIT, approve_status=None
     )
@@ -851,6 +953,15 @@ def command_wait_approve(request: HttpResponse):
 
 
 def all_inform(request: HttpResponse):
+    """
+    all_inform list of all inform
+
+    Args:
+        request:
+
+    Returns:
+
+    """
     object_list = Inform.objects.all()
     return render(
         request,
@@ -860,6 +971,15 @@ def all_inform(request: HttpResponse):
 
 
 def all_progress(request: HttpResponse):
+    """
+    all_progress list of all inform
+
+    Args:
+        request:
+
+    Returns:
+
+    """
     object_list = Inform.objects.filter(repair_status=Inform.RepairStatus.REPAIR)
     return render(
         request,
@@ -869,6 +989,15 @@ def all_progress(request: HttpResponse):
 
 
 def all_recheck(request: HttpResponse):
+    """
+    all_recheck list of all inform
+
+    Args:
+        request:
+
+    Returns:
+
+    """
     object_list = Inform.objects.filter(approve_status=Inform.ApproveStatus.REJECT)
     return render(
         request,
@@ -878,6 +1007,16 @@ def all_recheck(request: HttpResponse):
 
 
 def close_approve(request: HttpResponse, pk: int):
+    """
+    close_approve
+
+    Args:
+        request:
+        pk:
+
+    Returns:
+
+    """
     if request.method == "POST":
         inform = get_object_or_404(Inform, pk=pk)
         inform.closed = True
@@ -886,6 +1025,15 @@ def close_approve(request: HttpResponse, pk: int):
 
 
 def all_assigned(request: HttpResponse):
+    """
+    all_assigned list of all inform
+
+    Args:
+        request:
+
+    Returns:
+
+    """
     object_list = Inform.objects.filter(assigned_to=request.user.profile)
     return render(
         request,
@@ -895,6 +1043,16 @@ def all_assigned(request: HttpResponse):
 
 
 def inform_to_pdf(request: HttpResponse, pk: int):
+    """
+    render inform to pdf
+
+    Args:
+        request:
+        pk:
+
+    Returns:
+
+    """
     inform = get_object_or_404(Inform, pk=pk)
     try:
         customer_review = CustomerReview.objects.get(inform=inform)

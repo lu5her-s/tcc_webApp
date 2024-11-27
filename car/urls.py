@@ -32,7 +32,7 @@ urlpatterns = [
                 path("wait/", views.WaitApproveListView.as_view(), name="wait_approve"),
                 path(
                     "return/<int:pk>/",
-                    views.ReturnCar.as_view(),
+                    views.ReturnCar,
                     name="return-car",
                 ),
                 path("use/<int:pk>/", views.UseCar, name="use-car"),
@@ -61,7 +61,7 @@ urlpatterns = [
                 ),
                 path(
                     "after-fix/<int:pk>/",
-                    views.CarAfterFixView.as_view(),
+                    views.CarAfterFixView,
                     name="after-fix",
                 ),
                 path(
