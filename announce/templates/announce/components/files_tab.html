@@ -1,0 +1,15 @@
+{% load tags %}
+<h6 class="card-title"> ไฟล์ประกอบประชาสัมพันธ์ | <span> {{ object.title }}</span></h6>
+{% for f in files_list %}
+
+<iframe src="{{ f.files.url }}" frameborder="0" style="width: 100%; height: 800px;"></iframe>
+<br>
+{% comment %}<a href="{{ f.files.url }}" target="_blank">เอกสารที่เกี่ยวข้อง--{{ f.files.name }}</a>{% endcomment %}
+
+{% comment %}<p>Download - <a href="{{ f.files.url }}">เอกสารนี้</a></p>{% endcomment %}
+{% with f.files.name|split:"/" as file %}
+<p>Download - <a href="{{ f.files.url }}">{{ file|last }}</a></p>
+{% comment %}{{ file|last }}{% endcomment %}
+{% endwith %}
+
+{% endfor %}

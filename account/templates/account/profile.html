@@ -10,7 +10,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
         <li class="breadcrumb-item"><a href="{% url 'account:members' %}">Members</a></li>
-        <li class="breadcrumb-item active">Profile</li>
+        <li class="breadcrumb-item active">ข้อมูลส่วนตัว</li>
       </ol>
     </nav>
   </div><!-- End Page Title -->
@@ -30,13 +30,13 @@
             <ul class="nav nav-tabs nav-tabs-bordered">
 
               <li class="nav-item">
-                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">ภาพรวม</button>
               </li>
 
               {% comment %}{% if request.user == user %}{% endcomment %}
               {% if request.path == '/account/profile/' %}
               <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">อัพเดทข้อมูล</button>
               </li>
 
               {% comment %}<li class="nav-item">{% endcomment %}
@@ -44,7 +44,7 @@
               {% comment %}</li>{% endcomment %}
 
               <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">เปลี่ยนรหัสผ่าน</button>
               </li>
 
               {% endif %}

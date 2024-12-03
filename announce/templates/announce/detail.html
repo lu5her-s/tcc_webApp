@@ -69,35 +69,11 @@
               </div>
 
               <div id="images" class="tab-pane fade pt-3">
-                <h6 class="card-title"> รูปภาพประกอบประชาสัมพันธ์ | <span> {{ object.title }}</span></h6>
-                <div id="gallery">
-                  {% for item in images %}
-                  {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
-                  <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                  </a> {% endcomment %}
-                  <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
-                    <img height="250" width="250" src="{{ item.images.url }}" alt="">
-                  </a>
-                  {% endfor %}
-                </div>
+                {% include "announce/components/images_tab.html" %}
               </div>
 
               <div id="files" class="tab-pane fade pt-3">
-                <h6 class="card-title"> ไฟล์ประกอบประชาสัมพันธ์ | <span> {{ object.title }}</span></h6>
-                {% for f in files_list %}
-
-                <iframe src="{{ f.files.url }}" frameborder="0" style="width: 100%; height: 800px;"></iframe>
-                <br>
-                {% comment %}<a href="{{ f.files.url }}" target="_blank">เอกสารที่เกี่ยวข้อง--{{ f.files.name }}</a>{% endcomment %}
-
-                {% comment %}<p>Download - <a href="{{ f.files.url }}">เอกสารนี้</a></p>{% endcomment %}
-                {% with f.files.name|split:"/" as file %}
-                <p>Download - <a href="{{ f.files.url }}">{{ file|last }}</a></p>
-                {% comment %}{{ file|last }}{% endcomment %}
-                {% endwith %}
-
-                {% endfor %}
-
+                {% include "announce/components/files_tab.html" %}
               </div>
 
             </div><!-- End Tab -->
@@ -118,6 +94,15 @@
 
     <!-- comment sector -->
     {% include "announce/components/comments.html" %}
+
+    <!-- button to backward -->
+    <div class="card">
+      <div class="card-body pt-3">
+        <a href="{% url 'announce:list' %}" class="btn btn-primary"><i class="bi bi-arrow-left"></i>&nbsp;ย้อนกลับ</a>
+      </div>
+    </div>
+
+
 
   </section>
   {% include 'components/photoswipe.html' %}

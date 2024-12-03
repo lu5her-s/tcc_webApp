@@ -49,7 +49,7 @@ from account.models import (
 class HomeView(LoginRequiredMixin, TemplateView):
     """
     HomeView สำหรับหน้าแรก
-    แสดงผลหน้า Dashboard Test
+    แสดงผลหน้า Dashboard
 
     Attributes:
         template_name: str

@@ -1,0 +1,12 @@
+{% load tags %}
+<h6 class="card-title"> รูปภาพประกอบประชาสัมพันธ์ | <span> {{ object.title }}</span></h6>
+<div id="gallery">
+  {% for item in images %}
+  {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
+    <img height="150" width="150" src="{{ item.images.url }}" alt="">
+  </a> {% endcomment %}
+  <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
+    <img height="250" width="250" src="{{ item.images.url }}" alt="">
+  </a>
+  {% endfor %}
+</div>

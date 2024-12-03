@@ -63,6 +63,7 @@ class AnnounceForm(forms.ModelForm):
             "author": widgets.HiddenInput(
                 attrs={"class": "form-control", "id": "author"}
             ),
+            "tokens": widgets.CheckboxSelectMultiple(attrs={"class": "form-control"}),
         }
         labels = {
             "is_type": "ประเภท",

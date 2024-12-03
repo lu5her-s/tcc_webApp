@@ -17,38 +17,6 @@ def get_file_name(instance, filename):
     return "Announce/Files/{}/{}".format(file_name, filename)
 
 
-class AnnounceType(models.Model):
-    """
-    AnnounceType model ประเภทข่าวสาร
-
-    Attributes:
-        name:
-    """
-
-    name = models.CharField(max_length=200)
-
-    def __str__(self):
-        return f"{self.name}"
-
-
-class AnnounceStatus(models.Model):
-    """
-    AnnounceStatus model สถานะข่าวสาร
-
-    Attributes:
-        name:
-    """
-
-    name = models.CharField(max_length=200)
-
-    class Meta:
-        verbose_name = "Status"
-        verbose_name_plural = "Status"
-
-    def __str__(self):
-        return f"{self.name}"
-
-
 class Announce(models.Model):
     """
     Announce model ข่าวสาร
@@ -65,16 +33,28 @@ class Announce(models.Model):
         reads:
     """
 
-    is_type = models.ForeignKey(
-        AnnounceType, on_delete=models.CASCADE, related_name="announce_type"
+    class Type(models.TextChoices):
+        # choicers fort ข่าวสาร ประชาสัมพันธ์ สั่งการ ประสานงาน
+        INFORM = "INFORM", "ประชาสัมพันธ์"
+        ORDER = "ORDER", "สั่งการ"
+        COORDINATE = "COORDINATE", "ประสานงาน"
+
+    class Status(models.TextChoices):
+        # choicers fort สถานะข่าวสาร ประชาสัมพันธ์ สั่งการ ประสานงาน
+        PUBLISH = "PUBLISH", "ประกาศ"
+        DONE = "DONE", "เสร็จสิ้น"
+
+    is_type = models.CharField(
+        max_length=200, choices=Type.choices, default=Type.INFORM
     )
-    status = models.ForeignKey(
-        AnnounceStatus, on_delete=models.CASCADE, related_name="announce_status"
+    status = models.CharField(
+        max_length=200, choices=Status.choices, default=Status.PUBLISH
     )
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     # detail = models.TextField(null=True, blank=True)
-    detail = RichTextField(null=True, blank=True)
+    # detail = RichTextField(null=True, blank=True)
+    detail = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_delete = models.BooleanField(default=False)
@@ -82,7 +62,7 @@ class Announce(models.Model):
 
     def __str__(self):
         # return '(' + self.is_type.name + ')' + self.name + '(' + self.author.username + ')' + self.created_at.strftime('%a, %d %b %Y %H:%M:%S') + '--' + str(self.number_of_reader()) + ' reader'
-        return f"({self.is_type.name}) {self.title} by {self.author.username}"
+        return f"({self.get_is_type_display()}) {self.title} by {self.author.username}"
 
     def number_of_reader(self):
         return self.reads.count()

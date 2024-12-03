@@ -177,6 +177,9 @@
     <!-- Template Main JS File -->
     {% comment %}<script src="assets/js/main.js"></script>{% endcomment %}
     {% comment %}<script src="{% static 'assets/js/main.js' %}"></script>{% endcomment %}
+
+    <!-- modal welcome and show notify -->
+    {% include "components/modal_welcome.html" %}
   </body>
 
   <script>
@@ -223,6 +226,15 @@
     document.body.scrollTop = 0; // For Safari
     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
   }
+
+  //on ready if history url is login show alert hello
+  $(document).ready(function () {
+    let history_url = document.referrer;
+    // if "login" in history url
+    if (history_url.includes("login")) {
+      $("#welcomeModal").modal("show");
+    }
+  });
   </script>
 
 </html>

@@ -53,18 +53,21 @@
                 <tbody>
                   {% for object in object_list %}
                   <tr>
-                    <th scope="row">{{ object.is_type.name }}</th>
-                    <td><a href="#">{{ object.status.name }}</a></td>
+                    <th scope="row">{{ object.get_is_type_display }}</th>
+                    <td>{{ object.get_status_display }}</td>
                     <td><a href="{% url 'announce:detail' pk=object.pk %}" class="text-primary">{{ object.title }}</a></td>
                     <td>{{ object.created_at|timezone:"Asia/Bangkok"|thaidate }}</td>
                     <td>
-                      {% if not object in read and not object.author == request.user %}
-                      <a href="{% url 'announce:detail' pk=object.pk %}"><span  class="badge bg-warning text-black"><i class="bi bi-exclamation-circle"></i>&nbsp;ยังไม่อ่าน</span></a>
-                      {% elif object.author == request.user %}
-                      <a href="{% url 'announce:detail' pk=object.pk %}"><span class="badge bg-secondary">เจ้าของเรื่อง</span></a>
-                      {% else %}
-                      <a href="{% url 'announce:detail' pk=object.pk %}"><span class="badge bg-success">ตอบรับแล้ว</span></a>
-                      {% endif %}
+                      <a href="{% url 'announce:detail' pk=object.pk %}">
+                        {% if not object in read and not object.author == request.user %}
+                        <span  class="badge bg-warning text-black"><i class="bi bi-exclamation-circle"></i>&nbsp;ยังไม่อ่าน</span>
+                        {% elif object.author == request.user %}
+                        <span class="badge bg-secondary">เจ้าของเรื่อง</span>
+                        {% else %}
+                        <span class="badge bg-success">ตอบรับแล้ว</span>
+                        {% endif %}
+                        <span class="badge bg-primary"><i class="bi bi-eye"></i>&nbsp;</span>
+                      </a>
                     </td>
                   </tr>
                   {% endfor %}

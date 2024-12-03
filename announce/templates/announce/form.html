@@ -102,14 +102,16 @@
                 <div class="row mb-3">
                   <label for="{{ form.tokens.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.tokens.label }}</label>
                   <div class="col-md-8 col-lg-9">
-                    <fieldset>
-                      <!--{{ form.tokens }} -->
+                      <input type="checkbox" id="all_notifications" name="all_notifications" value="all_notifications">
+                      <label for="all_notifications" class="form-check-label form-check-inline">ทั้งหมด</label>
                       {% for field in form.tokens %}
-                      <div class="col-sm-8">
+                      <div class="form-check form-check-inline">
+                        <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        <!-- <input class="form-check-input" type="checkbox" id="{{ field.id_for_label }}" name="{{ field.name }}"> -->
                         {{ field }}
+                        {% comment %}{{ field.errors }}{% endcomment %}
                       </div>
                       {% endfor %}
-                    </fieldset>
                   </div>
                 </div>
 
@@ -123,11 +125,11 @@
                 <div class="text-center">
                   {% if btn_text == 'อัพเดท' %}
                   <a href="{% url 'announce:detail' pk=form.instance.pk %}" class="btn btn-lg btn-secondary">Back</a>
-                  <button type="submit" class="btn btn-lg btn-success">Update</button>
+                  <button type="submit" class="btn btn-lg btn-success">อัพเดท</button>
                   {% else %}
                   <a href="{% url 'announce:list' %}" class="btn btn-lg btn-secondary">Back</a>
-                  <button type="submit" class="btn btn-lg btn-success">Create</button>
-                  <button type="reset" class="btn btn-lg btn-warning">Reset</button>
+                  <button type="submit" class="btn btn-lg btn-success">สร้าง</button>
+                  <button type="reset" class="btn btn-lg btn-warning">รีเซ็ต</button>
                   {% endif %}
                 </div>
 
@@ -145,6 +147,22 @@
 
       </div>
     </div>
+
+    <script>
+    // if #all_notifications is checked, check all checkboxes or uncheck all checkboxes
+    document.getElementById('all_notifications').addEventListener('change', function() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      if (this.checked) {
+        checkboxes.forEach(function(checkbox) {
+          checkbox.checked = true;
+        });
+      } else {
+        checkboxes.forEach(function(checkbox) {
+          checkbox.checked = false;
+        });
+      }
+    });
+    </script>
   </section>
   {% endblock content %}
 

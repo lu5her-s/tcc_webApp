@@ -4,8 +4,6 @@ from announce.models import (
     Announce,
     AnnounceFile,
     AnnounceImage,
-    AnnounceStatus,
-    AnnounceType,
     Comment,
 )
 
@@ -81,8 +79,6 @@ class AnnounceImageAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(AnnounceType)
-admin.site.register(AnnounceStatus)
 admin.site.register(AnnounceFile)
 # admin.site.register(AnnounceImage)
 admin.site.register(Comment)

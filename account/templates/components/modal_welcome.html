@@ -1,0 +1,28 @@
+{% load tags %}
+<!-- modal to show welcome -->
+<div class="modal fade" id="welcomeModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">ยินดีต้อนรับเข้าสู่ระบบ</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ยินดีต้อนรับเข้าสู่ระบบ
+        {% if not request.user.profile %}
+        <br>
+        กรุณาอัพเดทข้อมูลส่วนตัว <a href="{% url 'account:profile' %}">ที่นี่</a>
+        {% else %}
+        <br>
+        ยินดีต้อนรับ {{ request.user.profile.rank|default_if_none:"" }} {{ request.user.full_name }}
+        <!-- TODO: add notification for new -->
+        {% endif %}
+        
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+      </div>
+    </div>
+  </div>
+</div>

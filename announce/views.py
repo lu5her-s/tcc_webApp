@@ -140,7 +140,6 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
         success_url:
     """
 
-    login_url = reverse_lazy("login")
     template_name = "announce/form.html"
     form_class = AnnounceForm
     success_url = reverse_lazy("announce:list")
@@ -187,7 +186,7 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
                 )
                 imgs = AnnounceImage.objects.filter(announce=form_id)
                 # url  = 'http://' + host + path
-                head = f"มี{form_save.is_type.name}ใหม่\n--------------------\n"
+                head = f"มี{form_save.get_is_type_display()}ใหม่\n--------------------\n"
                 body = f"เรื่อง: {form_save.title}\n--------------------\nรายละเอียด:\n{strip_tags(form_save.detail)}\n"
                 body += f"\n--------------------\nurl: {url}\n"
 
