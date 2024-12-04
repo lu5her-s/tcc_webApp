@@ -198,7 +198,7 @@ INTERNAL_IPS = [
 JAZZMIN_SETTINGS = {
     "site_title": "TCC Admin",
     "site_header": "TCC Admin",
-    "site_logo": "assets/img/tcc_logo_admin.png",
+    "site_logo": "assets/img/tcc_logo.png",
     "copyright": "Telecommunication and Network",
     "welcome_sign": "Welcome, TCC Admin",
     #######

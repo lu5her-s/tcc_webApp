@@ -9,7 +9,9 @@
       </div>
       <div class="modal-body">
         ยินดีต้อนรับเข้าสู่ระบบ
-        {% if not request.user.profile %}
+        {% if not request.user.profile.rank %}
+        <br>
+        ยังไม่ได้อัพเดทข้อมูลส่วนตัว
         <br>
         กรุณาอัพเดทข้อมูลส่วนตัว <a href="{% url 'account:profile' %}">ที่นี่</a>
         {% else %}
