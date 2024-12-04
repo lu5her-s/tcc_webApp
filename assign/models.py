@@ -61,7 +61,7 @@ class Assign(models.Model):
 
     title = models.CharField(max_length=200)
     # body        = models.TextField()
-    body = RichTextField()
+    body = models.TextField()
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="assignAuthor"
     )
