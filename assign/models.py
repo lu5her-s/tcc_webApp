@@ -3,7 +3,7 @@
 # File              : models.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Fri Oct, 28 2022, 21:17 301
-# Last Modified Date: Sun Dec, 25 2022, 11:18 359
+# Last Modified Date: Wed Dec, 04 2024, 21:40 339
 # Last Modified By  : lu5her <lu5her@mail>
 from datetime import datetime
 
@@ -11,6 +11,7 @@ from account.models import Profile
 from ckeditor.fields import RichTextField
 from django.contrib.auth.models import User
 from django.db import models
+from inform.models import Inform
 
 # Create your models here.
 
@@ -26,25 +27,37 @@ def get_image_name(instance, filename):
     return f"Assign/{file_name}/{filename}"
 
 
-class AssignStatus(models.Model):
-    """AssignStatus model.
+class Assign(models.Model):
+    """
+    Assign model for assigning tasks to users.
 
     Attributes:
-        name (str): The name of the status.
+        title:
+        body:
+        author:
+        created_at:
+        assigned_to:
+        accepted:
+        accepted_on:
+        status:
+        note:
     """
 
-    name = models.CharField(max_length=200)
+    class Status(models.TextChoices):
+        """
+        Status choices for Assign model.
 
-    class Meta:
-        verbose_name = "Status"
-        verbose_name_plural = "Status"
+        Attributes:
+            PENDING:
+            ACCEPTED:
+            REJECTED:
+            DONE:
+        """
 
-    def __str__(self) -> str:
-        return f"{self.name}"
-
-
-class Assign(models.Model):
-    """Assign."""
+        PENDING = "Pending", "รอตอบรับ"
+        ACCEPTED = "Accepted", "ตอบรับแล้ว"
+        REJECTED = "Rejected", "ปฏิเสธ"
+        DONE = "Done", "เสร็จสมบูรณ์"
 
     title = models.CharField(max_length=200)
     # body        = models.TextField()
@@ -58,19 +71,24 @@ class Assign(models.Model):
     )
     accepted = models.BooleanField(default=False)
     accepted_on = models.DateTimeField("date accepted", null=True, blank=True)
-    status = models.ForeignKey(
-        AssignStatus,
-        on_delete=models.CASCADE,
-        related_name="assignStatus",
-        null=True,
-        blank=True,
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING,
     )
-    note = RichTextField(null=True, blank=True)
+    note = models.TextField(null=True, blank=True)
+    ref_inform = models.ForeignKey(
+        Inform, on_delete=models.CASCADE, related_name="assigned_ref_inform"
+    )
+
+    class Meta:
+        verbose_name = "Assign"
+        verbose_name_plural = "Assign"
 
     def save(self, *args, **kwargs):
         if self.accepted and self.accepted_on is None:
             self.accepted_on = datetime.now()
-            self.status = AssignStatus.objects.get(pk=1)
+            self.status = self.Status.ACCEPTED
         elif not self.accepted and self.accepted_on is not None:
             self.accepted_on = None
         super(Assign, self).save(*args, **kwargs)
