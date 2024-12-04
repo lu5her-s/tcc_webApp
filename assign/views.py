@@ -25,7 +25,6 @@ from assign.models import (
     Assign,
     AssignImage,
     AssignProgress,
-    AssignStatus,
 )
 
 # Create your views here.

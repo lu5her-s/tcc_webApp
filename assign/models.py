@@ -78,7 +78,11 @@ class Assign(models.Model):
     )
     note = models.TextField(null=True, blank=True)
     ref_inform = models.ForeignKey(
-        Inform, on_delete=models.CASCADE, related_name="assigned_ref_inform"
+        Inform,
+        on_delete=models.CASCADE,
+        related_name="assigned_ref_inform",
+        null=True,
+        blank=True,
     )
 
     class Meta:

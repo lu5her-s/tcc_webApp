@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from assign.models import Assign, AssignImage, AssignProgress, AssignStatus
+from assign.models import Assign, AssignImage, AssignProgress
 
 # Register your models here.
 
@@ -34,5 +34,4 @@ class AssingAdmin(admin.ModelAdmin):
 
 
 admin.site.register(AssignImage)
-admin.site.register(AssignStatus)
 admin.site.register(AssignProgress)
