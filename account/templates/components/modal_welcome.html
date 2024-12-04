@@ -14,10 +14,14 @@
         กรุณาอัพเดทข้อมูลส่วนตัว <a href="{% url 'account:profile' %}">ที่นี่</a>
         {% else %}
         <br>
-        ยินดีต้อนรับ {{ request.user.profile.rank|default_if_none:"" }} {{ request.user.full_name }}
+        ยินดีต้อนรับ {{ request.user.profile.rank|default_if_none:"" }} {{ request.user.get_full_name }}
         <!-- TODO: add notification for new -->
+        {% if count_total %}
+        <br>
+        คุณมี {{ count_total }} การแจ้งเตือนใหม่
         {% endif %}
-        
+        {% endif %}
+
 
       </div>
       <div class="modal-footer">
