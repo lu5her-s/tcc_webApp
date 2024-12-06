@@ -53,7 +53,7 @@
                             <tbody>
                                 {% for object in object_list %}
                                 <tr>
-                                    <th scope="col">{{ object.category.name }}</th>
+                                    <th scope="col">{{ object.get_category_display }}</th>
                                     <td>{{ object.title }}</td>
                                     <td>{{ object.body|text_wrap:20|safe }}</td>
                                     <td>{{ object.created_at|thaidate }}</td>

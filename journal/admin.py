@@ -1,12 +1,10 @@
 from django.contrib import admin
 
-from journal.models import Journal, JournalImage, JournalStatus, JournalType
+from journal.models import Journal, JournalImage
 
 # Register your models here.
 
 # admin.site.register(Journal)
-admin.site.register(JournalType)
-admin.site.register(JournalStatus)
 admin.site.register(JournalImage)
 
 

@@ -10,7 +10,7 @@ from django.views.generic import (
 )
 
 from journal.forms import JournalForm
-from journal.models import Journal, JournalImage, JournalStatus, JournalType
+from journal.models import Journal, JournalImage
 
 # Create your views here.
 
@@ -165,6 +165,7 @@ class JournalDeleteView(LoginRequiredMixin, DeleteView):
         return context
 
 
+# FIX: edit category
 def JournalCategoriesView(request, pk):
     """
     JournalCategoriesView for show category
@@ -176,10 +177,7 @@ def JournalCategoriesView(request, pk):
     Returns:
 
     """
-    object_list = Journal.objects.filter(category__id__exact=pk)
-    description = JournalType.objects.get(pk=pk)
-    context = {"object_list": object_list, "description": description, "btn": "Back"}
-    return render(request, "journal/journal.html", context)
+    pass
 
 
 def JournalStatusView(request, pk):
@@ -193,7 +191,4 @@ def JournalStatusView(request, pk):
     Returns:
 
     """
-    object_list = Journal.objects.filter(status__id__exact=pk)
-    description = JournalStatus.objects.get(pk=pk)
-    context = {"object_list": object_list, "description": description, "btn": "Back"}
-    return render(request, "journal/journal.html", context)
+    pass

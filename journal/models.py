@@ -1,5 +1,4 @@
 from account.models import Profile
-from ckeditor.fields import RichTextField
 from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import reverse
@@ -11,25 +10,6 @@ def get_image_name(instance, filename):
     """get_absolute_url."""
     image_name = instance.journal.title
     return f"JournalImages/%Y/%B/{image_name}/{filename}"
-
-
-class JournalType(models.Model):
-    """JournalType."""
-
-    name = models.CharField(max_length=200)
-
-    def __str__(self):
-        """__str__."""
-        return f"{self.name}"
-
-
-class JournalStatus(models.Model):
-    """JournalStatus."""
-
-    name = models.CharField(max_length=200)
-
-    def __str__(self):
-        return f"{self.name}"
 
 
 class Journal(models.Model):
@@ -47,11 +27,25 @@ class Journal(models.Model):
         header:
     """
 
+    class Status(models.TextChoices):
+        IN_PROGRESS = "In Progress", "กำลังทำงาน"
+        DONE = "Done", "เสร็จสมบูรณ์"
+        CANCELLED = "Cancelled", "ยกเลิก"
+
+    class Category(models.TextChoices):
+        ROUTINE = "Routine", "การทำงานตามหน้าที่"
+        SPECIAL = "Special", "การทำงานมอบหมาย"
+        OTHER = "Other", "การทำงานอื่นๆ"
+
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    category = models.ForeignKey(JournalType, on_delete=models.CASCADE)
+    category = models.CharField(
+        max_length=200, choices=Category.choices, default=Category.ROUTINE
+    )
     title = models.CharField(max_length=200)
-    body = RichTextField()
-    status = models.ForeignKey(JournalStatus, on_delete=models.CASCADE)
+    body = models.TextField()
+    status = models.CharField(
+        max_length=200, choices=Status.choices, default=Status.IN_PROGRESS
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     header = models.ForeignKey(

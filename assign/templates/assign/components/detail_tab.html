@@ -1,0 +1,56 @@
+{% load tags %}
+<h6 class="card-title"> รายละเอียด | <span> {{ object.title }}</span></h6>
+<table class="table">
+  <tr>
+    <th>เรื่อง</th>
+    <td>{{ object.title }}</td>
+  </tr>
+
+  <tr>
+    <th>มอบหมายให้</th>
+    <td>{{ object.assigned_to.rank }}{{ object.assigned_to.user.get_full_name }}</td>
+  </tr>
+
+  <tr>
+    <th>ผู้มอบหมาย</th>
+    <td>{{ object.author.profile }}</td>
+  </tr>
+
+  <tr>
+    <th>สถานะ</th>
+    {% if object.accepted %}
+    <td>
+      <i class="bi bi-check-circle" style="color: green;"></i>
+      ตอบรับแล้ว เมื่อ<br>
+      {{ object.accepted_on|thaidate }} เวลา 
+      {{ object.accepted_on|date:"H:i" }} น.
+    </td>
+    {% else %}
+    <td>
+      <i class="bi bi-x-circle" style="color:red"></i>
+      ยังไม่ตอบรับ
+    </td>
+    {% endif %}
+  </tr>
+
+  {% comment %}<tr>{% endcomment %}
+    {% comment %}<th>ผู้สร้าง</th>{% endcomment %}
+    {% comment %}<td>{{ object.author.profile.rank }} {{ object.author.get_full_name }}</td>{% endcomment %}
+    {% comment %}</tr>{% endcomment %}
+
+  <tr>
+    <th>สร้างเมื่อ</th>
+    <td>{{ object.created_at|thaidate }} 
+      เวลา {{ object.created_at|date:"H:i" }} น.
+    </td>
+  </tr>
+</table>
+
+<table class="table table-borderless">
+  <tr>
+    <th class="text-center">รายละเอียด</th>
+  </tr>
+  <tr>
+    <td>{{ object.body|safe|linebreaks }}</td>
+  </tr>
+</table>

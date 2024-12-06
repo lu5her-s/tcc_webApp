@@ -19,6 +19,7 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
+from journal.models import Journal
 
 from assign.forms import AssignForm, NoteForm, ProgressForm
 from assign.models import (
@@ -133,13 +134,36 @@ class AssignDetailView(LoginRequiredMixin, DetailView):
         note_form = NoteForm(request.POST)
         if form.is_valid() and note_form.is_valid():
             note = request.POST.get("note")
-            status = AssignStatus.objects.get(pk=request.POST.get("status"))
             form.save()
-            note_save = AssignProgress.objects.create(
-                assign=self.get_object(), note=note, status=status.name
-            )
-            note_save.save()
-            return HttpResponseRedirect(self.request.path_info)
+            # check if status != DONE
+            if form.cleaned_data["status"] != "Done":
+                note_save = AssignProgress.objects.create(
+                    assign=self.get_object(),
+                    note=note,
+                    status=form.cleaned_data["status"],
+                )
+                note_save.save()
+                return HttpResponseRedirect(self.request.path_info)
+            else:
+                notes = []
+                for note in AssignProgress.objects.filter(assign=self.get_object()):
+                    notes.append(note.note)
+                note_save = AssignProgress.objects.create(
+                    assign=self.get_object(),
+                    note=note,
+                    status=form.cleaned_data["status"],
+                )
+                note_save.save()
+                journal = Journal.objects.create(
+                    author=self.request.user,
+                    category=Journal.Category.SPECIAL,
+                    title=self.get_object().title,
+                    body=self.get_object().body + "\n\n" + "\n".join(notes),
+                    status=Journal.Status.DONE,
+                    header=self.get_object().author.prfile,
+                )
+                journal.save()
+                return HttpResponseRedirect(self.request.path_info)
 
 
 class AssignCreateView(LoginRequiredMixin, CreateView):
@@ -324,12 +348,11 @@ class AssignDeleteView(LoginRequiredMixin, DeleteView):
 
 
 def accepted(request, pk):
-    """accepted button for accepted assigned_jib
-
-    :request: TODO
-    :pk: TODO
-    :returns: TODO
-
+    """
+    accepted button for accepted assigned_jib
+    :param request:
+    :param pk:
+    :return:
     """
     assigned_job = Assign.objects.get(pk=pk)
     assigned_job.accepted = True
