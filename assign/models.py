@@ -122,7 +122,9 @@ class AssignProgress(models.Model):
     assign = models.ForeignKey(Assign, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     note = models.TextField(null=True, blank=True)
-    status = models.TextField(null=True, blank=True)
+    status = models.CharField(
+        max_length=20, choices=Assign.Status.choices, default=Assign.Status.PENDING
+    )
 
     class Meta:
         verbose_name = "Progress"

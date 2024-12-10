@@ -4,7 +4,7 @@
 <table class="table table-borderless">
   {% for n in note %}
   <tr style="border-bottom: 2px dashed grey;">
-    {% if n.status is not None %}<td>({{ n.status }}) : </td>{% endif %}
+    {% if n.status is not None %}<td>({{ n.get_status_display }})</td>{% endif %}
     <td>{{ n.note|linebreaks }}</td>
     <td>{{ n.created_at|thaidate }} เวลา {{ n.created_at|date:"H:m" }}</td>
   </tr>

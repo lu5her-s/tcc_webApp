@@ -77,27 +77,24 @@ class Position(models.Model):
 # NOTE : class for create new profile
 class Profile(models.Model):
     """
-        This class for create new profile for use```pythonr
-    # Please provide the code you would like me to edit.
-    ```
+    This class for create new profile for use
 
-
-        Attributes:
-            user:
-            rank:
-            position:
-            sector:
-            department:
-            place:
-            phone:
-            image:
-            about:
-            address:
-            twitter:
-            facebook:
-            instagram:
-            line_id:
-            line_token:
+    Attributes:
+        user:
+        rank:
+        position:
+        sector:
+        department:
+        place:
+        phone:
+        image:
+        about:
+        address:
+        twitter:
+        facebook:
+        instagram:
+        line_id:
+        line_token:
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)

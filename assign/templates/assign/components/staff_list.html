@@ -1,0 +1,35 @@
+{% load tags %}
+<thead>
+  <tr>
+    <th scope="col">เรื่อง</th>
+    <th scope="col">มอบหมายให้</th>
+    <th scope="col">เมื่อ</th>
+    <th scope="col">สถานะ</th>
+    <th scope="col">การตอบรับ</th>
+    <th scope="col">...</th>
+  </tr>
+</thead>
+<tbody>
+  {% for object in object_list %}
+  <tr>
+    <th>{{ object.title|text_wrap:20 }}</th>
+    <td>{{ object.assigned_to.rank }}{{ object.assigned_to.user.get_full_name }}</td>
+    <td>{{ object.created_at|thaidate }}</td>
+    <td>
+      {% if object.status %}
+      {{ object.get_status_display }}
+      {% else %}
+      -
+      {% endif %}
+    </td>
+    <td>
+      {% if object.accepted %}
+      <i class="bi bi-check-circle" style="color: green"></i>&nbsp;ตอบรับแล้ว
+      {% else %}
+      <i class="bi bi-x-circle" style="color: red"></i>&nbsp;ยังไม่ตอบรับ
+      {% endif %}
+    </td>
+    <td><a href="{% url 'assign:detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a></td>
+  </tr>
+  {% endfor %}
+</tbody>

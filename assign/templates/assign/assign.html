@@ -44,78 +44,9 @@
               <table class="table table-hover" id="dataTable">
                 {% if request.user|has_group:"Staff" %}
 
-                <thead>
-                  <tr>
-                    <th scope="col">เรื่อง</th>
-                    <th scope="col">มอบหมายให้</th>
-                    <th scope="col">เมื่อ</th>
-                    <th scope="col">สถานะ</th>
-                    <th scope="col">การตอบรับ</th>
-                    <th scope="col">...</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for object in object_list %}
-                  <tr>
-                    <th>{{ object.title|text_wrap:20 }}</th>
-                    <td>{{ object.assigned_to.rank }}{{ object.assigned_to.user.get_full_name }}</td>
-                    <td>{{ object.created_at|thaidate }}</td>
-                    <td>
-                      {% if object.status %}
-                      {{ object.status.name }}
-                      {% else %}
-                      -
-                      {% endif %}
-                    </td>
-                    <td>
-                      {% if object.accepted %}
-                      <i class="bi bi-check-circle" style="color: green"></i>&nbsp;ตอบรับแล้ว
-                      {% else %}
-                      <i class="bi bi-x-circle" style="color: red"></i>&nbsp;ยังไม่ตอบรับ
-                      {% endif %}
-                    </td>
-                    <td><a href="{% url 'assign:detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a></td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
+                {% include "assign/components/staff_list.html" %}
                 {% else %}
-                <thead>
-                  <tr>
-                    <th scope="col">เรื่อง</th>
-                    <th scope="col">ผู้มอบหมาย</th>
-                    <th scope="col">มอบหมายเมื่อ</th>
-                    <th scope="col">สถานะ</th>
-                    <th scope="col">การตอบรับ</th>
-                    <th scope="col">...</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for object in object_list %}
-                  <tr>
-                    <td>{{ object.title|text_wrap:20 }}</td>
-                    <td>{{ object.author.profile.rank }}{{ object.author.get_full_name }}</td>
-                    <td>{{ object.created_at|thaidate }}</td>
-                    <td>
-                      {% if object.status %}
-                      {{ object.status.name }}
-                      {% else %}
-                      -
-                      {% endif %}
-                    </td>
-                    {% comment %}<td>{{ object.accepted }}</td>{% endcomment %}
-                    <td>
-                      {% if object.accepted %}
-                      <i class="bi bi-check-circle" style="color:green"></i>&nbsp;ตอบรับแล้ว
-                      {% else %}
-                      <i class="bi bi-x-circle" style="color:red"></i>&nbsp;ยังไม่ตอบรับ
-                      {% endif %}
-                    </td>
-                    <td>
-                      <a href="{% url 'assign:detail' pk=object.pk %}" class="badge bg-secondary">Detail</a>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
+                {% include "assign/components/user_list.html" %}
                 {% endif %}
               </table>
 
