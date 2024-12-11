@@ -85,8 +85,10 @@
         {% if object.author.pk == request.user.pk %}
         <div class="container float-start text-center">
           <a href="{% url 'assign:staff-list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+          {% if not object.accepted %}
           <a href="{% url 'assign:delete' pk=object.pk %}" class="btn btn-lg btn-danger">ลบ</a>
           <a href="{% url 'assign:update' pk=object.pk %}" class="btn btn-lg btn-success">แก้ไข</a>
+          {% endif %}
         </div>
         {% else %}
         <div class="container float-start text-center">

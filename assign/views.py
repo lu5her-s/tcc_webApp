@@ -357,4 +357,9 @@ def accepted(request, pk):
     assigned_job = Assign.objects.get(pk=pk)
     assigned_job.accepted = True
     assigned_job.save()
+    # create AssignProgress status Accepted and save
+    progress = AssignProgress.objects.create(
+        assign=assigned_job, status="Accepted", note="Accepted"
+    )
+    progress.save()
     return HttpResponseRedirect(reverse_lazy("assign:detail", args=[str(pk)]))
