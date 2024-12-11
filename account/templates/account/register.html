@@ -1,51 +1,243 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<!--
+- File              : register1.html
+- Author            : lu5her <lu5her@mail>
+- Date              : Thu Sep, 29 2022, 11:57 272
+- Last Modified Date: Thu Dec, 29 2022, 15:41 363
+- Last Modified By  : lu5her <lu5her@mail>
+-->
+
 {% load static %}
-{% load crispy_forms_tags %}
 
-  {% block title %}
-  Register
-  {% endblock title %}
+<html lang="en">
 
-  {% block content %}
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <div class="container">
+    <title>Register - TCC Portal</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
 
-    <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+    <!-- Favicons -->
+    <link href="{% static 'assets/img/tcc_logo.png' %}" rel="icon" type="image/png">
+    <link href="{% static 'assets/img/tcc_logo.png' %}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <!--<link href="https://fonts.gstatic.com" rel="preconnect">-->
+    <!--<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">-->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Krub:wght@300&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <main>
       <div class="container">
-        <div class="row justify-content-center">
-          <div class="logo d-flex justify-content-center py-4">
-            <a href="{% url 'home' %}" class="d-flex align-items-center w-auto">
-              <img src="{% static 'assets/img/tcc_logo.png' %}" alt="TCC Portal" class="img-fluid">
-              <span class="d-none d-lg-block">TCC Portal</span>
-            </a>
-          </div><!-- end logo -->
 
-          <div class="card mb-3">
-            <div class="card-body">
-              <div class="pt-4 pb-2">
-                <h5 class="card-title text-center pb-0 fs-4">ลงทะเบียนบัญชีเข้าใช้งาน</h5>
-                <p class="text-center small">Enter your personal details to create account</p>
+        <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-lg-6 col-md-6 d-flex flex-column align-items-center justify-content-center">
+
+                <div class="d-flex justify-content-center py-4">
+                  <a href="#" class="logo d-flex align-items-center w-auto">
+                    <img src="{% static 'assets/img/tcc_logo.png' %}" alt="TCC Portal" class="img-fluid">
+                    <span class="d-none d-lg-block">TCC Portal</span>
+                  </a>
+                </div><!-- End Logo -->
+
+                <div class="card mb-3">
+
+                  <div class="card-body">
+
+                    <div class="pt-4 pb-2">
+                      <h5 class="card-title text-center pb-0 fs-4">สร้างบัญชีเข้าใช้งาน</h5>
+                      <p class="text-center small">กรุณาระบุชื่อผู้ใช้งานและรหัสผ่านเพื่อสร้างบัญชี</p>
+                    </div>
+
+                    {% if form.non_field_errors %}
+                    {% comment %}<ul class="messages">{% endcomment %}
+                    {% comment %}{% for error in form.non_field_errors %}{% endcomment %}
+                    {% comment %}<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>{% endcomment %}
+                    {% comment %}<li>กรุณากรอกชื่อผู้ใช้และรหัสผ่านให้ถูกต้อง</li>{% endcomment %}
+                    <p class="text-danger text-center">กรุณากรอกชื่อผู้ใช้และรหัสผ่านให้ถูกต้อง</p>
+                    {% comment %}{% endfor %}{% endcomment %}
+                    {% comment %}</ul>{% endcomment %}
+                    {% endif %}
+
+
+                    <form method="post" class="row g-3 needs-validation" novalidate>
+                      {% csrf_token %}
+
+                      <div class="col-12">
+                        <label for="{{ form.username.name }}" class="form-label">ชื่อเข้าใข้งาน</label>
+                        <div class="input-group has-validation">
+                          <span class="input-group-text" id="inputGroupPrepend">@</span>
+                          <input type="text" name="{{ form.username.name }}" class="form-control" id="{{ form.username.name }}" required>
+                          <div class="invalid-feedback">Please choose a username.</div>
+                        </div>
+                      </div>
+
+                      <div class="col-12">
+                        <label for="{{ form.password1.name }}" class="form-label">รหัสผ่าน</label>
+                        <input type="password" name="{{ form.password1.name }}" class="form-control" id="{{ form.password1.name }}" required>
+                        <div class="invalid-feedback">Please enter your password!</div>
+                      </div>
+
+                      <div class="col-12">
+                        <label for="{{ form.password2.name }}" class="form-label">ยืนยันรหัสผ่าน</label>
+                        <input type="password" name="{{ form.password2.name }}" class="form-control" id="{{ form.password2.name }}" required>
+                        <div class="invalid-feedback">Please re-peat your password!</div>
+                      </div>
+
+                      <div class="col-12">
+                        <label for="{{ form.first_name.name }}" class="form-label">ชื่อ</label>
+                        <input type="text" name="{{ form.first_name.name }}" class="form-control" id="{{ form.first_name.name }}" required>
+                        <div class="invalid-feedback">Please fill your first name.</div>
+                      </div>
+
+                      <div class="col-12">
+                        <label for="{{ form.last_name.name }}" class="form-label">นามสกุล</label>
+                        <input type="text" name="{{ form.last_name.name }}" class="form-control" id="{{ form.last_name.name }}" required>
+                        <div class="invalid-feedback">Please fill your last name.</div>
+                      </div>
+
+                      <div class="col-12">
+                        <label for="{{ form.email.name }}" class="form-label">Email</label>
+                        <input type="email" name="{{ form.email.name }}" class="form-control" id="{{ form.email.name }}" required>
+                        <div class="invalid-feedback">Please enter your email.</div>
+                      </div>
+
+
+                      <div class="col-12">
+                        <div class="form-check">
+                          <input class="form-check-input" name="terms" type="checkbox" value="" id="acceptTerms" required>
+                          <label class="form-check-label" for="acceptTerms">ฉันยอมรับข้อกำหนดและเงื่อนไขการใช้งาน
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#term-and-conditions">ข้อกำหนดและเงื่อนไข</a>
+                          </label>
+                          <div class="invalid-feedback">You must agree before submitting.</div>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <button class="btn btn-primary w-100" type="submit" onclick="javascript:this.disabled=true; this.form.submit();">สร้างบัญชี</button>
+                      </div>
+                      <div class="col-12">
+                        <p class="mb-0">มีบัญชีผู้ใช้งานแล้ว? <a href="{% url 'login' %}">เข้าสู่ระบบ</a></p>
+                      </div>
+                    </form>
+
+                  </div>
+                </div>
+
               </div>
-
-              <form class="row g-3" method="post">
-                <label class="form-label" for="{{ form.username.name }}">Username</label>
-                <input type="text" name="{{ form.username.name }}" class="form-control">
-
-                <label class="form-la" for="{{ form.password1.name }}">Password</label>
-                <input type="password" name="{{ form.password1.name }}" class="form-control">
-
-
-                <label class="form-la" for="{{ form.password2.name }}">Re-Password</label>
-                <input type="password" name="{{ form.password2.name }}" class="form-control">
-              </form>
             </div>
+          </div>
+
+        </section>
+
+      </div>
+    </main><!-- End #main -->
+
+    <!-- Modal Term and Conditions -->
+    <div class="modal modal-lg fade" id="term-and-conditions">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">ข้อตกลงและข้อกำหนดการใช้งาน</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p><b>ข้อกำหนดและเงื่อนไขการใช้งาน TCC Portal</b></p>
+            <p>ยินดีต้อนรับสู่ TCC Portal! โปรดอ่านข้อกำหนดและเงื่อนไขการใช้งานเหล่านี้อย่างละเอียดก่อนใช้งานเว็บไซต์ของเรา</p>
+
+            <p><b>1. การยอมรับข้อกำหนด</b></p>
+            <p>การเข้าถึงและการใช้งาน TCC Portal ของคุณถือเป็นการยอมรับและปฏิบัติตามข้อกำหนดและเงื่อนไขเหล่านี้ หากคุณไม่เห็นด้วยกับข้อกำหนดเหล่านี้ โปรดอย่าใช้เว็บไซต์ของเรา</p>
+
+            <p><b>2. บัญชีผู้ใช้</b></p>
+            <p>คุณอาจต้องสร้างบัญชีเพื่อเข้าถึงคุณสมบัติบางอย่างของเว็บไซต์ของเรา คุณมีหน้าที่รักษาความลับของข้อมูลบัญชีของคุณ รวมถึงชื่อผู้ใช้และรหัสผ่าน และคุณตกลงที่จะรับผิดชอบต่อกิจกรรมทั้งหมดที่เกิดขึ้นภายใต้บัญชีของคุณ</p>
+
+            <p><b>3. การใช้งานที่ยอมรับได้</b></p>
+            <p>คุณตกลงที่จะใช้ TCC Portal เพื่อวัตถุประสงค์ที่ชอบธรรมเท่านั้น และจะไม่ใช้เว็บไซต์ของเราในลักษณะใดๆ ที่ละเมิดกฎหมายหรือสิทธิของผู้อื่น</p>
+
+            <p><b>4. ทรัพย์สินทางปัญญา</b></p>
+            <p>เนื้อหาทั้งหมดใน TCC Portal รวมถึงข้อความ กราฟิก โลโก้ รูปภาพ ซอฟต์แวร์ และเนื้อหาอื่นๆ เป็นทรัพย์สินของ TCC Portal หรือผู้อนุญาต และได้รับการคุ้มครองตามกฎหมายลิขสิทธิ์</p>
+
+            <p><b>5. การปฏิเสธความรับผิด</b></p>
+            <p>TCC Portal ให้บริการ "ตามที่เป็น" และไม่รับประกันใดๆ ไม่ว่าโดยชัดแจ้งหรือโดยนัย เกี่ยวกับความถูกต้อง ความน่าเชื่อถือ หรือความเหมาะสมของเนื้อหาในเว็บไซต์ของเรา</p>
+
+            <p><b>6. ข้อจำกัดความรับผิด</b></p>
+            <p>TCC Portal จะไม่รับผิดชอบต่อความเสียหายใดๆ ที่เกิดขึ้นจากการใช้งานหรือไม่สามารถใช้งานเว็บไซต์ของเรา</p>
+
+            <p><b>7. การเปลี่ยนแปลงข้อกำหนด</b></p>
+            <p>เราอาจแก้ไขข้อกำหนดและเงื่อนไขเหล่านี้ได้ตลอดเวลา การเปลี่ยนแปลงจะมีผลทันทีเมื่อโพสต์บนเว็บไซต์ของเรา</p>
+
+            <p><b>8. กฎหมายที่บังคับใช้</b></p>
+            <p>ข้อกำหนดและเงื่อนไขเหล่านี้จะอยู่ภายใต้และตีความตามกฎหมายของประเทศไทย</p>
+
+            <p><b>9. ข้อมูลติดต่อ</b></p>
+            <p>หากคุณมีคำถามใดๆ เกี่ยวกับข้อกำหนดและเงื่อนไขเหล่านี้ โปรดติดต่อเราที่ [admin@tcc.ac.th]</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal">ตกลง</button>
           </div>
         </div>
       </div>
-    </section>
-  </div>
+    </div>
 
-  <br><br><br>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-  {% endblock content %}
+    <!-- Vendor JS Files -->
+    <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/chart.js/chart.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/echarts/echarts.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/quill/quill.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/simple-datatables/simple-datatables.js' %}"></script>
+    <script src="{% static 'assets/vendor/tinymce/tinymce.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
 
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Template Main JS File -->
+    <script src="{% static 'assets/js/main.js' %}"></script>
+
+    <script>
+    $("#username").change(function() {
+      var username = $(this).val();
+      $.ajax({
+        url: "{% url 'account:check-username' %}",
+        data: {'username': username},
+        dataType: 'json',
+        success: function(data) {
+          if (data.username_exists) {
+            alert("ชื่อผู้ใช้งานนี้มีอยู่แล้ว");
+            $("#username").val("");
+            $("#username").focus();
+          }
+        }
+      })
+    });
+    </script>
+
+
+  </body>
+
+</html>

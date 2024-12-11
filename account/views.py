@@ -141,9 +141,9 @@ class RegisterView(CreateView):
         success_url: str -> return to login page
     """
 
-    form_class = UserCreationForm
+    form_class = UserForm
     model = User
-    template_name = "account/register1.html"
+    template_name = "account/register.html"
     success_url = reverse_lazy("login")
 
 

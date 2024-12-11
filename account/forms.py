@@ -6,22 +6,40 @@
 # Last Modified Date: Thu Dec, 22 2022, 00:16 356
 # Last Modified By  : lu5her <lu5her@mail>
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import widgets
 
 from account.models import LineToken, Position, Profile, Rank, Sector
 
 
-class UserForm(forms.ModelForm):
+class UserForm(UserCreationForm):
     """
     Form for creating and updating user information.
     """
 
     class Meta:
         model = User
-        fields = ("first_name", "last_name", "email")
-        labels = {"first_name": "ชื่อ", "last_name": "นามสกุล", "email": "Email"}
+        fields = (
+            "username",
+            "password1",
+            "password2",
+            "first_name",
+            "last_name",
+            "email",
+        )
+        labels = {
+            "username": "ชื่อผู้ใช้",
+            "password1": "รหัสผ่าน",
+            "password2": "ยืนยันรหัสผ่าน",
+            "first_name": "ชื่อ",
+            "last_name": "นามสกุล",
+            "email": "Email",
+        }
         widgets = {
+            "username": forms.TextInput(attrs={"class": "form-control"}),
+            "password1": forms.PasswordInput(attrs={"class": "form-control"}),
+            "password2": forms.PasswordInput(attrs={"class": "form-control"}),
             "first_name": forms.TextInput(attrs={"class": "form-control"}),
             "last_name": forms.TextInput(attrs={"class": "form-control"}),
             "email": forms.EmailInput(attrs={"class": "form-control"}),
