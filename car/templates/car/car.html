@@ -110,7 +110,7 @@
                         {{ object.number }}
                       </a>
                     </td>
-                    <td>{{ object.type.name }}</td>
+                    <td>{{ object.get_car_type_display }}</td>
                     <td>{{ object.capacity }}</td>
                     <td>
                       {% comment %}{{ object.fuel_now }}/{{ object.fuel_max }}{% endcomment %}
