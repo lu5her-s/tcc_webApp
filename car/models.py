@@ -39,21 +39,33 @@ def get_image_fix(instance: object, filename: str) -> str:
     return f"Car/Fix/{car_number}/{filename}"
 
 
-class CarType(models.Model):
-    """CarType. for type of car : van, truck etc."""
-
-    name = models.CharField(max_length=200)
-
-    class Meta:
-        verbose_name = "Type"
-        verbose_name_plural = "Type"
-
-    def __str__(self) -> str:
-        return f"{self.name}"
-
-
 class Car(models.Model):
-    """Car. detail for car general data for car"""
+    """
+    Car. detail for car general data for car
+
+    Attributes:
+        car_type:
+        number:
+        manufacturer:
+        color:
+        capacity:
+        fuel_max:
+        fuel_rate:
+        fuel_now:
+        status:
+        responsible_man:
+        created_at:
+        updated_at:
+        mile_now:
+        car_avatar:
+    """
+
+    class Type(models.TextChoices):
+        VAN = "van", "รถตู้"
+        TRUCK = "truck", "รถบรรทุก"
+        BUS = "bus", "รถบัส"
+        WAGON = "wagon", "รถระบะ"
+        OTHER = "other", "อื่นๆ"
 
     class Status(models.TextChoices):
         READY = "ready", "พร้อมใช้งาน"
@@ -63,7 +75,13 @@ class Car(models.Model):
         FIX = "fix", "ซ่อมบำรุง"
         NOT_READY = "not_ready", "ไม่พร้อมใช้งาน"
 
-    car_type = models.ForeignKey(CarType, on_delete=models.CASCADE)
+    car_type = models.CharField(
+        max_length=200,
+        choices=Type.choices,
+        default=Type.VAN,
+        null=True,
+        blank=True,
+    )
     number = models.CharField(max_length=50)
     manufacturer = models.CharField(max_length=200, null=True, blank=True)
     color = models.CharField(max_length=50, null=True, blank=True)
@@ -98,7 +116,26 @@ class Car(models.Model):
 
 
 class CarBooking(models.Model):
-    """CarUse. for request use car init request change status car to pending"""
+    """
+    CarUse. for request use car init request change status car to pending
+
+    Attributes:
+        car:
+        requester:
+        mission:
+        driver:
+        passenger:
+        controler:
+        approver:
+        requested_at:
+        mile_in:
+        mile_out:
+        distance:
+        return_at:
+        fuel_use:
+        status:
+        created_at:
+    """
 
     class Status(models.TextChoices):
         PENDING = "pending", "รออนุมัติ"
@@ -151,7 +188,22 @@ class CarBooking(models.Model):
 
 
 class CarFix(models.Model):
-    """CarFix. request to fix car change status car to in maintenance"""
+    """
+    CarFix. request to fix car change status car to in maintenance
+
+    Attributes:
+        car:
+        issue:
+        fix_requester:
+        approver:
+        requested_at:
+        cost_use:
+        finished_at:
+        approve_status:
+        note:
+        responsible_man:
+        fix_status:
+    """
 
     class Status(models.TextChoices):
         PENDING = "pending", "รอดำเนินการ"
@@ -237,6 +289,14 @@ class Refuel(models.Model):
 
 
 class CarImage(models.Model):
+    """
+    Car Image
+
+    Attributes:
+        car:
+        images:
+    """
+
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     images = models.ImageField(upload_to=get_image_name, blank=True, null=True)
 
@@ -249,6 +309,14 @@ class CarImage(models.Model):
 
 
 class CarFixImage(models.Model):
+    """
+    Car Fix Image
+
+    Attributes:
+        fix:
+        images:
+    """
+
     fix = models.ForeignKey(CarFix, on_delete=models.CASCADE)
     images = models.ImageField(upload_to=get_image_fix, blank=True, null=True)
 
@@ -257,6 +325,14 @@ class CarFixImage(models.Model):
 
 
 class CarAfterFixImage(models.Model):
+    """
+    Car After Fix Image
+
+    Attributes:
+        fix:
+        images:
+    """
+
     fix = models.ForeignKey(CarFix, on_delete=models.CASCADE)
     images = models.ImageField(upload_to=get_image_fix, blank=True, null=True)
 

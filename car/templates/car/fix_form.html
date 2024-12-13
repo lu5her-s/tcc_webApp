@@ -3,189 +3,189 @@
 {% load crispy_forms_tags %}
 {% load tags %}
 
-{% block title %}Car Fixing{% endblock title %}
+  {% block title %}Car Fixing{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>แจ้งซ่อมบำรุง {{ title }}{{ test_var }}</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'car:list' %}">การจัดการยานพาหนะ</a></li>
-            <li class="breadcrumb-item active">{{ car.type.name }} ทะเบียน {{ car.number }}</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'car:list' %}">การจัดการยานพาหนะ</a></li>
+        <li class="breadcrumb-item active">{{ car.type.name }} ทะเบียน {{ car.number }}</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
-<section class="section profile">
+  <section class="section profile">
     <div class="row">
 
-        <div class="col-xl-12">
+      <div class="col-xl-12">
 
-            <div class="card">
-                <div class="card-body pt-3">
-                    <!-- Bordered Tabs -->
-                    <ul class="nav nav-tabs nav-tabs-bordered">
+        <div class="card">
+          <div class="card-body pt-3">
+            <!-- Bordered Tabs -->
+            <ul class="nav nav-tabs nav-tabs-bordered">
 
-                        <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">แจ้งซ่อมบำรุง</button>
-                        </li>
+              <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">แจ้งซ่อมบำรุง</button>
+              </li>
 
-                    </ul>
-                    <div class="tab-content pt-2">
+            </ul>
+            <div class="tab-content pt-2">
 
-                        <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
+              <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
 
-                        <table class="table">
-                        {% if object.pk %}
-                            <tr>
-                                <th>หมายเลขแจ้งซ่อม</th>
-                                <td>{{ object.pk }}/{{ object.requested_at.year|thaiyear }}</td>
-                            </tr>
-                        {% endif %}
-                            <tr>
-                                <th>ประเภท</th>
-                                <td>{{ car.type.name }}</td>
-                            </tr>
+              <table class="table">
+                {% if object.pk %}
+                <tr>
+                  <th>หมายเลขแจ้งซ่อม</th>
+                  <td>{{ object.pk }}/{{ object.requested_at.year|thaiyear }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                  <th>ประเภท</th>
+                  <td>{{ car.type.name }}</td>
+                </tr>
 
-                            <tr>
-                                <th>หมายเลขทะเบียน</th>
-                                <td>{{ car.number }}</td>
-                            </tr>
+                <tr>
+                  <th>หมายเลขทะเบียน</th>
+                  <td>{{ car.number }}</td>
+                </tr>
 
-                            <tr>
-                                <th>ภาพยานพาหนะ</th>
-                                <td><img src="{{ car.car_avatar.url }}" alt="car avatar" style="width: 300px;"></td>
-                            </tr>
+                <tr>
+                  <th>ภาพยานพาหนะ</th>
+                  <td><img src="{{ car.car_avatar.url }}" alt="car avatar" style="width: 300px;"></td>
+                </tr>
 
-                            {% if request.user.profile == object.approver %}
-                            <tr>
-                                <th>อาการ</th>
-                                <td>{{ object.issue|safe }}</td>
-                            </tr>
+                {% if request.user.profile == object.approver %}
+                <tr>
+                  <th>อาการ</th>
+                  <td>{{ object.issue|safe }}</td>
+                </tr>
 
-                            <tr>
-                                <th>ผู้แจ้ง</th>
-                                <td>{{ object.fix_requester.profile }}</td>
-                            </tr>
+                <tr>
+                  <th>ผู้แจ้ง</th>
+                  <td>{{ object.fix_requester.profile }}</td>
+                </tr>
 
-                            <tr>
-                                <th>วันที่แจ้ง</th>
-                                <td>{{ object.requested_at|thaidate }} เวลา {{ object.requested_at|date:"H:m" }} น.</td>
-                            </tr>
+                <tr>
+                  <th>วันที่แจ้ง</th>
+                  <td>{{ object.requested_at|thaidate }} เวลา {{ object.requested_at|date:"H:m" }} น.</td>
+                </tr>
 
-                                {% if object.images %}
-                                <tr>
-                                    <td>
-                                        <div id="gallery">
-                                            {% for item in images %}
-                                            {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
-                                                <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                                            </a> {% endcomment %}
-                                            <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
-                                                <img height="250" width="250" src="{{ item.images.url }}" alt="">
-                                            </a>
-                                            {% endfor %}
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endif %}
-                            {% endif %}
+                {% if object.images %}
+                <tr>
+                  <td>
+                    <div id="gallery">
+                      {% for item in images %}
+                      {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
+                      <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                      </a> {% endcomment %}
+                      <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
+                        <img height="250" width="250" src="{{ item.images.url }}" alt="">
+                      </a>
+                      {% endfor %}
+                    </div>
+                  </td>
+                </tr>
+                {% endif %}
+                {% endif %}
 
-                        </table>
+              </table>
 
-                        {% comment %}การขอใช้ยานพาหนะ หมายเลขทะเบียน {{ car.number }}{% endcomment %}
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            {{ form.media }}
-                             
-                            {% comment %}{{ form|crispy }}{% endcomment %}
-                            
-                            {% comment %}{% if not request.user.profile == object.approver  %}{% endcomment %}
-                            <div class="row mb-3">
-                                <label for="{{ form.issue.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.issue.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.issue }}
-                                </div>
-                            </div>
+              {% comment %}การขอใช้ยานพาหนะ หมายเลขทะเบียน {{ car.number }}{% endcomment %}
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.media }}
 
-                            <div class="row mb-3">
-                                <label for="{{ form.approver.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approver.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.approver }}
-                                </div>
-                            </div>
+                {% comment %}{{ form|crispy }}{% endcomment %}
 
-                            <!-- input file -->
-                            <div class="row mb-3">
-                                <label for="{{ form.images.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.images.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.images }}
-                                </div>
-                            </div>
-                            <!-- end input file -->
-
-                            <!-- if user == object.approver show responsible_man select field -->
-                            {% if request.user.profile == object.approver %}
-                            <div class="row mb-3">
-                                <label for="{{ form.approve_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approve_status.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.approve_status }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.responsible_man.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.responsible_man.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.responsible_man }}
-                                </div>
-                            </div>
-                            <!-- end if user == object.approver show responsible_man select field -->
-
-                            {% endif %}
-                            <div class="row mb-3">
-                                <div class="col-md-8 col-lg-9">
-                                    <input name="{{ form.fix_requester.name }}" type="hidden" class="form-control" id="{{ form.requester.name }}" value="{{ request.user.pk }}">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-8 col-lg-9">
-                                    <input name="{{ form.car.name }}" type="hidden" class="form-control" id="{{ form.car.name }}" value="{{ car.pk }}">
-                                </div>
-                            </div>
-
-                            <div class="text-center">
-                                {% comment %}{% if form.instance %}{% endcomment %}
-                                    {% if request.user == object.fix_requester or request.user.profile == object.approver %}
-                                        <a href="{% url 'car:fix' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                                        <button type="submit" class="btn btn-lg btn-success">อัพเดท</button>
-                                        {% comment %}<button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>{% endcomment %}
-                                    {% else %}
-                                        <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                                        <button type="submit" class="btn btn-lg btn-danger">แจ้งซ่อมบำรุง</button>
-                                        <button type="reset" class="btn btn-lg btn-warning">Reset</button>
-                                    {% endif %}
-                            </div>
-
-                        </form>
-
-                    </div><!-- End Bordered Tabs -->
-
+                {% comment %}{% if not request.user.profile == object.approver  %}{% endcomment %}
+                <div class="row mb-3">
+                  <label for="{{ form.issue.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.issue.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.issue }}
+                  </div>
                 </div>
-            </div>
 
+                <div class="row mb-3">
+                  <label for="{{ form.approver.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approver.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.approver }}
+                  </div>
+                </div>
+
+                <!-- input file -->
+                <div class="row mb-3">
+                  <label for="{{ form.images.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.images.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.images }}
+                  </div>
+                </div>
+                <!-- end input file -->
+
+                <!-- if user == object.approver show responsible_man select field -->
+                {% if request.user.profile == object.approver %}
+                <div class="row mb-3">
+                  <label for="{{ form.approve_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approve_status.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.approve_status }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="{{ form.responsible_man.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.responsible_man.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.responsible_man }}
+                  </div>
+                </div>
+                <!-- end if user == object.approver show responsible_man select field -->
+
+                {% endif %}
+                <div class="row mb-3">
+                  <div class="col-md-8 col-lg-9">
+                    <input name="{{ form.fix_requester.name }}" type="hidden" class="form-control" id="{{ form.requester.name }}" value="{{ request.user.pk }}">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-8 col-lg-9">
+                    <input name="{{ form.car.name }}" type="hidden" class="form-control" id="{{ form.car.name }}" value="{{ car.pk }}">
+                  </div>
+                </div>
+
+                <div class="text-center">
+                  {% comment %}{% if form.instance %}{% endcomment %}
+                  {% if request.user == object.fix_requester or request.user.profile == object.approver %}
+                  <a href="{% url 'car:fix' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                  <button type="submit" class="btn btn-lg btn-success">อัพเดท</button>
+                  {% comment %}<button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>{% endcomment %}
+                  {% else %}
+                  <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                  <button type="submit" class="btn btn-lg btn-danger">แจ้งซ่อมบำรุง</button>
+                  <button type="reset" class="btn btn-lg btn-warning">Reset</button>
+                  {% endif %}
+                </div>
+
+              </form>
+
+            </div><!-- End Bordered Tabs -->
+
+          </div>
         </div>
+
+      </div>
     </div>
     <script>
-        $(document).ready(function () {
-            //change selectboxes to selectize mode to be searchable
-            $("select").select2({
-                width: '100%',
-            });
-        });
+    $(document).ready(function () {
+      //change selectboxes to selectize mode to be searchable
+      $("select").select2({
+        width: '100%',
+      });
+    });
     </script>
 
-</section>
+  </section>
 
-{% endblock content %}
+  {% endblock content %}
 

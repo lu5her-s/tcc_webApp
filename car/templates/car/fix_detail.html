@@ -4,181 +4,181 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Car Management{% endblock title %}
+  {% block title %}Car Management{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>{{ object.title }}</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'car:list' %}">Car List</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'car:fix' %}">Fix Request List</a></li>
-            <li class="breadcrumb-item active">{{ object.car.number }}</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'car:list' %}">Car List</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'car:fix' %}">Fix Request List</a></li>
+        <li class="breadcrumb-item active">{{ object.car.number }}</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
 
-<section class="section">
+  <section class="section">
     <div class="row">
 
-        <div class="col-xl-12">
-            <div class="card">
-                <div class="card-body pt-3">
-                    <ul class="nav nav-tabs nav-tabs-bordered">
-                        <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
-                                รายละเอียด
-                            </button>
-                        </li>
-                        {% if images %}
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#image">
-                                ภาพประกอบการแจ้งซ่อม
-                            </button>
-                        </li>{% endif %}
+      <div class="col-xl-12">
+        <div class="card">
+          <div class="card-body pt-3">
+            <ul class="nav nav-tabs nav-tabs-bordered">
+              <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
+                  รายละเอียด
+                </button>
+              </li>
+              {% if images %}
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#image">
+                  ภาพประกอบการแจ้งซ่อม
+                </button>
+              </li>{% endif %}
 
-                        {% if fix_image %}
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fix_image">
-                                ภาพการซ่อมบำรุง
-                            </button>
-                        </li>{% endif %}
-                    </ul>
+              {% if fix_image %}
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fix_image">
+                  ภาพการซ่อมบำรุง
+                </button>
+              </li>{% endif %}
+            </ul>
 
-                    <!-- start tab content -->
-                    <div class="tab-content pt-2">
-                        <div id="detail" class="tab-pane fade show active">
-                            <h6 class="card-title"> รายละเอียด | <span> การแจ้งซ่อม ที่ {{ object.pk }}/{{ object.requested_at.year|thaiyear }}</span></h6>
-                            <table class="table">
+            <!-- start tab content -->
+            <div class="tab-content pt-2">
+              <div id="detail" class="tab-pane fade show active">
+                <h6 class="card-title"> รายละเอียด | <span> การแจ้งซ่อม ที่ {{ object.pk }}/{{ object.requested_at.year|thaiyear }}</span></h6>
+                <table class="table">
 
-                                <tr>
-                                    <th>ประเภทยานพาหนะ</th>
-                                    <td>{{ object.car.type.name }}</td>
-                                </tr>
+                  <tr>
+                    <th>ประเภทยานพาหนะ</th>
+                    <td>{{ object.car.type.name }}</td>
+                  </tr>
 
-                                <tr>
-                                    <th>หมายเลขทะเบียน</th>
-                                    <td><a href="{% url 'car:detail' pk=object.car.pk %}" target="_blank">{{ object.car.number }}</a></td>
-                                </tr>
+                  <tr>
+                    <th>หมายเลขทะเบียน</th>
+                    <td><a href="{% url 'car:detail' pk=object.car.pk %}" target="_blank">{{ object.car.number }}</a></td>
+                  </tr>
 
-                                <tr>
-                                    <th>วันที่ขอใช้งาน</th>
-                                    <td>
-                                        {{ object.requested_at|thaidate }}
-                                        เวลา {{ object.requested_at|date:"H:m" }} น.
-                                    </td>
-                                </tr>
+                  <tr>
+                    <th>วันที่ขอใช้งาน</th>
+                    <td>
+                      {{ object.requested_at|thaidate }}
+                      เวลา {{ object.requested_at|date:"H:m" }} น.
+                    </td>
+                  </tr>
 
-                                <tr>
-                                    <th>ผู้อนุมัติ</th>
-                                    <td><a href="{% url 'account:member' pk=object.approver.pk %}" target="_blank">{{ object.approver }}</a></td>
-                                </tr>
+                  <tr>
+                    <th>ผู้อนุมัติ</th>
+                    <td><a href="{% url 'account:member' pk=object.approver.pk %}" target="_blank">{{ object.approver }}</a></td>
+                  </tr>
 
-                                <tr>
-                                    <th>สถานะ</th>
-                                    <td>{{ object.approve_status.name }}</td>
-                                </tr>
+                  <tr>
+                    <th>สถานะ</th>
+                    <td>{{ object.approve_status.name }}</td>
+                  </tr>
 
-                                <tr>
-                                    <th>อาการ</th>
-                                    <td>{{ object.issue|safe }}</td>
-                                </tr>
+                  <tr>
+                    <th>อาการ</th>
+                    <td>{{ object.issue|safe }}</td>
+                  </tr>
 
-                                <tr>
-                                    <th>ผู้แจ้งซ่อม</th>
-                                    <td>{{ object.fix_requester.profile }}</td>
-                                </tr>
+                  <tr>
+                    <th>ผู้แจ้งซ่อม</th>
+                    <td>{{ object.fix_requester.profile }}</td>
+                  </tr>
 
-                                {% if object.finished_at %}
+                  {% if object.finished_at %}
 
-                                <tr>
-                                    <th>การดำเนินการซ่อมบำรุง</th>
-                                    <td>{{ object.note|safe }}</td>
-                                </tr>
+                  <tr>
+                    <th>การดำเนินการซ่อมบำรุง</th>
+                    <td>{{ object.note|safe }}</td>
+                  </tr>
 
-                                <tr>
-                                    <th>ค่าใช้จ่าย</th>
-                                    <td>{{ object.cost_use }} บาท</td>
-                                </tr>
+                  <tr>
+                    <th>ค่าใช้จ่าย</th>
+                    <td>{{ object.cost_use }} บาท</td>
+                  </tr>
 
-                                <tr>
-                                    <th>ดำเนินการแล้วเมื่อ</th>
-                                    <td>{{ object.finished_at|thaidate }} เวลา {{ object.finished_at|date:"H m" }} น.</td>
-                                </tr>
+                  <tr>
+                    <th>ดำเนินการแล้วเมื่อ</th>
+                    <td>{{ object.finished_at|thaidate }} เวลา {{ object.finished_at|date:"H m" }} น.</td>
+                  </tr>
 
-                                <tr>
-                                    <th>ผู้ดำเนินการ</th>
-                                    <td>{{ object.responsible_man }}</td>
-                                </tr>
+                  <tr>
+                    <th>ผู้ดำเนินการ</th>
+                    <td>{{ object.responsible_man }}</td>
+                  </tr>
 
-                                {% endif %}
+                  {% endif %}
 
-                            </table>
+                </table>
 
-                            {% comment %}{{ fix_image }}{% endcomment %}
-                            {% comment %}{{ all_imgs }}{% endcomment %}
+                {% comment %}{{ fix_image }}{% endcomment %}
+                {% comment %}{{ all_imgs }}{% endcomment %}
 
-                        </div><!-- end detail -->
+              </div><!-- end detail -->
 
-                        <div id="image" class="tab-pane fade pt-3">
-                            <h5 class="card-title">ภาพประกอบการแจ้งซ่อม | <span>{{ object.car.type.name }}-{{ object.car.number }}</span></h5>
+              <div id="image" class="tab-pane fade pt-3">
+                <h5 class="card-title">ภาพประกอบการแจ้งซ่อม | <span>{{ object.car.type.name }}-{{ object.car.number }}</span></h5>
 
-                            <!-- Slides with indicators -->
-                            <div id="gallery">
-                                {% for item in images %}
-                                {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
-                                    <img height="150" width="150" src="{{ item.images.url }}" alt="">
-                                </a> {% endcomment %}
-                                <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
-                                    <img height="250" width="250" src="{{ item.images.url }}" alt="">
-                                </a>
-                                {% endfor %}
-                            </div>
-
-                        </div>
-
-                        <div id="fix_image" class="tab-pane fade pt-3">
-                            <h5 class="card-title">ภาพประกอบการแจ้งซ่อม | 
-                                <span>
-                                    {{ object.car.type.name }}-{{ object.car.number }}
-                                    ใบแจ้งซ่อมที่ {{ object.pk }}/{{ object.requested_at.year|thaiyear }}
-                                </span>
-                            </h5>
-                            <div id="fix_images">
-                                {% for item in fix_image %}
-                                <a href=""></a>
-                                    <img src="{{ item.images.url }}" alt="">
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- DONE: make condition for button -->
-                    <div class="container float-start text-center">
-                        <a href="{% url 'car:fix' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                        {% if request.user.profile == object.responsible_man %}
-                        <a href="{% url 'car:after-fix' pk=object.pk %}" class="btn btn-lg btn-warning">ซ่อมบำรุง</a>
-                        {% elif request.user.profile == object.approver and not object.finished_at %}
-                            <a href="{% url 'car:fix-update' pk=object.pk %}" class="btn btn-lg btn-info">มอบหมายช่าง</a>
-                        {% elif request.user == object.fix_requester and not object.finished_at %}
-                            <a href="{% url 'car:fix-update' pk=object.pk %}" class="btn btn-lg btn-warning">อัพเดท</a>
-                        {% else %}
-
-                        {% endif %}
-                        <!-- TODO: if user is Approver redirect to update fix, if user is responsible go to after fix -->
-                    </div>
-                    <br />
-
-                    <br />
+                <!-- Slides with indicators -->
+                <div id="gallery">
+                  {% for item in images %}
+                  {% comment %} <a class="col s12 m3" href="{{ item.images.url }}" target="_blank">
+                  <img height="150" width="150" src="{{ item.images.url }}" alt="">
+                  </a> {% endcomment %}
+                  <a class="col s12 m3" href="javascript:pswpInit({{forloop.counter0}})">
+                    <img height="250" width="250" src="{{ item.images.url }}" alt="">
+                  </a>
+                  {% endfor %}
                 </div>
 
-            </div><!-- end tab content -->
+              </div>
 
-        </div>
+              <div id="fix_image" class="tab-pane fade pt-3">
+                <h5 class="card-title">ภาพประกอบการแจ้งซ่อม | 
+                  <span>
+                    {{ object.car.type.name }}-{{ object.car.number }}
+                    ใบแจ้งซ่อมที่ {{ object.pk }}/{{ object.requested_at.year|thaiyear }}
+                  </span>
+                </h5>
+                <div id="fix_images">
+                  {% for item in fix_image %}
+                  <a href=""></a>
+                  <img src="{{ item.images.url }}" alt="">
+                  {% endfor %}
+                </div>
+              </div>
+
+            </div>
+
+            <!-- DONE: make condition for button -->
+            <div class="container float-start text-center">
+              <a href="{% url 'car:fix' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+              {% if request.user.profile == object.responsible_man %}
+              <a href="{% url 'car:after-fix' pk=object.pk %}" class="btn btn-lg btn-warning">ซ่อมบำรุง</a>
+              {% elif request.user.profile == object.approver and not object.finished_at %}
+              <a href="{% url 'car:fix-update' pk=object.pk %}" class="btn btn-lg btn-info">มอบหมายช่าง</a>
+              {% elif request.user == object.fix_requester and not object.finished_at %}
+              <a href="{% url 'car:fix-update' pk=object.pk %}" class="btn btn-lg btn-warning">อัพเดท</a>
+              {% else %}
+
+              {% endif %}
+              <!-- TODO: if user is Approver redirect to update fix, if user is responsible go to after fix -->
+            </div>
+            <br />
+
+            <br />
+          </div>
+
+        </div><!-- end tab content -->
+
+      </div>
     </div>
-</section>
-{% include 'components/photoswipe.html' %}
-{% endblock content %}
+  </section>
+  {% include 'components/photoswipe.html' %}
+  {% endblock content %}

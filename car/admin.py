@@ -7,7 +7,6 @@ from car.models import (
     CarFix,
     CarFixImage,
     CarImage,
-    CarType,
     Refuel,
 )
 
@@ -16,7 +15,6 @@ from car.models import (
 # admin.site.register(Car)
 admin.site.register(CarBooking)
 admin.site.register(CarFix)
-admin.site.register(CarType)
 admin.site.register(Refuel)
 admin.site.register(CarImage)
 admin.site.register(CarFixImage)

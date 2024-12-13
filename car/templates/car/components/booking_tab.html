@@ -1,0 +1,34 @@
+{% load tags %}
+<h5 class="card-title">รายการขอใช้ยานพาหนะ | <span>{{ object.number }}</span></h5>
+
+<!-- table booking list with search -->
+<table id="TableBooking" class="table table-hover datatable">
+  <thead>
+    <tr>
+      <th scope="col">ภารกิจ</th>
+      <th scope="col">วันที่ขอใช้งาน</th>
+      <th scope="col">ผู้ควบคุม</th>
+      <th scope="col">ผู้อนุมัติ</th>
+      <th scope="col">สถานะ</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for bk in booking_list %}
+    <tr>
+      <td>
+        <a href="{% url 'car:booking-detail' pk=bk.pk %}">
+          {{ bk.mission }}
+        </a>
+      </td>
+      <td>{{ bk.requested_at|thaidate }}</td>
+      <td>{{ bk.controler }}</td>
+      <td>{{ bk.approver }}</td>
+      {% if not bk.mile_in %}
+      <td>{{ bk.approve_status }}</td>
+      {% else %}
+      <td>เสร็จสิ้น</td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

@@ -1,0 +1,27 @@
+{% load tags %}
+<h5 class="card-title">ประวัติการซ่อมบำรุง | <span>{{ object.number }}</span></h5>
+
+<table id="TableFix" class="table table-hover datatable">
+  <thead>
+    <tr>
+      <th scope="col">หมายเลขแจ้งซ่อม</th>
+      <th scope="col">วันที่แจ้ง</th>
+      <th scope="col">อาการ</th>
+      <th scope="col">ผู้แจ้ง</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for cf in car_fix %}
+    <tr>
+      <td>
+        <a href="{% url 'car:fix-detail' pk=cf.pk %}">
+          {{ cf.pk }}/{{ cf.requested_at.year|thaiyear }}
+        </a>
+      </td>
+      <td>{{ cf.requested_at|thaidate }} เวลา {{ cf.requested_at|timezone:"Asia/Bangkok"|date:"H:m" }} น.</td>
+      <td>{{ cf.issue|safe }}</td>
+      <td>{{ cf.fix_requester.profile }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

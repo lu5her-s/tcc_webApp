@@ -4,315 +4,138 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Car Management{% endblock title %}
+  {% block title %}Car Management{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>{{ object.title }}</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'car:list' %}">Car List</a></li>
-            <li class="breadcrumb-item active">{{ object.number }}</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'car:list' %}">Car List</a></li>
+        <li class="breadcrumb-item active">{{ object.number }}</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
 
-<section class="section">
+  <section class="section">
     <div class="row">
 
-        <div class="col-xl-12">
-            <div class="card">
-                <div class="card-body pt-3">
-                    <ul class="nav nav-tabs nav-tabs-bordered">
-                        <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
-                                รายละเอียด
-                            </button>
-                        </li>
-                        {% if booking %}
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#booking">
-                                การขอใช้ยานพาหนะ
-                            </button>
-                        </li>{% endif %}
-                        {% if refuel %}
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#refuel">
-                                การเติมเชื้อเพลิง
-                            </button>
-                        </li>
-                        {% endif %}
+      <div class="col-xl-12">
+        <div class="card">
+          <div class="card-body pt-3">
+            <ul class="nav nav-tabs nav-tabs-bordered">
+              <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
+                  รายละเอียด
+                </button>
+              </li>
+              {% if booking %}
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#booking">
+                  การขอใช้ยานพาหนะ
+                </button>
+              </li>{% endif %}
+              {% if refuel %}
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#refuel">
+                  การเติมเชื้อเพลิง
+                </button>
+              </li>
+              {% endif %}
 
-                        {% if car_fix %}
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#car_fix">
-                                ประวัติการซ่อมบำรุง
-                            </button>
-                        </li>
-                        {% endif %}
-                    </ul>
+              {% if car_fix %}
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#car_fix">
+                  ประวัติการซ่อมบำรุง
+                </button>
+              </li>
+              {% endif %}
+            </ul>
 
-                    <!-- start tab content -->
-                    <div class="tab-content pt-2">
-                        <div id="detail" class="tab-pane fade show active">
-                            <h6 class="card-title"> รายละเอียด | <span> {{ object.number }}</span></h6>
-                            <table class="table">
-                                {% comment %}<p>{{ booking }}</p>{% endcomment %}
-                                {% comment %}<p>{{ car_fix }}</p>{% endcomment %}
-                                <tr>
-                                    <th>ประเภท</th>
-                                    <td>{{ object.type }}</td>
-                                </tr>
+            <!-- start tab content -->
+            <div class="tab-content pt-2">
+              <div id="detail" class="tab-pane fade show active">
+                {% include "car/components/detail_tab.html" %}
 
-                                <tr>
-                                    <th>หมายเลขทะเบียน</th>
-                                    <td>{{ object.number }}</td>
-                                </tr>
+              </div><!-- end detail -->
 
-                                <tr>
-                                    <th>สถานภาพเชื้อเพลิง</th>
-                                    <td>
-                                        {% with fuel_current=object.fuel_now fuel_max=object.fuel_max %}
-                                        <p style="text-align:center;">
-                                            {{ fuel_current|fuel:fuel_max|floatformat:"2" }}%
-                                            ({{ object.fuel_now|floatformat:"2" }}/{{ object.fuel_max }})
-                                        </p>
-                                        {% with fuel_current|fuel:fuel_max as per %}
-                                        {% if per > 80 %}
-                                        <div class="progress">
-                                            <div class="progress-bar progress-bar-striped bg-success" 
-                                                 role="progressbar" 
-                                                 style="width: {{ object.fuel_now|fuel:object.fuel_max }}%" 
-                                                 aria-valuenow="{{ object.fuel_now }}" 
-                                                 aria-valuemin="0" 
-                                                 aria-valuemax="{{ object.fuel_max }}">
-                                                {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
-                                            </div>
-                                        </div>
-                                        {% elif per > 50 %}
-                                        <div class="progress">
-                                            <div class="progress-bar progress-bar-striped bg-warning" 
-                                                 role="progressbar" 
-                                                 style="width: {{ object.fuel_now|fuel:object.fuel_max }}%;
-                                                 color: black;" 
-                                                 aria-valuenow="{{ object.fuel_now }}" 
-                                                 aria-valuemin="0" 
-                                                 aria-valuemax="{{ object.fuel_max }}">
-                                                {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
-                                            </div>
-                                        </div>
-                                        {% else %}
-                                        <div class="progress">
-                                            <div class="progress-bar progress-bar-striped bg-danger" 
-                                                 role="progressbar" 
-                                                 style="width: {{ object.fuel_now|fuel:object.fuel_max }}%" 
-                                                 aria-valuenow="{{ object.fuel_now }}" 
-                                                 aria-valuemin="0" 
-                                                 aria-valuemax="{{ object.fuel_max }}">
-                                                {% comment %}{{ object.fuel_now|fuel:object.fuel_max }}%{% endcomment %}
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                        {% endwith %} 
-                                        {% endwith %}
+              <!-- booking tab -->
+              <div id="booking" class="tab-pane fade pt-3">
+                {% include "car/components/booking_tab.html" %}
 
-                                    </td>
-                                </tr>
+              </div><!-- end booking -->
 
-                                <tr>
-                                    <th>สถานะ</th>
-                                    <td>{{ object.status }}</td>
-                                </tr>
+              <!-- refuel tab -->
+              <div id="refuel" class="tab-pane fade pt-3">
+                {% include "car/components/refuel_tab.html" %}
+              </div>
 
-                                <tr>
-                                    <th>จำนวนความจุผู้โดยสาร</th>
-                                    <td>{{ object.capacity }}</td>
-                                </tr>
-
-                                <tr>
-                                    <th>เลขไมล์</th>
-                                    <td>{{ object.mile_now }}</td>
-                                </tr>
-
-                                <tr>
-                                    <th>ผู้รับผิดชอบ</th>
-                                    <td>{{ object.responsible_man }}</td>
-                                </tr>
-
-                            </table>
-
-                            <table class="table table-borderless">
-                                <tr>
-                                    <th class="text-center">ภาพยานพาหนะ</th>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <center>
-                                            <img src="{{ object.car_avatar.url }}" width="100%">
-                                        </center>
-                                    </td>
-                                </tr>
-                            </table>
-
-                        </div><!-- end detail -->
-
-                        <!-- booking tab -->
-                        <div id="booking" class="tab-pane fade pt-3">
-                            <h5 class="card-title">รายการขอใช้ยานพาหนะ | <span>{{ object.number }}</span></h5>
-
-                            <!-- table booking list with search -->
-                            <table id="TableBooking" class="table table-hover datatable">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">ภารกิจ</th>
-                                        <th scope="col">วันที่ขอใช้งาน</th>
-                                        <th scope="col">ผู้ควบคุม</th>
-                                        <th scope="col">ผู้อนุมัติ</th>
-                                        <th scope="col">สถานะ</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for bk in booking_list %}
-                                    <tr>
-                                        <td>
-                                            <a href="{% url 'car:booking-detail' pk=bk.pk %}">
-                                                {{ bk.mission }}
-                                            </a>
-                                        </td>
-                                        <td>{{ bk.requested_at|thaidate }}</td>
-                                        <td>{{ bk.controler }}</td>
-                                        <td>{{ bk.approver }}</td>
-                                        {% if not bk.mile_in %}
-                                        <td>{{ bk.approve_status }}</td>
-                                        {% else %}
-                                        <td>เสร็จสิ้น</td>
-                                        {% endif %}
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-
-                </div><!-- end booking -->
-
-                <!-- refuel tab -->
-                <div id="refuel" class="tab-pane fade pt-3">
-                    <h5 class="card-title">ประวัติการเติมเชื้อเพลิง | <span>{{ object.number }}</span></h5>
-
-                    <!-- table booking list with search -->
-                    <table id="TableRefuel" class="table table-hover datatable">
-                        <thead>
-                            <tr>
-                                <th scope="col">วัน เดือน ปี</th>
-                                <th scope="col">เลขไมล์ตอนเติม</th>
-                                <th scope="col">จำนวนที่เติม</th>
-                                <th scope="col">ผู้เติม</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for rf in refuel %}
-                            <tr>
-                                <td>{{ rf.refueled_at|thaidate }} เวลา {{ rf.refueled_at|timezone:"Asia/Bangkok"|date:"H:m" }} น.</td>
-                                <td>{{ rf.mile_refuel }}</td>
-                                <td>{{ rf.refuel|floatformat:"2" }}</td>
-                                <td>{{ rf.refueler.profile.rank }}{{ rf.refueler.get_full_name }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- fix tab -->
-                <div id="car_fix" class="tab-pane fade pt-3">
-                    <h5 class="card-title">ประวัติการซ่อมบำรุง | <span>{{ object.number }}</span></h5>
-
-                    <!-- table booking list with search -->
-                    <table id="TableFix" class="table table-hover datatable">
-                        <thead>
-                            <tr>
-                                <th scope="col">หมายเลขแจ้งซ่อม</th>
-                                <th scope="col">วันที่แจ้ง</th>
-                                <th scope="col">อาการ</th>
-                                <th scope="col">ผู้แจ้ง</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for cf in car_fix %}
-                            <tr>
-                                <td>
-                                    <a href="{% url 'car:fix-detail' pk=cf.pk %}">
-                                        {{ cf.pk }}/{{ cf.requested_at.year|thaiyear }}
-                                    </a>
-                                </td>
-                                <td>{{ cf.requested_at|thaidate }} เวลา {{ cf.requested_at|timezone:"Asia/Bangkok"|date:"H:m" }} น.</td>
-                                <td>{{ cf.issue|safe }}</td>
-                                <td>{{ cf.fix_requester.profile }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div> <!-- end fix -->
+              <!-- fix tab -->
+              <div id="car_fix" class="tab-pane fade pt-3">
+                {% include "car/components/fix_tab.html" %}
+              </div> <!-- end fix -->
 
             </div>
 
-        </div><!-- end tab -->
+          </div><!-- end tab -->
 
 
-        <!-- TODO: make condition for button -->
-        <div class="container float-start text-center">
+          <!-- TODO: make condition for button -->
+          <div class="container float-start text-center">
             <a href="{% url 'car:list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
             <!-- DONE: send pk to booking view -->
             {% if object.status.name == 'พร้อมใช้งาน' %}
             <!-- NOTE: condition for request if fuel more than 15% -->
-                {% if object.fuel_now|fuel:object.fuel_max > 15 %}
-                    <a href="{% url 'car:booking-create' pk=object.pk %}" class="btn btn-lg btn-info">ขอใช้งาน</a>
-                {% endif %}
+            {% if object.fuel_now|fuel:object.fuel_max > 15 %}
+            <a href="{% url 'car:booking-create' pk=object.pk %}" class="btn btn-lg btn-info">ขอใช้งาน</a>
+            {% endif %}
             {% endif %}
             <a href="{% url 'car:refuel' pk=object.pk %}" class="btn btn-lg btn-warning">เติมน้ำมัน</a>
             {% if not object.status.name == 'ซ่อมบำรุง' %}
-                <a href="{% url 'car:fix-create' pk=object.pk %}" class="btn btn-lg btn-danger">แจ้งซ่อมบำรุง</a>
+            <a href="{% url 'car:fix-create' pk=object.pk %}" class="btn btn-lg btn-danger">แจ้งซ่อมบำรุง</a>
             {% endif %}
             {% if request.user|has_group:"Car" %}
-                <a href="{% url 'car:update' pk=object.pk %}" class="btn btn-lg btn-warning">แก้ไข</a>
+            <a href="{% url 'car:update' pk=object.pk %}" class="btn btn-lg btn-warning">แก้ไข</a>
             {% endif %}
+          </div>
+          <br />
+
+          <br />
         </div>
-        <br />
 
-        <br />
-    </div>
-
-    </div><!-- end tab content -->
+      </div><!-- end tab content -->
 
     </div>
 
-</section>
-{% comment %}{% include 'components/photoswipe.html' %}{% endcomment %}
-<script>
-    $(document).ready(function(){
-        $("#TableBooking").DataTable({
-            "fnDrawCallback" : function(oSettings) {
-                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
-                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
-                } else {
-                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
-                }
-            },
-            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
-        });
+  </section>
+  {% comment %}{% include 'components/photoswipe.html' %}{% endcomment %}
+  <script>
+  $(document).ready(function(){
+    $("#TableBooking").DataTable({
+      "fnDrawCallback" : function(oSettings) {
+        if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+        } else {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+        }
+      },
+      "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
     });
-    $(document).ready(function(){
-        $("#TableRefuel").DataTable({
-            "fnDrawCallback" : function(oSettings) {
-                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
-                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
-                } else {
-                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
-                }
-            },
-            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
-        });
+  });
+  $(document).ready(function(){
+    $("#TableRefuel").DataTable({
+      "fnDrawCallback" : function(oSettings) {
+        if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+        } else {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+        }
+      },
+      "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
     });
+  });
 
-</script>
-{% endblock content %}
+  </script>
+  {% endblock content %}

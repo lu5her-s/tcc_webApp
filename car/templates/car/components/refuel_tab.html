@@ -1,0 +1,24 @@
+{% load tags %}
+<h5 class="card-title">ประวัติการเติมเชื้อเพลิง | <span>{{ object.number }}</span></h5>
+
+<!-- table booking list with search -->
+<table id="TableRefuel" class="table table-hover datatable">
+  <thead>
+    <tr>
+      <th scope="col">วัน เดือน ปี</th>
+      <th scope="col">เลขไมล์ตอนเติม</th>
+      <th scope="col">จำนวนที่เติม</th>
+      <th scope="col">ผู้เติม</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for rf in refuel %}
+    <tr>
+      <td>{{ rf.refueled_at|thaidate }} เวลา {{ rf.refueled_at|timezone:"Asia/Bangkok"|date:"H:m" }} น.</td>
+      <td>{{ rf.mile_refuel }}</td>
+      <td>{{ rf.refuel|floatformat:"2" }}</td>
+      <td>{{ rf.refueler.profile.rank }}{{ rf.refueler.get_full_name }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

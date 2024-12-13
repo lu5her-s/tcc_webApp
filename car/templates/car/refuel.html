@@ -3,109 +3,109 @@
 {% load crispy_forms_tags %}
 {% load tags %}
 
-{% block title %}Refuel{% endblock title %}
+  {% block title %}Refuel{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>Car {{ title }}{{ test_var }}</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'car:list' %}">การจัดการยานพาหนะ</a></li>
-            <li class="breadcrumb-item active">การเติมเชื้อเพลิง</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'car:list' %}">การจัดการยานพาหนะ</a></li>
+        <li class="breadcrumb-item active">การเติมเชื้อเพลิง</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
-<section class="section profile">
+  <section class="section profile">
     <div class="row">
 
-        <div class="col-xl-12">
+      <div class="col-xl-12">
 
-            <div class="card">
-                <div class="card-body pt-3">
-                    <!-- Bordered Tabs -->
-                    <ul class="nav nav-tabs nav-tabs-bordered">
+        <div class="card">
+          <div class="card-body pt-3">
+            <!-- Bordered Tabs -->
+            <ul class="nav nav-tabs nav-tabs-bordered">
 
-                        <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Car Refuel</button>
-                        </li>
+              <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Car Refuel</button>
+              </li>
 
-                    </ul>
-                    <div class="tab-content pt-2">
+            </ul>
+            <div class="tab-content pt-2">
 
-                        <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
-                        <br />
-                        
-                        <table class="table">
+              <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
+              <br />
 
-                            <tr>
-                                <th>ประเภทยานพาหนะ</th>
-                                <td>{{ car.type.name }}</td>
-                            </tr>
+              <table class="table">
 
-                            <tr>
-                                <th>หมายเลขทะเบียน</th>
-                                <td>{{ car.number }}</td>
-                            </tr>
+                <tr>
+                  <th>ประเภทยานพาหนะ</th>
+                  <td>{{ car.type.name }}</td>
+                </tr>
 
-                            <tr>
-                                <th>ปริมาณเชื้อเพลิงปัจจุบัน</th>
-                                <td>{{ car.fuel_now }}/{{ car.fuel_max }} ลิตร</td>
-                            </tr>
+                <tr>
+                  <th>หมายเลขทะเบียน</th>
+                  <td>{{ car.number }}</td>
+                </tr>
 
-                            <tr>
-                                <th>อัตราการใช้เชื้อเพลิง</th>
-                                <td>{{ car.fuel_rate }} ลิตร/กม.</td>
-                            </tr>
-                        </table>
+                <tr>
+                  <th>ปริมาณเชื้อเพลิงปัจจุบัน</th>
+                  <td>{{ car.fuel_now }}/{{ car.fuel_max }} ลิตร</td>
+                </tr>
 
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            {{ form.media }}
-                             
-                            {% comment %}{{ form|crispy }}{% endcomment %}
-                            
-                            <div class="row mb-3">
-                                <label for="{{ form.mile_refuel.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.mile_refuel.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.mile_refuel }}
-                                </div>
-                            </div>
+                <tr>
+                  <th>อัตราการใช้เชื้อเพลิง</th>
+                  <td>{{ car.fuel_rate }} ลิตร/กม.</td>
+                </tr>
+              </table>
 
-                            <div class="row mb-3">
-                                <label for="{{ form.refuel.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.refuel.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.refuel }}
-                                </div>
-                            </div>
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.media }}
 
-                            <div class="row mb-3">
-                                <label for="{{ form.note.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.note.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.note }}
-                                </div>
-                            </div>
+                {% comment %}{{ form|crispy }}{% endcomment %}
 
-                            <div class="text-center">
-                                {% comment %}{% if form.instance %}{% endcomment %}
-                                        <a href="{% url 'car:detail' pk=car.pk %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                                        <button type="submit" class="btn btn-lg btn-success">บันทึก</button>
-                                        <button type="reset" class="btn btn-lg btn-warning">ล้าง</button>
-                                        {% comment %}<button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>{% endcomment %}
-                            </div>
-
-                        </form>
-
-                    </div><!-- End Bordered Tabs -->
-
+                <div class="row mb-3">
+                  <label for="{{ form.mile_refuel.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.mile_refuel.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.mile_refuel }}
+                  </div>
                 </div>
-            </div>
 
+                <div class="row mb-3">
+                  <label for="{{ form.refuel.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.refuel.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.refuel }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="{{ form.note.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.note.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.note }}
+                  </div>
+                </div>
+
+                <div class="text-center">
+                  {% comment %}{% if form.instance %}{% endcomment %}
+                  <a href="{% url 'car:detail' pk=car.pk %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                  <button type="submit" class="btn btn-lg btn-success">บันทึก</button>
+                  <button type="reset" class="btn btn-lg btn-warning">ล้าง</button>
+                  {% comment %}<button type="submit" class="btn btn-lg btn-success">ขอใช้ยานพาหนะ</button>{% endcomment %}
+                </div>
+
+              </form>
+
+            </div><!-- End Bordered Tabs -->
+
+          </div>
         </div>
+
+      </div>
     </div>
 
-</section>
+  </section>
 
-{% endblock content %}
+  {% endblock content %}
 

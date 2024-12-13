@@ -4,150 +4,150 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Car Management{% endblock title %}
+  {% block title %}Car Management{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>{{ object.title }}</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'car:list' %}">Car List</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'car:booking' %}">Booking List</a></li>
-            <li class="breadcrumb-item active">{{ object.car.number }}</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'car:list' %}">Car List</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'car:booking' %}">Booking List</a></li>
+        <li class="breadcrumb-item active">{{ object.car.number }}</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
 
-<section class="section">
+  <section class="section">
     <div class="row">
 
-        <div class="col-xl-12">
-            <div class="card">
-                <div class="card-body pt-3">
-                    <ul class="nav nav-tabs nav-tabs-bordered">
-                        <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
-                                รายละเอียด
-                            </button>
-                        </li>
-                        {% if images %}
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#image">
-                                ภาพการทำงาน
-                            </button>
-                        </li>{% endif %}
-                    </ul>
+      <div class="col-xl-12">
+        <div class="card">
+          <div class="card-body pt-3">
+            <ul class="nav nav-tabs nav-tabs-bordered">
+              <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
+                  รายละเอียด
+                </button>
+              </li>
+              {% if images %}
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#image">
+                  ภาพการทำงาน
+                </button>
+              </li>{% endif %}
+            </ul>
 
-                    <!-- start tab content -->
-                    <div class="tab-content pt-2">
-                        <div id="detail" class="tab-pane fade show active">
-                            <h6 class="card-title"> รายละเอียด | <span> การขอใช้งาน ที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h6>
-                            <table class="table">
-                                <tr>
-                                    <th>ภารกิจ</th>
-                                    <td>{{ object.mission }}</td>
-                                </tr>
+            <!-- start tab content -->
+            <div class="tab-content pt-2">
+              <div id="detail" class="tab-pane fade show active">
+                <h6 class="card-title"> รายละเอียด | <span> การขอใช้งาน ที่ {{ object.pk }}/{{ object.created_at.year|thaiyear }}</span></h6>
+                <table class="table">
+                  <tr>
+                    <th>ภารกิจ</th>
+                    <td>{{ object.mission }}</td>
+                  </tr>
 
-                                <tr>
-                                    <th>ประเภทยานพาหนะ</th>
-                                    <td>{{ object.car.type.name }}</td>
-                                </tr>
+                  <tr>
+                    <th>ประเภทยานพาหนะ</th>
+                    <td>{{ object.car.type.name }}</td>
+                  </tr>
 
-                                <tr>
-                                    <th>หมายเลขทะเบียน</th>
-                                    <td><a href="{% url 'car:detail' pk=object.car.pk %}" target="_blank">{{ object.car.number }}</a></td>
-                                </tr>
+                  <tr>
+                    <th>หมายเลขทะเบียน</th>
+                    <td><a href="{% url 'car:detail' pk=object.car.pk %}" target="_blank">{{ object.car.number }}</a></td>
+                  </tr>
 
-                                <tr>
-                                    <th>วันที่ขอใช้งาน</th>
-                                    <td>
-                                        {{ object.requested_at|thaidate }}
-                                        เวลา {{ object.requested_at|date:"H:m" }} น.
-                                    </td>
-                                </tr>
+                  <tr>
+                    <th>วันที่ขอใช้งาน</th>
+                    <td>
+                      {{ object.requested_at|thaidate }}
+                      เวลา {{ object.requested_at|date:"H:m" }} น.
+                    </td>
+                  </tr>
 
-                                <tr>
-                                    <th>ผู้ควบคุม</th>
-                                        <td><a href="{% url 'account:member' pk=object.controler.pk %}" target="_blank">{{ object.controler }}</a></td>
-                                </tr>
+                  <tr>
+                    <th>ผู้ควบคุม</th>
+                    <td><a href="{% url 'account:member' pk=object.controler.pk %}" target="_blank">{{ object.controler }}</a></td>
+                  </tr>
 
-                                <tr>
-                                    <th>พลขับ</th>
-                                    <td><a href="{% url 'account:member' pk=object.driver.pk %}" target="_blank">{{ object.driver }}</a></td>
-                                </tr>
+                  <tr>
+                    <th>พลขับ</th>
+                    <td><a href="{% url 'account:member' pk=object.driver.pk %}" target="_blank">{{ object.driver }}</a></td>
+                  </tr>
 
-                                <tr>
-                                    <th>จำนวนผู้โดยสาร</th>
-                                    <td>{{ object.passenger }} คน</td>
-                                </tr>
+                  <tr>
+                    <th>จำนวนผู้โดยสาร</th>
+                    <td>{{ object.passenger }} คน</td>
+                  </tr>
 
-                                <tr>
-                                    <th>ผู้อนุมัติ</th>
-                                    <td><a href="{% url 'account:member' pk=object.approver.pk %}" target="_blank">{{ object.approver }}</a></td>
-                                </tr>
+                  <tr>
+                    <th>ผู้อนุมัติ</th>
+                    <td><a href="{% url 'account:member' pk=object.approver.pk %}" target="_blank">{{ object.approver }}</a></td>
+                  </tr>
 
-                                <tr>
-                                    <th>สถานะ</th>
-                                    <td>{{ object.approve_status.name }}</td>
-                                </tr>
+                  <tr>
+                    <th>สถานะ</th>
+                    <td>{{ object.approve_status.name }}</td>
+                  </tr>
 
-                                {% if object.mile_in %}
-                                <tr>
-                                    <th>ไมล์ออก</th>
-                                    <td>{{ object.mile_out }}</td>
-                                </tr>
-                                <tr>
-                                    <th>ไมล์เข้า</th>
-                                    <td>{{ object.mile_in }}</td>
-                                </tr>
-                                <tr>
-                                    <th>ระยะทาง</th>
-                                    <td>{{ object.distance }} กม.</td>
-                                </tr>
-                                <tr>
-                                    <th>ใช้นำมันไป</th>
-                                    <td>{{ object.fuel_use }} ลิตร</td>
-                                </tr>
-                                <tr>
-                                    <th>คืนเมื่อ</th>
-                                    <td>{{ object.return_at|thaidate }} เวลา {{ object.return_at|timezone:"Asia/Bangkok"|date:"H:i" }} น.</td>
-                                </tr>
-                                {% endif %}
+                  {% if object.mile_in %}
+                  <tr>
+                    <th>ไมล์ออก</th>
+                    <td>{{ object.mile_out }}</td>
+                  </tr>
+                  <tr>
+                    <th>ไมล์เข้า</th>
+                    <td>{{ object.mile_in }}</td>
+                  </tr>
+                  <tr>
+                    <th>ระยะทาง</th>
+                    <td>{{ object.distance }} กม.</td>
+                  </tr>
+                  <tr>
+                    <th>ใช้นำมันไป</th>
+                    <td>{{ object.fuel_use }} ลิตร</td>
+                  </tr>
+                  <tr>
+                    <th>คืนเมื่อ</th>
+                    <td>{{ object.return_at|thaidate }} เวลา {{ object.return_at|timezone:"Asia/Bangkok"|date:"H:i" }} น.</td>
+                  </tr>
+                  {% endif %}
 
 
-                            </table>
+                </table>
 
-                        </div><!-- end detail -->
+              </div><!-- end detail -->
 
-                <!-- TODO: make condition for button -->
-                <div class="container float-start text-center">
-                    <a href="{% url 'car:booking' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                    {% if not object.mile_current %}
-                        {% if request.user == object.requester or request.user.profile == object.driver or request.user.profile == object.approver %}
-                            {% if object.car.status.name == 'จอง' and object.approve_status.name == 'อนุมัติ' %}
-                                <a href="{% url 'car:use-car' pk=object.car.pk %}" class="btn btn-lg btn-info">Use {{ object.car.pk }}</a>
-                            {% elif object.car.status.name == 'กำลังใช้งาน' %}
-                                <a href="{% url 'car:return-car' pk=object.pk %}" class="btn btn-lg btn-success">Return</a>
-                            {% endif %}
-                            {% if not object.mile_in %}
-                            <a href="{% url 'car:booking-update' pk=object.pk %}" class="btn btn-lg btn-warning">อัพเดท</a>
-                            {% endif %}
-                        {% comment %}<button type="reset" href="#" class="btn btn-lg btn-warning">Reset</button>{% endcomment %}
-                        {% endif %}
-                    {% endif %}
-                </div>
-                <br />
+              <!-- TODO: make condition for button -->
+              <div class="container float-start text-center">
+                <a href="{% url 'car:booking' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                {% if not object.mile_current %}
+                {% if request.user == object.requester or request.user.profile == object.driver or request.user.profile == object.approver %}
+                {% if object.car.status.name == 'จอง' and object.approve_status.name == 'อนุมัติ' %}
+                <a href="{% url 'car:use-car' pk=object.car.pk %}" class="btn btn-lg btn-info">Use {{ object.car.pk }}</a>
+                {% elif object.car.status.name == 'กำลังใช้งาน' %}
+                <a href="{% url 'car:return-car' pk=object.pk %}" class="btn btn-lg btn-success">Return</a>
+                {% endif %}
+                {% if not object.mile_in %}
+                <a href="{% url 'car:booking-update' pk=object.pk %}" class="btn btn-lg btn-warning">อัพเดท</a>
+                {% endif %}
+                {% comment %}<button type="reset" href="#" class="btn btn-lg btn-warning">Reset</button>{% endcomment %}
+                {% endif %}
+                {% endif %}
+              </div>
+              <br />
 
-                <br />
-                </div>
+              <br />
+            </div>
 
-            </div><!-- end tab content -->
+          </div><!-- end tab content -->
 
         </div>
-    </div>
+      </div>
 
-</section>
-{% include 'components/photoswipe.html' %}
-{% endblock content %}
+  </section>
+  {% include 'components/photoswipe.html' %}
+  {% endblock content %}

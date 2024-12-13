@@ -4,150 +4,150 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Booking Management{% endblock title %}
+  {% block title %}Booking Management{% endblock title %}
 
 
-{% block content %}
+  {% block content %}
 
-<div class="pagetitle">
+  <div class="pagetitle">
     <h1>รายการขอใช้ยานพาหนะ</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'car:list' %}">Car List</a></li>
-            <li class="breadcrumb-item active">Booking list</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'car:list' %}">Car List</a></li>
+        <li class="breadcrumb-item active">Booking list</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
-<section class="section profile">
+  <section class="section profile">
     <div class="row">
 
-        <div class="col-xl-12">
+      <div class="col-xl-12">
 
-            <!-- Recent Job -->
-            <div class="col-12">
-                <div class="card recent-sales overflow-auto">
+        <!-- Recent Job -->
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
 
-                    <div class="card-body">
-                        <h5 class="card-title">{{ title }} 
-                            <span>| List</span>
-                            {% if request.user|has_group:"Staff" %}
-                            <span>
-                                <a href="{% url 'car:wait_approve' %}" class="align-right btn btn-warning" style="float: right">
-                                    <i class="bi bi-calendar-minus">
-                                        รออนุมัติใช้งาน
-                                    </i>
-                                </a>
-                            </span>
-                            {% endif %}
-                        </h5>
-                        <br>
+            <div class="card-body">
+              <h5 class="card-title">{{ title }} 
+                <span>| List</span>
+                {% if request.user|has_group:"Staff" %}
+                <span>
+                  <a href="{% url 'car:wait_approve' %}" class="align-right btn btn-warning" style="float: right">
+                    <i class="bi bi-calendar-minus">
+                      รออนุมัติใช้งาน
+                    </i>
+                  </a>
+                </span>
+                {% endif %}
+              </h5>
+              <br>
 
-                        <table class="table table-hover datatable" id="dataTable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">ใบขอใช้รถเลขที่</th>
-                                    <th scope="col">หมายเลขทะเบียน</th>
-                                    <th scope="col">ภารกิจ</th>
-                                    <th scope="col">วันที่ขอใช้งาน</th>
-                                    <th scope="col">ผู้ควบคุม</th>
-                                    <th scope="col">ผู้อนุมัติ</th>
-                                    <th scope="col">...</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for object in object_list %}
-                                <tr>
-                                    <td>
-                                        <a href="{% url 'car:booking-detail' pk=object.pk %}">
-                                            {{ object.pk }}/{{ object.created_at.year|thaiyear }}
-                                        </a>
-                                    </td>
-                                    <td>{{ object.car.number }}</td>
-                                    <td>{{ object.mission }}</td>
-                                    <td>{{ object.requested_at|thaidate }}</td>
-                                    <td>{{ object.controler }}</td>
-                                    <td>{{ object.approver }}</td>
-                                    <td>
-                                        <!-- add detail booking -->
-                                        <a href="{% url 'car:booking-detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a>
-                                        {% if not object.approve_status.name == 'เสร็จสิ้น' %}
-                                            {% if object.approve_status.name == 'อนุมัติ' %}
-                                                <a class="badge bg-success" href="#">{{ object.approve_status }}</a>
-                                            {% else %}
-                                                <a class="badge bg-warning text-black" href="#">{{ object.approve_status }}</a>
-                                            {% endif %}
-                                        {% else %}
-                                            <p class="badge bg-info text-black" href="#">{{ object.approve_status.name }}</p>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+              <table class="table table-hover datatable" id="dataTable">
+                <thead>
+                  <tr>
+                    <th scope="col">ใบขอใช้รถเลขที่</th>
+                    <th scope="col">หมายเลขทะเบียน</th>
+                    <th scope="col">ภารกิจ</th>
+                    <th scope="col">วันที่ขอใช้งาน</th>
+                    <th scope="col">ผู้ควบคุม</th>
+                    <th scope="col">ผู้อนุมัติ</th>
+                    <th scope="col">...</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for object in object_list %}
+                  <tr>
+                    <td>
+                      <a href="{% url 'car:booking-detail' pk=object.pk %}">
+                        {{ object.pk }}/{{ object.created_at.year|thaiyear }}
+                      </a>
+                    </td>
+                    <td>{{ object.car.number }}</td>
+                    <td>{{ object.mission }}</td>
+                    <td>{{ object.requested_at|thaidate }}</td>
+                    <td>{{ object.controler }}</td>
+                    <td>{{ object.approver }}</td>
+                    <td>
+                      <!-- add detail booking -->
+                      <a href="{% url 'car:booking-detail' pk=object.pk %}" class="badge bg-secondary">เพิ่มเติม</a>
+                      {% if not object.approve_status.name == 'เสร็จสิ้น' %}
+                      {% if object.approve_status.name == 'อนุมัติ' %}
+                      <a class="badge bg-success" href="#">{{ object.approve_status }}</a>
+                      {% else %}
+                      <a class="badge bg-warning text-black" href="#">{{ object.approve_status }}</a>
+                      {% endif %}
+                      {% else %}
+                      <p class="badge bg-info text-black" href="#">{{ object.approve_status.name }}</p>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
 
-                    </div>
+            </div>
 
-                </div>
-            </div><!-- End Announce List -->
-            {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
+          </div>
+        </div><!-- End Announce List -->
+        {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
 
-        </div>
+      </div>
 
     </div>
 
     <!-- Modal Form -->
     <div id="approve_form" class="modal fade" 
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-        tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 id="modalTitle" class="modal-title">Update Approve</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 id="modalTitle" class="modal-title">Update Approve</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div id="modalBody" class="modal-body">
+            <form action="#">
+              <div class="row mb-3">
+                <label for="{{ form.approve_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approve_status.label }}</label>
+                <div class="col-md-8 col-lg-9">
+                  {{ form.approve_status }}
                 </div>
-                <div id="modalBody" class="modal-body">
-                    <form action="#">
-                        <div class="row mb-3">
-                            <label for="{{ form.approve_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approve_status.label }}</label>
-                            <div class="col-md-8 col-lg-9">
-                                {{ form.approve_status }}
-                            </div>
-                        </div>
-                        {% comment %}<div class="row mb-3">{% endcomment %}
-                            {% comment %}<label for="{{ form.approve_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approve_status.label }}</label>{% endcomment %}
-                            <div class="col-md-8 col-lg-9">
-                                {{ form.car_ref }}
-                            </div>
-                        {% comment %}</div>{% endcomment %}
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button id="submitButton" class="btn btn-primary">Ok</button>
-                </div>
-            </div>
+              </div>
+              {% comment %}<div class="row mb-3">{% endcomment %}
+              {% comment %}<label for="{{ form.approve_status.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.approve_status.label }}</label>{% endcomment %}
+              <div class="col-md-8 col-lg-9">
+                {{ form.car_ref }}
+              </div>
+              {% comment %}</div>{% endcomment %}
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button id="submitButton" class="btn btn-primary">Ok</button>
+          </div>
         </div>
+      </div>
     </div> <!-- end modal -->
 
-</section>
+  </section>
 
-<script>
-    $(document).ready(() => {
-        $("#dataTable").DataTable({
-            "fnDrawCallback" : function(oSettings) {
-                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
-                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
-                } else {
-                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
-                }
-            },
-            "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
-        });
+  <script>
+  $(document).ready(() => {
+    $("#dataTable").DataTable({
+      "fnDrawCallback" : function(oSettings) {
+        if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+        } else {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+        }
+      },
+      "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
     });
+  });
 
 
-</script>
-{% endblock content %}
+  </script>
+  {% endblock content %}
