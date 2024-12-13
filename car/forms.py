@@ -35,7 +35,7 @@ class CarForm(forms.ModelForm):
     class Meta:
         model = Car
         fields = (
-            "type",
+            "car_type",
             "number",
             "manufacturer",
             "capacity",
@@ -49,7 +49,7 @@ class CarForm(forms.ModelForm):
             "images",
         )
         widgets = {
-            "type": widgets.Select(attrs={"class": "form-select"}),
+            "car_type": widgets.Select(attrs={"class": "form-select"}),
             "number": widgets.TextInput(attrs={"class": "form-control"}),
             "manufacturer": widgets.TextInput(attrs={"class": "form-control"}),
             "capacity": widgets.NumberInput(attrs={"class": "form-control"}),
@@ -62,7 +62,7 @@ class CarForm(forms.ModelForm):
             "car_avatar": widgets.ClearableFileInput(attrs={"class": "form-control"}),
         }
         labels = {
-            "type": "ประเภท",
+            "car_type": "ประเภท",
             "number": "หมายเลขทะเบียน",
             "manufacturer": "ยี่ห้อ/รุ่น",
             "capacity": "จำนวนผู้โดยสาร",
@@ -91,7 +91,7 @@ class BookingForm(forms.ModelForm):
             "approver",
             "driver",
             "requested_at",
-            "approve_status",
+            "status",
             "requester",
         )
         widgets = {
@@ -101,7 +101,7 @@ class BookingForm(forms.ModelForm):
             "controler": widgets.Select(attrs={"class": "form-select"}),
             "approver": widgets.Select(attrs={"class": "form-select"}),
             "driver": widgets.Select(attrs={"class": "form-select"}),
-            "approve_status": widgets.Select(attrs={"class": "form-select"}),
+            "status": widgets.Select(attrs={"class": "form-select"}),
             "requested_at": widgets.DateTimeInput(
                 attrs={
                     "class": "form-control",
@@ -119,7 +119,7 @@ class BookingForm(forms.ModelForm):
             "approver": "ผู้อนุมัติ",
             "driver": "พลขับ",
             "requested_at": "วันที่ใช้งาน",
-            "approve_status": "สถานะ",
+            "status": "สถานะ",
         }
 
 
@@ -135,12 +135,12 @@ class ApproveForm(forms.ModelForm):
 
     class Meta:
         model = CarBooking
-        fields = ("approve_status",)
+        fields = ("status",)
         widgets = {
-            "approve_status": widgets.Select(attrs={"class": "form-select"}),
+            "status": widgets.Select(attrs={"class": "form-select"}),
         }
         labels = {
-            "approve_status": "สถานะการขอใช้",
+            "status": "สถานะการขอใช้",
         }
 
 
@@ -312,14 +312,14 @@ class ApproverForm(forms.ModelForm):
     class Meta:
         model = CarFix
         fields = {
-            "approve_status",
+            "fix_status",
             "responsible_man",
         }
         widgets = {
-            "approve_status": forms.Select(attrs={"class": "form-select"}),
+            "fix_status": forms.Select(attrs={"class": "form-select"}),
             "responsible_man": forms.Select(attrs={"class": "form-select"}),
         }
         labels = {
-            "approve_status": "สถานะการอนุมัติ",
+            "fix_status": "สถานะการอนุมัติ",
             "responsible_man": "มอบหมายผู้ดำเนินการ",
         }

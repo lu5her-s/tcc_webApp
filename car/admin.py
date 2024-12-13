@@ -1,15 +1,12 @@
 from django.contrib import admin
 
 from car.models import (
-    ApproveStatus,
     Car,
     CarAfterFixImage,
     CarBooking,
     CarFix,
     CarFixImage,
-    CarFixStatus,
     CarImage,
-    CarStatus,
     CarType,
     Refuel,
 )
@@ -18,17 +15,14 @@ from car.models import (
 
 # admin.site.register(Car)
 admin.site.register(CarBooking)
-admin.site.register(CarStatus)
 admin.site.register(CarFix)
 admin.site.register(CarType)
 admin.site.register(Refuel)
-admin.site.register(ApproveStatus)
 admin.site.register(CarImage)
 admin.site.register(CarFixImage)
 # register CarAfterFixImage
 admin.site.register(CarAfterFixImage)
 # register CarFixStatus
-admin.site.register(CarFixStatus)
 
 
 @admin.register(Car)

@@ -39,19 +39,6 @@ def get_image_fix(instance: object, filename: str) -> str:
     return f"Car/Fix/{car_number}/{filename}"
 
 
-class ApproveStatus(models.Model):
-    """RequestStatus. for track status when request user, fix, re_fuel"""
-
-    name = models.CharField(max_length=200)
-
-    class Meta:
-        verbose_name = "Approve Status"
-        verbose_name_plural = "Approve Status"
-
-    def __str__(self) -> str:
-        return f"{self.name}"
-
-
 class CarType(models.Model):
     """CarType. for type of car : van, truck etc."""
 
@@ -65,23 +52,18 @@ class CarType(models.Model):
         return f"{self.name}"
 
 
-class CarStatus(models.Model):
-    """CarStatus. show status : ready, pending, inuse, fix etc."""
-
-    name = models.CharField(max_length=200)
-
-    class Meta:
-        verbose_name = "Status"
-        verbose_name_plural = "Status"
-
-    def __str__(self) -> str:
-        return f"{self.name}"
-
-
 class Car(models.Model):
     """Car. detail for car general data for car"""
 
-    type = models.ForeignKey(CarType, on_delete=models.CASCADE)
+    class Status(models.TextChoices):
+        READY = "ready", "พร้อมใช้งาน"
+        PENDING = "pending", "จอง"
+        WAIT = "wait", "รอดำเนินการ"
+        INUSE = "inuse", "ใช้งานอยู่"
+        FIX = "fix", "ซ่อมบำรุง"
+        NOT_READY = "not_ready", "ไม่พร้อมใช้งาน"
+
+    car_type = models.ForeignKey(CarType, on_delete=models.CASCADE)
     number = models.CharField(max_length=50)
     manufacturer = models.CharField(max_length=200, null=True, blank=True)
     color = models.CharField(max_length=50, null=True, blank=True)
@@ -89,8 +71,12 @@ class Car(models.Model):
     fuel_max = models.FloatField(default=40.0)
     fuel_rate = models.FloatField(default=0.0)
     fuel_now = models.FloatField(default=0.0)
-    status = models.ForeignKey(
-        CarStatus, on_delete=models.CASCADE, related_name="car_status"
+    status = models.CharField(
+        max_length=200,
+        choices=Status.choices,
+        default=Status.READY,
+        null=True,
+        blank=True,
     )
     responsible_man = models.ForeignKey(
         Profile, on_delete=models.CASCADE, related_name="responsible_man"
@@ -108,11 +94,18 @@ class Car(models.Model):
         fuel_now = self.fuel_now
         fuel_max = self.fuel_max
         percent = (fuel_now / fuel_max) * 100
-        return f"{self.type.name} เลขทะเบียน {self.number} สถานภาพเชื้อเพลิง {self.fuel_now}/{self.fuel_max}({percent} %)"
+        return f"{self.car_type.name} เลขทะเบียน {self.number} สถานภาพเชื้อเพลิง {self.fuel_now}/{self.fuel_max}({percent} %)"
 
 
 class CarBooking(models.Model):
     """CarUse. for request use car init request change status car to pending"""
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "รออนุมัติ"
+        APPROVE = "approve", "อนุมัติ"
+        REJECT = "reject", "ไม่อนุมัติ"
+        CANCEL = "cancel", "ยกเลิก"
+        DONE = "done", "เสร็จสิ้น"
 
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="car_booking")
     requester = models.ForeignKey(
@@ -136,8 +129,12 @@ class CarBooking(models.Model):
     return_at = models.DateTimeField(null=True, blank=True)
     fuel_use = models.FloatField(default=0.0)
     # FIX: change choice to class textchoices
-    approve_status = models.ForeignKey(
-        ApproveStatus, on_delete=models.CASCADE, related_name="use_approve_status"
+    status = models.CharField(
+        max_length=200,
+        choices=Status.choices,
+        default=Status.PENDING,
+        null=True,
+        blank=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -153,25 +150,23 @@ class CarBooking(models.Model):
             return f"ใบขอใช้รถเลขที่ {self.pk}/{year} - {self.car.number} ผู้ขอใช้ {self.requester.get_full_name()}"
 
 
-# class for fix status
-class CarFixStatus(models.Model):
-    """CarFixStatus. status of car fix"""
-
-    name = models.CharField(max_length=50)
-
-    class Meta:
-        verbose_name = "Car Fix Status"
-        verbose_name_plural = "Car Fix Status"
-
-    def __str__(self) -> str:
-        return self.name
-
-
 class CarFix(models.Model):
     """CarFix. request to fix car change status car to in maintenance"""
 
+    class Status(models.TextChoices):
+        PENDING = "pending", "รอดำเนินการ"
+        IN_MAINTENANCE = "in_maintenance", "กําลังซ่อม"
+        FINISHED = "finished", "เสร็จสิ้น"
+
+    class ApproveStatus(models.TextChoices):
+        PENDING = "pending", "รออนุมัติ"
+        APPROVE = "approve", "อนุมัติ"
+        REJECT = "reject", "ไม่อนุมัติ"
+        CANCEL = "cancel", "ยกเลิก"
+        DONE = "done", "เสร็จสิ้น"
+
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="car_fix")
-    issue = RichTextField(null=True, blank=True)
+    issue = models.TextField(null=True, blank=True)
     # cost_expect = models.PositiveIntegerField(default=0)
     fix_requester = models.ForeignKey(User, on_delete=models.CASCADE)
     approver = models.ForeignKey(
@@ -180,14 +175,14 @@ class CarFix(models.Model):
     requested_at = models.DateTimeField(auto_now_add=True)
     cost_use = models.PositiveIntegerField(default=0, null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)
-    approve_status = models.ForeignKey(
-        ApproveStatus,
-        on_delete=models.CASCADE,
-        related_name="fix_approve_status",
+    approve_status = models.CharField(
+        max_length=200,
+        choices=ApproveStatus.choices,
+        default=ApproveStatus.PENDING,
         null=True,
         blank=True,
     )
-    note = RichTextField(null=True, blank=True)
+    note = models.TextField(null=True, blank=True)
     responsible_man = models.ForeignKey(
         Profile,
         on_delete=models.CASCADE,
@@ -195,10 +190,10 @@ class CarFix(models.Model):
         null=True,
         blank=True,
     )
-    fix_status = models.ForeignKey(
-        CarFixStatus,
-        on_delete=models.CASCADE,
-        related_name="fix_status",
+    fix_status = models.CharField(
+        max_length=200,
+        choices=Status.choices,
+        default=Status.PENDING,
         null=True,
         blank=True,
     )

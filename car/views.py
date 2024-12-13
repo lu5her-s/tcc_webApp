@@ -35,15 +35,12 @@ from car.forms import (
     CarReturnForm,
 )
 from car.models import (
-    ApproveStatus,
     Car,
     CarAfterFixImage,
     CarBooking,
     CarFix,
     CarFixImage,
-    CarFixStatus,
     CarImage,
-    CarStatus,
     Refuel,
 )
 
@@ -229,7 +226,7 @@ class CarBookingCreateView(LoginRequiredMixin, CreateView):
         if form.is_valid():
             form_save = form.save()
             car = Car.objects.get(pk=kwargs["pk"])
-            car.status = CarStatus.objects.get(name="จอง")
+            car.status = Car.Status.PENDING
             car.save()
             return redirect(self.success_url)
         else:
@@ -317,10 +314,10 @@ class CarBookingUpdateView(LoginRequiredMixin, UpdateView):
         if form.is_valid():
             form.save()
             # a_status = ApproveStatus.objects.get(pk=request.POST.get('approve_status'))
-            if request.POST["approve_status"] == "3":
+            if request.POST["approve_status"] == "APPROVE":
                 car = Car.objects.get(pk=request.POST.get("car"))
                 print(car)
-                car.status = CarStatus.objects.get(pk=1)
+                car.status = Car.Status.WAIT
                 car.save()
             return redirect(self.get_success_url())
         else:
@@ -342,7 +339,7 @@ class WaitApproveListView(LoginRequiredMixin, ListView):
     model = CarBooking
 
     def get_queryset(self):
-        qs = CarBooking.objects.filter(approve_status__name="รออนุมัติ")
+        qs = CarBooking.objects.filter(status=CarBooking.Status.PENDING)
         return qs
 
 
@@ -376,10 +373,10 @@ def ReturnCar(request, pk):
             booking.mile_in = request.POST["mile_current"]
             booking.return_at = datetime.datetime.now()
             booking.fuel_use = fuel_use
-            booking.approver = ApproveStatus.objects.get(name="เสร็จสิ้น")
+            booking.status = CarBooking.Status.DONE
             car.mile_now = request.POST["mile_current"]
             car.fuel_now = car.fuel_now - fuel_use
-            car.status = CarStatus.objects.get(name="พร้อมใช้งาน")
+            car.status = Car.Status.READY
             booking.save()
             car.save()
             return redirect(reverse_lazy("car:booking"))
@@ -411,8 +408,7 @@ def UseCar(request, pk):
 
     """
     car = Car.objects.get(pk=pk)
-    car_status = CarStatus.objects.get(name="กำลังใช้งาน")
-    car.status = car_status
+    car.status = Car.Status.INUSE
     car.save()
     return HttpResponseRedirect(reverse("car:booking"))
 
@@ -481,7 +477,7 @@ class CarFixCreateView(LoginRequiredMixin, CreateView):
         car = Car.objects.get(pk=car_pk)
         form = CarRequestFixForm(request.POST, request.FILES)
         if form.is_valid():
-            car.status = CarStatus.objects.get(name="ซ่อมบำรุง")
+            car.status = Car.Status.FIX
             car.save()
             fix_db = form.save()
             # save images
@@ -574,11 +570,11 @@ def CarAfterFixView(request, pk):
         if form.is_valid():
             fix.note = request.POST["note"]
             fix.cost_use = request.POST["cost_use"]
-            fix.fix_status = CarFixStatus.objects.get(pk=request.POST["fix_status"])
+            fix.fix_status = CarFix.Status.FINISHED
             # fix finished_at now()
             fix.finished_at = datetime.datetime.now()
             # approve_status change to name = "เสร็จสิ้น"
-            fix.approve_status = ApproveStatus.objects.get(name="เสร็จสิ้น")
+            fix.approve_status = CarFix.ApproveStatus.DONE
             # save image to CarAfterFixImage
             for f in request.FILES.getlist("fixed_image"):
                 CarAfterFixImage.objects.create(fix=fix, images=f)

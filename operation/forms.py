@@ -152,7 +152,7 @@ class CarAddForm(forms.Form):
     """
 
     car_booking = forms.ModelChoiceField(
-        queryset=CarBooking.objects.filter(approve_status__name="อนุมัติ"),
+        queryset=CarBooking.objects.filter(status="APPROVE"),
         label="การจองรถ",
         widget=forms.Select(attrs={"class": "form-select"}),
     )
