@@ -1,11 +1,13 @@
 {% load tags %}
+{% load tz %}
+
 <h6 class="card-title"> รายละเอียด | <span> {{ object.number }}</span></h6>
 <table class="table">
   {% comment %}<p>{{ booking }}</p>{% endcomment %}
   {% comment %}<p>{{ car_fix }}</p>{% endcomment %}
   <tr>
     <th>ประเภท</th>
-    <td>{{ object.type }}</td>
+    <td>{{ object.get_car_type_display }}</td>
   </tr>
 
   <tr>
@@ -65,7 +67,7 @@
 
   <tr>
     <th>สถานะ</th>
-    <td>{{ object.status }}</td>
+    <td>{{ object.get_status_display }}</td>
   </tr>
 
   <tr>

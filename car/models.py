@@ -22,7 +22,8 @@ def get_image_name(instance: object, filename: str) -> str:
     :param filename:str
     for store image for car
     """
-    car_number = instance.car.number
+    car_number = instance.number.replace(" ", "_").replace("-", "_")
+
     return f"Car/{car_number}/{filename}"
 
 
@@ -112,7 +113,7 @@ class Car(models.Model):
         fuel_now = self.fuel_now
         fuel_max = self.fuel_max
         percent = (fuel_now / fuel_max) * 100
-        return f"{self.car_type.name} เลขทะเบียน {self.number} สถานภาพเชื้อเพลิง {self.fuel_now}/{self.fuel_max}({percent} %)"
+        return f"{self.get_car_type_display()} เลขทะเบียน {self.number} สถานภาพเชื้อเพลิง {self.fuel_now}/{self.fuel_max}({percent} %)"
 
 
 class CarBooking(models.Model):
