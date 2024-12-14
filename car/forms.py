@@ -1,5 +1,4 @@
 from account.models import Profile
-from ckeditor.fields import RichTextFormField
 from django import forms
 from django.forms import widgets
 
@@ -237,7 +236,7 @@ class CarRequestFixForm(forms.ModelForm):
         ]
         widgets = {
             "car": forms.HiddenInput(attrs={"class": "form-control"}),
-            "issue": RichTextFormField(),
+            "issue": forms.Textarea(attrs={"class": "form-control"}),
             "fix_requester": forms.HiddenInput(attrs={"class": "form-control"}),
             "approver": forms.Select(attrs={"class": "form-select"}),
             "finished_at": forms.DateInput(
@@ -302,7 +301,7 @@ class CarAfterFixForm(forms.ModelForm):
         }
         widgets = {
             "fix_status": forms.Select(attrs={"class": "form-select"}),
-            "note": RichTextFormField(),
+            "note": forms.Textarea(attrs={"class": "form-control"}),
             "cost_use": forms.NumberInput(
                 attrs={"class": "form-control", "min_value": 0}
             ),
