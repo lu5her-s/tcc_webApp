@@ -184,9 +184,10 @@ class CarRefuelForm(forms.Form):
             }
         ),
     )
-    note = RichTextFormField(
+    note = forms.CharField(
         label="บันทึก",
         required=False,
+        widget=forms.Textarea(attrs={"class": "form-control"}),
     )
     refuel = forms.FloatField(
         label="จำนวนน้ำมันที่เติม",

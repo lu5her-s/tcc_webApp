@@ -107,5 +107,17 @@
 
   </section>
 
+  <script>
+    // Disable mouse scroll from increasing or decreasing the value of a NumberInput widget
+    document.addEventListener("DOMContentLoaded", function() {
+      const numberInputs = document.querySelectorAll("input[type='number']");
+      numberInputs.forEach(function(numberInput) {
+        numberInput.addEventListener("wheel", function(event) {
+          event.preventDefault();
+        });
+      });
+    });
+  </script>
+
   {% endblock content %}
 
