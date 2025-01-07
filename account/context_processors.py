@@ -58,12 +58,11 @@ def new_inform(request):
 
 def car_booking(request):
     try:
-        if request.user.groups.filter(name="Command").exists():
-            return {"car_booking": CarBooking.objects.all()}
-        else:
-            return {
-                "car_booking": CarBooking.objects.filter(approver=request.user.profile)
-            }
+        return {
+            "car_booking": CarBooking.objects.filter(
+                Q(approver=request.user.profile) & Q(status=CarBooking.Status.PENDING)
+            )
+        }
     except:
         return {"car_booking": None}
 
@@ -93,7 +92,7 @@ def count_total(request):
             ).count()
 
         car_booking_count = CarBooking.objects.filter(
-            approver=request.user.profile
+            Q(approver=request.user.profile) & Q(status=CarBooking.Status.PENDING)
         ).count()
 
         total_notification = (
