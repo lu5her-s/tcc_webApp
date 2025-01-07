@@ -29,6 +29,22 @@
   </li>
   {% endif %}
 
+  {% if car_booking.count and request.user|has_group:"Command" or request.user.profile == car_booking.approver %}
+  <li>
+    <hr class="dropdown-divider">
+  </li>
+  <a href="{% url 'car:booking' %}">
+    <li class="notification-item">
+      <i class="bi bi-file-earmark-check text-success"></i>
+      <div>
+        <h4>รายการขออนุมัติยานพาหนะ</h4>
+        <p>รออนุมัติ</p>
+        <p>จำนวน {{ car_booking.count }} รายการ</p>
+      </div>
+    </li>
+  </a>
+  {% endif %}
+
   <li>
     <hr class="dropdown-divider">
   </li>
@@ -80,6 +96,7 @@
     </li>
   </a>
 
+
   <li>
     {% endif %}
     <hr class="dropdown-divider">
@@ -117,6 +134,7 @@
       </div>
     </li>
   </a>
+
 
   {% endif %}
   {% endif %}

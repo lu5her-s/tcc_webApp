@@ -1,0 +1,50 @@
+<!-- modal for approve -->
+<div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="approveModalLabel">อนุมัติ</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        <div class="modal-body">
+        <form method="post" id="approveForm">
+          {% csrf_token %}
+          <p class="text-danger">คุณต้องการอนุมัติหรือไม่</p>
+          <div class="form-group">
+            <select class="form-select" name="approve" id="approve">
+              <option value="approve">อนุมัติ</option>
+              <option value="reject">ไม่อนุมัติ</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" id="approveBtn" class="btn btn-primary">ยืนยัน</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End modal for approve -->
+
+<script>
+$(document).ready(function() {
+  $("#approveBtn").on("click", function(e) {
+    // check approve or reject if approve set action url to booking-approve or booking-reject
+    let form = $("#approveForm");
+    if ($("#approve").val() == "approve") {
+      $("#approveForm").attr("action", "{% url 'car:booking-approve' pk=object.pk %}");
+      // console.log("approve");
+      // console.log("{% url 'car:booking-approve' pk=object.pk %}");
+      form.submit();
+      // if select reject action url booking-reject
+    } else if ($("#approve").val() == "reject") {
+      $("#approveForm").attr("action", "{% url 'car:booking-reject' pk=object.pk %}");
+      // console.log("reject");
+      // console.log("{% url 'car:booking-reject' pk=object.pk %}");
+      form.submit();
+    }
+    e.preventDefault();
+  });
+});
+</script>

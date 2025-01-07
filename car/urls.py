@@ -35,6 +35,16 @@ urlpatterns = [
                     views.ReturnCar,
                     name="return-car",
                 ),
+                path(
+                    "approve/<int:pk>/",
+                    views.car_booking_approve,
+                    name="booking-approve",
+                ),
+                path(
+                    "reject/<int:pk>/",
+                    views.car_booking_reject,
+                    name="booking-reject",
+                ),
                 path("use/<int:pk>/", views.UseCar, name="use-car"),
             ]
         ),

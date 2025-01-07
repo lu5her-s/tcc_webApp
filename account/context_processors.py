@@ -5,6 +5,7 @@ from document.models import Depart, Document
 from inform.models import Inform
 from parcel.models import ParcelRequest, RequestBillDetail, RequestItem
 from operation.models import Operation
+from car.models import CarBooking
 
 
 def assign_not_accepted(request):
@@ -55,6 +56,18 @@ def new_inform(request):
         return {"new_inform": None}
 
 
+def car_booking(request):
+    try:
+        if request.user.groups.filter(name="Command").exists():
+            return {"car_booking": CarBooking.objects.all()}
+        else:
+            return {
+                "car_booking": CarBooking.objects.filter(approver=request.user.profile)
+            }
+    except:
+        return {"car_booking": None}
+
+
 def count_total(request):
     try:
         total_notification = 0
@@ -79,11 +92,16 @@ def count_total(request):
                 inform_status=Inform.InformStatus.INFORM
             ).count()
 
+        car_booking_count = CarBooking.objects.filter(
+            approver=request.user.profile
+        ).count()
+
         total_notification = (
             assign_not_accepted_count
             + announce_not_read_count
             + document_not_accepted_count
             + new_inform_count
+            + car_booking_count
         )
         return {"count_total": total_notification}
     except:

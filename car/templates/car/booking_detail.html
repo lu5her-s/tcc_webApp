@@ -52,7 +52,7 @@
 
                   <tr>
                     <th>ประเภทยานพาหนะ</th>
-                    <td>{{ object.car.type.name }}</td>
+                    <td>{{ object.car.get_car_type_display }}</td>
                   </tr>
 
                   <tr>
@@ -90,7 +90,7 @@
 
                   <tr>
                     <th>สถานะ</th>
-                    <td>{{ object.approve_status.name }}</td>
+                    <td>{{ object.get_status_display }}</td>
                   </tr>
 
                   {% if object.mile_in %}
@@ -132,7 +132,20 @@
                 <a href="{% url 'car:return-car' pk=object.pk %}" class="btn btn-lg btn-success">Return</a>
                 {% endif %}
                 {% if not object.mile_in %}
+                {% if object.status == 'pending' %}
+                {% if request.user|has_group:"Command" or request.user.profile == object.approver %}
+                <button 
+                  type="button" 
+                  class="btn btn-lg btn-success"
+                  data-bs-toggle="modal"
+                  data-bs-target="#approveModal"
+                >อนุมัติ</button>
+                {% include "car/components/approve_modal.html" %}
+                {% endif %}
+                {% endif %}
+                {% if request.user == object.requester or request.user == object.driver %}
                 <a href="{% url 'car:booking-update' pk=object.pk %}" class="btn btn-lg btn-warning">อัพเดท</a>
+                {% endif %}
                 {% endif %}
                 {% comment %}<button type="reset" href="#" class="btn btn-lg btn-warning">Reset</button>{% endcomment %}
                 {% endif %}

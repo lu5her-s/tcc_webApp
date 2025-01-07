@@ -326,6 +326,44 @@ class CarBookingUpdateView(LoginRequiredMixin, UpdateView):
         return render(request, self.template_name, context)
 
 
+def car_booking_approve(request, pk):
+    """
+    car_booking_approve for approve booking
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
+    if request.method == "POST":
+        booking = CarBooking.objects.get(pk=pk)
+        # booking.approver = request.user.profile
+        booking.status = CarBooking.Status.APPROVE
+        booking.save()
+        return redirect(reverse_lazy("car:booking-detail", kwargs={"pk": pk}))
+
+
+def car_booking_reject(request, pk):
+    """
+    car_booking_reject for reject booking
+
+    Args:
+        request ():
+        pk ():
+
+    Returns:
+
+    """
+    if request.method == "POST":
+        booking = CarBooking.objects.get(pk=pk)
+        # booking.approver = request.user.profile
+        booking.approve = CarBooking.Status.REJECT
+        booking.save()
+        return redirect(reverse_lazy("car:booking-detail", kwargs={"pk": pk}))
+
+
 class WaitApproveListView(LoginRequiredMixin, ListView):
     """
     WaitApproveListView for CarBooking app
