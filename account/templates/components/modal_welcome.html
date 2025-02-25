@@ -13,12 +13,14 @@
         <br>
         กรุณาอัพเดทข้อมูลส่วนตัว <a href="{% url 'account:profile' %}">ที่นี่</a>
         {% else %}
-        {{ request.user.profile.rank|default_if_none:"" }} {{ request.user.get_full_name }}
-        <!-- TODO: add notification for new -->
-        {% if count_total %}
-        <br>
-        <i class="bi bi-bell text-warning"></i>&nbsp;คุณมี {{ count_total }} การแจ้งเตือนใหม่ กรุณาตรวจสอบ
-        {% endif %}
+        <center>
+          <h3>คุณ {{ request.user.profile.rank|default_if_none:"" }} {{ request.user.get_full_name }}</h3>
+          <!-- TODO: add notification for new -->
+          {% if count_total %}
+          <br>
+          <i class="bi bi-exclamation-square text-danger"></i>&nbsp;คุณมี {{ count_total }} การแจ้งเตือนใหม่ กรุณาตรวจสอบ&nbsp;<i class="bi bi-exclamation-square text-danger"></i>
+          {% endif %}
+        </center>
         {% endif %}
 
       </div>
