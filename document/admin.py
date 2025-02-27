@@ -20,15 +20,34 @@ from document.models import (
 # admin.site.register(Document)
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
-    list_display = ("recieve_number", "urgency", "doc_number", "doc_date", "created_at")
+    list_display = (
+        "recieve_number",
+        "urgency",
+        "doc_number",
+        "doc_date",
+        "title",
+        "category",
+        "created_at",
+    )
     list_filter = (
         "urgency",
         "doc_number",
         "doc_date",
+        "category",
     )
     search_fields = ("doc_number", "title")
 
 
-admin.site.register(Depart)
-admin.site.register(Operator)
-admin.site.register(Category)
+@admin.register(Depart)
+class DepartAdmin(admin.ModelAdmin):
+    list_display = ("document",)  # Customize as needed
+
+
+@admin.register(Operator)
+class OperatorAdmin(admin.ModelAdmin):
+    list_display = ("document",)  # Customize as needed
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ("name",)  # Customize as needed
