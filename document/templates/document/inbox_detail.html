@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
@@ -186,14 +185,14 @@
         headers: {
           'X-CSRFToken': '{{ csrf_token }}',
         },
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
       })
-      .catch(error => {
-        console.error(error);
-      });
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        })
+        .catch(error => {
+          console.error(error);
+        });
       // refresh page
       window.location.reload();
     });
