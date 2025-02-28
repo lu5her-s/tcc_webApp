@@ -121,6 +121,7 @@
                 <div class="text-center">
                   <h5 class="card-title">ยังไม่ตอบรับ | <span>{{ object.doc_number }}</span></h5>
                   <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#acceptModal">ลงชื่อรับ</button>
+                  <a href="{% url 'document:accept' pk=object.pk %}"><button class="btn btn-success">ลงชื่อรับ</button></a>
                 </div>
                 {% else %}
                 <div class="text-center">
@@ -159,46 +160,17 @@
           </div>
           <div class="modal-body">
             <div class="mb-3">
-              <h5 class="card-title">เอกสารเลขที่ : {{ object.doc_number }}</h5>
-              <p>จาก : {{ object.author.profile.sector.name }}</p>
-              <p>ลงวันที่ : {{ object.doc_date|thaidate }} </p>
+              <h5 class="card-title">สำหรับ | <span>{{ object.doc_number }}</span><h5>
+              <p> {{ request.user.profile.sector.name }}</p>
             </div>
           </div>
           <div class="modal-footer">                    
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-            <button type="button" class="btn btn-primary" id="acceptButton">ลงชื่อรับ</button>
+            <button type="button" class="btn btn-primary">ลงชื่อรับ</button>
           </div>
         </div>
       </div>
     </div>
-
-    <script>
-    // if #acceptButton is clicked request GET to "{% url 'document:accept' pk=object.pk %}">
-    var acceptButton = document.getElementById('acceptButton');
-    let url = "{% url 'document:accept' pk=object.pk %}";
-    acceptButton.addEventListener('click', (e) => {
-      // display loading
-      acceptButton.innerHTML = 'กำลังลงชื่อรับ';
-      acceptButton.disabled = true;
-      // send GET request to "{% url 'document:accept' pk=object.pk %}"
-      fetch(url, {
-        method: 'GET',
-        headers: {
-          'X-CSRFToken': '{{ csrf_token }}',
-        },
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-      // refresh page
-      window.location.reload();
-    });
-
-    </script>
   </section>
   {% include 'components/photoswipe.html' %}
   {% endblock content %}

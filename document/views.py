@@ -142,9 +142,7 @@ class InboxDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         self.object = self.get_object()
         context = super().get_context_data(**kwargs)
-        context["department"] = Document.objects.get(
-            pk=self.object.pk
-        ).department_set.all()
+        context["department"] = Document.objects.get(pk=self.object.pk).depart_set.all()
         try:
             d = Depart.objects.get(
                 document=self.object,

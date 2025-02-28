@@ -49,8 +49,12 @@ class DocumentForm(forms.ModelForm):
             "assigned_sector",
         )
         widgets = {
-            "recieve_number": widgets.TextInput(attrs={"class": "form-control"}),
-            "doc_sector": widgets.TextInput(attrs={"class": "form-control"}),
+            "recieve_number": widgets.TextInput(
+                attrs={"class": "form-control", "placeholder": "เลขทะเบียนรับหนังสือ"}
+            ),
+            "doc_sector": widgets.TextInput(
+                attrs={"class": "form-control", "placeholder": "หน่วยเจ้าของเรื่อง"}
+            ),
             "urgency": widgets.Select(attrs={"class": "form-select"}),
             "doc_number": widgets.TextInput(attrs={"class": "form-control"}),
             "title": widgets.Textarea(attrs={"class": "form-control", "rows": "1"}),
@@ -63,7 +67,11 @@ class DocumentForm(forms.ModelForm):
             "operation": widgets.Select(attrs={"class": "form-select"}),
             "file": widgets.ClearableFileInput(attrs={"class": "form-control"}),
             # 'assigned_sector': widgets.CheckboxSelectMultiple(attrs={'class': 'form-check-inline'}),
-            "assigned_sector": widgets.SelectMultiple(attrs={"class": "select"}),
+            "assigned_sector": widgets.SelectMultiple(
+                attrs={
+                    "class": "select",
+                }
+            ),
             # 'status':        widgets.HiddenInput(attrs={'class':        'form-control', 'id':  'status'}),
         }
 

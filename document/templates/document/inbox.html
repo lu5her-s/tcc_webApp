@@ -4,104 +4,111 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Inbox List{% endblock title %}
+  {% block title %}Inbox List{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>กล่องขาเข้า : {{ request.user.profile.sector.name|title }}</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'document:home' %}">Document Home</a></li>
-            <li class="breadcrumb-item active">Inbox List</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'document:home' %}">Document Home</a></li>
+        <li class="breadcrumb-item active">Inbox List</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
-<section class="section profile">
+  <section class="section profile">
     <div class="row">
 
-        <div class="col-xl-12">
+      <div class="col-xl-12">
 
-            <!-- Recent Job -->
-            <div class="col-12">
-                <div class="card recent-sales overflow-auto">
+        <!-- Recent Job -->
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
 
 
-                    <div class="card-body">
-                        <h5 class="card-title">{{ title }} 
-                            <span>| List</span>
-                            {% comment %}<span>{% endcomment %}
-                                {% comment %}<a href="{% url 'document:create' %}" class="align-right btn btn-success" style="float: right">{% endcomment %}
-                                    {% comment %}<i class="bi bi-plus">{% endcomment %}
-                                        {% comment %}New{% endcomment %}
-                                    {% comment %}</i>{% endcomment %}
-                                {% comment %}</a>{% endcomment %}
-                            {% comment %}</span>{% endcomment %}
-                        </h5>
-                        <br>
+            <div class="card-body">
+              <h5 class="card-title">{{ title }} 
+                <span>| List</span>
+                {% comment %}<span>{% endcomment %}
+                {% comment %}<a href="{% url 'document:create' %}" class="align-right btn btn-success" style="float: right">{% endcomment %}
+                {% comment %}<i class="bi bi-plus">{% endcomment %}
+                {% comment %}New{% endcomment %}
+                {% comment %}</i>{% endcomment %}
+                {% comment %}</a>{% endcomment %}
+                {% comment %}</span>{% endcomment %}
+              </h5>
+              <br>
 
-                        <table class="table table-hover" id="dataTable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">เอกสารเลขที่</th>
-                                    <th scope="col">ความเร่งด่วน</th>
-                                    <th scope="col">จาก</th>
-                                    <th scope="col" style="width: 50%">เรื่อง</th>
-                                    <th scope="col">...</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for object in object_list %}
-                                <tr>
-                                    <th scope="row">{{ object.doc_number }}</th>
-                                    <td><a href="#">{{ object.urgency }}</a></td>
-                                    <th scope="row">{{ object.author.profile.sector.name }}</th>
-                                    {% comment %}<td>{{ object.title|truncatechars:50 }}</td>{% endcomment %}
-                                    <td>{{ object.title|text_wrap:10 }}</td>
-                                    <td>
-                                      {% comment %}<button class="btn btn-sm btn-info" id="myModal" {% endcomment %}
-                                          {% comment %}data-bs-toggle="modal" {% endcomment %}
-                                          {% comment %}data-bs-target="#exampleModal"{% endcomment %}
-                                          {% comment %}data-bs-whatever="{{ object.pk }}">{% endcomment %}
-                                          {% comment %}Detail{% endcomment %}
-                                          {% comment %}</button>{% endcomment %}
-                                        <a href="{% url 'document:inbox-detail' pk=object.pk %}">
-                                            {% comment %}<button class="btn btn-sm btn-info">Detail</button>{% endcomment %}
-                                            {% if object.pk not in all_accepted %}
-                                            <span class="badge bg-danger">New !</span>
-                                            {% else %}
-                                            <span class="badge bg-secondary">Detail</span>
-                                            {% endif %}
-                                        </a>
-                                    </td>
-                                    {% comment %}{% if not object in read and not object.author == request.user %}{% endcomment %}
-                                        {% comment %}<td><span class="badge bg-warning text-black">Not Read</span></td>{% endcomment %}
-                                    {% comment %}{% elif object.author == request.user %}{% endcomment %}
-                                        {% comment %}<td><span class="badge bg-secondary">Own</span></td>{% endcomment %}
-                                    {% comment %}{% else %}{% endcomment %}
-                                        {% comment %}<td><span class="badge bg-success">Accepted</span></td>{% endcomment %}
-                                    {% comment %}{% endif %}{% endcomment %}
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+              <table class="table table-hover" id="dataTable">
+                <thead>
+                  <tr>
+                    <th scope="col">เอกสารเลขที่</th>
+                    <th scope="col">ความเร่งด่วน</th>
+                    <th scope="col">จาก</th>
+                    <th scope="col" style="width: 50%">เรื่อง</th>
+                    <th scope="col">...</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for object in object_list %}
+                  <tr>
+                    <th scope="row">{{ object.doc_number }}</th>
+                    <td><a href="#">{{ object.urgency }}</a></td>
+                    <th scope="row">{{ object.author.profile.sector.name }}</th>
+                    {% comment %}<td>{{ object.title|truncatechars:50 }}</td>{% endcomment %}
+                    <td>
+                      {{ object.title|text_wrap:10 }}
+                      {% if object.pk not in all_accepted %}
+                      <span class="badge bg-danger">ใหม่ !</span>
+                      {% else %}
+                      <span class="badge bg-secondary">รับแล้ว</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% comment %}<button class="btn btn-sm btn-info" id="myModal" {% endcomment %}
+                      {% comment %}data-bs-toggle="modal" {% endcomment %}
+                      {% comment %}data-bs-target="#exampleModal"{% endcomment %}
+                      {% comment %}data-bs-whatever="{{ object.pk }}">{% endcomment %}
+                      {% comment %}Detail{% endcomment %}
+                      {% comment %}</button>{% endcomment %}
+                      <a href="{% url 'document:inbox-detail' pk=object.pk %}">
+                        {% comment %}<button class="btn btn-sm btn-info">Detail</button>{% endcomment %}
+                        {% if object.pk not in all_accepted %}
+                        <i class="btn btn-sm btn-warning"><i class="bi bi-eye-fill"></i></i>
+                        {% else %}
+                        <span class="badge bg-secondary"><i class="bi bi-eye"></i></span>
+                        {% endif %}
+                      </a>
+                    </td>
+                    {% comment %}{% if not object in read and not object.author == request.user %}{% endcomment %}
+                    {% comment %}<td><span class="badge bg-warning text-black">Not Read</span></td>{% endcomment %}
+                    {% comment %}{% elif object.author == request.user %}{% endcomment %}
+                    {% comment %}<td><span class="badge bg-secondary">Own</span></td>{% endcomment %}
+                    {% comment %}{% else %}{% endcomment %}
+                    {% comment %}<td><span class="badge bg-success">Accepted</span></td>{% endcomment %}
+                    {% comment %}{% endif %}{% endcomment %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
 
-                    </div>
+            </div>
 
-                </div>
-            </div><!-- End Announce List -->
-            {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
+          </div>
+        </div><!-- End Announce List -->
+        {% comment %}{% if perms.announce.view_announce %}Permission Grant{% endif %}{% endcomment %}
 
-            {% comment %}<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Open modal for @mdo</button>{% endcomment %}
-            {% comment %}<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@fat">Open modal for @fat</button>{% endcomment %}
-            {% comment %}<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@getbootstrap">Open modal for @getbootstrap</button>{% endcomment %}
+        {% comment %}<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Open modal for @mdo</button>{% endcomment %}
+        {% comment %}<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@fat">Open modal for @fat</button>{% endcomment %}
+        {% comment %}<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@getbootstrap">Open modal for @getbootstrap</button>{% endcomment %}
 
-        </div>
+      </div>
 
     </div>
     </div>
-    
+
     {% comment %}{{ all_accepted }}{% endcomment %}
     <br>
     {% comment %}{% if 1 in all_accepted %}{% endcomment %}
@@ -109,76 +116,76 @@
     {% comment %}{% else %}{% endcomment %}
     {% comment %}No{% endcomment %}
     {% comment %}{% endif %}{% endcomment %}
-    
-</section>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
+  </section>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
 
           <div class="myTitle"></div>
 
-        <form>
-          <div class="mb-3">
-            <label for="recipient-name" class="col-form-label">Recipient:</label>
-            <input type="text" class="form-control" id="recipient-name" disabled>
-          </div>
-          <div class="mb-3">
-            <label for="message-text" class="col-form-label">Message:</label>
-            <textarea class="form-control" id="message-text"></textarea>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Send message</button>
+          <form>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Recipient:</label>
+              <input type="text" class="form-control" id="recipient-name" disabled>
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label">Message:</label>
+              <textarea class="form-control" id="message-text"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Send message</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 
-<script>
-    var exampleModal = document.getElementById('exampleModal')
-    exampleModal.addEventListener('show.bs.modal', function (event) {
-        // Button that triggered the modal
-        var button = event.relatedTarget
-        // Extract info from data-bs-* attributes
-        var recipient = button.getAttribute('data-bs-whatever')
-        // If necessary, you could initiate an AJAX request here
-        // and then do the updating in a callback.
-        //
-        // Update the modal's content.
-        var modalTitle = exampleModal.querySelector('.modal-title')
-        var modalBodyInput = exampleModal.querySelector('.modal-body input')
+  <script>
+  var exampleModal = document.getElementById('exampleModal')
+  exampleModal.addEventListener('show.bs.modal', function (event) {
+    // Button that triggered the modal
+    var button = event.relatedTarget
+    // Extract info from data-bs-* attributes
+    var recipient = button.getAttribute('data-bs-whatever')
+    // If necessary, you could initiate an AJAX request here
+    // and then do the updating in a callback.
+    //
+    // Update the modal's content.
+    var modalTitle = exampleModal.querySelector('.modal-title')
+    var modalBodyInput = exampleModal.querySelector('.modal-body input')
 
-        var modalmyTitle = exampleModal.querySelector('.myTitle')
+    var modalmyTitle = exampleModal.querySelector('.myTitle')
 
-        modalTitle.textContent = 'New message to ' + recipient
-        modalBodyInput.value = recipient
-        modalmyTitle.innerHTML = recipient
-    })
+    modalTitle.textContent = 'New message to ' + recipient
+    modalBodyInput.value = recipient
+    modalmyTitle.innerHTML = recipient
+  })
 
-    $(document).ready(() => {
-        $("#dataTable").DataTable({
-            "fnDrawCallback" : function(oSettings) {
-                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
-                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
-                } else {
-                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
-                }
-            },
-            "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
-          order: [[4, "desc"]],
-        });
+  $(document).ready(() => {
+    $("#dataTable").DataTable({
+      "fnDrawCallback" : function(oSettings) {
+        if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+        } else {
+          $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+        }
+      },
+      "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+      order: [[4, "desc"]],
     });
+  });
 
-</script>
-{% endblock content %}
+  </script>
+  {% endblock content %}
 
