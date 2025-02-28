@@ -202,7 +202,7 @@ class OutboxDetailView(LoginRequiredMixin, DetailView):
             context["accepted"] = None
         context["all_accepted"] = (
             Document.objects.get(pk=self.get_object().pk)
-            .department_set.all()
+            .depart_set.all()
             .values_list("reciever__profile__sector__pk", flat=True)
         )
         context["accept_detail"] = Depart.objects.filter(document=self.get_object())

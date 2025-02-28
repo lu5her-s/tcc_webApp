@@ -5,181 +5,198 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}Document Outbox Detail{% endblock title %}
+  {% block title %}Document Outbox Detail{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>{{ object.doc_number }}</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'document:home' %}">Document Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'document:outbox' %}">Outbox List</a></li>
-            <li class="breadcrumb-item active">{{ object.doc_number }}</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'document:home' %}">Document Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'document:outbox' %}">Outbox List</a></li>
+        <li class="breadcrumb-item active">{{ object.doc_number }}</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
 
-<section class="section">
+  <section class="section">
     <div class="row">
 
-        <div class="col-xl-12">
-            <div class="card">
-                <div class="card-body pt-3">
-                    <ul class="nav nav-tabs nav-tabs-bordered">
-                        <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
-                                รายละเอียด
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#accept">
-                                หน่วยที่ส่งให้
-                            </button>
-                        </li>
-                    </ul><!-- end ul list link -->
+      <div class="col-xl-12">
+        <div class="card">
+          <div class="card-body pt-3">
+            <ul class="nav nav-tabs nav-tabs-bordered">
+              <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detail">
+                  รายละเอียด
+                </button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#files">
+                  เอกสารแนบ
+                </button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#accept">
+                  หน่วยที่ส่งให้
+                </button>
+              </li>
+            </ul><!-- end ul list link -->
 
-                    <div class="tab-content pt-2">
-                        <div id="detail" class="tab-pane fade show active">
-                            <h6 class="card-title"> รายละเอียด | <span> {{ object.doc_number }}</span></h6>
-                            <table class="table">
-                                <tr>
-                                    <th>เลขทะเบียนรับ</th>
-                                    <td>{{ object.recieve_number }}</td>
-                                </tr>
+            <div class="tab-content pt-2">
+              <div id="detail" class="tab-pane fade show active">
+                <h6 class="card-title"> รายละเอียด | <span> {{ object.doc_number }}</span></h6>
+                <table class="table">
+                  <tr>
+                    <th>เลขทะเบียนรับ</th>
+                    <td>{{ object.recieve_number }}</td>
+                  </tr>
 
-                                <tr>
-                                    <th>ความเร่งด่วน</th>
-                                    <td>{{ object.urgency }}</td>
-                                </tr>
+                  <tr>
+                    <th>ความเร่งด่วน</th>
+                    <td>{{ object.urgency }}</td>
+                  </tr>
 
-                                <tr>
-                                    <th>เลขที่เอกสาร</th>
-                                    <td>{{ object.doc_number }}</td>
-                                </tr>
+                  <tr>
+                    <th>เลขที่เอกสาร</th>
+                    <td>{{ object.doc_number }}</td>
+                  </tr>
 
-                                <tr>
-                                    <th>ลงวันที่</th>
-                                    <td>{{ object.doc_date|thaidate }}</td>
-                                </tr>
+                  <tr>
+                    <th>ลงวันที่</th>
+                    <td>{{ object.doc_date|thaidate }}</td>
+                  </tr>
 
-                                <tr>
-                                    <th>เรื่อง</th>
-                                    <td>{{ object.title|text_wrap:25 }}</td>
-                                </tr>
+                  <tr>
+                    <th>เรื่อง</th>
+                    <td>{{ object.title|text_wrap:25 }}</td>
+                  </tr>
 
-                                <tr>
-                                    <th>จาก</th>
-                                    <td>{{ object.author.profile.sector.name }}</td>
-                                </tr>
+                  <tr>
+                    <th>จาก</th>
+                    <td>{{ object.author.profile.sector.name }}</td>
+                  </tr>
 
-                                <tr>
-                                    <th>ส่งเมื่อ</th>
-                                    <td>{{ object.created_at|thaidate }} 
-                                        เวลา {{ object.created_at|date:"H:i" }} น.
-                                    </td>
-                                </tr>
-                            </table>
+                  <tr>
+                    <th>ส่งเมื่อ</th>
+                    <td>{{ object.created_at|thaidate }} 
+                      เวลา {{ object.created_at|date:"H:i" }} น.
+                    </td>
+                  </tr>
+                </table>
 
-                            <table class="table table-borderless">
-                                <tr>
-                                    <th class="text-center">รายละเอียด</th>
-                                </tr>
-                                <tr>
-                                    <td>{{ object.detail|safe|linebreaks }}</td>
-                                </tr>
-                            </table>
-                        </div>
+                <table class="table table-borderless">
+                  <tr>
+                    <th class="text-center">รายละเอียด</th>
+                  </tr>
+                  <tr>
+                    <td>{{ object.detail|safe|linebreaks }}</td>
+                  </tr>
+                </table>
+              </div>
+              <!-- end detail -->
 
-                        <div id="accept" class="tab-pane fade pt-3">
-                            <h5 class="card-title text-center">แผนกที่ส่งให้ | <span>{{ object.doc_number }}</span></h5>
-                            <table class="table">
-                                {% for sector in object.assigned_sector.all %}
-                                <tr>
-                                    <td>{{ forloop.counter }}. {{ sector.name }} </td>
-                                    <td>
-                                        {% comment %}{{ sector.pk }} {{ all_accepted }}{% endcomment %}
-                                        {% if sector.pk in all_accepted %}
-                                        <i class="bi bi-check-circle text-success"></i>
-                                        <small class="text-success">ตอบรับแล้ว</small>
-                                        {% else %}
-                                        <i class="bi bi-x-circle text-danger"></i>
-                                        <small class="text-danger">ยังไม่ตอบรับ</small>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                                </ol>
-                            </table>
+              <!-- start file content -->
+              <div id="files" class="tab-pane fade pt-3">
+                <h5 class="card-title text-center"> ไฟล์เอกสาร | <span> {{ object.doc_number }}</span></h5>
+                <iframe src="{{ object.file.url }}" frameborder="0" style="width: 100%; height: 800px;"></iframe>
+                {% with object.file.name|split:"/" as f %}
+                <p>Download - <a href="{{ object.file.url }}">{{ f|last }}</a></p>
+                {% comment %}{{ file|last }}{% endcomment %}
+                {% endwith %}
 
-                        </div><!-- end accept -->
-                    </div><!-- end card body -->
-                </div><!-- end content -->
+              </div><!-- end file -->
 
-            </div>
+              <div id="accept" class="tab-pane fade pt-3">
+                <h5 class="card-title text-center">แผนกที่ส่งให้ | <span>{{ object.doc_number }}</span></h5>
+                <table class="table">
+                  {% for sector in object.assigned_sector.all %}
+                  <tr>
+                    <td>{{ forloop.counter }}. {{ sector.name }} </td>
+                    <td>
+                      {% comment %}{{ sector.pk }} {{ all_accepted }}{% endcomment %}
+                      {% if sector.pk in all_accepted %}
+                      <i class="bi bi-check-circle text-success"></i>
+                      <small class="text-success">ตอบรับแล้ว</small>
+                      {% else %}
+                      <i class="bi bi-x-circle text-danger"></i>
+                      <small class="text-danger">ยังไม่ตอบรับ</small>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  </ol>
+                </table>
 
-            <!-- Recent Job -->
+              </div><!-- end accept -->
+            </div><!-- end card body -->
+          </div><!-- end content -->
 
         </div>
+
+        <!-- Recent Job -->
+
+      </div>
     </div>
     {% comment %}<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Open modal for @mdo</button>{% endcomment %}
-</section>
+  </section>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-                <div class="myTitle"></div>
-
-                <div class="mb-3">
-                    <h4>Reciever:</h4>
-                    <h5 id="reciever-name"></h5>
-                </div>
-                <div class="mb-3">
-                    <label for="message-text" class="col-form-label">Message:</label>
-                    <textarea class="form-control" id="message-text"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Send message</button>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body">
+
+          <div class="myTitle"></div>
+
+          <div class="mb-3">
+            <h4>Reciever:</h4>
+            <h5 id="reciever-name"></h5>
+          </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">Message:</label>
+            <textarea class="form-control" id="message-text"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Send message</button>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<script>
+  <script>
 
-    var exampleModal = document.getElementById('exampleModal')
-    exampleModal.addEventListener('show.bs.modal', function (event) {
-        // Button that triggered the modal
-        var button = event.relatedTarget
-        // Extract info from data-bs-* attributes
-        var recipient = button.getAttribute('data-bs-whatever')
+var exampleModal = document.getElementById('exampleModal')
+exampleModal.addEventListener('show.bs.modal', function (event) {
+  // Button that triggered the modal
+  var button = event.relatedTarget
+  // Extract info from data-bs-* attributes
+  var recipient = button.getAttribute('data-bs-whatever')
 
-        var title = button.getAttribute('data-bs-title')
-        var reciever = button.getAttribute('data-bs-reciever')
+  var title = button.getAttribute('data-bs-title')
+  var reciever = button.getAttribute('data-bs-reciever')
 
-        // If necessary, you could initiate an AJAX request here
-        // and then do the updating in a callback.
-        //
-        // Update the modal's content.
-        var modalTitle = exampleModal.querySelector('.modal-title')
-        var modalBodyInput = exampleModal.querySelector('#reciever-name')
+  // If necessary, you could initiate an AJAX request here
+  // and then do the updating in a callback.
+  //
+  // Update the modal's content.
+  var modalTitle = exampleModal.querySelector('.modal-title')
+  var modalBodyInput = exampleModal.querySelector('#reciever-name')
 
-        var modalmyTitle = exampleModal.querySelector('.myTitle')
+  var modalmyTitle = exampleModal.querySelector('.myTitle')
 
-        modalTitle.textContent = 'Document to ' + title
-        modalBodyInput.innerHTML = reciever
-        modalmyTitle.innerHTML = recipient
-    })
-</script>
+  modalTitle.textContent = 'Document to ' + title
+  modalBodyInput.innerHTML = reciever
+  modalmyTitle.innerHTML = recipient
+})
+  </script>
 
-{% include 'components/photoswipe.html' %}
-{% endblock content %}
+  {% include 'components/photoswipe.html' %}
+  {% endblock content %}
