@@ -1,7 +1,7 @@
 {% load tags %}
 {% load static %}
 
-<form method="post" enctype="multipart/form-data" action="{% url 'account:profile-update' %}">
+<form method="post" enctype="multipart/form-data" action="{% url 'account:profile-update' %}" id="profile-form">
   {% csrf_token %}
   {% comment %}{{ user_form }}{% endcomment %}
   {% comment %}{{ profile_form }}{% endcomment %}
@@ -141,6 +141,18 @@
   </div>
 
   <div class="text-center">
-    <button type="submit" class="btn btn-primary">บันทึก</button>
+    <button type="button" id="profile-update-btn" class="btn btn-primary">บันทึก</button>
   </div>
 </form><!-- End Profile Edit Form -->
+
+<script>
+var profileUpdateBtn = document.getElementById("profile-update-btn");
+
+profileUpdateBtn.addEventListener("click", function() {
+  profileUpdateBtn.innerHTML = "กําลังบันทึก...";
+  profileUpdateBtn.disabled = true;
+  var profileForm = document.getElementById("profile-form");
+  profileForm.submit();
+});
+
+</script>
