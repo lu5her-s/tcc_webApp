@@ -1,8 +1,8 @@
-from asset.models import StockItem
-from ckeditor.fields import RichTextFormField
+# from ckeditor.fields import RichTextFormField
 from django import forms
 from django.forms import widgets
-from repair.forms import RepairForm
+
+from asset.models import StockItem
 
 from .models import Inform, InformProgress
 
@@ -35,7 +35,7 @@ class InformForm(forms.ModelForm):
         widgets = {
             "stockitem": widgets.Select(attrs={"class": "form-select"}),
             "issue_category": widgets.Select(attrs={"class": "form-select"}),
-            "issue": RichTextFormField(),
+            "issue": widgets.Textarea(attrs={"class": "form-control", "rows": 5}),
             "urgency": widgets.Select(attrs={"class": "form-select"}),
         }
         labels = {

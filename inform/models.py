@@ -84,7 +84,7 @@ class Inform(models.Model):
         StockItem, on_delete=models.CASCADE, related_name="stockitem"
     )
     issue_category = models.CharField(max_length=8, choices=IssueCategory.choices)
-    issue = RichTextField()
+    issue = models.TextField()
     urgency = models.CharField(
         max_length=8, choices=Urgency.choices, default=Urgency.LOW
     )
