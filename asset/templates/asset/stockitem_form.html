@@ -2,187 +2,195 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}StockItem Stock Management{% endblock title %}
+  {% block title %}StockItem Stock Management{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
+  {% block content %}
+  <div class="pagetitle">
     <h1>พัสดุ {{ title }}</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">StockItem Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_list' %}">StockItem List</a></li>
-            <li class="breadcrumb-item active">เพิ่มพัสดุ</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">StockItem Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_list' %}">StockItem List</a></li>
+        <li class="breadcrumb-item active">เพิ่มพัสดุ</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
-<section class="section profile">
+  <section class="section profile">
     <div class="row">
 
-        <div class="col-xl-12">
+      <div class="col-xl-12">
 
-            <div class="card">
-                <div class="card-body pt-3">
-                    <!-- Bordered Tabs -->
-                    <ul class="nav nav-tabs nav-tabs-bordered">
+        <div class="card">
+          <div class="card-body pt-3">
+            <!-- Bordered Tabs -->
+            <ul class="nav nav-tabs nav-tabs-bordered">
 
-                        <li class="nav-item">
-                            <buttont class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Item add Form</buttont>
-                        </li>
+              <li class="nav-item">
+                <buttont class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Item add Form</buttont>
+              </li>
 
-                    </ul>
-                    <div class="tab-content pt-2">
+            </ul>
+            <div class="tab-content pt-2">
 
-                        <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
-                        {% comment %}{{ errors }}{% endcomment %}
-                        {% if errors %}
-                        <div class="alert alert-danger" role="alert">
-                            {{ errors }}
-                        </div>
-                        {% endif %}
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            {{ form.media }}
-                             
-                             {% comment %}{{ form|crispy }} {% endcomment %}
-                            
-                            <div class="row mb-3">
-                                <label for="{{ form.category.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.category.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.category }}
-                                </div>
-                            </div>
+              <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
+              {% comment %}{{ errors }}{% endcomment %}
+              {% if errors %}
+              <div class="alert alert-danger" role="alert">
+                {{ errors }}
+              </div>
+              {% endif %}
+              <form method="post" enctype="multipart/form-data" id="form-stockitem">
+                {% csrf_token %}
+                {{ form.media }}
 
-                            <div class="row mb-3">
-                                <label for="{{ form.item_name.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.item_name.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.item_name }}
-                                </div>
-                            </div>
+                {% comment %}{{ form|crispy }} {% endcomment %}
 
-                            <div class="row mb-3">
-                                <label for="{{ form.manufacturer.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.manufacturer.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.manufacturer }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.serial.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.serial.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.serial }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.description.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.description.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.description }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.model_no.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.model_no.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.model_no }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.part_no.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.part_no.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.part_no }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.price.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.price.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.price }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.supplier.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.supplier.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.supplier }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.network.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.network.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.network }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.stock_control.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.stock_control.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.stock_control }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.installed.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.installed.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.installed }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label for="{{ form.images.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.images.label }}</label>
-                                <div class="col-md-8 col-lg-9">
-                                    {{ form.images }}
-                                </div>
-                            </div>
-
-                            {% comment %}<div class="row mb-3">{% endcomment %}
-                                {% comment %}<label for="{{ form.location.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.location.label }}</label>{% endcomment %}
-                                {% comment %}<div class="col-md-8 col-lg-9">{% endcomment %}
-                                    {% comment %}{{ form.location }}{% endcomment %}
-                                {% comment %}</div>{% endcomment %}
-                            {% comment %}</div>{% endcomment %}
-
-                            <input 
-                                id="{{ form.location_install.name }}"
-                                type="hidden" 
-                                name="{{ form.location_install.name }}" 
-                                value="{{ request.user.profile.department.pk }}"
-                                />
-
-                        {% if images %}
-                                <p class="w3-text w3-disabled">ภาพปัจจุบัน</p>
-                                {% for image in images %}
-                                    <img src="{{ image.images.url }}" class="w3-image" width="150" height="100">
-                                {% endfor %}
-                                <br>
-                            {% endif %}
-
-                            <br>
-
-                            <div class="text-center">
-                                <a href="{% url 'asset:stockitem_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                                <button type="submit" class="btn btn-lg btn-success">บันทึก</button>
-                                <button type="reset" class="btn btn-lg btn-warning">Reset</button>
-                            </div>
-
-                        </form>
-
-                    </div><!-- End Bordered Tabs -->
-
+                <div class="row mb-3">
+                  <label for="{{ form.category.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.category.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.category }}
+                  </div>
                 </div>
-            </div>
 
+                <div class="row mb-3">
+                  <label for="{{ form.item_name.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.item_name.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.item_name }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="{{ form.manufacturer.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.manufacturer.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.manufacturer }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="{{ form.serial.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.serial.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.serial }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="{{ form.description.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.description.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.description }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="{{ form.model_no.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.model_no.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.model_no }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="{{ form.part_no.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.part_no.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.part_no }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="{{ form.price.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.price.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.price }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="{{ form.supplier.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.supplier.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.supplier }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="{{ form.network.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.network.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.network }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="{{ form.stock_control.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.stock_control.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.stock_control }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="{{ form.installed.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.installed.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.installed }}
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="{{ form.images.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.images.label }}</label>
+                  <div class="col-md-8 col-lg-9">
+                    {{ form.images }}
+                  </div>
+                </div>
+
+                {% comment %}<div class="row mb-3">{% endcomment %}
+                {% comment %}<label for="{{ form.location.name }}" class="col-md-4 col-lg-3 col-form-label">{{ form.location.label }}</label>{% endcomment %}
+                {% comment %}<div class="col-md-8 col-lg-9">{% endcomment %}
+                {% comment %}{{ form.location }}{% endcomment %}
+                {% comment %}</div>{% endcomment %}
+                {% comment %}</div>{% endcomment %}
+
+                <input 
+                  id="{{ form.location_install.name }}"
+                  type="hidden" 
+                  name="{{ form.location_install.name }}" 
+                  value="{{ request.user.profile.department.pk }}"
+                />
+
+                {% if images %}
+                <p class="w3-text w3-disabled">ภาพปัจจุบัน</p>
+                {% for image in images %}
+                <img src="{{ image.images.url }}" class="w3-image" width="150" height="100">
+                {% endfor %}
+                <br>
+                {% endif %}
+
+                <br>
+
+                <div class="text-center">
+                  <a href="{% url 'asset:stockitem_list' %}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
+                  <button type="button" id="save-btn" class="btn btn-lg btn-success">บันทึก</button>
+                  <button type="reset" class="btn btn-lg btn-warning">Reset</button>
+                </div>
+
+              </form>
+
+            </div><!-- End Bordered Tabs -->
+
+          </div>
         </div>
+
+      </div>
     </div>
     <script>
-        $(document).ready(function () {
-            $("select").select2({
-                width: "100%",
-            });
-        });
+    $(document).ready(function () {
+      $("select").select2({
+        width: "100%",
+      });
+    });
+
+    var saveBtn = document.getElementById("save-btn");
+    saveBtn.addEventListener("click", function () {
+      let form = document.getElementById("form-stockitem");
+      saveBtn.innerHTML = "กําลังบันทึก...";
+      saveBtn.disabled = true;
+      form.submit();
+    });
     </script>
-</section>
-{% endblock content %}
+  </section>
+  {% endblock content %}

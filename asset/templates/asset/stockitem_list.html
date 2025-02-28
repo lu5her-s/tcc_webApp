@@ -53,6 +53,7 @@
                     <th scope="col">สถานะ</th>
                     <th scope="col">การติดตั้ง</th>
                     <th scope="col">Network</th>
+                    <th scope="col">...</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -86,14 +87,19 @@
                     <td>{% if object.location_install %}
                       {{ object.location_install.name }}
                       {% else %}
-                      {{ object.stock_control.name }}
+                      {{ object.get_stock_control_display }}
                       {% endif %}</td>
                     <td>
                       {% if object.network %}
                       <a href="{% url 'asset:network_list' pk=object.network.pk %}">
                         {{ object.network.ip_addr|default:"-" }}
                       </a>
+                      {% else %}
+                      -
                       {% endif %}
+                    </td>
+                    <td>
+                      <a href="{% url 'asset:stockitem_detail' pk=object.pk %}" class="btn btn-primary btn-sm"><i class="bi bi-info-circle"></i></a>
                     </td>
                   </tr>
                   {% endfor %}

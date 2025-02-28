@@ -158,28 +158,29 @@ class StockItemCreateView(LoginRequiredMixin, CreateView):
         if form.is_valid():
             images = request.FILES.getlist("images")
             # save images to StockItemImage
-            stockitem = form.save(commit=False)
-            stockitem.save()
+            stockitem_form = form.save(commit=False)
+            # stockitem.save()
 
-            if stockitem.installed:
-                stockitem.status = StockItem.Status.IN_USE
-                stockitem.location_install = self.request.user.profile.department
-                stockitem.location_item = self.request.user.profile.department
-                stockitem.save()
+            if form.cleaned_data["installed"]:
+                stockitem_form.status = StockItem.Status.IN_USE
+                stockitem_form.location_install = self.request.user.profile.department
+                stockitem_form.location_item = self.request.user.profile.department
+                stockitem_form.save()
             else:
-                stockitem.status = StockItem.Status.AVAILABLE
-                stockitem.location_install = None
-                stockitem.location_item = self.request.user.profile.department
-                stockitem.save()
+                stockitem_form.status = StockItem.Status.AVAILABLE
+                stockitem_form.location_install = None
+                stockitem_form.location_item = self.request.user.profile.department
+                stockitem_form.save()
 
             for image in images:
-                StockItemImage.objects.create(stock_item=stockitem, images=image)
+                StockItemImage.objects.create(stock_item=stockitem_form, images=image)
             return redirect(self.success_url)
         else:
-            print(form.errors)
+            # print(form.errors)
+            # filled old data
             context = {
                 "errors": form.errors,
-                "form": self.form_class,
+                "form": self.form_class(request.POST),
             }
             return render(request, self.template_name, context)
         # return super().post(request, *args, **kwargs)
