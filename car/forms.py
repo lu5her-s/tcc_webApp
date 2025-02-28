@@ -173,7 +173,7 @@ class CarRefuelForm(forms.Form):
 
     mile_refuel = forms.FloatField(
         label="ไมล์เติมน้ำมัน",
-        required=False,
+        # required=False,
         min_value=0,
         widget=forms.NumberInput(
             attrs={
