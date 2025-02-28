@@ -1,78 +1,83 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Cart{% endblock %}
+  {% block title %}Cart{% endblock %}
 
-{% block content %}
-<h1>ตะกร้า</h1>
-<table class="table" id="dataTable">
-  <thead>
-    <tr>
-      <th style="width: 18%">ภาพ</th>
-      <th>ประเภท</th>
-      <th style="width: 15%">จำนวน</th>
-      <th style="width: 10%;">นำออก</th>
-    </tr>
-  </thead>
+  {% block content %}
+  <h1>ตะกร้า</h1>
+  <table class="table" id="dataTable">
+    <thead>
+      <tr>
+        <th style="width: 18%">ภาพ</th>
+        <th>ประเภท</th>
+        <th style="width: 15%">จำนวน</th>
+        <th style="width: 10%;">นำออก</th>
+      </tr>
+    </thead>
 
-  <tbody>
-    {% for item in cart %}
-    <tr>
-      <td><img src="{{ item.category.image.url }}" width="100" height="100"></td>
-      <td>{{ item.category.name }}</td>
-      <td>
-        <!-- <p>{{ item.category.stockitem_set.first.location }}</p> -->
-        <form action="{% url 'cart:cart_add' item.category.id %}" method="post">
-          {% csrf_token %}
-          <input 
-                                                                  id="quantity-{{ item.category.id }}"
-                                                                  bs-data="{{ item.category.stockitem_set.first.location.id }}"
-                                                                  type="number"
-                                                                  name="quantity"
-                                                                  min="1"
-                                                                  max="{{ item.available_quantity }}"
-                                                                  value="{{ item.quantity }}"
-                                                                  style="width: 50px"
-                                                                  >
-                                                                  <input type="hidden" name="override" value="True">
-                                                                  <button class="btn btn-sm btn-primary" type="submit">Update</button>
-        </form>
-      </td>
-      <td>
-        <form action="{% url 'cart:cart_remove' item.category.id %}" method="post">
-          {% csrf_token %}
-          <button class="btn btn-sm btn-danger">Remove</button>
-        </form>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<p>
-{% with total_items=cart|length %}
-{% if total_items > 0 %}
-You have {{ total_items }} items in your cart.
+    <tbody>
+      {% for item in cart %}
+      <tr>
+        {% if item.category.image %}
+        <td><img src="{{ item.category.image.url }}" width="100" height="100"></td>
+        {% else %}
+        <td><img src="{% static 'assets/img/profile.png' %}" width="100" height="100"></td>
+        
+        {% endif %}
+        <td>{{ item.category.name }}</td>
+        <td>
+          <!-- <p>{{ item.category.stockitem_set.first.location }}</p> -->
+          <form action="{% url 'cart:cart_add' item.category.id %}" method="post">
+            {% csrf_token %}
+            <input 
+              id="quantity-{{ item.category.id }}"
+              bs-data="{{ item.category.stockitem_set.first.location.id }}"
+              type="number"
+              name="quantity"
+              min="1"
+              max="{{ item.available_quantity }}"
+              value="{{ item.quantity }}"
+              style="width: 50px"
+            >
+            <input type="hidden" name="override" value="True">
+            <button class="btn btn-sm btn-primary" onclick="this.innerHTML = 'Updating...'; this.disabled = true; this.form.submit();" type="submit">Update</button>
+          </form>
+        </td>
+        <td>
+          <form action="{% url 'cart:cart_remove' item.category.id %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-danger" onclick="this.innerHTML = 'Removing...'; this.disabled = true; this.form.submit();">Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p>
+    {% with total_items=cart|length %}
+    {% if total_items > 0 %}
+    You have {{ total_items }} items in your cart.
 
-{% endif %}
-{% endwith %}
-</p>
+    {% endif %}
+    {% endwith %}
+  </p>
 
 
-{% if cart %}
+  {% if cart %}
 
-<p style="text-align: right">
-<!-- <button id="checkout" class="btn btn-success">Checkout</button> -->
-<form action="{% url 'parcel:bill_create' %}" method="post">
-  {% csrf_token %}
-  <input type="hidden" name="stock" value="{{ stock }}">
-  <button onclick="setStock()" class="btn btn-success" style="float: right">สร้างใบเบิก</button>
-  <a onclick="continueShopping()" id="continueShopping" class="btn btn-primary">เลือกพัสดุต่อ</a>
-</form>
-<!-- <button class="btn btn-primary" id="continueShopping">Continue Shopping</button> -->
-</p>
-{% endif %}
+  <p style="text-align: right">
+    <!-- <button id="checkout" class="btn btn-success">Checkout</button> -->
+  <form action="{% url 'parcel:bill_create' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="stock" value="{{ stock }}">
+    <button onclick="setStock()" class="btn btn-success" style="float: right">สร้างใบเบิก</button>
+    <a onclick="continueShopping()" id="continueShopping" class="btn btn-primary">เลือกพัสดุต่อ</a>
+  </form>
+  <!-- <button class="btn btn-primary" id="continueShopping">Continue Shopping</button> -->
+  </p>
+  {% endif %}
 
-<script>
+  <script>
   $(document).ready(() => {
     $("#dataTable").DataTable({
       "fnDrawCallback" : function(oSettings) {
@@ -118,5 +123,5 @@ You have {{ total_items }} items in your cart.
     window.location.href = url
   }
 
-</script>
-{% endblock %}
+  </script>
+  {% endblock %}
