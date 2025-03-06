@@ -4,114 +4,114 @@
 {% load tags %}
 {% load tz %}
 
-{% block title %}StockItem Management{% endblock title %}
+  {% block title %}StockItem Management{% endblock title %}
 
 
-{% block content %}
+  {% block content %}
 
-<div class="pagetitle">
+  <div class="pagetitle">
     <h1>การจัดการพัสดุ</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item active">StockItem Home</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item active">StockItem Home</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
-<section class="section dashboard">
+  <section class="section dashboard">
     <div class="row">
-        <!-- Stock asset manager card -->
+      <!-- Stock asset manager card -->
 
-        <!-- if user not stock manager show list asset in department -->
-    <!-- TODO: edit condition for manager, current is error to show list of stock item in department -->
-    {% comment %}
-        {% if perms.asset.add_stockitem %}
-    {% endcomment %}
+      <!-- if user not stock manager show list asset in department -->
+      <!-- TODO: edit condition for manager, current is error to show list of stock item in department -->
+      {% comment %}
+      {% if perms.asset.add_stockitem %}
+      {% endcomment %}
       {% if request.user|has_group:'StockManager' %}
-    
-        <div class="col-xxl-4 col-md-6">
-            <div class="card info-card bg-card">
-                <a href="{% url 'asset:manager_home' %}">
-                    <div class="card-body">
-                        <h5 class="card-title">การจัดการคลัง <span>| All</span></h5>
-                        <div class="d-flex align-items-center">
-                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                <i class="bi bi-bank text-danger"></i>
-                            </div>
-                            <div class="ps-3">
-                                <h6>{{ request.user.profile.department.name }}</h6>
-                                <span class="text-success small pt-1 fw-bold">การจัดการ</span> <span class="text-muted small pt-2 ps-1">สำหรับเจ้าหน้าที่คลัง</span>
 
-                            </div>
-                        </div>
-                    </div>
-                </a>
+      <div class="col-xxl-4 col-md-6">
+        <div class="card info-card bg-card">
+          <a href="{% url 'asset:manager_home' %}">
+            <div class="card-body">
+              <h5 class="card-title">การจัดการคลัง <span>| All</span></h5>
+              <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="bi bi-bank text-danger"></i>
+                </div>
+                <div class="ps-3">
+                  <h6>{{ request.user.profile.department.name }}</h6>
+                  <span class="text-success small pt-1 fw-bold">การจัดการ</span> <span class="text-muted small pt-2 ps-1">สำหรับเจ้าหน้าที่คลัง</span>
+
+                </div>
+              </div>
             </div>
+          </a>
         </div>
+      </div>
 
-        {% else %}
-        <div class="col-xxl-4 col-md-6">
-            <div class="card info-card bg-card">
-                <a href="{% url 'asset:department_list' %}">
-                    <div class="card-body">
-                        <h5 class="card-title">รายการพัสดุ <span>| All</span></h5>
-                        <div class="d-flex align-items-center">
-                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                <i class="bi bi-bank text-danger"></i>
-                            </div>
-                            <div class="ps-3">
-                                <h6>{{ request.user.profile.department.name }}</h6>
-                                <span class="text-success small pt-1 fw-bold">การจัดการ</span> <span class="text-muted small pt-2 ps-1">{{ request.user.profile.department.name }}</span>
+      {% else %}
+      <div class="col-xxl-4 col-md-6">
+        <div class="card info-card bg-card">
+          <a href="{% url 'asset:department_list' %}">
+            <div class="card-body">
+              <h5 class="card-title">รายการพัสดุ <span>| All</span></h5>
+              <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="bi bi-bank text-danger"></i>
+                </div>
+                <div class="ps-3">
+                  <h6>{{ request.user.profile.department.name }}</h6>
+                  <span class="text-success small pt-1 fw-bold">การจัดการ</span> <span class="text-muted small pt-2 ps-1">{{ request.user.profile.department.name }}</span>
 
-                            </div>
-                        </div>
-                    </div>
-                </a>
+                </div>
+              </div>
             </div>
+          </a>
         </div>
+      </div>
 
-        {% endif %}
-        <!-- End Stock manager --> 
+      {% endif %}
+      <!-- End Stock manager --> 
 
-        <!-- Show List all stock items card -->
-        <div class="col-xxl-4 col-md-6">
-            <div class="card info-card bg-card">
-                <a href="{% url 'asset:stockitem_list' %}">
-                    <div class="card-body">
-                        <h5 class="card-title">รายการพัสดุ <span>| All</span></h5>
-                        <div class="d-flex align-items-center">
-                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                <i class="bi bi-list-ul text-success"></i>
-                            </div>
-                            <div class="ps-3">
-                                <h6>List Overall</h6>
-                                <span class="text-success small pt-1 fw-bold">ภาพรวม</span> <span class="text-muted small pt-2 ps-1">รายการพัสดุทั้งหมด</span>
+      <!-- Show List all stock items card -->
+      <div class="col-xxl-4 col-md-6">
+        <div class="card info-card bg-card">
+          <a href="{% url 'asset:stockitem_list' %}">
+            <div class="card-body">
+              <h5 class="card-title">รายการพัสดุ <span>| All</span></h5>
+              <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="bi bi-list-ul text-success"></i>
+                </div>
+                <div class="ps-3">
+                  <h6>รายการพัสดุทั้งหมด</h6>
+                  <span class="text-success small pt-1 fw-bold">ภาพรวม</span> <span class="text-muted small pt-2 ps-1">รายการพัสดุทั้งหมด</span>
 
-                            </div>
-                        </div>
-                    </div>
-                </a>
+                </div>
+              </div>
             </div>
+          </a>
         </div>
-        <!-- End List all --> 
+      </div>
+      <!-- End List all --> 
 
-    
+
     </div>
-</section>
+  </section>
 
-<script>
-    $(document).ready(() => {
-        $("#dataTable").DataTable({
-            "fnDrawCallback" : function(oSettings) {
-                if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
-                    $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
-                } else {
-                    $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
-                }
-            },
-            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
-        });
-    });
-</script>
-{% endblock content %}
+  <script>
+$(document).ready(() => {
+  $("#dataTable").DataTable({
+    "fnDrawCallback" : function(oSettings) {
+      if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
+        $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+      } else {
+        $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+      }
+    },
+    "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+  });
+});
+  </script>
+  {% endblock content %}

@@ -45,7 +45,7 @@ class StockItemListView(LoginRequiredMixin, ListView):
     """
 
     model = StockItem
-    template_name = "asset/stockitem_list.html"
+    template_name = "asset/condition_list.html"
 
     def get_queryset(self):
         """
@@ -65,6 +65,7 @@ class StockItemListView(LoginRequiredMixin, ListView):
 
         """
         context = super().get_context_data(**kwargs)
+        context["h_title"] = "รายการพัสดุทั้งหมด"
         context["title"] = "แสดงรายการพัสดุ"
         return context
 

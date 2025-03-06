@@ -9,12 +9,12 @@
   {% block content %}
 
   <div class="pagetitle">
-    <h1>รายการพัสดุทั้งหมด</h1>
+    <h1>รายการพัสดุ หน่วย {{ request.user.profile.department.name }}</h1>
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
         <li class="breadcrumb-item"><a href="{% url 'asset:stockitem_home' %}">StockItem Home</a></li>
-        <li class="breadcrumb-item active">รายการพัสดุทั้งหมด</li>
+        <li class="breadcrumb-item active">รายการพัสดุ</li>
       </ol>
     </nav>
   </div><!-- End Page Title -->
