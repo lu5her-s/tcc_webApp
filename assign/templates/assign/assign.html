@@ -12,7 +12,7 @@
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item active">assign list</li>
+        <li class="breadcrumb-item active">รายการมอบหมายงาน</li>
       </ol>
     </nav>
   </div><!-- End Page Title -->
@@ -28,7 +28,7 @@
 
             <div class="card-body">
               <h5 class="card-title">{{ title }} 
-                <span>| List</span>
+                <span>| {{ request.user.profile }}</span>
                 {% if request.user|has_group:"Staff" %}
                 <span>
                   <a href="{% url 'assign:create' %}" class="align-right btn btn-success" style="float: right">
