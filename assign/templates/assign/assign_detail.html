@@ -13,9 +13,9 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
         {% if request.user|has_group:"Staff" %}
-        <li class="breadcrumb-item"><a href="{% url 'assign:staff-list' %}">Assign List</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'assign:staff-list' %}">รายการมอบหมายงาน</a></li>
         {% else %}
-        <li class="breadcrumb-item"><a href="{% url 'assign:list' %}">Assign List</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'assign:list' %}">รายการมอบหมายงาน</a></li>
         {% endif %}
         <li class="breadcrumb-item active">{{ object.title }}</li>
       </ol>
