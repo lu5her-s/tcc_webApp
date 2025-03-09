@@ -1,7 +1,6 @@
 from account.models import Profile
 from asset.models import StockItem
 from car.models import CarBooking
-from ckeditor.fields import RichTextField
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
@@ -42,6 +41,7 @@ class Inform(models.Model):
     class IssueCategory(models.TextChoices):
         HARDWARE = "HW", "อุปกรณ์"
         SOFTWARE = "SW", "ระบบ"
+        REPLACEMENT = "RP", "ทดแทน"
         OTHER = "OT", "อื่น ๆ"
 
     class InformStatus(models.TextChoices):
