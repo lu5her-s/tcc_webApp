@@ -166,7 +166,7 @@ class CarBooking(models.Model):
     distance = models.FloatField(default=0)
     return_at = models.DateTimeField(null=True, blank=True)
     fuel_use = models.FloatField(default=0.0)
-    # FIX: change choice to class textchoices
+    # DONE: change choice to class textchoices
     status = models.CharField(
         max_length=200,
         choices=Status.choices,

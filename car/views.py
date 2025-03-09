@@ -257,9 +257,8 @@ class CarBookingDetailView(LoginRequiredMixin, DetailView):
 
 
 def update_approve(request, pk):
-    """TODO: Docstring for update_approve.
-    :returns: TODO
-
+    """
+    update_approve for update approve status
     """
     # booking = CarBooking.objects.get(pk=pk)
     form = ApproveForm()
@@ -433,7 +432,7 @@ def ReturnCar(request, pk):
     return render(request, "car/return.html", context)
 
 
-# FIX: add mile_out in this
+# DONE: add mile_out in this
 def UseCar(request, pk):
     """
     UseCar for use car

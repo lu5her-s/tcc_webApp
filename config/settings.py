@@ -214,3 +214,6 @@ CSRF_TRUSTED_ORIGINS = ["https://*.ngrok-free.app"]
 
 # for cart sessions
 CART_SESSION_ID = "cart"
+
+# FROM_EMAIL
+DEFAULT_FROM_EMAIL = "tcc-web <tcc-web@localhost>"

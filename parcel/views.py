@@ -55,7 +55,7 @@ class ParcelHomeView(LoginRequiredMixin, TemplateView):
             item__status=StockItem.Status.ON_HAND,
         )
 
-        # TODO: command context
+        # TODO: command context show report and quantity
         # for command views
 
         # for manager views
