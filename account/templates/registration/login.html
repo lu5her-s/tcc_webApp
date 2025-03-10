@@ -137,4 +137,11 @@ document.getElementById("login-btn").addEventListener("click", function() {
   let form = document.getElementById("login-form");
   form.submit();
 });
+
+// click login button chnage to disabled and change text to loging in
+document.getElementById("login-btn").addEventListener("click", function() {
+  let btn = document.getElementById("login-btn");
+  btn.disabled = true;
+  btn.innerHTML = "กำลังเข้าสู่ระบบ";
+});
 </script>

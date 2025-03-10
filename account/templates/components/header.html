@@ -68,9 +68,11 @@
 document.getElementById("logout-btn").addEventListener("click", function() {
   let a_tag = document.getElementById("logout-btn");
   a_tag.disabled = true;
-
+  a_tag.innerHTML = "กำลังออกจากระบบ";
   // go to href
   window.location.href = "{% url 'logout' %}";
+
+  // logout button change to disabled and change text to loging out
 
 });
 </script>
