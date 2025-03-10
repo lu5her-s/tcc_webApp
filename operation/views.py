@@ -24,6 +24,7 @@ from django.utils import timezone
 from django.views.generic import DetailView, ListView, TemplateView, View
 from inform.models import Inform
 from parcel.models import ParcelRequest
+from journal.models import Journal
 
 from .forms import (
     AddFuelForm,
@@ -849,6 +850,19 @@ def approve_close(request, pk):
         operation.operation_status = Operation.OperationStatus.DONE
         operation.approve_status = Operation.ApproveStatus.CLOSED
         operation.save()
+        # get all members of operation
+        team = Team.objects.filter(team__operation=operation)
+        # create journal for all members in body is f'สมาชิกของใบงาน {operation.id} ปิดงาน'
+        for member in team.members.all():
+            Journal.objects.create(
+                author=member.user,
+                category=Journal.Category.SPECIAL,
+                title=f"ใบงาน {operation.id} ปิดงาน",
+                body=f"ปฏิบัติงานเป็นสมาชิกของใบงาน {operation.id}",
+                status=Journal.Status.DONE,
+                header=team.team_leader.profile,
+            )
+
         return redirect(reverse_lazy("operation:detail", kwargs={"pk": pk}))
 
 

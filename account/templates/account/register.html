@@ -136,7 +136,7 @@
                         </div>
                       </div>
                       <div class="col-12">
-                        <button class="btn btn-primary w-100" type="submit" onclick="javascript:this.disabled=true; this.form.submit();">สร้างบัญชี</button>
+                        <button class="btn btn-primary w-100" type="submit" onclick="javascript:this.disabled=true; this.form.submit(); this.innerHTML='<span class=\'bx bxs-loader bx-spin\'><i class=\'bx bx-loader-circle\'></i></span>';">สมัครสมาชิก</button>
                       </div>
                       <div class="col-12">
                         <p class="mb-0">มีบัญชีผู้ใช้งานแล้ว? <a href="{% url 'login' %}">เข้าสู่ระบบ</a></p>

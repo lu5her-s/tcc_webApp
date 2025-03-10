@@ -68,7 +68,7 @@
 document.getElementById("logout-btn").addEventListener("click", function() {
   let a_tag = document.getElementById("logout-btn");
   a_tag.disabled = true;
-  a_tag.innerHTML = "กำลังออกจากระบบ";
+  a_tag.innerHTML = "<span class='bx bxs-loader bx-spin'><i class='bx bx-loader-circle'></i></span><span>ออกจากระบบ</span>";
   // go to href
   window.location.href = "{% url 'logout' %}";
 

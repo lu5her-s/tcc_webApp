@@ -109,7 +109,8 @@ $(document).ready(function () {
 $('#addMemberBtn').on('click', function () {
   let btn = $(this);
   btn.prop("disabled", true);
-  let form = $('#add_member_form');
+  btn.html('<span class="bx bxs-loader bx-spin"><i class="bx bx-loader-circle"></i></span>');
+ let form = $('#add_member_form');
   form.submit();
 }
 );
