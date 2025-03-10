@@ -1,4 +1,5 @@
 {% load tags %}
+{% load static %}
 <div class="card">
   <div class="card-body pb-0">
     <h5 class="card-title">
@@ -7,7 +8,11 @@
     <div class="news">
       {% for comment in recent_comment %}
       <div class="post-item clearfix">
+        {% if comment.author.profile.image %}
         <img src="{{ comment.author.profile.image.url }}" alt="">
+        {% else %}
+        <img src="{% static 'assets/img/profile.png' %}" alt="">
+        {% endif %}
         <h4>
           <a href="{% url 'announce:detail' pk=comment.announce.pk %}">in {{ comment.announce.title }}</a>
         </h4>

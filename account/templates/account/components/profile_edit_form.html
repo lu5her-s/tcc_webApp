@@ -15,9 +15,12 @@
       {% endif %}
       <div class="pt-2">
         {{ profile_form.image }}
+        <img id="image-preview" src="#" alt="Preview" style="max-width: 200px; max-height: 200px; display: none;">
         {% comment %}<a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>{% endcomment %}
         {% comment %}<a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>{% endcomment %}
       </div>
+    </div>
+  </div>
     </div>
   </div>
 
@@ -153,6 +156,26 @@ profileUpdateBtn.addEventListener("click", function() {
   profileUpdateBtn.disabled = true;
   var profileForm = document.getElementById("profile-form");
   profileForm.submit();
+});
+const imageInput = document.getElementById('{{ profile_form.image.id_for_label }}');
+const imagePreview = document.getElementById('image-preview');
+
+imageInput.addEventListener('change', (event) => {
+  const file = event.target.files[0];
+
+  if (file) {
+    const reader = new FileReader();
+
+    reader.addEventListener('load', () => {
+      imagePreview.src = reader.result;
+      imagePreview.style.display = 'block';
+    });
+
+    reader.readAsDataURL(file);
+  } else {
+    imagePreview.src = '#';
+    imagePreview.style.display = 'none';
+  }
 });
 
 </script>
