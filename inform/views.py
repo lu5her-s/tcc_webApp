@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 14 2023, 15:33 257
-# Last Modified Date: Wed Sep, 20 2023, 10:33 263
+# Last Modified Date: Mon Mar, 10 2025, 12:15 069
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 import os
@@ -23,6 +23,7 @@ from django.views.generic import (
     ListView,
     TemplateView,
 )
+from journal.models import Journal
 from repair.forms import Repair
 
 from inform.forms import (
@@ -479,8 +480,8 @@ class InformCreateView(LoginRequiredMixin, CreateView):
             issue_clear = self.remove_html(form.cleaned_data["issue"])
             # body = ''
             body = "\nมีแจ้งซ่อมใหม่: "
-            body += f"\nหมายเลขใบแจ้งซ่อม : {inform.pk}/{inform.created_at.year+543}"
-            body += f'\nวันที่แจ้งซ่อม : {inform.created_at.strftime("%d/%m/%Y")}'
+            body += f"\nหมายเลขใบแจ้งซ่อม : {inform.pk}/{inform.created_at.year + 543}"
+            body += f"\nวันที่แจ้งซ่อม : {inform.created_at.strftime('%d/%m/%Y')}"
             body += f"\nความเร่งด่วน : {inform.get_urgency_display()}"
             body += f"\nสถานที่ : {inform.customer.profile.department}"
             body += f"\nผู้แจ้งซ่อม : {inform.customer.profile if inform.customer.profile else inform.customer}"
@@ -794,7 +795,7 @@ def inform_approve(request, pk):
     inform.save(update_fields=["approve_status"])
     token = LineToken.objects.get(name="Manager").token
     line = Sendline(token)
-    body = f"อนุมัติแจ้งซ่อม : {inform.pk}/{inform.created_at.year+543}"
+    body = f"อนุมัติแจ้งซ่อม : {inform.pk}/{inform.created_at.year + 543}"
     line.sendtext(body)
     return redirect(reverse_lazy("inform:detail", kwargs={"pk": pk}))
 

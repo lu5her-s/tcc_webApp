@@ -58,7 +58,7 @@
               <br>
               <div class="text-center">
                 <a href="{{ HTTP_REFERER }}" class="btn btn-lg btn-secondary">ย้อนกลับ</a>
-                <button type="submit" class="btn btn-lg btn-success">สร้างใบงาน</button>
+                <button type="submit" class="btn btn-lg btn-success" id="submit-op-btn">สร้างใบงาน</button>
                 <button type="reset" class="btn btn-lg btn-warning">Reset</button>
               </div>
             </form>
@@ -94,6 +94,15 @@ $(document).ready(function () {
   $("#id_inform").select2({
     width: "100%",
   });
+});
+
+let btn = document.getElementById("submit-op-btn");
+btn.addEventListener("click", function () {
+  // disable the button
+  btn.disabled = true;
+  // add a loading spinner
+  btn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> กำลังสร้างใบงาน`;
+  btn.submit();
 });
 </script>
 

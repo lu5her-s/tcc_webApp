@@ -125,8 +125,8 @@ class TeamMemberForm(forms.Form):
 
     member = forms.ModelChoiceField(
         queryset=User.objects.filter(
-            profile__isnull=False, profile__department__name="ส่วนกลาง"
-        ),
+            profile__isnull=False, profile__sector__name="ส่วนกลาง"
+        ).exclude(groups__name="Command"),
         label="ลูกชุด",
         widget=forms.Select(
             attrs={"class": "form-select member-select", "required": False}
