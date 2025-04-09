@@ -98,12 +98,7 @@
 
                 <tr>
                   <th>Part no.</th>
-                  <td>{{ object.part_no }}</td>
-                </tr>
-
-                <tr>
-                  <th>Location</th>
-                  <td>{{ object.location.name|default:'-' }}</td>
+                  <td>{{ object.part_no|default:"-" }}</td>
                 </tr>
 
                 {% if object.location_install %}

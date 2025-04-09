@@ -2,127 +2,133 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}Request Stock Bill{% endblock title %}
+  {% block title %}Request Stock Bill{% endblock title %}
 
-{% block content %}
-<div class="pagetitle">
-  <h1>Select Item in {{ stock }}</h1>
+  {% block content %}
+  <div class="pagetitle">
+    <h1>Select Item in {{ stock }}</h1>
     <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'parcel:home' %}">Parcel Home</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'parcel:select_stock' %}">Select Stock</a></li>
-            <li class="breadcrumb-item active">{{ stock }}</li>
-        </ol>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'parcel:home' %}">Parcel Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'parcel:select_stock' %}">Select Stock</a></li>
+        <li class="breadcrumb-item active">{{ stock }}</li>
+      </ol>
     </nav>
-</div><!-- End Page Title -->
+  </div><!-- End Page Title -->
 
-<section class="section profile">
+  <section class="section profile">
     <div class="row">
 
-        <div class="col-xl-12">
+      <div class="col-xl-12">
 
-            <div class="card">
-                <div class="card-body pt-3">
-                    <!-- Bordered Tabs -->
-                    <ul class="nav nav-tabs nav-tabs-bordered">
+        <div class="card">
+          <div class="card-body pt-3">
+            <!-- Bordered Tabs -->
+            <ul class="nav nav-tabs nav-tabs-bordered">
 
-                        <li class="nav-item">
-                          <buttont class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">{{ stock }}-{{ categories.first.pk }}</buttont>
-                        </li>
+              <li class="nav-item">
+                <buttont class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">{{ stock }}-{{ categories.first.pk }}</buttont>
+              </li>
 
-                    </ul>
-                    <div class="tab-content pt-2">
+            </ul>
+            <div class="tab-content pt-2">
 
-                        <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
-                        {% comment %}{{ errors }}{% endcomment %}
-                        {% if errors %}
-                        <div class="alert alert-danger" role="alert">
-                            {{ errors }}
-                        </div>
-                        {% endif %}
+              <div class="tab-pane fade show active profile-overview" id="profile-overview"></div>
+              {% comment %}{{ errors }}{% endcomment %}
+              {% if errors %}
+              <div class="alert alert-danger" role="alert">
+                {{ errors }}
+              </div>
+              {% endif %}
 
-                        <br />
-                        <!-- {% for item in items %} -->
-                        <!-- {{ item }}<br /> -->
-                        <!-- {% endfor %} -->
+              <br />
+              <!-- {% for item in items %} -->
+              <!-- {{ item }}<br /> -->
+              <!-- {% endfor %} -->
 
-                        <!-- {% for ct in categories %} -->
-                        <!-- {{ ct }} -- PK is{{ ct.pk }}<br /> -->
-                        <!-- {% endfor %} -->
+              <!-- {% for ct in categories %} -->
+              <!-- {{ ct }} -- PK is{{ ct.pk }}<br /> -->
+              <!-- {% endfor %} -->
 
-                        {% if categories %}
-                          {% for ct in categories %}
-                          <div class="row">
-                              <div class="card mb-3">
-                                  <div class="row g-0">
-                                      <div class="col-md-4">
-                                        <img src="{{ ct.image.url }}" style="height: 200px" class="img-fluid rounded-start" alt="...">
-                                      </div>
-                                      <div class="col-md-6">
-                                          <div class="card-body">
-                                              <h5 class="card-title">{{ ct.name }}</h5>
-                                              <p class="card-text">{{ ct.description|safe }}</p>
-                                                
-                                              <p class="card-text" id="sum-{{ ct.pk }}"></p>
-                                              {% comment %}
-                                                <form action="{% url 'parcel:add_to_cart' ct.pk %}" method="post">
-                                              {% endcomment %}
-                                              <form id="add-form" action="{% url 'cart:cart_add' ct.pk %}" method="post">
-                                                {% csrf_token %}
-                                                <!-- <a href="#" class="btn btn-primary" onclick="addTest"><span class="bi bi-plus-circle"></span> Add to cart</a> -->
-                                                <!-- input quantity increase and decreasee button -->
-                                                <input type="hidden" name="quantity" id="quantity-{{ ct.pk }}" value="1" class="form-control mb-2">
-                                                {% if ct.pk in request.session.cart %}
-                                                <input type="hidden" name="override" id="override-{{ ct.pk }}" value="False">
-                                                {% else %}
-                                                <input type="hidden" name="override" id="override-{{ ct.pk }}" value="True">
-                                                {% endif %}
-                                                <input type="hidden" name"stock" value="{{ stock }}">
-                                                <!-- <a href="#" class="btn btn-primary"><span class="bi bi-plus-circle"></span> Add to cart</a> -->
-                                                <button type="submit" class="btn btn-primary">Add to cart</button>
-                                              </form>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                          {% endfor %}
-                        
-                        {% else %}
-                        <div class="alert alert-danger" role="alert">
-                            ยังไม่มีรายการ
-                        </div>
-                        {% endif %}
+              {% if categories %}
+              {% for ct in categories %}
+              <div class="row">
+                <div class="card mb-3">
+                  <div class="row g-0">
+                    <div class="col-md-4">
+                      {% if ct.image %}
+                      <img src="{{ ct.image.url }}" style="height: 200px" class="img-fluid rounded-start" alt="...">
 
+                      {% else %}
+                      <img src="{% static 'img/no-image.png' %}" class="img-fluid rounded-start" alt="..." style="height: 200px">
+                      {% endif %}
+
+                    </div>
+                    <div class="col-md-6">
+                      <div class="card-body">
+                        <h5 class="card-title">{{ ct.name }}</h5>
+                        <p class="card-text">{{ ct.description|safe }}</p>
+
+                        <p class="card-text" id="sum-{{ ct.pk }}"></p>
+                        {% comment %}
+                        <form action="{% url 'parcel:add_to_cart' ct.pk %}" method="post">
+                        {% endcomment %}
+  <form id="add-form" action="{% url 'cart:cart_add' ct.pk %}" method="post">
+                          {% csrf_token %}
+                          <!-- <a href="#" class="btn btn-primary" onclick="addTest"><span class="bi bi-plus-circle"></span> Add to cart</a> -->
+                          <!-- input quantity increase and decreasee button -->
+                          <input type="hidden" name="quantity" id="quantity-{{ ct.pk }}" value="1" class="form-control mb-2">
+                          {% if ct.pk in request.session.cart %}
+                          <input type="hidden" name="override" id="override-{{ ct.pk }}" value="False">
+                          {% else %}
+                          <input type="hidden" name="override" id="override-{{ ct.pk }}" value="True">
+                          {% endif %}
+                          <input type="hidden" name"stock" value="{{ stock }}">
+                          <!-- <a href="#" class="btn btn-primary"><span class="bi bi-plus-circle"></span> Add to cart</a> -->
+                          <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> ใส่ตะกร้า</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              </div>
+              {% endfor %}
+
+              {% else %}
+              <div class="alert alert-danger" role="alert">
+                ยังไม่มีรายการ
+              </div>
+              {% endif %}
+
             </div>
+          </div>
 
         </div>
-    </div>
-    <script>
-        $(document).ready(function () {
-            $("select").select2({
-                width: "100%",
-            });
+      </div>
+      <script>
+      $(document).ready(function () {
+        $("select").select2({
+          width: "100%",
         });
+      });
 
-        // let sum = 0
-        {% for ct in categories %}
-          var sumTag = document.getElementById("sum-{{ ct.pk }}")
-          var max_quantity = document.getElementById("quantity-{{ ct.pk }}" )
-          var sum = 0
-          {% for item in ct.stockitem_set.all %}
-          {% if item.status == "AVAILABLE" %}
-            sum += {{ item.quantity }}
-          {% endif %}
-          {% endfor %}
-          sumTag.innerHTML = "จำนวน คงคลัง - " + sum
-          max_quantity.max = sum
+      // let sum = 0
+    {% for ct in categories %}
+        var sumTag = document.getElementById("sum-{{ ct.pk }}")
+        var max_quantity = document.getElementById("quantity-{{ ct.pk }}" )
+        var sum = 0
+      {% for item in ct.stockitem_set.all %}
+      {% if item.status == "AVAILABLE" %}
+        sum += {{ item.quantity }}
+      {% endif %}
+      {% endfor %}
+        sumTag.innerHTML = "จำนวน คงคลัง - " + sum
+        max_quantity.max = sum
         // sum = 0
-        {% endfor %}
+      {% endfor %}
         // const categories = {% for ct in categories %} Array.from('{{ ct.name }}') {% endfor %}
-    </script>
-</section>
+      </script>
+  </section>
 
-{% endblock content %}
+  {% endblock content %}

@@ -21,6 +21,8 @@ def stock_image(instance, filename: str) -> str:
     :param instance:get instance from StockItem
     :param filename:get filename to set folder
     """
+    ext = filename.split(".")[-1]
+    filename = f"{uuid.uuid4()}.{ext}"
     return f"StockItem/{instance.stock_item.item_name}/{filename}"
 
 
@@ -220,7 +222,7 @@ class StockItemImage(models.Model):
     images = models.ImageField(upload_to=stock_image)
 
     def __str__(self):
-        return f"{self.stock_item.item_name} - { self.images.name }"
+        return f"{self.stock_item.item_name} - {self.images.name}"
 
 
 class ItemLocation(models.Model):

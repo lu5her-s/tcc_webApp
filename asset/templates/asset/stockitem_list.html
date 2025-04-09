@@ -31,14 +31,15 @@
             <div class="card-body">
               <h5 class="card-title">{{ title }} 
                 <span>| รายการพัสดุ</span>
-                {% if perms.asset.add_stockitem %}
+                  
+                {#% if perms.asset.add_stockitem %#}
                 <a href="{% url 'asset:stockitem_create' %}" 
                   class="btn btn-success"
                   style="float: right;">
                   <i class="bi bi-plus"></i>
                   เพิ่มพัสดุ {{ request.user.profile.department.name }}
                 </a>
-                {% endif %}
+                {#% endif %#}
               </h5>
 
               <br>

@@ -269,7 +269,7 @@ class SelecItemView(LoginRequiredMixin, View):
     def get(self, request, pk):
         stock = get_object_or_404(Department, pk=pk)
         items = StockItem.objects.filter(
-            stock_control=stock, status=StockItem.Status.AVAILABLE
+            location_item=stock, status=StockItem.Status.AVAILABLE
         )
         categories = Category.objects.filter(stockitem__in=items).distinct()
         context = {
