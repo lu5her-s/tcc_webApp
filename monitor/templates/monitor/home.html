@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tags %}
+{% load tz %}
+
+  {% block title %}Summary{% endblock title %}
+
+  {% block content %}
+
+  <div class="pagetitle">
+    <h1>รายการสถานภาพ</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'monitor:home' %}">Monitor Home</a></li>
+        <li class="breadcrumb-item active">Summary</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <div class="row">
+
+      <div class="col-xl-12">
+
+        <!-- Recent Job -->
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
+
+            <div class="card-body">
+              <h5 class="card-title">ภาพรวม
+                <span>| สถานะ</span>
+              </h5>
+
+              <br>
+
+              {% for sector in sectors %}
+              <h3>รายการสถานภาพ {{ sector.name }}</h3>
+              <table class="table table-hover" id="monitor-{{ sector.id }}">
+                <thead>
+                  <tr>
+                    <th scope="col">หน่วย</th>
+                    <th scope="col">สถานะ</th>
+                    <th scope="col">เวลา</th>
+                    <th scope="col">ผู้ตรวจสอบ</th>
+                    <th scope="col">...</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for dept in sector.sector.all %}
+                  <tr>
+                    <td>{{ dept.name }}</td>
+                    <td>status</td>
+                    <td>time</td>
+                    <td>approver</td>
+                    <td>...</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <br>
+              {% endfor %}
+
+            </div>
+
+          </div>
+        </div><!-- End Announce List -->
+
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // loop for table id sector-name and set sataTable
+    {% for sector in sectors %}
+    $(document).ready(function () {
+      $('#monitor-{{ sector.id }}').DataTable({
+        "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+        "pageLength": -1
+      });
+    });
+{% endfor %}
+  </script>
+
+  {% endblock content %}
