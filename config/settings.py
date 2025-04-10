@@ -72,7 +72,6 @@ INSTALLED_APPS = [
     "parcel",
     "operation",
     "cart.apps.CartConfig",
-    "monitor",
 ]
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
