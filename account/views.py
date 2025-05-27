@@ -3,15 +3,10 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Sep, 29 2022, 11:58 272
-# Last Modified Date: Fri Dec, 23 2022, 18:00 357
+# Last Modified Date: Tue May, 27 2025, 13:43 147
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 
-from announce.models import (
-    Announce,
-    Comment,
-)
-from assign.models import Assign
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -26,10 +21,12 @@ from django.views.generic import (
     ListView,
     TemplateView,
 )
-from document.models import Depart, Document
-from inform.models import Inform
-from journal.models import Journal
-from parcel.models import ParcelRequest, RequestBillDetail
+from .helpers import (
+    get_inbox_counts,
+    get_journals,
+    get_not_read_announces,
+    get_today_range,
+)
 
 from account.forms import (
     ProfileForm,
@@ -42,6 +39,15 @@ from account.models import (
     Rank,
     Sector,
 )
+from announce.models import (
+    Announce,
+    Comment,
+)
+from assign.models import Assign
+from document.models import Depart, Document
+from inform.models import Inform
+from journal.models import Journal
+from parcel.models import ParcelRequest, RequestBillDetail
 
 # Create your views here.
 
@@ -57,7 +63,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     template_name = "base.html"
 
-    def get_context_data(self, *args, **kwargs):
+    def get_context_data(self, **kwargs):
         """
         get_context_data สำหรับการเรียกข้อมูลที่จะแสดงในหน้าหลัก
 
@@ -69,64 +75,70 @@ class HomeView(LoginRequiredMixin, TemplateView):
             context: dict
 
         """
-        context = super().get_context_data(*args, **kwargs)
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        # Fetch data via helper functions
         context["announce"] = Announce.objects.all()
         context["recent_comment"] = Comment.objects.all().order_by("-created_at")[:5]
-        all_inbox = Document.objects.filter(
-            assigned_sector=self.request.user.profile.sector
-        ).count()
-        context["all_inbox"] = all_inbox
-        all_department = Depart.objects.filter(
-            reciever__profile__sector=self.request.user.profile.sector
-        ).count()
-        context["new_inbox"] = str(abs(all_inbox - all_department))
-        context["journal"] = Journal.objects.filter(author=self.request.user)
-        today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
-        today_max = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
-        context["today_journal"] = Journal.objects.filter(
-            author__profile__sector=self.request.user.profile.sector,
-            created_at__range=(today_min, today_max),
+
+        # Inbox counts
+        all_inbox, all_department, new_inbox = get_inbox_counts(user)
+        context.update(
+            {
+                "all_inbox": all_inbox,
+                "new_inbox": new_inbox,
+            }
         )
-        try:
-            context["not_read"] = Announce.objects.filter(
-                ~Q(author=self.request.user) & ~Q(reads__id=self.request.user.id)
-            )
-        except:
-            pass
-        if self.request.user.groups.filter(name="Staff"):
-            context["assign"] = Assign.objects.filter(author=self.request.user)
-            context["wait_assign"] = Assign.objects.filter(
-                author=self.request.user, accepted=False
-            )
+
+        # Journals
+        context["journal"] = Journal.objects.filter(author=user)
+        context["today_journal"] = get_journals(user)
+
+        # Announce unread
+        context["not_read"] = get_not_read_announces(user)
+
+        # Assigns bases on group
+        if self.request.user.groups.filter(name="Staff").exists():
+            context["assign"] = Assign.objects.filter(author=user)
+            context["wait_assign"] = Assign.objects.filter(author=user, accepted=False)
         else:
-            context["assign"] = Assign.objects.filter(
-                assigned_to__user=self.request.user
-            )
+            context["assign"] = Assign.objects.filter(assigned_to__user=user)
             context["wait_assign"] = Assign.objects.filter(
-                assigned_to__user=self.request.user, accepted=False
+                assigned_to__user=user, accepted=False
             )
 
-        if not self.request.user.groups.filter(name="StaffRepair"):
+        # Inform department
+        if not self.request.user.groups.filter(name="StaffRepair").exists():
             context["inform_department"] = Inform.objects.filter(
-                customer__profile__department=self.request.user.profile.department
+                customer__profile__department=user.profile.department
             )
+
+        # Inform and bills
+        today_min, today_max = get_today_range()
         context["informs"] = Inform.objects.filter(
             created_at__range=(today_min, today_max)
         )
         context["wait_approve"] = Inform.objects.filter(
-            Q(inform_status=Inform.InformStatus.WAIT) & Q(approve_status=None)
+            inform_status=Inform.InformStatus.WAIT, approve_status=None
         )
-        bills = ParcelRequest.objects.filter(user=self.request.user)
-        bill_manager = ParcelRequest.objects.filter(
-            Q(stock=self.request.user.profile.department)
-            & ~Q(status=ParcelRequest.RequestStatus.DRAFT)
-        )
-        context["bill_manager"] = bill_manager
+
+        # all_department = Depart.objects.filter(
+        #     reciever__profile__sector=self.request.user.profile.sector
+        # ).count()
+        context["new_inbox"] = str(abs(all_inbox - all_department))
+        today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
+        today_max = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
+
+        bills = ParcelRequest.objects.filter(user=user)
         context["request_bills"] = bills
+        context["bill_manager"] = ParcelRequest.objects.filter(
+            stock=user.profile.department
+        ).exclude(status=ParcelRequest.RequestStatus.DRAFT)
+
         context["bill_wait_approve"] = bills.filter(
             billdetail__approve_status=RequestBillDetail.ApproveStatus.WAIT
         )
-
         return context
 
 
@@ -256,6 +268,7 @@ class MembersListView(LoginRequiredMixin, ListView):
 
     model = Profile
     template_name = "account/members.html"
+    context_object_name = "members"
 
     def get_queryset(self):
         """

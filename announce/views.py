@@ -1,5 +1,3 @@
-from account.models import LineToken
-from config.LineNotify import LineNotify
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
@@ -15,8 +13,10 @@ from django.views.generic import (
     UpdateView,
 )
 
+from account.models import LineToken
 from announce.forms import AnnounceForm
 from announce.models import Announce, AnnounceFile, AnnounceImage, Comment
+from config.LineNotify import LineNotify
 
 # Create your views here.
 

@@ -3,10 +3,9 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Fri Apr, 19 2024, 16:36 110
-# Last Modified Date: Fri Apr, 19 2024, 16:36 110
+# Last Modified Date: Wed May, 07 2025, 19:24 127
 # Last Modified By  : lu5her <lu5her@mail>
 # -----
-from account.models import Department
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import reverse_lazy
 from django.shortcuts import (
@@ -26,6 +25,7 @@ from django.views.generic import (
     UpdateView,
 )
 
+from account.models import Department
 from asset.forms import StockItemForm
 from asset.models import (
     Category,

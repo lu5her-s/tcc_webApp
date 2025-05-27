@@ -37,7 +37,6 @@ class AnnounceAdmin(admin.ModelAdmin):
         "status",
         "author",
         "title",
-        "detail",
         "created_at",
         "updated_at",
         "is_delete",
@@ -47,7 +46,6 @@ class AnnounceAdmin(admin.ModelAdmin):
         "status",
         "author",
         "title",
-        "detail",
         "created_at",
         "updated_at",
         "is_delete",
@@ -69,16 +67,37 @@ class AnnounceImageAdmin(admin.ModelAdmin):
         "announce",
         "images",
     )
-    list_filter = (
-        "announce",
-        "images",
-    )
-    search_fields = (
-        "announce",
-        "images",
-    )
+    list_filter = ("announce",)
+    search_fields = ("announce",)
 
 
-admin.site.register(AnnounceFile)
-# admin.site.register(AnnounceImage)
-admin.site.register(Comment)
+@admin.register(AnnounceFile)
+class AnnounceFileAdmin(admin.ModelAdmin):
+    """
+    ModelAdmin for AnnounceFile
+
+    Attributes:
+        list_display:
+        list_filter:
+        search_fields:
+    """
+
+    list_display = ("announce", )
+    list_filter = ("announce",)
+    search_fields = ("announce",)
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    """
+    ModelAdmin สำหรับคอมเมนต์
+
+    Attributes:
+        list_display:
+        list_filter:
+        search_fields:
+    """
+
+    list_display = ("announce", "author", "created_at")
+    list_filter = ("announce", "author")
+    search_fields = ("announce", "author", "text")

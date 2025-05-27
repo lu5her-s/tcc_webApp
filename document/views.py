@@ -3,7 +3,7 @@
 # File              : views.py
 # Author            : lu5her <lu5her@mail>
 # Date              : Thu Oct, 06 2022, 23:34 279
-# Last Modified Date: Mon Oct, 31 2022, 22:19 304
+# Last Modified Date: Wed May, 07 2025, 20:08 127
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 
@@ -191,6 +191,7 @@ class OutboxDetailView(LoginRequiredMixin, DetailView):
     template_name = "document/outbox_detail.html"
 
     def get_context_data(self, **kwargs):
+        # TODO: add reciever name
         context = super().get_context_data(**kwargs)
         try:
             # d =  Document.objects.get(pk=self.get_object().pk).department_set.all().values_list('reciever__profile__sector', flat=True)
