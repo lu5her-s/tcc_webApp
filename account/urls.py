@@ -18,8 +18,13 @@ urlpatterns = [
     path("change-password/", views.ChangePassword.as_view(), name="change-password"),
     path("members/", views.MembersListView.as_view(), name="members"),
     path("member/<int:pk>/", views.MembersDetailView.as_view(), name="member"),
-    path("sectors/<int:sector_pk>/", views.sector_list, name="sectors"),
-    path("positions/<int:position_pk>/", views.position_list, name="positions"),
+    # path("sectors/<int:sector_pk>/", views.sector_list, name="sectors"),
+    # path("positions/<int:position_pk>/", views.position_list, name="positions"),
+    path(
+        "profiles/<str:filter_type>/<int:pk>/",
+        views.ProfileListView.as_view(),
+        name="profile_list",
+    ),
     # check username
     path("check-username/", views.check_username, name="check-username"),
 ]

@@ -299,41 +299,42 @@ class MembersDetailView(LoginRequiredMixin, DetailView):
     template_name = "account/profile.html"
 
 
-def sector_list(request, sector_pk):
+class ProfileListView(LoginRequiredMixin, ListView):
     """
-    sector_list สำหรับการแสดงผลรายชื่อแผนก
+    ProfileListView สำหรับการแสดงผลรายชื่อผู้ใช้ที่มีชื่อแผนกหรือตําแหน่ง
 
-    Args:
-        request ():
-        pk ():
-
-    Returns:
-
+    Attributes:
+        model:
+        template_name:
     """
-    profiles = Profile.objects.filter(sector__pk=sector_pk).exclude(
-        user__is_superuser=True
-    )
-    sector = get_object_or_404(Sector, pk=sector_pk)
-    # sector_name = profiles.first().sector.name
-    sector_name = sector.name
-    context = {"object_list": profiles, "bc_title": sector_name}
-    return render(request, "account/other_list.html", context)
 
+    model = Profile
+    template_name = "account/other_list.html"
 
-def position_list(request, position_pk):
-    """
-    position_list สำหรับการแสดงผลรายชื่อตําแหน่ง
+    def get_queryset(self):
+        filter_type = self.kwargs.get("filter_type")
+        pk = self.kwargs.get("pk")
+        if filter_type == "sector":
+            return Profile.objects.filter(sector__pk=pk).exclude(
+                user__is_superuser=True
+            )
+        elif filter_type == "position":
+            return Profile.objects.filter(position__pk=pk).exclude(
+                user__is_superuser=True
+            )
+        return Profile.objects.all()
 
-    Args:
-        request ():
-        pk ():
-
-    Returns:
-
-    """
-    qs = Profile.objects.filter(position__pk=position_pk)
-    context = {"object_list": qs, "bc_title": Position.objects.get(pk=position_pk).name}
-    return render(request, "account/other_list.html", context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        filter_type = self.kwargs.get("filter_type")
+        pk = self.kwargs.get("pk")
+        if filter_type == "sector":
+            sector = get_object_or_404(Sector, pk=pk)
+            context["bc_title"] = sector.name
+        elif filter_type == "position":
+            position = get_object_or_404(Position, pk=pk)
+            context["bc_title"] = position.name
+        return context
 
 
 class ContactView(LoginRequiredMixin, TemplateView):

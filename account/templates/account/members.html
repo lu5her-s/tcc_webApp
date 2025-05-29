@@ -44,7 +44,7 @@
                 <tr>
                   <th scope="row">
                     {% if member.sector %}
-                    <a href="{% url 'account:sectors' sector_pk=member.sector.pk %}">{{ member.sector.name }}</a>
+                    <a href="{% url 'account:profile_list' filter_type='sector' pk=member.sector.pk %}">{{ member.sector.name|default:'-' }}</a>
                     {% else %}
                     <a href="#">{{ member.sector.name|default:'-' }}</a>
                     {% endif %}
@@ -60,7 +60,7 @@
                   <td><a href="{% url 'account:member' pk=member.user.pk %}">{{ member.user.username }}</a></td>
                   {% endif %}
                   {% if member.position %}
-                  <td><a href="{% url 'account:positions' position_pk=member.position.pk %}" class="text-primary">{{ member.position.name }}</a></td>
+                  <td><a href="{% url 'account:profile_list' filter_type='position' pk=member.position.pk %}" class="text-primary">{{ member.position.name }}</a></td>
                   {% else %}
                   <td>-</td>
                   {% endif %}
