@@ -15,6 +15,17 @@ from document.models import Depart, Document
 from journal.models import Journal
 
 
+class UserProfileMixin:
+    def get_user_profile_context(self):
+        user = self.request.user
+        context = {
+            "user_form": UserForm(instance=user),
+            "profile_form": ProfileForm(instance=user.profile),
+            "password_form": PasswordChangeForm(user),
+        }
+        return context
+
+
 def get_today_range():
     today_min = datetime.combine(date.today(), time.min)
     today_max = datetime.combine(date.today(), time.max)
