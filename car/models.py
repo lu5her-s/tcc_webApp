@@ -7,9 +7,9 @@
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 
-from ckeditor.fields import RichTextField
 from django.contrib.auth.models import User
 from django.db import models
+from django_prose_editor.fields import ProseEditorField
 
 from account.models import Profile
 
@@ -280,7 +280,23 @@ class Refuel(models.Model):
         User, on_delete=models.CASCADE, related_name="refueler"
     )
     refueled_at = models.DateTimeField(auto_now_add=True)
-    note = RichTextField(null=True, blank=True)
+    note = ProseEditorField(
+        extensions={
+            "Bold": True,
+            "Italic": True,
+            "Strike": True,
+            "Underline": True,
+            "HardBreak": True,
+            "BulletList": True,
+            "OrderedList": True,
+            "ListItem": True,
+            "Link": True,
+            "History": True,
+        },
+        sanitize=True,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Refuel"

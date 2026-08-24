@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     # external app
     "crispy_forms",
-    "ckeditor",
+    "django_prose_editor",
     "debug_toolbar",
     "django_extensions",
     # internal app
@@ -75,13 +75,6 @@ INSTALLED_APPS = [
     "cart.apps.CartConfig",
 ]
 CRISPY_TEMPLATE_PACK = "bootstrap4"
-
-CKEDITOR_CONFIGS = {
-    "default": {
-        "height": "full",
-        "width": "full",
-    },
-}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
