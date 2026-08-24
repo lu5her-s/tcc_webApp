@@ -1097,7 +1097,7 @@ journal/
 
 | Version | Date | Author | Description |
 |---|---|---|---|
-| 1.1 | 2026-08-24 | Lin (หลิน) | Update per Louis decisions 24 ส.ค. 2026 — Decision Log (24-Aug-2026) 10 ข้อ (Q1 ✅ exclude-fix + badge, Q2 🗑️ DELETE, Q3 MOOT, Q4 ❌ REMOVE LINE, Q5 ❌ CUT Telegram + email only, Q6 📦 ARCHIVE bill.bk, Q7 🔌 env-driven DB, Q9 ❌ keep optional) + §8-A Design Proposal (Inform/Repair FK-many + status machine on Inform, deprecate InformOption) + §8-B Design Proposal (Serial matching HTMX — live lookup + audit trail) + ปรับ §5/§7/§6.3 ให้สอดคล้อง decisions |
+| 1.1 | 2026-08-25 | Lin (หลิน) | Update per Louis decisions 25 ส.ค. 2026 — Decision Log 10 ข้อ (Q1 exclude-fix, Q2/Q3 DELETE/MOOT, Q4 REMOVE LINE, Q5 CUT Telegram, Q6 ARCHIVE bill.bk, Q7 env-driven DB, Q9 keep optional) + §8-A Design Proposal (Inform/Repair FK-many + status machine on Inform, deprecate InformOption) + §8-B Design Proposal (Serial matching HTMX — live lookup + audit trail) + ปรับ §5/§7/§6.3 ให้สอดคล้อง decisions |
 | 1.0 | 2026-08-24 | Lin (หลิน) | Initial PRD — Full audit + System Map 9 ระบบ + 8 workflows (mermaid) + Integrations + NFR + Target State + 10 Open Questions |
 
 ---
