@@ -740,24 +740,33 @@ flowchart LR
 
 ## 7. Target State — Refactor Roadmap
 
-### 7.1 Phase 0 — Cleanup (ก่อน upgrade) — *อัปเดตตาม Decisions 24 ส.ค. 2026*
+### 7.1 Phase 0 — Cleanup (ก่อน upgrade) — *✅ DONE 24 ส.ค. 2026 — PR #2–#5 merged*
 
-- **Q6 ARCHIVE:** `git mv bill.bk/ → 04-Archives/bill.bk-2026-08-24/` (นอก working tree, เก็บไว้ search)
-- **Q2 DELETE + Q4 REMOVE:** ลบ `announce/serializers.py` ทั้งไฟล์ + ลบ `config/LineNotify.py` + `config/sendline.py` + `connect_api.js` (หรือ archive ไป `docs/archive/`) + ลบ LINE send ใน `announce/views.py`/`inform/views.py` + deprecate `account.LineToken` (หรือคงไว้แต่ไม่ใช้)
-- **Q1 FIX:** แก้ `account/context_processors.py::document_not_accepted` + `account/helpers.py::get_inbox_counts` + `document/views.py::DocumentHomeView` จาก `abs(len - len)` → `exclude(pk__in Depart...)` — badge สารบรรณถูกต้อง (fix menu badge)
-- **Q9 keep optional:** คง `Journal.header null=True` — แก้แค่ typo `prfile` → `profile` ใน `assign/views.py`
-- แก้บัค typo อื่น `document/views.py` (`requst`, `self.template`, `Operator` unused) + `Operator.__str__` ใช้ `self.document.doc_no` (ไม่มี field) → จะ `AttributeError` + `repair/models.py` `__str__` ใช้ `self.inform.status`
-- Normalize `is_delete` vs `is_deleted`, `reciever` typo (ควรเป็น `receiver` แต่ต้อง migrate — ทำ soft, ค่อย rename column)
-- ตั้ง `ruff`/`basedpyright` + pre-commit, แยก `requirements.in` → lock `requirements.txt` ด้วย `uv`
-- **Q7 prepare switch:** `config/settings.py` → `DATABASES` อ่านจาก `.env` (`DATABASE_URL` / `POSTGRES_*`) — default SQLite, ถ้า `.env` มี Postgres ก็ switch ทันที (ดู §7.2)
+**ผลงาน Phase 0 (merged แล้ว):**
+
+| PR | เนื้อหา |
+|---|---|
+| #2 | gitignore hygiene — untrack db.sqlite3/lazygit/hello.py/*.bk/media |
+| #3 | migration reset — ลบ 178 migration files (fresh baseline รอหลัง refactor) |
+| #4 | LINE Notify stack removal — serializers.py/connect_api.js/telegram.py/LineNotify.py/sendline.py + LineToken model + notification blocks · **เก็บ Profile.line_id** (contact info) |
+| #5 | badge fix (`abs()`→`exclude()`) · env-driven DATABASES + `.env.example` · ruff + pre-commit · bill.bk archive · lint bug fixes ×6 |
+
+**Decision เพิ่มเติม (24 ส.ค. 2026 — Louis approved):** เปลี่ยน dependency ที่ดูแลไม่ดี → ทางที่ดีกว่า
+
+| เดิม | ใหม่ | เหตุผล | PR |
+|---|---|---|---|
+| `django-jazzmin` 2.6.0 (release ล่าสุด Nov-2022 💀) | **`django-unfold`** | active · Tailwind + HTMX/Alpine native = ตรง roadmap Phase 2 · MIT | #6 |
+| `django-ckeditor` 6.5.1 (CKEditor 4 EOL Jun-2023 + unfixed security issues ⚠️) | **`django-prose-editor`** + sanitize | แนะนำโดย maintainer เดิมเอง · ProseMirror/Tiptap · BSD-3 · server-side nh3 sanitizer | #7 |
+
+> DB rebuild (`makemigrations` fresh baseline → migrate → createsuperuser → loaddata auth fixture) = **เลื่อนไปหลัง refactor เสร็จ** (Louis 24 ส.ค.) — backup ครบนอก repo (`../tcc_webApp_{db_backup,media_backup,auth_fixture}_2026-08-24.*`)
 
 ### 7.2 Phase 1 — Django 4.2 → 5.2 LTS Upgrade
 
 | งาน | รายละเอียด | Watch out |
 |---|---|---|
 | **ลบ `USE_L10N`** | เอา `USE_L10N = True` ออกจาก `settings.py` — Django 5.0 ลบ setting นี้แล้ว จะ `SystemCheckError` ถ้าค้าง | `USE_I18N` ยังอยู่ |
-| **jazzmin compat** | `django-jazzmin==2.6.0` เคยมีปัญหากับ Django 5.0+ (template tags) — ต้องอัพเป็น `>=3.x` หรือ pin Django 5.2 ที่เข้ากัน | ทดสอบ admin ทุกหน้า |
-| **ckeditor compat** | `django-ckeditor==6.5.1` — เช็คกับ Django 5.2, อาจต้องย้ายไป `django-ckeditor-5` | RichTextField ยังใช้ได้ |
+| **unfold bump** | ✅ jazzmin ถูกแทนด้วย unfold แล้ว (PR #6) — บน Django 4.2 pin `0.89.0`; ตอนขึ้น 5.2 bump เป็น latest (0.104+) พร้อมทดสอบ admin | ทดสอบ admin ทุกหน้า |
+| ~~ckeditor compat~~ | ✅ **MOOT** — django-ckeditor ถูกแทนด้วย django-prose-editor แล้ว (PR #7) · prose-editor รองรับ Django 5.x ตรงๆ | ตรวจ HTML เก่า render |
 | **crispy-forms** | `CRISPY_TEMPLATE_PACK="bootstrap4"` — Django 5.2 ยังรองรับ แต่ถ้าย้าย BS5 ต้องเปลี่ยน pack | |
 | **คุยกับ `TIME_ZONE`/`USE_TZ`** | ปัจจุบัน `USE_TZ=False` เก็บ naive — ถ้าเปิด `True` ต้อง migrate datetime ทั้ง DB | แนะคง `False` ก่อน แล้วค่อย plan แยก |
 | **Python** | `Python 3.13` พร้อมสำหรับ Django 5.2 (รองรับ 3.10–3.13) | อย่าอัพ 3.14 จนกว่า Django รองรับ |
