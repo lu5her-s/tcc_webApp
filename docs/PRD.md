@@ -1,8 +1,8 @@
 # PRD — TCC WebApp (ระบบบริหารงานภายใน ทค.)
 
-> **Version:** 1.1 · **Date:** 2026-08-25 · **Author:** Lin (หลิน) — Product Owner · **Status:** Draft / Single Source of Truth ก่อน Refactor (อัปเดตตาม Decisions ของ Louis 25 ส.ค. 2026)  
+> **Version:** 1.1 · **Date:** 2026-08-24 · **Author:** Lin (หลิน) — Product Owner · **Status:** Draft / Single Source of Truth ก่อน Refactor (อัปเดตตาม Decisions ของ Louis 24 ส.ค. 2026)  
 > **Repo:** `/home/lu5her/01-Projects/tcc_webApp` · **Branch:** `docs/prd-tcc-webapp` · **Stack:** Django 4.2 (EOL Apr 2026) · Python 3.13 venv · SQLite  
-> **ผู้มอบหมาย:** Aiy (อัย) — Strategic Orchestrator (Fast-track) · **ผู้รับรอง:** Louis · **Decisions locked:** 2026-08-25
+> **ผู้มอบหมาย:** Aiy (อัย) — Strategic Orchestrator (Fast-track) · **ผู้รับรอง:** Louis · **Decisions locked:** 2026-08-24
 
 ---
 
@@ -714,7 +714,7 @@ flowchart LR
 
 ### 6.3 On-Prem Deployment Assumption
 
-| ประเด็น | ค่าปัจจุบัน | Target (อัปเดต Q7 — 25 ส.ค. 2026) |
+| ประเด็น | ค่าปัจจุบัน | Target (อัปเดต Q7 — 24 ส.ค. 2026) |
 |---|---|---|
 | **DB** | SQLite (`db.sqlite3` in repo, dirty git) | **Env-driven switch — default SQLite (keep for testing), Postgres = config change only** (`DATABASE_URL` ใน `.env`), production จะห่อ Docker ทีหลัง — เตรียม mechanism ตอนนี้ ไม่ migrate ข้อมูลตอนนี้ → ค่อย `pg_dump` เมื่อพร้อม |
 | **App server** | `DEBUG=True`, `runserver` | Gunicorn + Nginx (on-prem VM), `DEBUG=False`, `ALLOWED_HOSTS` ระบุ host จริง |
@@ -740,9 +740,9 @@ flowchart LR
 
 ## 7. Target State — Refactor Roadmap
 
-### 7.1 Phase 0 — Cleanup (ก่อน upgrade) — *อัปเดตตาม Decisions 25 ส.ค. 2026*
+### 7.1 Phase 0 — Cleanup (ก่อน upgrade) — *อัปเดตตาม Decisions 24 ส.ค. 2026*
 
-- **Q6 ARCHIVE:** `git mv bill.bk/ → 04-Archives/bill.bk-2026-08-25/` (นอก working tree, เก็บไว้ search)
+- **Q6 ARCHIVE:** `git mv bill.bk/ → 04-Archives/bill.bk-2026-08-24/` (นอก working tree, เก็บไว้ search)
 - **Q2 DELETE + Q4 REMOVE:** ลบ `announce/serializers.py` ทั้งไฟล์ + ลบ `config/LineNotify.py` + `config/sendline.py` + `connect_api.js` (หรือ archive ไป `docs/archive/`) + ลบ LINE send ใน `announce/views.py`/`inform/views.py` + deprecate `account.LineToken` (หรือคงไว้แต่ไม่ใช้)
 - **Q1 FIX:** แก้ `account/context_processors.py::document_not_accepted` + `account/helpers.py::get_inbox_counts` + `document/views.py::DocumentHomeView` จาก `abs(len - len)` → `exclude(pk__in Depart...)` — badge สารบรรณถูกต้อง (fix menu badge)
 - **Q9 keep optional:** คง `Journal.header null=True` — แก้แค่ typo `prfile` → `profile` ใน `assign/views.py`
@@ -780,7 +780,7 @@ flowchart LR
 - ใช้ `django-htmx` middleware + `request.htmx` check ใน view → ถ้า `HX-Request` ส่ง partial, Else ส่ง full page (progressive enhancement)
 - `context_processors` counts → ย้ายเป็น `HX-Trigger` header หรือ `{% include "components/notification_list.html" %}` partial ที่ HTMX swap ได้
 
-### 7.4 Phase 3 — DRF API (เฉพาะจุดที่มี consumer จริง) — **LOCKED: MOOT per Q2/Q3 (25 ส.ค. 2026)**
+### 7.4 Phase 3 — DRF API (เฉพาะจุดที่มี consumer จริง) — **LOCKED: MOOT per Q2/Q3 (24 ส.ค. 2026)**
 
 > **Decision Q2=DELETE, Q3=MOOT, Q4=REMOVE, Q5=CUT** — Louis สั่ง **ไม่ทำ `/api/announce` สำหรับ LINE bot** — ไม่ติดตั้ง DRF เพื่อจุดนี้ — `email (sendmail.py)` เป็นช่องทางเดียวชั่วคราว — รอประชุม ส่วนกลาง หลัง production launch ค่อยเลือก notification channel ใหม่ด้วย fresh approach
 
@@ -1097,7 +1097,7 @@ journal/
 
 | Version | Date | Author | Description |
 |---|---|---|---|
-| 1.1 | 2026-08-25 | Lin (หลิน) | Update per Louis decisions 25 ส.ค. 2026 — Decision Log 10 ข้อ (Q1 exclude-fix, Q2/Q3 DELETE/MOOT, Q4 REMOVE LINE, Q5 CUT Telegram, Q6 ARCHIVE bill.bk, Q7 env-driven DB, Q9 keep optional) + §8-A Design Proposal (Inform/Repair FK-many + status machine on Inform, deprecate InformOption) + §8-B Design Proposal (Serial matching HTMX — live lookup + audit trail) + ปรับ §5/§7/§6.3 ให้สอดคล้อง decisions |
+| 1.1 | 2026-08-24 | Lin (หลิน) | Update per Louis decisions 24 ส.ค. 2026 — Decision Log 10 ข้อ (Q1 exclude-fix, Q2/Q3 DELETE/MOOT, Q4 REMOVE LINE, Q5 CUT Telegram, Q6 ARCHIVE bill.bk, Q7 env-driven DB, Q9 keep optional) + §8-A Design Proposal (Inform/Repair FK-many + status machine on Inform, deprecate InformOption) + §8-B Design Proposal (Serial matching HTMX — live lookup + audit trail) + ปรับ §5/§7/§6.3 ให้สอดคล้อง decisions |
 | 1.0 | 2026-08-24 | Lin (หลิน) | Initial PRD — Full audit + System Map 9 ระบบ + 8 workflows (mermaid) + Integrations + NFR + Target State + 10 Open Questions |
 
 ---
