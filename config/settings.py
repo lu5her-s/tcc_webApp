@@ -19,6 +19,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 
+from django.templatetags.static import static
+from django.urls import reverse_lazy
 from dotenv import dotenv_values
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -61,18 +63,18 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "django_extensions",
     # internal app
-    "account",
-    "announce",
-    "document",
-    "journal",
-    "assign",
-    "car",
-    "asset",
-    "inform",
-    "repair",
-    "parcel",
-    "operation",
-    "cart.apps.CartConfig",
+    # "account",
+    # "announce",
+    # "document",
+    # "journal",
+    # "assign",
+    # "car",
+    # "asset",
+    # "inform",
+    # "repair",
+    # "parcel",
+    # "operation",
+    # "cart.apps.CartConfig",
 ]
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
@@ -101,14 +103,14 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 # for render app context
-                "account.context_processors.assign_not_accepted",
-                "account.context_processors.announce_not_read",
-                "account.context_processors.document_not_accepted",
-                "account.context_processors.new_inform",
-                "account.context_processors.car_booking",
-                "account.context_processors.count_total",
+                # "account.context_processors.assign_not_accepted",
+                # "account.context_processors.announce_not_read",
+                # "account.context_processors.document_not_accepted",
+                # "account.context_processors.new_inform",
+                # "account.context_processors.car_booking",
+                # "account.context_processors.count_total",
                 # 'account.context_processors.items_on_hand',
-                "parcel.context_processors.items_on_hand",
+                # "parcel.context_processors.items_on_hand",
                 # "car.context_processors.car_booking",
             ],
         },
@@ -190,9 +192,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MEDIA_URL = "media/"
 MEDIA_ROOT = Path.joinpath(BASE_DIR, "media")
 
-LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "home"
-LOGOUT_REDIRECT_URL = "login"
+# LOGIN_URL = "login"
+# LOGIN_REDIRECT_URL = "home"
+# LOGOUT_REDIRECT_URL = "login"
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
@@ -204,8 +206,24 @@ INTERNAL_IPS = [
 UNFOLD = {
     "SITE_TITLE": "TCC Admin",
     "SITE_HEADER": "TCC Admin",
-    "SITE_LOGO": "assets/img/tcc_logo.png",
+    # "SITE_ICON": "assets/img/tcc_logo.png",
     "COPYRIGHT": "Telecommunication and Network",
+    "SHOW_VIEW_ON_SITE": True,  # show/hide "View on site" button, default: True
+    "SITE_ICON": {
+        "light": lambda request: static("assets/img/tcc_logo.png"),  # light mode
+        "dark": lambda request: static("assets/img/tcc_logo.png"),  # dark mode
+    },
+    # "SITE_LOGO": lambda request: static("logo.svg"),  # both modes, optimise for 32px height
+    "SITE_LOGO": {
+        "light": lambda request: static("assets/img/tcc_logo.png"),  # light mode
+        "dark": lambda request: static("assets/img/tcc_logo.png"),  # dark mode
+    },
+    "LOGIN": {
+        # "image": lambda request: static("assets/img/tcc_logo_admin.png"),
+        "redirect_after": lambda request: reverse_lazy("admin:APP_MODEL_changelist"),
+        # Inherits from `unfold.forms.AuthenticationForm`
+        # "form": "app.forms.CustomLoginForm",
+    },
 }
 
 # for use out by ngrok-free
