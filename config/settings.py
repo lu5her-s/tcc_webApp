@@ -47,7 +47,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-    "jazzmin",
+    "unfold",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -210,16 +210,11 @@ INTERNAL_IPS = [
     # 'localhost',
 ]
 
-JAZZMIN_SETTINGS = {
-    "site_title": "TCC Admin",
-    "site_header": "TCC Admin",
-    "site_logo": "assets/img/tcc_logo.png",
-    "copyright": "Telecommunication and Network",
-    "welcome_sign": "Welcome, TCC Admin",
-    #######
-    # css #
-    #######
-    # "custom_css": "assets/css/style.css",
+UNFOLD = {
+    "SITE_TITLE": "TCC Admin",
+    "SITE_HEADER": "TCC Admin",
+    "SITE_LOGO": "assets/img/tcc_logo.png",
+    "COPYRIGHT": "Telecommunication and Network",
 }
 
 # for use out by ngrok-free

@@ -7,6 +7,10 @@ from asset.models import StockItem
 from .models import Inform, InformProgress
 
 
+class MultipleFileInput(widgets.ClearableFileInput):
+    allow_multiple_selected = True
+
+
 class InformForm(forms.ModelForm):
     """
     Form for inform
@@ -16,9 +20,7 @@ class InformForm(forms.ModelForm):
     """
 
     images = forms.ImageField(
-        widget=widgets.ClearableFileInput(
-            attrs={"class": "form-control", "multiple": True}
-        ),
+        widget=MultipleFileInput(attrs={"class": "form-control"}),
         label="ภาพประกอบการแจ้งซ่อม",
         required=False,
     )

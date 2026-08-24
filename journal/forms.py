@@ -10,11 +10,13 @@ class DateInput(widgets.DateTimeBaseInput):
     format_key = "DATE_INPUT_FORMATS"
 
 
+class MultipleFileInput(widgets.ClearableFileInput):
+    allow_multiple_selected = True
+
+
 class JournalForm(forms.ModelForm):
     images = forms.ImageField(
-        widget=widgets.ClearableFileInput(
-            attrs={"class": "form-control", "multiple": True}
-        ),
+        widget=MultipleFileInput(attrs={"class": "form-control"}),
         label="ภาพการปฏิบัติงาน",
         required=False,
     )

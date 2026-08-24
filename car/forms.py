@@ -5,6 +5,10 @@ from account.models import Profile
 from car.models import Car, CarBooking, CarFix
 
 
+class MultipleFileInput(widgets.ClearableFileInput):
+    allow_multiple_selected = True
+
+
 class DateInput(widgets.DateTimeBaseInput):
     """DateInput."""
 
@@ -21,12 +25,7 @@ class CarForm(forms.ModelForm):
     """
 
     images = forms.ImageField(
-        widget=widgets.ClearableFileInput(
-            attrs={
-                "class": "form-control",
-                "multiple": True,
-            }
-        ),
+        widget=MultipleFileInput(attrs={"class": "form-control"}),
         label="ภาพเพิ่มเติม",
         required=False,
     )
@@ -213,12 +212,7 @@ class CarRequestFixForm(forms.ModelForm):
     images = forms.ImageField(
         label="รูปภาพ",
         required=False,
-        widget=forms.ClearableFileInput(
-            attrs={
-                "class": "form-control",
-                "multiple": True,
-            }
-        ),
+        widget=MultipleFileInput(attrs={"class": "form-control"}),
     )
 
     class Meta:
@@ -277,12 +271,7 @@ class CarAfterFixForm(forms.ModelForm):
     fixed_image = forms.ImageField(
         label="รูปภาพการซ่อม",
         required=False,
-        widget=forms.FileInput(
-            attrs={
-                "class": "form-control",
-                "multiple": True,
-            }
-        ),
+        widget=MultipleFileInput(attrs={"class": "form-control"}),
     )
 
     class Meta:

@@ -4,6 +4,10 @@ from django.forms import widgets
 from .models import Announce
 
 
+class MultipleFileInput(widgets.ClearableFileInput):
+    allow_multiple_selected = True
+
+
 class AnnounceForm(forms.ModelForm):
     """
     ModelForm for Announce creation
@@ -14,16 +18,12 @@ class AnnounceForm(forms.ModelForm):
     """
 
     files = forms.FileField(
-        widget=forms.ClearableFileInput(
-            attrs={"class": "form-control", "multiple": True}
-        ),
+        widget=MultipleFileInput(attrs={"class": "form-control"}),
         label="เอกสารที่เกี่ยวข้อง",
         required=False,
     )
     images = forms.ImageField(
-        widget=forms.ClearableFileInput(
-            attrs={"class": "form-control", "multiple": True}
-        ),
+        widget=MultipleFileInput(attrs={"class": "form-control"}),
         label="รูปภาพ",
         required=False,
     )
