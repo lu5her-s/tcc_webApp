@@ -1,5 +1,6 @@
-from account.models import Department, Profile
 from django import forms
+
+from account.models import Department, Profile
 
 from .models import (
     ParcelReturnDetail,

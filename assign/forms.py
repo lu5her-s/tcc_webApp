@@ -5,10 +5,10 @@
 # Date              : Fri Oct, 28 2022, 21:13 301
 # Last Modified Date: Fri Nov, 11 2022, 22:58 315
 # Last Modified By  : lu5her <lu5her@mail>
-from account.models import Profile
 from django import forms
 from django.forms import widgets
 
+from account.models import Profile
 from assign.models import Assign, AssignImage, AssignProgress
 
 

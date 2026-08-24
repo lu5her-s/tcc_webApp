@@ -9,16 +9,17 @@
 import os
 from itertools import chain
 
-from account.models import Department, Profile
-from asset.models import Category, ItemHistory, ItemOnHand, StockItem
-from cart.cart import Cart
-from config.utils import generate_pdf
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView, View
+
+from account.models import Department, Profile
+from asset.models import Category, ItemHistory, ItemOnHand, StockItem
+from cart.cart import Cart
+from config.utils import generate_pdf
 
 from .forms import RequestBillDetailForm, ReturnBillDetailForm, SelectStockForm
 from .models import (

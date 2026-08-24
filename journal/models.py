@@ -1,7 +1,8 @@
-from account.models import Profile
 from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import reverse
+
+from account.models import Profile
 
 # Create your models here.
 

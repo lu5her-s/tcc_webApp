@@ -6,10 +6,13 @@
 # Last Modified Date: Fri Apr, 19 2024, 16:36 110
 # Last Modified By  : lu5her <lu5her@mail>
 # -----
-from account.models import Department
+import uuid
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import reverse
+
+from account.models import Department
 
 # Create your models here.
 

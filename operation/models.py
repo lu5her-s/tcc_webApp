@@ -9,10 +9,11 @@
 import os
 from datetime import datetime
 
-from account.models import Department
-from car.models import CarBooking
 from django.contrib.auth.models import User
 from django.db import models
+
+from account.models import Department
+from car.models import CarBooking
 from inform.models import Inform
 from parcel.models import ParcelRequest, ParcelReturn
 

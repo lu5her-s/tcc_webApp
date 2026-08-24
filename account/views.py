@@ -7,25 +7,18 @@
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 
-from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import PasswordChangeView
-from django.contrib.contenttypes.models import Q
 from django.http import JsonResponse
-from django.shortcuts import HttpResponseRedirect, get_object_or_404, render
+from django.shortcuts import HttpResponseRedirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
     DetailView,
     ListView,
     TemplateView,
-)
-from .helpers import (
-    get_inbox_counts,
-    get_journals,
-    get_not_read_announces,
-    get_today_range,
 )
 
 from account.forms import (
@@ -44,10 +37,16 @@ from announce.models import (
     Comment,
 )
 from assign.models import Assign
-from document.models import Depart, Document
 from inform.models import Inform
 from journal.models import Journal
 from parcel.models import ParcelRequest, RequestBillDetail
+
+from .helpers import (
+    get_inbox_counts,
+    get_journals,
+    get_not_read_announces,
+    get_today_range,
+)
 
 # Create your views here.
 
@@ -126,7 +125,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
         # all_department = Depart.objects.filter(
         #     reciever__profile__sector=self.request.user.profile.sector
         # ).count()
-        context["new_inbox"] = str(abs(all_inbox - all_department))
+        context["new_inbox"] = str(new_inbox)
         today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
         today_max = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
 

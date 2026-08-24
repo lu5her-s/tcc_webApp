@@ -7,5 +7,5 @@ def assign_not_accepted(request):
             assigned_to=request.user.profile,
             accepted=False
         )}
-    except:
+    except Exception:
         return {'assign_not_accepted': None}

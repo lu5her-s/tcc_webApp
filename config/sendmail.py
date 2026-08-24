@@ -1,6 +1,6 @@
-from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail
 
 # Assuming your Profile model is in the same app
 # If not, adjust the import path accordingly

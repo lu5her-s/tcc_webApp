@@ -7,10 +7,12 @@
 # Last Modified By  : lu5her <lu5her@mail>
 from datetime import datetime
 
-from account.models import Department, Profile
-from asset.models import Category, StockItem
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse_lazy
+
+from account.models import Department, Profile
+from asset.models import Category, StockItem
 
 # Create your models here.
 

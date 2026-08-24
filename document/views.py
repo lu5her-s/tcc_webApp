@@ -7,7 +7,6 @@
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 
-from account.models import Sector
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import HttpResponseRedirect, redirect, render, reverse
 from django.urls import reverse_lazy
@@ -20,6 +19,7 @@ from django.views.generic import (
     UpdateView,
 )
 
+from account.models import Sector
 from document.forms import DocumentForm
 from document.models import Depart, Document
 
@@ -41,13 +41,13 @@ class DocumentHomeView(LoginRequiredMixin, TemplateView):
             author__profile__sector=self.request.user.profile.sector
         )
         # context['new_inbox'] = Department.objects.filter(recieved=False)
-        all_inbox = Document.objects.filter(
+        inbox = Document.objects.filter(
             assigned_sector=self.request.user.profile.sector
-        ).count()
-        all_department = Depart.objects.filter(
+        )
+        accepted_ids = Depart.objects.filter(
             reciever__profile__sector=self.request.user.profile.sector
-        ).count()
-        context["new_inbox"] = str(abs(all_inbox - all_department))
+        ).values_list("document_id", flat=True)
+        context["new_inbox"] = str(inbox.exclude(id__in=accepted_ids).count())
 
         today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
         today_max = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
@@ -149,7 +149,7 @@ class InboxDetailView(LoginRequiredMixin, DetailView):
                 reciever__profile__sector=self.request.user.profile.sector,
             )
             context["accepted"] = d
-        except:
+        except Exception:
             context["accepted"] = None
         return context
 
@@ -199,7 +199,7 @@ class OutboxDetailView(LoginRequiredMixin, DetailView):
                 reciever__profile__sector=self.request.user.profile.sector
             )
             context["accepted"] = d
-        except:
+        except Exception:
             context["accepted"] = None
         context["all_accepted"] = (
             Document.objects.get(pk=self.get_object().pk)
@@ -244,7 +244,7 @@ class DocumentUpdateView(LoginRequiredMixin, UpdateView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        form = self.form_class(requst.POST, request.FILES, instance=self.object)
+        form = self.form_class(request.POST, request.FILES, instance=self.object)
 
         if form.is_valid():
             form_save = form.save(commit=False)
@@ -293,7 +293,7 @@ class DocumentDelete(LoginRequiredMixin, DeleteView):
             self.object.save()
             return HttpResponseRedirect(self.get_success_url())
         else:
-            return super().post(s * args, **kwargs)
+            return super().post(*args, **kwargs)
 
 
 def accept_document(request, pk):

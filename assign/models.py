@@ -7,10 +7,10 @@
 # Last Modified By  : lu5her <lu5her@mail>
 from datetime import datetime
 
-from account.models import Profile
-from ckeditor.fields import RichTextField
 from django.contrib.auth.models import User
 from django.db import models
+
+from account.models import Profile
 from inform.models import Inform
 
 # Create your models here.

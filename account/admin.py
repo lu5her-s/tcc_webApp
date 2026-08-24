@@ -7,7 +7,7 @@
 # Last Modified By  : lu5her <lu5her@mail>
 from django.contrib import admin
 
-from account.models import Department, Profile, Rank, Sector, Position
+from account.models import Department, Position, Profile, Rank, Sector
 
 # Register your models here.
 

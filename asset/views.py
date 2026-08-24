@@ -337,7 +337,7 @@ class StockItemUpdateView(LoginRequiredMixin, UpdateView):
         if form.is_valid():
             images = request.FILES.getlist("images")
             form_save = form.save()
-            form_id = get_list_or_404(StockItem, pk=form_save.pk)
+            get_list_or_404(StockItem, pk=form_save.pk)
 
             if images:
                 for image in images:

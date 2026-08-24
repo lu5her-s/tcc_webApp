@@ -1,6 +1,4 @@
-from .models import ParcelRequest, RequestBillDetail, RequestItem
-from asset.models import StockItem, ItemOnHand
-from itertools import chain
+from asset.models import ItemOnHand, StockItem
 
 
 def items_on_hand(request):
@@ -16,5 +14,5 @@ def items_on_hand(request):
         # all_on_hand = list(chain(items_on_hand, item_remove))
         all_on_hand = ItemOnHand.objects.filter(user=request.user, item__status=StockItem.Status.ON_HAND)
         return {'items_on_hand': all_on_hand}
-    except:
+    except Exception:
         return {'items_on_hand': None}

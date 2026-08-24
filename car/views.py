@@ -155,7 +155,7 @@ class CarDetailView(LoginRequiredMixin, DetailView):
                 pk=self.object.pk
             ).car_booking.all()
             context["booking"] = Car.objects.get(pk=self.object.pk).car_booking.get()
-        except:
+        except Exception:
             context["booking_list"] = None
             context["booking"] = None
         return context
@@ -224,7 +224,7 @@ class CarBookingCreateView(LoginRequiredMixin, CreateView):
         form = self.form_class(request.POST)
 
         if form.is_valid():
-            form_save = form.save()
+            form.save()
             car = Car.objects.get(pk=kwargs["pk"])
             car.status = Car.Status.PENDING
             car.save()

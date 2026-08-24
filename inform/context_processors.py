@@ -1,5 +1,6 @@
 from .models import Inform
 
+
 def new_inform(request):
     try:
         if request.user.groups.filter(name__in=['Manager', 'Technical', 'Command']).exists():
@@ -9,5 +10,5 @@ def new_inform(request):
             return {'new_inform': new_inform}
         else:
             return {'new_inform': None}
-    except:
+    except Exception:
         return {'new_inform': None}
