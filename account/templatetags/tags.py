@@ -1,7 +1,9 @@
 import math
+from textwrap import wrap
+
 from django import template
 from django.db.models import Q
-from textwrap import wrap
+
 from asset.models import StockItem
 
 register = template.Library()
@@ -52,7 +54,7 @@ def thaidate(var):
         m = n[var.month - 1]
         y = var.year + 543
         return f"{d} {m} {y}"
-    except:
+    except Exception:
         return "-"
 
 
@@ -64,7 +66,7 @@ def thaiyear(var):
     try:
         y = var + 543
         return f"{y}"
-    except:
+    except Exception:
         return "-"
 
 
@@ -92,7 +94,7 @@ def thaidate_short(var):
             return f"{d} {m} {y}"
         else:
             return "___/___/___"
-    except:
+    except Exception:
         return "___/___/___"
     # if var:
     #     n = [
@@ -130,7 +132,7 @@ def ThaiBahtConversion(amount_number):
     pt = amount_number.find(".")
     number, fraction = "", ""
     amount_number1 = amount_number.split(".")
-    if pt == False:
+    if pt == -1:
         number = amount_number
     else:
         amount_number = amount_number.split(".")

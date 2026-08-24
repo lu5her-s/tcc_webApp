@@ -1,5 +1,6 @@
-from docx import Document
 import subprocess
+
+from docx import Document
 
 
 class DocxFiller:

@@ -1,5 +1,6 @@
 from ckeditor.fields import RichTextField
 from django.db import models
+
 from inform.models import Inform
 
 # Create your models here.

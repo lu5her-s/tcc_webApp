@@ -15,17 +15,6 @@ from document.models import Depart, Document
 from journal.models import Journal
 
 
-class UserProfileMixin:
-    def get_user_profile_context(self):
-        user = self.request.user
-        context = {
-            "user_form": UserForm(instance=user),
-            "profile_form": ProfileForm(instance=user.profile),
-            "password_form": PasswordChangeForm(user),
-        }
-        return context
-
-
 def get_today_range():
     today_min = datetime.combine(date.today(), time.min)
     today_max = datetime.combine(date.today(), time.max)
@@ -34,9 +23,15 @@ def get_today_range():
 
 def get_inbox_counts(user):
     sector = user.profile.sector
-    all_inbox = Document.objects.filter(assigned_sector=sector).count()
-    all_department = Depart.objects.filter(reciever__profile__sector=sector).count()
-    new_inbox = abs(all_inbox - all_department)
+    inbox = Document.objects.filter(assigned_sector=sector)
+    accepted_ids = Depart.objects.filter(
+        reciever__profile__sector=sector
+    ).values_list("document_id", flat=True)
+    all_inbox = inbox.count()
+    all_department = Depart.objects.filter(
+        reciever__profile__sector=sector
+    ).count()
+    new_inbox = inbox.exclude(id__in=accepted_ids).count()
     return all_inbox, all_department, new_inbox
 
 
@@ -52,5 +47,5 @@ def get_journals(user):
 def get_not_read_announces(user):
     try:
         return Announce.objects.filter(~Q(author=user) & ~Q(reads__id=user.id))
-    except:
+    except Exception:
         return Announce.objects.none()

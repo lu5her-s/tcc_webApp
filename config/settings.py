@@ -32,12 +32,13 @@ config = dotenv_values(".env")
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-61v=ike9p3)ol&xa33bkw=&ogpw^&*jnh+0zt3afnoq8u5q7)3"
-# SECRET_KEY = os.environ['SECRET_KEY']
-# SECRET_KEY = config["SECRET_KEY"]
+SECRET_KEY = config.get(
+    "SECRET_KEY",
+    "django-insecure-61v=ike9p3)ol&xa33bkw=&ogpw^&*jnh+0zt3afnoq8u5q7)3",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.get("DEBUG", "True").lower() in ("true", "1", "yes")
 # DEBUG = config["DEBUG"]
 
 ALLOWED_HOSTS = ["*"]
@@ -127,12 +128,24 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+DB_ENGINE = config.get("DB_ENGINE", "django.db.backends.sqlite3")
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": DB_ENGINE,
+        "NAME": config.get("DB_NAME", str(BASE_DIR / "db.sqlite3")),
     }
 }
+
+if DB_ENGINE == "django.db.backends.postgresql":
+    DATABASES["default"].update(
+        {
+            "HOST": config.get("DB_HOST", "localhost"),
+            "PORT": config.get("DB_PORT", "5432"),
+            "USER": config.get("DB_USER", ""),
+            "PASSWORD": config.get("DB_PASSWORD", ""),
+        }
+    )
 
 
 # Password validation

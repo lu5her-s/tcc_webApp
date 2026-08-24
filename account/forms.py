@@ -10,7 +10,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import widgets
 
-from account.models import Position, Profile, Rank, Sector
+from account.models import Profile
 
 
 # ===== Helpers for DRY code =====

@@ -1,5 +1,6 @@
-from asset.models import Category, StockItem
 from django.conf import settings
+
+from asset.models import Category, StockItem
 
 
 class Cart:

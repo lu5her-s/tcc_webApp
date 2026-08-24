@@ -1,8 +1,7 @@
-from ckeditor.widgets import CKEditorWidget
 from django import forms
 from django.forms import widgets
 
-from .models import Announce, Comment
+from .models import Announce
 
 
 class AnnounceForm(forms.ModelForm):

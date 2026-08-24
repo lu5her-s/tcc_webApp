@@ -1,11 +1,11 @@
 from django.db.models import Q
-from assign.models import Assign
+
 from announce.models import Announce
+from assign.models import Assign
+from car.models import CarBooking
 from document.models import Depart, Document
 from inform.models import Inform
-from parcel.models import ParcelRequest, RequestBillDetail, RequestItem
 from operation.models import Operation
-from car.models import CarBooking
 
 
 def assign_not_accepted(request):
@@ -15,7 +15,7 @@ def assign_not_accepted(request):
                 assigned_to=request.user.profile, accepted=False
             )
         }
-    except:
+    except Exception:
         return {"assign_not_accepted": None}
 
 
@@ -26,20 +26,33 @@ def announce_not_read(request):
                 ~Q(author=request.user) & ~Q(reads__id=request.user.id)
             )
         }
-    except:
+    except Exception:
         return {"announce_not_read": None}
+
+
+def _documents_not_accepted_count(user) -> int:
+    """Documents assigned to the user's sector not yet accepted by anyone in it.
+
+    Replaces the old ``abs(len(inbox) - len(accepted))`` arithmetic, which
+    produced wrong counts whenever the two sets did not nest.
+    """
+    sector = user.profile.sector
+    accepted_ids = Depart.objects.filter(
+        reciever__profile__sector=sector
+    ).values_list("document_id", flat=True)
+    return (
+        Document.objects.filter(assigned_sector=sector)
+        .exclude(id__in=accepted_ids)
+        .count()
+    )
 
 
 def document_not_accepted(request):
     try:
-        all_inbox = Document.objects.filter(assigned_sector=request.user.profile.sector)
-        all_department = Depart.objects.filter(
-            reciever__profile__sector=request.user.profile.sector
-        )
-        not_accepted = abs(len(all_inbox) - len(all_department))
-        # context['new_inbox'] = str(abs(all_inbox - all_department))
-        return {"document_not_accepted": not_accepted}
-    except:
+        return {
+            "document_not_accepted": _documents_not_accepted_count(request.user)
+        }
+    except Exception:
         return {"document_not_accepted": None}
 
 
@@ -52,7 +65,7 @@ def new_inform(request):
             return {"new_inform": new_inform}
         else:
             return {"new_inform": None}
-    except:
+    except Exception:
         return {"new_inform": None}
 
 
@@ -63,7 +76,7 @@ def car_booking(request):
                 Q(approver=request.user.profile) & Q(status=CarBooking.Status.PENDING)
             )
         }
-    except:
+    except Exception:
         return {"car_booking": None}
 
 
@@ -78,11 +91,7 @@ def count_total(request):
             ~Q(author=request.user) & ~Q(reads__id=request.user.id)
         ).count()
 
-        all_inbox = Document.objects.filter(assigned_sector=request.user.profile.sector)
-        all_department = Depart.objects.filter(
-            reciever__profile__sector=request.user.profile.sector
-        )
-        document_not_accepted_count = abs(len(all_inbox) - len(all_department))
+        document_not_accepted_count = _documents_not_accepted_count(request.user)
         new_inform_count = 0
         if request.user.groups.filter(
             name__in=["Manager", "Technical", "Command"]
@@ -103,7 +112,7 @@ def count_total(request):
             + car_booking_count
         )
         return {"count_total": total_notification}
-    except:
+    except Exception:
         return {"count_total": None}
 
 

@@ -1,5 +1,5 @@
+
 from .models import CarBooking
-from django.db.models import Q
 
 
 def car_booking(request):
@@ -10,5 +10,5 @@ def car_booking(request):
             return {
                 "car_booking": CarBooking.objects.filter(approver=request.user.profile)
             }
-    except:
+    except Exception:
         return {"car_booking": None}

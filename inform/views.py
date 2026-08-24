@@ -8,7 +8,6 @@
 import datetime
 import os
 
-from config.utils import generate_pdf
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
@@ -20,9 +19,8 @@ from django.views.generic import (
     ListView,
     TemplateView,
 )
-from journal.models import Journal
-from repair.forms import Repair
 
+from config.utils import generate_pdf
 from inform.forms import (
     InformForm,
     InformProgress,
@@ -30,6 +28,7 @@ from inform.forms import (
     ProgressForm,
     ReviewForm,
 )
+from repair.forms import Repair
 
 from .models import (
     CommandReview,
@@ -299,25 +298,25 @@ class InformDetailView(LoginRequiredMixin, DetailView):
             context["customer_review"] = CustomerReview.objects.get(
                 inform=self.get_object()
             )
-        except:
+        except Exception:
             pass
         try:
             context["manager_review"] = ManagerReview.objects.get(
                 inform=self.get_object()
             )
-        except:
+        except Exception:
             pass
         try:
             context["command_review"] = CommandReview.objects.get(
                 inform=self.get_object()
             )
-        except:
+        except Exception:
             pass
         try:
             context["inform_options"] = InformOption.objects.get(
                 inform=self.get_object()
             )
-        except:
+        except Exception:
             pass
 
         if InformReject.objects.filter(inform=self.get_object()):
@@ -728,9 +727,7 @@ def repair_note(request, pk):
         repair_status = request.POST.get("status")
         note = request.POST.get("note")
 
-        repair_note = InformProgress.objects.create(
-            inform=inform, status=repair_status, note=note
-        )
+        InformProgress.objects.create(inform=inform, status=repair_status, note=note)
         inform.repair_status = repair_status
         inform.save(update_fields=["repair_status"])
 
@@ -770,9 +767,7 @@ def inform_reject(request, pk):
     inform = get_object_or_404(Inform, pk=pk)
     inform.approve_status = Inform.ApproveStatus.REJECT
     inform.save(update_fields=["approve_status"])
-    reject = InformReject.objects.create(
-        inform=inform, reason=request.POST.get("reason")
-    )
+    InformReject.objects.create(inform=inform, reason=request.POST.get("reason"))
     return redirect(reverse_lazy("inform:detail", kwargs={"pk": pk}))
 
 
@@ -1013,15 +1008,15 @@ def inform_to_pdf(request: HttpResponse, pk: int):
     inform = get_object_or_404(Inform, pk=pk)
     try:
         customer_review = CustomerReview.objects.get(inform=inform)
-    except:
+    except Exception:
         customer_review = None
     try:
         manager_review = ManagerReview.objects.get(inform=inform)
-    except:
+    except Exception:
         manager_review = None
     try:
         command_review = CommandReview.objects.get(inform=inform)
-    except:
+    except Exception:
         command_review = None
 
     context = {

@@ -7,8 +7,9 @@
 # Last Modified By  : lu5her <lu5her@mail>
 import os
 from io import BytesIO
-from typing import Any, Dict, List
+from typing import Any, Dict
 
+from django.conf import settings
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 

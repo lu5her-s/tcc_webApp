@@ -1,10 +1,10 @@
-from car.models import CarBooking
 from django import forms
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.forms import formset_factory, widgets
-from inform.models import Inform
 
+from car.models import CarBooking
+from inform.models import Inform
 from operation.models import ParcelRequest, ParcelReturn
 
 from . import models

@@ -1,9 +1,10 @@
+from unittest.mock import patch
+
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse_lazy
-from operation.models import Operation, Team
+
 from operation.forms import OperationForm, TeamForm
-from django.contrib.auth.models import User
-from unittest.mock import patch
 
 
 class OperationCreateViewTest(TestCase):

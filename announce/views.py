@@ -246,7 +246,7 @@ class AnnounceUpdateView(LoginRequiredMixin, UpdateView):
 
             if files:
                 for file in files:
-                    a_file = AnnounceFile.objects.create(announce=form_id, files=file)
+                    AnnounceFile.objects.create(announce=form_id, files=file)
                     # try:
                     # a_file = AnnounceFile.objects.get(announce=form_id)
                     # a_file.files = file

@@ -5,7 +5,6 @@
 # Date              : Fri Oct, 28 2022, 21:12 301
 # Last Modified Date: Fri Nov, 11 2022, 17:11 315
 # Last Modified By  : lu5her <lu5her@mail>
-from account.models import Profile
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import HttpResponseRedirect
@@ -19,14 +18,15 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
-from journal.models import Journal
 
+from account.models import Profile
 from assign.forms import AssignForm, NoteForm, ProgressForm
 from assign.models import (
     Assign,
     AssignImage,
     AssignProgress,
 )
+from journal.models import Journal
 
 # Create your views here.
 
