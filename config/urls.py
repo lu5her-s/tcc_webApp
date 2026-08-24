@@ -29,36 +29,34 @@ from django.urls import include, path
 # for test template
 from django.views.generic import TemplateView
 
-from account import views
+# from account import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("test/", TemplateView.as_view(template_name="test.html"), name="test"),
     # url for under development page
-    path(
-        "develop/", TemplateView.as_view(template_name="under_dev.html"), name="develop"
-    ),
-    path("", views.HomeView.as_view(), name="home"),
-    path("contact/", views.ContactView.as_view(), name="contact"),
+    path("develop/", TemplateView.as_view(template_name="under_dev.html"), name="develop"),
+    # path("", views.HomeView.as_view(), name="home"),
+    # path("contact/", views.ContactView.as_view(), name="contact"),
     # internal url
-    path("account/", include("account.urls")),
-    path("account/", include("django.contrib.auth.urls")),
-    path("announce/", include("announce.urls")),
-    path("document/", include("document.urls")),
-    path("journal/", include("journal.urls")),
-    path("assign/", include("assign.urls")),
-    path("car/", include("car.urls")),
-    path("asset/", include("asset.urls")),
-    path("inform/", include("inform.urls")),
-    path("repair/", include("repair.urls")),
-    path("parcel/", include("parcel.urls")),
-    path("cart/", include("cart.urls")),
-    path(
-        "operation/",
-        include(
-            "operation.urls",
-        ),
-    ),
+    # path("account/", include("account.urls")),
+    # path("account/", include("django.contrib.auth.urls")),
+    # path("announce/", include("announce.urls")),
+    # path("document/", include("document.urls")),
+    # path("journal/", include("journal.urls")),
+    # path("assign/", include("assign.urls")),
+    # path("car/", include("car.urls")),
+    # path("asset/", include("asset.urls")),
+    # path("inform/", include("inform.urls")),
+    # path("repair/", include("repair.urls")),
+    # path("parcel/", include("parcel.urls")),
+    # path("cart/", include("cart.urls")),
+    # path(
+    #     "operation/",
+    #     include(
+    #         "operation.urls",
+    #     ),
+    # ),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
