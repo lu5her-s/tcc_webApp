@@ -15,6 +15,10 @@ from asset.models import (
 )
 
 
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
 # ModelForm for categorie
 class CategoryForm(forms.ModelForm):
     """ModelForm for categorie"""
@@ -100,12 +104,7 @@ class StockItemForm(forms.ModelForm):
     """
 
     images = forms.ImageField(
-        widget=forms.ClearableFileInput(
-            attrs={
-                "class": "form-control",
-                "multiple": True,
-            }
-        ),
+        widget=MultipleFileInput(attrs={"class": "form-control"}),
         label="ภาพพัสดุ",
         required=False,
     )
