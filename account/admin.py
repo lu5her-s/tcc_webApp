@@ -7,7 +7,7 @@
 # Last Modified By  : lu5her <lu5her@mail>
 from django.contrib import admin
 
-from account.models import Department, LineToken, Profile, Rank, Sector, Position
+from account.models import Department, Profile, Rank, Sector, Position
 
 # Register your models here.
 
@@ -43,17 +43,8 @@ class ProfileAdmin(admin.ModelAdmin):
     full_name.short_description = "Full Name"
 
 
-@admin.register(LineToken)
-class LineTokenAdmin(admin.ModelAdmin):
-    list_display = ("name", "token")
-    list_filter = ("name",)
-    search_fields = ("name", "token")
-    list_editable = ("token",)
-
-
 # admin.site.register(Profile)
 admin.site.register(Rank)
 admin.site.register(Sector)
 admin.site.register(Position)
-# admin.site.register(LineToken)
 admin.site.register(Department)

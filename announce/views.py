@@ -4,7 +4,6 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
-from django.utils.html import strip_tags
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -13,10 +12,8 @@ from django.views.generic import (
     UpdateView,
 )
 
-from account.models import LineToken
 from announce.forms import AnnounceForm
 from announce.models import Announce, AnnounceFile, AnnounceImage, Comment
-from config.LineNotify import LineNotify
 
 # Create your views here.
 
@@ -160,7 +157,6 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
             # img_url = []
             images = request.FILES.getlist("images")
             files = request.FILES.getlist("files")
-            tokens = request.POST.getlist("tokens")
             form_save = form.save()
             form_id = get_object_or_404(Announce, pk=form_save.pk)
 
@@ -177,30 +173,6 @@ class AnnounceCreateView(LoginRequiredMixin, CreateView):
                     a_file.save()
             else:
                 form_save.save()
-
-            if tokens:
-                # host = request.get_host()
-                # path = reverse_lazy('announce:detail', args=[str(form_id.pk)])
-                url = request.build_absolute_uri(
-                    reverse_lazy("announce:detail", args=[str(form_id.pk)])
-                )
-                imgs = AnnounceImage.objects.filter(announce=form_id)
-                # url  = 'http://' + host + path
-                head = f"มี{form_save.get_is_type_display()}ใหม่\n--------------------\n"
-                body = f"เรื่อง: {form_save.title}\n--------------------\nรายละเอียด:\n{strip_tags(form_save.detail)}\n"
-                body += f"\n--------------------\nurl: {url}\n"
-
-                for token_id in tokens:
-                    token = LineToken.objects.get(id=token_id).token
-                    # line  = Sendline(token)
-                    line = LineNotify(token)
-                    line.send_message(head + body)
-                    image_file = AnnounceImage.objects.filter(announce=form_id)
-                    for image in image_file:
-                        # image_path = str(Path.joinpath(settings.BASE_DIR, settings.MEDIA_ROOT, image.images.name))
-                        image_path = image.images.path
-                        line.send_image(image_path)
-                        print(image_path)
 
             return redirect(self.success_url)
 

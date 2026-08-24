@@ -2,8 +2,6 @@ from ckeditor.fields import RichTextField
 from django.contrib.auth.models import User
 from django.db import models
 
-# from config.sendline import Sendline
-
 # Create your models here.
 
 

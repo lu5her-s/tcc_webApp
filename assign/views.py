@@ -208,19 +208,6 @@ class AssignCreateView(LoginRequiredMixin, CreateView):
             else:
                 form_save.save()
 
-            # if tokens:
-            # host = request.get_host()
-            # path = reverse_lazy('announce:detail', args=[str(form_id.pk)])
-            # url = 'http://' + host + path
-            # head = '\nมี : ' + form_save.is_type.name + 'ใหม่'
-            # body = '\nเรื่อง : ' + form_save.name + '\n' + 'รายละเอียดเพิ่มเติม :' + url
-
-            # for token_id in tokens:
-            # token = LineToken.objects.get(id=token_id).token
-            # line = Sendline(token)
-            # line.sendtext(head + body)
-            # print(token)
-
             return redirect(self.success_url)
 
         else:

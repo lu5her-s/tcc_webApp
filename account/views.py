@@ -233,7 +233,6 @@ def update_profile(request):
         profile.facebook = request.POST["facebook"]
         profile.instagram = request.POST["instagram"]
         profile.line_id = request.POST["line_id"]
-        profile.line_token = request.POST["line_token"]
         profile.about = request.POST["about"]
 
         profile.save()
