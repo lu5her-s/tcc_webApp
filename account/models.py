@@ -94,7 +94,6 @@ class Profile(models.Model):
         facebook:
         instagram:
         line_id:
-        line_token:
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -115,7 +114,6 @@ class Profile(models.Model):
     facebook = models.CharField(max_length=200, default="https://facebook.com/#")
     instagram = models.CharField(max_length=200, default="https://instagram.com/#")
     line_id = models.CharField(max_length=200, default="line_id")
-    line_token = models.CharField(max_length=200, default="line_token")
 
     class Meta:
         verbose_name_plural = "Profiles"
@@ -154,14 +152,3 @@ def save_user_profile(sender, instance, **kwargs):
     """
     instance.profile.save()
 
-
-# REVIEW: update for token line
-class LineToken(models.Model):
-    """add Line token for send line notify"""
-
-    name = models.CharField(max_length=200)
-    token = models.CharField(max_length=200)
-    note = models.TextField(blank=True, null=True)
-
-    def __str__(self) -> str:
-        return f"{self.name}"

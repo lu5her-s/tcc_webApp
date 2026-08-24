@@ -7,10 +7,7 @@
 # Last Modified By  : lu5her <lu5her@mail>
 import datetime
 import os
-import re
 
-from account.models import LineToken
-from config.sendline import Sendline
 from config.utils import generate_pdf
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
@@ -340,16 +337,6 @@ class InformDetailView(LoginRequiredMixin, DetailView):
             if inform.repair_category == Inform.RepairCategory.AGENT:
                 inform.assigned_to = inform.customer.profile
             inform.save()
-            token = LineToken.objects.get(name="Manager").token
-            line = Sendline(token)
-            body = "มีการแจ้งซ่อมรออนุมัติ"
-            body += f"\nหมายเลขการแจ้งซ่อม: {inform.pk}"
-            body += f"\nประเภทงาน: {inform.get_repair_category_display()}"
-            url = request.build_absolute_uri(
-                reverse_lazy("inform:detail", kwargs={"pk": inform.pk})
-            )
-            body += f"\nurl : {url}"
-            line.send_message(body)
             return redirect(
                 reverse_lazy("inform:detail", kwargs={"pk": self.get_object().pk})
             )
@@ -456,14 +443,10 @@ class InformCreateView(LoginRequiredMixin, CreateView):
         context = {"form": self.form_class(request)}
         return render(request, self.template_name, context)
 
-    def remove_html(self, text):
-        return re.sub("<[^<]+?>", "", text)
-
     def post(self, request, *args, **kwargs):
         form = self.form_class(request, request.POST, request.FILES)
         if form.is_valid():
             inform = form.save()
-            token = LineToken.objects.get(name="Manager").token
             images = (
                 request.FILES.getlist("images") if "images" in request.FILES else None
             )
@@ -471,29 +454,6 @@ class InformCreateView(LoginRequiredMixin, CreateView):
                 InformImage.objects.bulk_create(
                     [InformImage(inform=inform, images=image) for image in images]
                 )
-            # host = request.get_host()
-            # path = reverse_lazy('inform:detail', kwargs={'pk': inform.pk})
-            # url  = 'http://' + host + path
-            url = request.build_absolute_uri(
-                reverse_lazy("inform:detail", kwargs={"pk": inform.pk})
-            )
-            issue_clear = self.remove_html(form.cleaned_data["issue"])
-            # body = ''
-            body = "\nมีแจ้งซ่อมใหม่: "
-            body += f"\nหมายเลขใบแจ้งซ่อม : {inform.pk}/{inform.created_at.year + 543}"
-            body += f"\nวันที่แจ้งซ่อม : {inform.created_at.strftime('%d/%m/%Y')}"
-            body += f"\nความเร่งด่วน : {inform.get_urgency_display()}"
-            body += f"\nสถานที่ : {inform.customer.profile.department}"
-            body += f"\nผู้แจ้งซ่อม : {inform.customer.profile if inform.customer.profile else inform.customer}"
-            body += f"\nอุปกรณ์ที่แจ้งซ่อม : {inform.stockitem.item_name}"
-            body += f"\nอาการ : \n{issue_clear}"
-            body += f"\n\nurl : {url}"
-
-            line = Sendline(token)
-            try:
-                line.send_message(body)
-            except Exception as e:
-                print(e)
         return redirect(reverse_lazy("inform:home"))
 
 
@@ -793,10 +753,6 @@ def inform_approve(request, pk):
     inform.approve_status = Inform.ApproveStatus.APPROVE
     inform.inform_status = None
     inform.save(update_fields=["approve_status"])
-    token = LineToken.objects.get(name="Manager").token
-    line = Sendline(token)
-    body = f"อนุมัติแจ้งซ่อม : {inform.pk}/{inform.created_at.year + 543}"
-    line.sendtext(body)
     return redirect(reverse_lazy("inform:detail", kwargs={"pk": pk}))
 
 

@@ -10,7 +10,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import widgets
 
-from account.models import LineToken, Position, Profile, Rank, Sector
+from account.models import Position, Profile, Rank, Sector
 
 
 # ===== Helpers for DRY code =====
@@ -122,7 +122,6 @@ class ProfileForm(forms.ModelForm):
             "facebook",
             "instagram",
             "line_id",
-            "line_token",
             "department",
         )
         exclude = ["password"]
@@ -140,7 +139,6 @@ class ProfileForm(forms.ModelForm):
             "facebook": "Facebook",
             "instagram": "Instagram",
             "line_id": "Line ID",
-            "line_token": "Line Token",
         }
         widgets = {
             "rank": widgets.Select(attrs={"class": "form-select"}),
@@ -157,7 +155,6 @@ class ProfileForm(forms.ModelForm):
             "facebook": forms.TextInput(attrs=form_control()),
             "instagram": forms.TextInput(attrs=form_control()),
             "line_id": forms.TextInput(attrs=form_control()),
-            "line_token": forms.TextInput(attrs=form_control()),
         }
 
 
@@ -218,22 +215,3 @@ class PositionForm(_SingleNameForm):
     name_placeholder = "ตำแหน่ง"
     name_label = "ตำแหน่ง"
 
-
-class LineTokenForm(forms.ModelForm):
-    class Meta:
-        model = LineToken
-        fields = ("name", "token", "note")
-        labels = {
-            "name": "ชื่อโทเคน",
-            "token": "Token",
-            "note": "หมายเหตุ",
-        }
-        widgets = {
-            "name": forms.TextInput(
-                attrs={"class": "w3-input", "placeholder": "ชื่อโทเคน"}
-            ),
-            "token": forms.TextInput(
-                attrs={"class": "w3-input", "placeholder": "Line token..."}
-            ),
-            "note": forms.Textarea(attrs=w3_input()),
-        }

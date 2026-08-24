@@ -1,14 +1,8 @@
-from account.models import LineToken
 from ckeditor.widgets import CKEditorWidget
 from django import forms
 from django.forms import widgets
 
 from .models import Announce, Comment
-
-
-class LineTokenMultiple(forms.ModelMultipleChoiceField):
-    def label_form_instance(self, obj: LineToken) -> str:
-        return obj.name
 
 
 class AnnounceForm(forms.ModelForm):
@@ -18,7 +12,6 @@ class AnnounceForm(forms.ModelForm):
     Attributes:
         files:
         images:
-        tokens:
     """
 
     files = forms.FileField(
@@ -35,12 +28,6 @@ class AnnounceForm(forms.ModelForm):
         label="รูปภาพ",
         required=False,
     )
-    tokens = LineTokenMultiple(
-        queryset=LineToken.objects.all(),
-        label="การแจ้งเตือน",
-        widget=widgets.CheckboxSelectMultiple(),
-        required=False,
-    )
 
     class Meta:
         model = Announce
@@ -52,7 +39,6 @@ class AnnounceForm(forms.ModelForm):
             "author",
             "images",
             "files",
-            "tokens",
         )
         widgets = {
             "is_type": widgets.Select(attrs={"class": "form-select"}),
@@ -63,7 +49,6 @@ class AnnounceForm(forms.ModelForm):
             "author": widgets.HiddenInput(
                 attrs={"class": "form-control", "id": "author"}
             ),
-            "tokens": widgets.CheckboxSelectMultiple(attrs={"class": "form-control"}),
         }
         labels = {
             "is_type": "ประเภท",
@@ -71,7 +56,6 @@ class AnnounceForm(forms.ModelForm):
             "detail": "รายละเอียด",
             "status": "สถานะ",
             "author": "ผู้เขียน",
-            "tokens": "การแจ้งเตือน",
         }
 
 
