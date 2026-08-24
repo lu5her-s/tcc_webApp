@@ -1,8 +1,8 @@
 # PRD — TCC WebApp (ระบบบริหารงานภายใน ทค.)
 
-> **Version:** 1.0 · **Date:** 2026-08-24 · **Author:** Lin (หลิน) — Product Owner · **Status:** Draft / Single Source of Truth ก่อน Refactor  
+> **Version:** 1.1 · **Date:** 2026-08-25 · **Author:** Lin (หลิน) — Product Owner · **Status:** Draft / Single Source of Truth ก่อน Refactor (อัปเดตตาม Decisions ของ Louis 25 ส.ค. 2026)  
 > **Repo:** `/home/lu5her/01-Projects/tcc_webApp` · **Branch:** `docs/prd-tcc-webapp` · **Stack:** Django 4.2 (EOL Apr 2026) · Python 3.13 venv · SQLite  
-> **ผู้มอบหมาย:** Aiy (อัย) — Strategic Orchestrator (Fast-track) · **ผู้รับรอง:** Louis
+> **ผู้มอบหมาย:** Aiy (อัย) — Strategic Orchestrator (Fast-track) · **ผู้รับรอง:** Louis · **Decisions locked:** 2026-08-25
 
 ---
 
@@ -15,7 +15,10 @@
 5. [Integrations](#5-integrations)
 6. [Non-Functional Requirements](#6-non-functional-requirements)
 7. [Target State — Refactor Roadmap](#7-target-state--refactor-roadmap)
-8. [Open Questions for Louis](#8-open-questions-for-louis)
+8. [Open Questions & Decisions](#8-open-questions--decisions)
+   - [Decision Log (24-Aug-2026)](#decision-log-24-aug-2026)
+   - [8-A Design Proposal — Inform/Repair model (Q8)](#8-a-design-proposal--informrepair-model-q8)
+   - [8-B Design Proposal — Serial matching HTMX (Q10)](#8-b-design-proposal--serial-matching-htmx-q10)
 9. [Appendix — Audit Facts & Tech Inventory](#9-appendix--audit-facts--tech-inventory)
 
 ---
@@ -657,10 +660,9 @@ flowchart LR
 | **สถานะ LINE Notify API** | ⚠️ LINE Notify **EOL 31 Mar 2025** — ต้อง migrate ไป **LINE Messaging API** (Channel Access Token) ใน Target State มิฉะนั้นการส่งจะล้ม |
 | **Dead consumer** | `connect_api.js` (Google Apps Script `doPost`/`doGet`) เรียก `GET /api/announce?userId=` + `UrlFetchApp.fetch` → คาดหวัง JSON `[{title}]` → ส่ง `replyToken` กลับ `https://api.line.me/v2/bot/message/reply` — แต่ endpoint `/api/announce` **ไม่มีอยู่จริง** (ไม่มี DRF router) |
 
-**Requirement หลัง refactor:**
-- สร้าง `GET /api/announce?userId=` (หรือ better: `?unread=true` + auth) ให้ `connect_api.js` หรือ LINE Messaging webhook เรียกได้
-- ย้ายจาก Notify → Messaging API (เก็บ `CHANNEL_ACCESS_TOKEN` ใน `.env`)
-- พิจารณา rate limit + auth (มิฉะนั้นใครก็ดึง announce ได้)
+**Decision 24 ส.ค. 2026 (Q2–Q4) — LOCKED: REMOVE** — Louis สั่ง **DELETE `announce/serializers.py` + REMOVE LINE Notify (`config/LineNotify.py`/`config/sendline.py`/`connect_api.js`)** — ไม่ทำ `/api/announce`, ไม่ migrate ไป Messaging API ตอนนี้ — ให้ `email (sendmail.py)` เป็นช่องทางเดียวชั่วคราว, ค่อยเลือก channel ใหม่ด้วย fresh approach หลังประชุม ส่วนกลาง
+
+> **Requirement หลัง refactor (เดิม — ยกเลิกตาม Decision):** ~~สร้าง `GET /api/announce?userId=` ให้ `connect_api.js` เรียกได้ + ย้าย Notify → Messaging API~~ — **CANCELLED (24-Aug-2026)**
 
 ### 5.2 Email (`config/sendmail.py`)
 
@@ -675,8 +677,8 @@ flowchart LR
 
 | ประเด็น | รายละเอียด |
 |---|---|
-| **ไฟล์** | `config/telegram.py` **ไม่มีอยู่ใน repo ปัจจุบัน** (brief บอกว่ามี แต่ audit พบไม่มี) — อาจเคยมีแล้วถูกลบ หรืออยู่ใน `.venv` |
-| **Requirement** | ถ้าต้องใช้ Telegram จริง ต้อง implement ใหม่ (python-telegram-bot / aiogram) — ตั้งเป็น Open Question (§8) |
+| **ไฟล์** | `config/telegram.py` **ไม่มีอยู่ใน repo ปัจจุบัน** (audit พบไม่มี) |
+| **Decision 24 ส.ค. 2026 (Q5) — LOCKED: CUT** | Louis สั่ง **CUT for now, do not replace** — รอประชุม ส่วนกลาง หลัง production launch ค่อยตัดสินใจ channel — **คง `email sendmail.py` เป็นช่องทางเดียวชั่วคราว** — ไม่ implement Telegram |
 
 ### 5.4 PDF — พิมพ์ฟอร์มราชการ (`config/utils.py`, `parcel/views.py`, `inform/views.py`, `operation/views.py`)
 
@@ -712,9 +714,9 @@ flowchart LR
 
 ### 6.3 On-Prem Deployment Assumption
 
-| ประเด็น | ค่าปัจจุบัน | Target |
+| ประเด็น | ค่าปัจจุบัน | Target (อัปเดต Q7 — 25 ส.ค. 2026) |
 |---|---|---|
-| **DB** | SQLite (`db.sqlite3` in repo, dirty git) | **PostgreSQL 15+** (รองรับ concurrency + backup) |
+| **DB** | SQLite (`db.sqlite3` in repo, dirty git) | **Env-driven switch — default SQLite (keep for testing), Postgres = config change only** (`DATABASE_URL` ใน `.env`), production จะห่อ Docker ทีหลัง — เตรียม mechanism ตอนนี้ ไม่ migrate ข้อมูลตอนนี้ → ค่อย `pg_dump` เมื่อพร้อม |
 | **App server** | `DEBUG=True`, `runserver` | Gunicorn + Nginx (on-prem VM), `DEBUG=False`, `ALLOWED_HOSTS` ระบุ host จริง |
 | **Secrets** | `SECRET_KEY` hard-code, `dotenv_values(".env")` แต่ไม่ใช้ | ย้ายทุก secret ลง `.env` + `django-environ` / `python-dotenv` จริงจัง |
 | **Media/Static** | `MEDIA_ROOT=BASE_DIR/media`, `STATICFILES_DIRS=[BASE_DIR/static]` ไม่มี `STATIC_ROOT` | ตั้ง `STATIC_ROOT` + `collectstatic` + Nginx serve |
@@ -738,13 +740,16 @@ flowchart LR
 
 ## 7. Target State — Refactor Roadmap
 
-### 7.1 Phase 0 — Cleanup (ก่อน upgrade)
+### 7.1 Phase 0 — Cleanup (ก่อน upgrade) — *อัปเดตตาม Decisions 25 ส.ค. 2026*
 
-- ลบ `bill.bk` (backup app ค้าง), รวม `Sendline` + `LineNotify` เหลือ 1 class, ลบ `connect_api.js` หรือย้ายไป `docs/` ถ้ายังอยากเก็บตัวอย่าง
-- ตัดสินใจชะตา `announce/serializers.py` (ดู §8 Q2)
-- แก้บัค typo `document/views.py` (`requst`, `self.template`, `Operator` unused) + `Operator.__str__` ใช้ `self.document.doc_no` (ไม่มี field) → จะ `AttributeError`
-- Normalize `is_delete` vs `is_deleted`, `reciever` typo (ควรเป็น `receiver` แต่ต้อง migrate)
+- **Q6 ARCHIVE:** `git mv bill.bk/ → 04-Archives/bill.bk-2026-08-25/` (นอก working tree, เก็บไว้ search)
+- **Q2 DELETE + Q4 REMOVE:** ลบ `announce/serializers.py` ทั้งไฟล์ + ลบ `config/LineNotify.py` + `config/sendline.py` + `connect_api.js` (หรือ archive ไป `docs/archive/`) + ลบ LINE send ใน `announce/views.py`/`inform/views.py` + deprecate `account.LineToken` (หรือคงไว้แต่ไม่ใช้)
+- **Q1 FIX:** แก้ `account/context_processors.py::document_not_accepted` + `account/helpers.py::get_inbox_counts` + `document/views.py::DocumentHomeView` จาก `abs(len - len)` → `exclude(pk__in Depart...)` — badge สารบรรณถูกต้อง (fix menu badge)
+- **Q9 keep optional:** คง `Journal.header null=True` — แก้แค่ typo `prfile` → `profile` ใน `assign/views.py`
+- แก้บัค typo อื่น `document/views.py` (`requst`, `self.template`, `Operator` unused) + `Operator.__str__` ใช้ `self.document.doc_no` (ไม่มี field) → จะ `AttributeError` + `repair/models.py` `__str__` ใช้ `self.inform.status`
+- Normalize `is_delete` vs `is_deleted`, `reciever` typo (ควรเป็น `receiver` แต่ต้อง migrate — ทำ soft, ค่อย rename column)
 - ตั้ง `ruff`/`basedpyright` + pre-commit, แยก `requirements.in` → lock `requirements.txt` ด้วย `uv`
+- **Q7 prepare switch:** `config/settings.py` → `DATABASES` อ่านจาก `.env` (`DATABASE_URL` / `POSTGRES_*`) — default SQLite, ถ้า `.env` มี Postgres ก็ switch ทันที (ดู §7.2)
 
 ### 7.2 Phase 1 — Django 4.2 → 5.2 LTS Upgrade
 
@@ -756,7 +761,7 @@ flowchart LR
 | **crispy-forms** | `CRISPY_TEMPLATE_PACK="bootstrap4"` — Django 5.2 ยังรองรับ แต่ถ้าย้าย BS5 ต้องเปลี่ยน pack | |
 | **คุยกับ `TIME_ZONE`/`USE_TZ`** | ปัจจุบัน `USE_TZ=False` เก็บ naive — ถ้าเปิด `True` ต้อง migrate datetime ทั้ง DB | แนะคง `False` ก่อน แล้วค่อย plan แยก |
 | **Python** | `Python 3.13` พร้อมสำหรับ Django 5.2 (รองรับ 3.10–3.13) | อย่าอัพ 3.14 จนกว่า Django รองรับ |
-| **DB** | ย้าย SQLite → Postgres ใน phase นี้เลย (ทำ `dumpdata`/`loaddata` หรือ `pgloader`) | |
+| **DB** | **Q7 — Prepare switch mechanism now (env-driven DATABASE):** `DATABASES` อ่าน `.env` — default SQLite (ใช้ทดสอบต่อ), ถ้า `.env` มี `POSTGRES_*` / `DATABASE_URL` ก็เป็น Postgres ทันที — ไม่ migrate ข้อมูลตอนนี้, production จะห่อ Docker ทีหลัง — ทำ `dumpdata`/`loaddata` เมื่อถึงเวลาจริง | |
 
 ### 7.3 Phase 2 — HTMX Migration (Partial Template Strategy)
 
@@ -775,40 +780,237 @@ flowchart LR
 - ใช้ `django-htmx` middleware + `request.htmx` check ใน view → ถ้า `HX-Request` ส่ง partial, Else ส่ง full page (progressive enhancement)
 - `context_processors` counts → ย้ายเป็น `HX-Trigger` header หรือ `{% include "components/notification_list.html" %}` partial ที่ HTMX swap ได้
 
-### 7.4 Phase 3 — DRF API (เฉพาะจุดที่มี consumer จริง)
+### 7.4 Phase 3 — DRF API (เฉพาะจุดที่มี consumer จริง) — **LOCKED: MOOT per Q2/Q3 (25 ส.ค. 2026)**
 
-**หลักการ:** ไม่ทำ API ทั้งระบบ — ทำ **เฉพาะ endpoint ที่มี consumer จริง** ก่อน (YAGNI)
+> **Decision Q2=DELETE, Q3=MOOT, Q4=REMOVE, Q5=CUT** — Louis สั่ง **ไม่ทำ `/api/announce` สำหรับ LINE bot** — ไม่ติดตั้ง DRF เพื่อจุดนี้ — `email (sendmail.py)` เป็นช่องทางเดียวชั่วคราว — รอประชุม ส่วนกลาง หลัง production launch ค่อยเลือก notification channel ใหม่ด้วย fresh approach
 
-| Endpoint | Consumer | Spec |
-|---|---|---|
-| `GET /api/announce/` ( + `?unread=true&userId=...` ) | `connect_api.js` / LINE Messaging webhook | ใช้ `announce/serializers.AnnounceSerializer` ที่มีอยู่ (ต้องติดตั้ง `djangorestframework` ก่อน) + `IsAuthenticated` หรือ `TokenAuth` (LINE `userId` ไม่พอ — ต้อง map LINE userId ↔ Django User) |
-| `GET /api/document/inbox/` (optional) | อนาคต LINE/Telegram bot แจ้งหนังสือใหม่ | ถ้าไม่มี demand ให้ defer |
-| `POST /api/line/webhook/` | LINE Messaging API | รับ `replyToken` + `userId` → ตอบ announce/document counts |
+| Endpoint | Consumer | Spec | Status |
+|---|---|---|---|
+| `GET /api/announce/` | `connect_api.js` / LINE | เดิม: DRF + AnnounceSerializer | **CANCELLED — DELETE `serializers.py` + `connect_api.js`** |
+| `GET /api/document/inbox/` | LINE/Telegram | optional | **DEFERRED — CUT** |
+| `POST /api/line/webhook/` | LINE Messaging | webhook | **CANCELLED** |
 
-**Steps:**
-1. `pip install djangorestframework` + เพิ่ม `rest_framework` ใน `INSTALLED_APPS`
-2. สร้าง `announce/api/views.py` (ViewSet) + `announce/api/urls.py` + `config/urls.py` include `path("api/announce/", ...)`
-3. เปิด `GET /api/announce?userId=` ให้ผ่าน (แต่ต้อง auth — ใช้ `TokenAuthentication` หรือ `SessionAuthentication` + CSRF exempt สำหรับ webhook)
-4. ทดสอบ `connect_api.js` → ยิง `UrlFetchApp.fetch` → ได้ JSON จริง
+*Phase 3 จึง **ไม่มีงาน DRF** จนกว่าจะมี decision ใหม่หลังประชุม ส่วนกลาง — ถ้าต้องการ API ภายหลัง ให้ทำ fresh design ใหม่ (ไม่ reuse `announce/serializers.py` เก่า)*
 
 ---
 
-## 8. Open Questions for Louis
+## 8. Open Questions & Decisions
 
-> ทุกข้อต้องได้คำตอบก่อนเริ่ม Phase 1 (หรือก่อนเขียนโค้ดแก้) — หลินจะ lock scope ตามคำตอบ
+> §8 เดิมคือ Open Questions (v1.0) — ตอนนี้ Louis ตอบครบ 10 ข้อแล้ว (24 ส.ค. 2026) — หลิน lock scope และเพิ่ม Design Proposals สำหรับ Q8/Q10 ตามที่สั่ง
 
-| # | คำถาม | บริบท / ทางเลือก | เจ้าของคำตอบ | ผลกระทบถ้าไม่ตอบ |
-|---|---|---|---|---|
-| **Q1** | **Logic `document_not_accepted` ต้องการนับแบบไหน?** ปัจจุบัน `abs(len(all_inbox) - len(all_department))` คือ `จำนวนหนังสือที่ส่งมาหา Sector - จำนวนครั้งที่มีคนกดรับ` (นับ rows `Depart` ตาม `reciever__profile__sector`) — ไม่ใช่ “จำนวนหนังสือที่ยังไม่มีคนรับเลย” ที่ถูกต้องควรเป็น `Document.objects.filter(assigned_sector=sector).exclude(pk__in=Depart.objects.filter(reciever__profile__sector=sector).values_list("document__pk", flat=True)).count()` — **ต้องการให้แก้เป็นแบบไหน?** | A) แก้เป็น exclude-PK (ถูกต้อง) / B) คงไว้ (ถ้ามีเหตุผลทางธุรกิจ) / C) นับต่อ Department แทน Sector | Louis + หัวหน้า สบ. | Badge สารบรรณคลาดเคลื่อน, `count_total` รวมผิด |
-| **Q2** | **`announce/serializers.py` (DRF) จะเอาไง?** ไฟล์มีครบ 4 serializers แต่ `requirements.txt` ไม่มี `djangorestframework` → import พังถ้าเรียก — จะ **A) ติดตั้ง DRF + เปิด `/api/announce` (แนะนำ, รองรับ LINE bot)** / B) ลบทิ้ง (ถ้าไม่ทำ API) / C) ย้ายไป `announce/api/serializers.py` หลัง Phase 3 | Louis + An | กระทบ LINE bot (`connect_api.js`) จะใช้ไม่ได้ถ้าเลือก B |
-| **Q3** | **`GET /api/announce` ควร auth แบบไหน?** `connect_api.js` ส่ง `userId` (LINE userId) ผ่าน query string แบบไม่มี token — **จะให้ A) ทำ TokenAuth / B) ผูก LINE userId ↔ Django User ใน DB + verify signature / C) เปิด public read-only (เสี่ยง)** | Louis + An + Cloud | กระทบ security ของ API |
-| **Q4** | **LINE Notify EOL 31 Mar 2025 — จะย้ายไป LINE Messaging API เมื่อไหร่?** ปัจจุบัน `LineNotify` ใช้ Notify API ที่ปิดแล้ว — ต้องขอ Channel Access Token ใหม่ | A) ย้ายทันทีใน Phase 1 / B) defer หลัง 5.2 upgrade | Louis + Cloud | ถ้า defer, ฟีเจอร์ LINE จะดับ |
-| **Q5** | **`config/telegram.py` ยังต้องการไหม?** brief บอกว่ามี Telegram integration แต่ audit ไม่พบไฟล์ — จะ A) implement ใหม่ / B) ตัด scope | Louis | กระทบ scope Phase 3 |
-| **Q6** | **`bill.bk` (backup app) ลบทิ้งได้เลยไหม?** มี `bill.bk/models.py`/`views.py` ค้างใน repo — ไม่มีใน `INSTALLED_APPS` | A) ลบ / B) archive ไป `04-Archives/` | Louis | ลด confusion |
-| **Q7** | **On-prem DB จะย้ายไป Postgres เมื่อไหร่?** ปัจจุบัน SQLite + `db.sqlite3` dirty git — ควรย้ายก่อน HTMX เพื่อ test migration | A) Phase 1 พร้อม Django 5.2 / B) หลัง 5.2 | Louis + Cloud | กระทบ deployment |
-| **Q8** | **`inform.InformOption` และ `repair.Repair` จะคงไหม?** `InformOption` มีแค่ `car` FK ไม่ค่อยใช้, `Repair` เป็น FK ธรรมดา (ไม่ OneToOne) → 1 Inform มีหลาย Repair ได้ — ตั้งใจไหม? | A) คง / B) ลบ `InformOption` / C) เปลี่ยน `Repair` เป็น OneToOne | Louis + An | กระทบ data model |
-| **Q9** | **`Journal.header` ต้อง required ไหม?** ปัจจุบัน `null=True, blank=True` แต่ `AssignDetail` auto-create `Journal(header=author.prfile)` มี typo `prfile` → จะ `AttributeError` — จะแก้ typo + ทำ required ไหม? | A) แก้ typo + คง nullable / B) ทำ required | Louis | บัคตอนปิดงาน Assign |
-| **Q10** | **`StockItem.serial` unique + `parcel.RequestItem.item` nullable — flow จับคู่ serial จะทำ UI อย่างไรใน HTMX?** ปัจจุบัน manager ต้อง `set_serial_item` manual | A) ทำ modal HTMX + autocomplete / B) คง full-page | Louis + Mint | กระทบ UX Phase 2 |
+### Decision Log (24-Aug-2026) — คำตอบจาก Louis (บันทึก verbatim intent)
+
+> บันทึกตามคำสั่ง: เก็บเจตนาเดิมของ Louis แบบ verbatim + ผลกระทบต่อ PRD/แผนงาน
+
+| # | คำถามเดิม | ✅ Decision (verbatim intent) | ผลกระทบต่อ PRD / Action ต่อ |
+|---|---|---|---|
+| **Q1** | Logic `document_not_accepted` นับแบบไหน? | ✅ **ใช้ตามที่ PRD เสนอ (exclude-based correct count)** — *fixing this = fixing the menu badge too (badge reads from this context processor)* | แก้ `account/context_processors.py::document_not_accepted` + `account/helpers.py::get_inbox_counts` + `document/views.py::DocumentHomeView` จาก `abs(len - len)` → `exclude(pk__in Depart...)` — badge สารบรรณ + `count_total` จะถูกต้องทันที |
+| **Q2** | `announce/serializers.py` (DRF) จะเอาไง? | 🗑️ **DELETE** — *no more notifications via this path, LINE is no longer free* | Phase 0: ลบ `announce/serializers.py` ทั้งไฟล์ + ลบ `connect_api.js` หรือ archive ไป `docs/archive/` ถ้าอยากเก็บตัวอย่าง — ไม่ต้องติดตั้ง DRF เพื่อจุดนี้ |
+| **Q3** | `GET /api/announce` auth แบบไหน? | **MOOT (follows Q2)** — *no DRF API for LINE bot* | ตัด Target State §7.4 ออก — ไม่ทำ `/api/announce` |
+| **Q4** | LINE Notify (`LineNotify.py`/`sendline.py`) EOL → ย้ายเมื่อไหร่? | ❌ **REMOVE for now** — *revisit later with fresh approach if needed* | Phase 0: ลบ `config/LineNotify.py` + `config/sendline.py` + `LineToken` model (หรือ deprecate) + LINE send ใน `announce/views.py` + `inform/views.py` (Sendline) — คง `sendmail.py` เป็นช่องทางเดียวชั่วคราว |
+| **Q5** | `telegram.py` ยังต้องการไหม? | ❌ **CUT for now** — *wait for meeting with ส่วนกลาง AFTER production launch to decide channels — email `sendmail.py` remains only active channel meanwhile* | ไม่ implement Telegram — ตัดออกจาก §5.3 และ §7.4 |
+| **Q6** | `bill.bk/` ลบทิ้งได้ไหม? | 📦 **ARCHIVE** — *keep searchable reference, out of working tree* | `git mv bill.bk/ → 04-Archives/bill.bk-2026-08-24/` หรือ `docs/archive/bill.bk/` นอก `INSTALLED_APPS` — ไม่อยู่ใน working tree |
+| **Q7** | SQLite→Postgres เมื่อไหร่? | 🔌 **prepare switch mechanism now** — *env-driven DATABASE config so Postgres = config change only; keep SQLite for testing; production likely Docker-wrapped later* | `config/settings.py` → `DATABASES` อ่านจาก `.env` (`DATABASE_URL` / `POSTGRES_*`) — default SQLite, ถ้า `.env` มี Postgres ก็ switch ทันที — ไม่ migrate ข้อมูลตอนนี้ |
+| **Q8** | `InformOption`/`Repair` FK vs OneToOne → คงไหม? | 📐 **Lin analyzes & proposes** — *see Design Task A below (§8-A Design Proposal — Inform/Repair model)* | → ดู §8-A |
+| **Q9** | `Journal.header` required ไหม? | ❌ **keep optional — work sometimes happens without an orderer (self-initiated)** | คง `header FK null=True, blank=True` — แก้ typo `prfile` → `profile` ใน `assign/views.py` อย่างเดียว |
+| **Q10** | `RequestItem` serial matching — HTMX แบบไหน? | 📐 **design now** — *see Design Task B below (§8-B Design Proposal — Serial matching HTMX)* — serial = supply serial number, expected unique | → ดู §8-B |
+
+> **Status หลัง Decision Log:** Q1–Q7, Q9 = **LOCKED** — พร้อมเข้า Phase 0 cleanup ทันที · Q8/Q10 = **DESIGNED** ใน §8-A/§8-B รอ Louis approve ก่อน implement
+
+---
+
+### 8-A Design Proposal — Inform/Repair model (Q8)
+
+#### 8-A.1 บริบทที่อ่านจากโค้ดจริงก่อนเสนอ (READ BEFORE PROPOSE)
+
+| สิ่งที่อ่าน | พบอะไร |
+|---|---|
+| `inform/models.py` — `Inform` | มี **status machine 3 ชั้น** บน `Inform` เอง: `inform_status` (INF/WAT/REJ) + `approve_status` (APR/RJT/RCK) + `repair_status` (ACC/RPR/CMP/REJ/CLO) + `accepted` + `closed` — นี่คือ **source of truth** ของ workflow, ไม่ได้ฝากไว้ที่ `Repair` |
+| `inform/models.py` — `InformProgress` | `inform FK, note, status (RepairStatus)` — **ทำหน้าที่ “หลายครั้ง” อยู่แล้ว** — `repair_note()` สร้าง `InformProgress` ทุกครั้งที่ช่างอัปเดต + `inform.repair_status = status` ควบคู่ — ใช้เป็น audit trail ต่อเนื่อง |
+| `inform/models.py` — `InformOption` | `inform FK, car FK CarBooking (nullable)` + comment `job/stock FK` ที่ถูก comment ทิ้ง — ใช้ใน `InformDetailView` (`inform_options = InformOption.objects.get(inform)`) เพื่อโชว์ปุ่ม “เบิกคลัง/ยานพาหนะ/ใบงาน” — แต่ `stock/job` ไม่มี field จริง → ปุ่มเป็น dead link, มีแค่ `car` ที่ใช้งาน — logic นี้ถูกแทนที่แล้วด้วย `operation` linking tables (`OperationInform`/`OperationCar`/`OperationParcelRequest`) |
+| `repair/models.py` — `Repair` | `inform FK (not OneToOne), comment RichTextField, cost Integer, created_at` — `__str__` ใช้ `self.inform.status` (field ไม่มีจริง → bug, ควรเป็น `repair_status`) — **FK ธรรมดา → 1 Inform มีได้หลาย Repair rows** — แต่ `repair/views.py:repair_create` สร้าง 1 row ต่อ POST แบบไม่มี guard, และ `inform_detail.html` แสดง `repairs = Repair.objects.filter(inform)` เป็น list |
+| `inform/views.py` — `InformDetailView` + `repair_note` + `accept_inform` + `close_approve` | Flow ทั้งหมดขับด้วย `Inform.repair_status`/`closed`/`accepted` — `Repair` ไม่ได้ถูกเช็คเป็นเงื่อนไข gating เลย — `Repair` เป็น “ใบรายงาน” ที่แนบหลังซ่อมเสร็จ ไม่ใช่ตัวขับสถานะ |
+| `inform/inform_detail.html` + `repair/` templates | Tab “บันทึกการทำงาน” แสดง `InformProgress` list, Tab อื่นแสดง `repairs` list — UI รองรับหลายรายการอยู่แล้ว |
+
+**Domain criteria ที่ Louis ให้ประเมิน:**
+
+| Criteria | คำตอบจากโค้ด + โดเมนจริง |
+|---|---|
+| (a) 1 ใบแจ้งซ่อมมี **MULTIPLE repair events** ได้ไหม? | **ได้และควรได้** — ซ่อมครั้งเดียวไม่จบ (อะไหล่ขาด/ต้องกลับมาซ่อมอีกรอบ/ซ่อมไม่ผ่านต้องซ่อมซ้ำ) — ปัจจุบัน `InformProgress` + `Repair` หลาย rows รองรับอยู่แล้ว — ถ้าล็อกเป็น OneToOne จะทำ audit trail หาย |
+| (b) ต้องมี **per-event documents (ใบรายงานซ่อม)** ไหม? | **ควรมี แต่ไม่ต้อง 1:1 กับ Inform** — แต่ละครั้งที่ซ่อมควรออก `Repair` 1 ใบ (comment + cost + วันที่ + คนซ่อม) ไว้แนบเบิก/สรุป — ปัจจุบัน `repair_create` ทำได้ แต่ยังไม่มีเลขที่เอกสาร/ลายเซ็น |
+| (c) ต้องมี **Inform status independent** ไหม? | **ต้องมี** — `Inform` คือใบแจ้ง (open/in-progress/done) ส่วน `Repair` คือใบรายงานผล — ถ้าเอา status ไปฝากที่ `Repair` จะ query ยาก (ต้อง aggregate) — ปัจจุบัน `Inform.repair_status` ทำหน้าที่นี้ดีอยู่แล้ว |
+
+#### 8-A.2 ข้อเสนอของหลิน — **RECOMMENDED: Keep FK-many + Status Machine on Inform (ชนะ)**
+
+**สรุป 1 บรรทัด:** **คง `Inform 1 — * Repair` (FK-many) + ให้ `Inform.repair_status`/`inform_status`/`approve_status`/`closed` เป็น status machine หลัก, `Repair` เป็น “ใบรายงานซ่อม” ต่อเหตุการณ์, `InformProgress` เป็น “timeline บันทึก” ต่อเหตุการณ์ย่อย, และ **deprecate `InformOption`***
+
+| Entity | บทบาทหลัง refactor | Relation |
+|---|---|---|
+| `Inform` | **ใบแจ้งซ่อม = Aggregate Root** — ถือ status machine ทั้งหมด | 1 — * `Repair`, 1 — * `InformProgress`, 1 — * `InformImage`, 1 — 1 `InformReject` (optional), 1 — * `*Review` |
+| `Repair` | **ใบรายงานซ่อมต่อครั้ง** — comment (RichText) + cost + created_at (+ เพิ่ม repaired_by, repaired_at ในอนาคต) | `inform FK, on_delete CASCADE, related_name=repairs` |
+| `InformProgress` | **Timeline บันทึกระหว่างซ่อม** — note + status snapshot | `inform FK, related_name=progress` |
+| `InformOption` | **DEPRECATE → REMOVE** — แทนด้วย `Operation*` hub | ลบ model ทั้งหมด (migration) |
+
+**ทำไมไม่ใช่ OneToOne?**
+
+| ทางเลือก | ข้อเสียที่พบจากโค้ด |
+|---|---|
+| `Repair OneToOne Inform` | 1 ใบแจ้งมีได้แค่ 1 รายงาน → ถ้าซ่อม 2 รอบต้อง overwrite/lose history → ไม่ผ่าน criteria (a) + ต้อง migrate ข้อมูลเก่าที่มี >1 Repair ต่อ Inform (ถ้ามี) → เสี่ยง data loss |
+| `เอา status ไปไว้ที่ Repair` | `InformHomeView`/`InformManagerListView` ทุกที่ filter ด้วย `Inform.repair_status` — ถ้าย้ายต้อง join/aggregate ทุก query → ช้า + พัง dashboard, ไม่ผ่าน criteria (c) |
+| `คง InformOption` | มีแค่ `car` ใช้ได้, `stock/job` ไม่มี field → ปุ่ม “เบิกคลัง/ใบงาน” เป็น dead link — ควรให้ `Operation` (ที่มี `OperationInform`/`OperationCar`/`OperationParcelRequest`) เป็น hub แทน — ลด duplication |
+
+#### 8-A.3 สิ่งที่ต้องเปลี่ยน (Models/Migrations Impact)
+
+| งาน | รายละเอียด | Migration risk |
+|---|---|---|
+| **คง `Repair.inform = FK`** (ไม่เปลี่ยนเป็น OneToOne) | ไม่ต้องสร้าง migration เปลี่ยน relation — แค่ **เพิ่ม `ordering = ["-created_at"]`** + แก้ `__str__` bug (`self.inform.status` → `self.inform.get_repair_status_display()` หรือ `f"Repair {self.pk} for Inform {self.inform_id} — {self.cost}฿"`) | 🟢 Low — ไม่มี schema change |
+| **เพิ่ม field ที่ขาด (optional, หลัง approve)** | `Repair.repaired_by FK User (nullable)` + `Repair.repaired_at DateTime (auto_now_add)` + `Repair.report_no CharField (unique, สำหรับเลขที่ใบรายงาน)` | 🟡 Medium — `null=True` จึงไม่กระทบข้อมูลเก่า, แต่ถ้าใส่ unique report_no ต้อง backfill |
+| **Deprecate `InformOption`** | Phase 0: หยุดสร้าง `InformOption` ใหม่ (comment code ใน `inform/views.py`) → Phase 1: `DeleteModel` migration (ลบ table) — ก่อนลบต้อง check ว่ามี rows ไหม (`InformOption.objects.count()`) | 🟡 Medium — ถ้ามี data ต้อง migrate ไป `Operation` ก่อนลบ |
+| **(ไม่ต้อง) เปลี่ยน `InformProgress`** | คงไว้ — เป็น timeline ที่ดีอยู่แล้ว | 🟢 Low |
+| **Migration file** | `inform/migrations/XXXX_remove_informoption_and_fix_repair.py` + `repair/migrations/XXXX_add_repaired_by_and_ordering.py` | ต้องรัน `makemigrations` หลังแก้ models |
+
+#### 8-A.4 Migration Risk Notes
+
+- **Data loss risk:** ถ้ามี `InformOption` rows อยู่ → ก่อน `DeleteModel` ต้อง `RunPython` ย้าย `car` link ไป `OperationInform`/`OperationCar` หรือ dump เป็น JSON archive
+- **FK many vs OneToOne confusion:** ทีมอาจเผลอ `get()` แทน `filter()` — ต้อง grep `Repair.objects.get(inform=` ทั้ง repo แล้วเปลี่ยนเป็น `filter().first()`/`latest()`
+- **PDF:** `inform_to_pdf` ปัจจุบันไม่รวม `repairs` — หลังคง FK-many ต้องเพิ่ม `repairs = inform.repairs.all().order_by("-created_at")` เข้า PDF context เพื่อให้ใบรายงานครบ
+- **No downtime:** ทุก change เป็น additive (`null=True`) + deprecate แบบ soft → ไม่ต้อง downtime, รัน migrate แบบ online ได้
+
+#### 8-A.5 Diagram — ความสัมพันธ์ที่เสนอ (คง FK-many)
+
+```mermaid
+erDiagram
+  Inform ||--o{ Repair : "1 ใบแจ้ง → * ใบรายงาน (FK-many)"
+  Inform ||--o{ InformProgress : "1 ใบแจ้ง → * timeline"
+  Inform ||--o{ InformImage : "1 ใบแจ้ง → * รูป"
+  Inform ||--o{ CustomerReview : ""
+  Inform }o--|| StockItem : "แจ้งซ่อมพัสดุชิ้นนี้"
+  Inform }o--o| Profile : "assigned_to ช่าง"
+  Repair }o--|| User : "repaired_by (ใหม่, nullable)"
+  InformOption }o--|| Inform : "DEPRECATED → ลบ, แทนด้วย Operation hub"
+  OperationInform }o--|| Inform : "Operation hub แทน InformOption"
+```
+
+> **Next step สำหรับ Q8:** รอ Louis approve §8-A → An สร้าง migration + แก้ `__str__` + เพิ่ม `repaired_by` (nullable) → Pao อัปเดต `inform_detail.html` ให้ loop `repairs` แบบ timeline → Fah เขียน test `Inform → multiple Repairs` ordering
+
+---
+
+### 8-B Design Proposal — Serial matching (HTMX) (Q10)
+
+#### 8-B.1 บริบทที่อ่านจากโค้ดจริงก่อนเสนอ
+
+| สิ่งที่อ่าน | พบอะไร |
+|---|---|
+| `asset/models.py` — `StockItem.serial` | `CharField(max_length=50, unique=True, null=True, blank=True)` — **unique + nullable** → serial คือ supply serial number, คาดว่า unique ต่อ physical unit (เช่น S/N ของวิทยุ) — แต่ `null=True` ทำให้ของที่ไม่มี S/N (เช่น สายไฟ, น็อต) เก็บ `serial=None` ได้ |
+| `parcel/models.py` — `RequestItem` | `bill FK, category FK, item FK StockItem (null=True), quantity, quantity_approve, paid, recieved` — **ไม่มี `serial_no` field จริง** (comment ทิ้ง) — ตอนสร้าง `BillCreateView` จะสร้าง `RequestItem(category, quantity)` โดย `item=None` — ต้องมี step “จับคู่ serial” ก่อนจ่าย — view `set_serial_item` พยายาม `item.serial_no = serial_no` แต่ field ไม่มี → bug (set attr ลอย ไม่ persist) |
+| `parcel/views.py` — `set_serial_item(request, pk)` | รับ `request.POST.getlist("serial_no")` → `StockItem.objects.filter(serial__in=serials_no)` → zip `items ↔ serials` → `item.item = stock_item` (ถูก) + `item.serial_no = serial_no` (ผิด — field ไม่มี) → `save()` — ไม่มี validate `category match` / `status == AVAILABLE` / `location_item == stock` |
+| `parcel/templates/parcel/bill_detail2.html` | Modal `#set_serial` — แสดง `<select name="serial_no">` loop `serial` list (preload ทั้งหมด) แบบ full-page POST → ไม่มี live lookup, ไม่มี HTMX, ไม่มี audit trail แยก |
+| `asset/models.py` — `StockItem.Status` | 7 ค่า: AVAILABLE/HOLD/ON_HAND/IN_USE/UNDER_MAINTENANCE/DISPOSED/CHECK — flow ปัจจุบัน: AVAILABLE → (set_serial → item assigned) → HOLD (mark_as_paid) → ON_HAND (mark_as_received/ItemOnHand) → IN_USE |
+| `parcel/models.py` — `RequestBillDetail` + `ItemOnHand` | `paider FK User, paid_at, paid_status=PAID, receiver FK Profile` + `ItemOnHand(item, user, is_done)` — audit trail ครึ่งหนึ่งอยู่แล้ว แต่ **ไม่มี “ใครจ่าย serial ไหนให้ใครเมื่อไหร่” ต่อชิ้น** |
+
+**สรุป pain:** จับคู่ serial แบบ select ทื่อๆ + ไม่มี validate + ไม่มี live search + bug field + ไม่มี audit ต่อชิ้น
+
+#### 8-B.2 ข้อเสนอของหลิน — **HTMX Live Lookup + Attach + Audit ต่อชิ้น**
+
+**หลักการ:** 1 `RequestItem` (category + quantity) → จ่ายเป็น *N physical units* (แต่ละ unit มี serial unique) — ถ้า `quantity=1` ต้องจับ 1 serial, ถ้า `quantity=3` ต้องจับ 3 serials (หรือ fallback ถ้าของไม่มี serial)
+
+##### Flow ภาพรวม (HTMX dispense)
+
+```mermaid
+sequenceDiagram
+  participant Staff as จนท.คลัง (Manager)
+  participant UI as BillDetail (HTMX)
+  participant Frag as Fragment API
+  participant DB as DB
+
+  Staff->>UI: เปิด BillDetail (status=WAIT/APPROVED)
+  UI->>UI: แสดง RequestItem rows (category, qty, qty_approve) + ปุ่ม "จ่ายพัสดุ"
+  loop ต่อ 1 RequestItem
+    Staff->>UI: พิมพ์/สแกน serial ใน <input> (hx-get)
+    UI->>Frag: GET /parcel/lookup-serial/?serial=ABC123&category=5&stock=2 (hx-trigger keyup changed delay:300ms)
+    Frag->>DB: StockItem.objects.filter(serial=ABC123, category=5, status=AVAILABLE, location_item=stock)
+    alt พบ + valid
+      Frag-->>UI: HTML fragment: card ✓ "วิทยุ XYZ — S/N ABC123 — AVAILABLE — คลัง SATT" + ปุ่ม "แนบ"
+    else ไม่พบ / ไม่ตรง / ถูก HOLD ไปแล้ว
+      Frag-->>UI: HTML fragment: alert ✗ "ไม่พบ / ไม่ว่าง / ไม่ตรงหมวด" + hint
+    end
+    Staff->>UI: กด "แนบ" (hx-post /parcel/attach-serial/)
+    UI->>DB: RequestItem.item = stock_item (FK) + สร้าง ParcelDispenseAudit (ดู 8-B.4) + StockItem.status=HOLD (ถ้ายัง)
+    DB-->>UI: fragment อัปเดต row → "แนบแล้ว: S/N ABC123" + badge HOLD
+  end
+  Staff->>UI: กด "จ่ายพัสดุ" (hx-post /parcel/paid/<pk>/ + PIN check) → paid_status=PAID + paider + paid_at
+  UI-->>Staff: Toast "จ่ายแล้ว" + badge PAID + ล็อกฟอร์ม
+```
+
+##### HTMX Interaction Spec
+
+| ชิ้น | Spec |
+|---|---|
+| **Input** | `<input name="serial" hx-get="{% url 'parcel:lookup-serial' %}" hx-trigger="keyup changed delay:300ms, search" hx-target="#lookup-result-{{ item.pk }}" hx-include="[name='category'],[name='stock']" placeholder="พิมพ์/สแกน S/N">` — รองรับ barcode scanner (scanner พิมพ์แล้ว Enter → trigger) + `autofocus` |
+| **Lookup fragment endpoint** | `GET /parcel/lookup-serial/` — query `serial, category, stock` → filter `StockItem.objects.filter(serial__iexact=serial, category_id=category, status=AVAILABLE)` (+ check `location_item == stock` ถ้ามี) → render `parcel/partials/_serial_lookup.html` (card + ปุ่ม Attach) — ใช้ `select_related("category")` ป้องกัน N+1 |
+| **Validate rules** | 1) `serial` ต้อง `unique=True` อยู่แล้ว — ห้ามซ้ำ 2) `stock_item.category == request_item.category` (ถ้าไม่ตรง → error “หมวดไม่ตรง”) 3) `stock_item.status == AVAILABLE` (ถ้า HOLD/ON_HAND/IN_USE → error “ไม่ว่าง”) 4) `stock_item.location_item == bill.stock` (ถ้าไม่ตรงคลัง → warning) 5) `request_item` ยังไม่มี `item` (ถ้ามีแล้ว → error “แนบแล้ว”) |
+| **Attach** | `POST /parcel/attach-serial/` — `hx-post` + `hx-target="#request-item-{{ pk }}"` + `hx-swap="outerHTML"` — body `request_item_id + stock_item_id` → `RequestItem.item = stock_item; save()` + สร้าง audit + `StockItem.status = HOLD` (optional, ถ้าต้องการกันคนอื่นแย่ง) — response เป็น row fragment ที่อัปเดตแล้ว |
+| **Detach** | `POST /parcel/detach-serial/` — ปุ่ม “ถอด” (hx-post) — `RequestItem.item = None` + audit “detach” + `StockItem.status = AVAILABLE` |
+| **Fallback เมื่อไม่มี serial** | ถ้า `StockItem.serial is None` (ของไม่มี S/N, เช่น วัสดุสิ้นเปลือง) → แสดง checkbox “ไม่มี S/N — จ่ายตามจำนวน” → `RequestItem.item = None` แต่ `quantity_approve` คือจำนวนที่จ่าย → ไม่ต้อง validate serial, audit บันทึก `serial=None, quantity=...` + หมายเหตุ “วัสดุไม่มี S/N” |
+| **Multi-qty** | ถ้า `quantity=3` ต้อง attach 3 ครั้ง — UI แสดง `3 slots` (เช่น `1/3 attached`) + progress bar — ถ้า attach ครบ `quantity` แล้ว disable input |
+
+##### Unique Constraint
+
+- **มีอยู่แล้ว:** `StockItem.serial unique=True, null=True, blank=True` — คงไว้ — `null` หลาย rows ได้ (ของไม่มี S/N) แต่ `serial` ที่เป็น string ต้อง unique — **ไม่ต้องเพิ่ม migration** — แค่เพิ่ม `clean()` validate ว่า `serial` ถ้าใส่ต้องไม่ซ้ำ (case-insensitive)
+- **(Optional) เพิ่ม `RequestItem.item` unique per bill?** ไม่ต้อง — 1 Bill มีหลาย Items ได้, แต่ 1 StockItem ควรถูกจ่ายแค่ 1 ครั้ง — enforce ด้วย `StockItem.status != AVAILABLE` check ใน lookup แทน DB unique
+
+##### Audit Trail — “ใครจ่าย serial ไหนให้ใครเมื่อไหร่”
+
+| Field | เก็บที่ไหน | รายละเอียด |
+|---|---|---|
+| `paider` (คนจ่าย) | `RequestBillDetail.paider FK User` + `paid_at` | มีอยู่แล้ว — `mark_as_paid(user)` |
+| `receiver` (คนรับ) | `RequestBillDetail.receiver FK Profile` | มีอยู่แล้ว — แต่เป็นต่อ Bill ไม่ใช่ต่อชิ้น |
+| **(ใหม่) ต่อชิ้น** | **สร้าง `ParcelDispenseAudit` (ใหม่)** หรือ reuse `ItemHistory`/`ItemOnHand` | `ParcelDispenseAudit(bill, request_item, stock_item, serial, dispensed_by FK User, dispensed_to FK User/Profile, dispensed_at DateTime, action=ATTACH/DETACH/PAID/RECEIVED)` — ทุก attach/detach/paid/received สร้าง 1 row |
+| `ItemOnHand` | มีอยู่ — `ItemOnHand(item, user, is_done)` | หลัง `paid_status=RECEIVED` จะสร้าง `ItemOnHand` — คงไว้ |
+| **PDF** | `bill_pdf.html` | เพิ่มคอลัมน์ S/N ต่อบรรทัด (`item.serial`) + ลายเซ็น paider/receiver + QR |
+
+**Minimal audit (ถ้าไม่อยากสร้าง table ใหม่):** ใช้ `ItemHistory(item, user, description="Dispensed S/N ABC123 to <receiver> by <paider> at <time>")` แทน — แต่แนะนำ `ParcelDispenseAudit` แยกเพื่อ query ง่าย
+
+##### States & Badges (HTMX swap)
+
+```
+DRAFT → REQUEST → WAIT (approve) → APPROVED → PAID (paider+paid_at) → RECEIVED (ItemOnHand)
+         └─ RequestItem: (no item) → HOLD (attached) → PAID → ON_HAND → IN_USE
+```
+
+- Fragment badge เปลี่ยนทันทีหลัง attach/detach/paid โดย HTMX swap ไม่ต้อง reload หน้า
+
+##### Error Handling & Edge
+
+- พิมพ์ serial ผิด → fragment แดง + hint “ตรวจ S/N อีกครั้ง”
+- สแกนบาร์โค้ดซ้ำ → “serial นี้ถูกแนบไปแล้วใน Bill นี้”
+- StockItem อยู่คลังอื่น → warning เหลือง “อยู่นอกคลังที่เลือก — ยืนยันไหม?”
+- ของไม่มี S/N → ใช้ fallback quantity mode
+- PIN check ตอน “จ่ายพัสดุ” ยังคง (`paid_item` view เช็ค `user.check_password(pin)`) — เพิ่ม `hx-post` + modal PIN
+
+#### 8-B.3 สิ่งที่ต้องเปลี่ยน (Models/Views/Templates)
+
+| งาน | ไฟล์ | รายละเอียด |
+|---|---|---|
+| **Model: Audit** | `parcel/models.py` | เพิ่ม `ParcelDispenseAudit` (ใหม่) — `bill FK, request_item FK, stock_item FK, serial CharField, dispensed_by FK User, dispensed_to FK Profile, dispensed_at DateTime auto_now_add, action Choices(ATTACH/DETACH/PAID/RECEIVED)` |
+| **Model: Fix bug** | `parcel/models.py` | ลบ code `item.serial_no = ...` (field ไม่มี) — ใช้ `item.item = stock_item` อย่างเดียว |
+| **Views: Lookup** | `parcel/views.py` | เพิ่ม `lookup_serial(request)` — GET → filter + render partial `_serial_lookup.html` |
+| **Views: Attach/Detach** | `parcel/views.py` | `attach_serial` / `detach_serial` — POST + create audit + update status HOLD/AVAILABLE + return fragment |
+| **Views: HTMXify paid** | `parcel/views.py` | `PaidItemView` เพิ่ม `if request.htmx:` → return fragment + `HX-Trigger: toast` |
+| **Templates: Partials** | `parcel/templates/parcel/partials/` | `_serial_lookup.html`, `_request_item_row.html`, `_dispense_audit.html` |
+| **URL** | `parcel/urls.py` | `path("lookup-serial/", views.lookup_serial, name="lookup-serial")`, `attach-serial`, `detach-serial` |
+
+#### 8-B.4 Migration Risk
+
+- 🟢 **Low** — `StockItem.serial` unique มีอยู่แล้ว ไม่ต้อง migrate — `ParcelDispenseAudit` เป็น table ใหม่ ไม่มี data เก่า
+- 🟡 ถ้า `RequestItem` เก่ามี `item=None` อยู่ → ไม่กระทบ — dispense flow จะค่อยๆ attach ใหม่ได้
+- ต้องเพิ่ม `hx-headers` CSRF + ทำ `request.htmx` guard ให้ fallback เป็น full-page ถ้า JS ปิด
+
+> **Next step สำหรับ Q10:** รอ Louis approve §8-B → Mint ออกแบบ wireframe modal + fragment states (empty/valid/error/attached) → Pao implement HTMX views + partials + audit model → Fah เขียน test `lookup → attach → paid → audit` end-to-end
+
+---
+
+## 9. Appendix — Audit Facts & Tech Inventory
 
 ---
 
@@ -899,10 +1101,11 @@ journal/
 
 | Version | Date | Author | Description |
 |---|---|---|---|
+| 1.1 | 2026-08-25 | Lin (หลิน) | Update per Louis decisions 25 ส.ค. 2026 — Decision Log 10 ข้อ (Q1 exclude-fix, Q2/Q3 DELETE/MOOT, Q4 REMOVE LINE, Q5 CUT Telegram, Q6 ARCHIVE bill.bk, Q7 env-driven DB, Q9 keep optional) + §8-A Design Proposal (Inform/Repair FK-many + status machine on Inform, deprecate InformOption) + §8-B Design Proposal (Serial matching HTMX — live lookup + audit trail) + ปรับ §5/§7/§6.3 ให้สอดคล้อง decisions |
 | 1.0 | 2026-08-24 | Lin (หลิน) | Initial PRD — Full audit + System Map 9 ระบบ + 8 workflows (mermaid) + Integrations + NFR + Target State + 10 Open Questions |
 
 ---
 
 > **เอกสารนี้เป็น Single Source of Truth ก่อน Refactor** — ทุกการเปลี่ยนแปลง scope หลังนี้ต้องผ่าน Lin (Product Owner) และบันทึกเป็น Amendment ใน `Knowledge/Knowledge-*.md` + อัปเดต PRD version ถัดไป
->
-> **Next Action แนะนำ:** รอคำตอบ Open Questions §8 (โดยเฉพาะ Q1–Q4) → An ออกแบบ Schema/API contract สำหรับ Django 5.2 → Mint ทำ wireframe HTMX partials → Pao เริ่ม Phase 0 cleanup บน branch `refactor/phase0-cleanup`
+
+> **Next Action หลัง v1.1 (Decisions locked):** Phase 0 cleanup เริ่มได้ทันที — An ทำ `config/settings.py` env-driven DATABASE + แก้ `document_not_accepted` (Q1) + สร้าง migration §8-A (Repair ordering/bug + InformOption deprecate) → Mint ทำ wireframe §8-B (serial lookup fragment states) → Pao ทำ HTMX `lookup-serial`/`attach` + `ParcelDispenseAudit` → Fah เขียน test `Inform→multiple Repairs` + `lookup→attach→paid→audit` → Cloud เตรียม Docker wrapper (Q7) — รอ Louis approve §8-A/§8-B ก่อน implement เต็ม
