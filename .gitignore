@@ -46,7 +46,8 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
-#db.sqlite3
+db.sqlite3
+*.sqlite3
 # Flask stuff:
 instance/
 .webassets-cache
@@ -85,3 +86,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 .vscode/
+
+# TCC project-specific: binaries, backups, runtime data
+/lazygit
+*.bk
+media/
